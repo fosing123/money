@@ -278,7 +278,7 @@ function bindApp(){
  document.getElementById('chat-form')?.addEventListener('submit',function(e){e.preventDefault();sendMessage();});
  document.querySelectorAll('[data-prompt]').forEach(function(b){b.onclick=function(){sendMessage(b.dataset.prompt);};});
 }
-function openModal(content){overlay.innerHTML='<section class="modal">'+content+'</section>';overlay.style.display='grid';overlay.onclick=function(e){if(e.target===overlay)closeModal();};overlay.querySelector('[data-close]')?.addEventListener('click',closeModal);}
+function openModal(content){overlay.innerHTML='<section class="modal">'+content+'</section>';overlay.style.display='grid';overlay.onclick=function(e){if(e.target===overlay)closeModal();};overlay.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',closeModal);});}
 function closeModal(){overlay.innerHTML='';overlay.style.display='none';}
 function openTx(type){
  var chosen=type||'expense';
@@ -328,7 +328,6 @@ function moneyReply(text){
  return 'I can help you review your recorded spending, plan your allowance, and think through a purchase. Try “Spent 1,200 FCFA on lunch”, “Can I afford 3,000 FCFA shoes?”, or “Where does most of my money go?”. 🌈\\n\\nThis is a smart-rule preview, not a live AI model yet.';
 }
 function renderTour(){
- if(state.tutorialDone){overlay.style.display='none';return;}
  var steps=[
   {icon:'💜',title:'Welcome to your money space!',body:'This is your starting point. Your balance is the amount you entered during setup — it is not connected to a bank or Mobile Money account.',image:'./assets/student-hero-3d.webp',label:'1 / 3'},
   {icon:'✨',title:'Every small move has a place.',body:'Use Add income or Add expense to keep your records current. Budgets and savings goals help you decide what to do next.',image:'./assets/marketplace.svg',label:'2 / 3'},
