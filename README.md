@@ -14,6 +14,9 @@ A colourful, mobile-first money management website concept for students in Camer
 ## Main experience
 
 - Full-screen, photo-led onboarding with profile, goals, payday/income, available balance, money sources, weekly needs and debts
+- Nine personalized goal paths across education/career, tech and creative work, business, wellbeing, independence, family, travel, emergency savings and personal dreams
+- Six selectable colour palettes: Dreamy Violet, Ocean Calm, Sunset Glow, Forest Fresh, Rose Studio and Midnight Neon
+- Custom savings goals with a category, target amount, saved amount and optional personal motivation
 - An editable FCFA weekly budget and warning when actual needs exceed the plan or allocations exceed income
 - Dashboard showing recorded balance, transactions, current-week spending and savings goals
 - Weekly budgets use transactions recorded since Monday; lifetime recorded totals stay separate
