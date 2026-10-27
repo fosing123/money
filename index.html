@@ -39,7 +39,7 @@
 'use strict';
 var STORE='student-money-experience-v2', PROFILE='student-money-profile-v2', TOUR='student-money-tour-v2';
 var app=document.getElementById('app'),overlay=document.getElementById('overlay-root'),toastRoot=document.getElementById('toast-root');
-var state=loadState(),profile=loadProfile(),page='dashboard',onStep=0,selectedGoals=[],selectedPersona='student',allowanceCadence='weekly',budgetPreset='balanced',tourStep=0,chatMessages=[],activityFilter='all',activitySearch='';
+var state=loadState(),profile=loadProfile(),page='dashboard',onStep=1,introStep=0,selectedGoals=[],selectedPersona='student',allowanceCadence='weekly',budgetPreset='balanced',tourStep=0,chatMessages=[],activityFilter='all',activitySearch='';
 var goalOptions=[
  {id:'emergency',emoji:'🛟',title:'Build a safety cushion',detail:'Feel ready for surprises',target:30000,color:'mint'},
  {id:'school',emoji:'🎓',title:'Pay school fees',detail:'Plan ahead for school',target:150000,color:'blue'},
@@ -69,53 +69,73 @@ function weeklyAllowance(){if(state.cadence==='monthly')return Math.round(state.
 function categoryFor(text){var s=String(text||'').toLowerCase();if(/food|lunch|dinner|breakfast|bread|meal|restaurant|chop|snack|drink/.test(s))return 'Food';if(/taxi|transport|bus|bike|ride|fuel|car/.test(s))return 'Transport';if(/airtime|data bundle|internet|mtn|orange money|wifi|megabyte/.test(s))return 'Airtime & data';if(/school|book|print|exam|course|tuition|photocopy|note/.test(s))return 'School';if(/rent|room|house|water|electricity|light bill/.test(s))return 'Housing';return 'Other';}
 function brand(){return '<div class="brand"><div class="brand-symbol">✳</div><div>Money, made clearer.<small>STUDENT MONEY · CAMEROON</small></div></div>';}
 function renderOnboarding(){
- var stepNames=['Welcome','Your world','Your goals','Your starting point'];
- var content='';
- if(onStep===0){
-  content='<div class="ob-progress-top"><span>WELCOME</span><strong>LET’S START ✨</strong></div><div class="progress-track"><i style="width:20%"></i></div><div class="ob-step-icon">🌈</div><h2>Make money feel simpler.</h2><p class="ob-sub">Track what you have. Plan what matters.</p><div class="choice-list"><div class="choice selected"><span class="choice-icon">🧠</span><span class="choice-copy"><b>Know where it goes</b><small>See your spending at a glance.</small></span><span class="checkmark">✓</span></div><div class="choice selected"><span class="choice-icon">🎯</span><span class="choice-copy"><b>Reach your goals</b><small>Save at your own pace.</small></span><span class="checkmark">✓</span></div><div class="choice selected"><span class="choice-icon">✨</span><span class="choice-copy"><b>Get helpful tips</b><small>Simple help when you need it.</small></span><span class="checkmark">✓</span></div></div><div class="ob-footer"><div class="step-dots"><span class="active"></span><span></span><span></span><span></span></div><button class="button" data-action="ob-next">Let’s set it up <span>→</span></button></div><div class="swipe-hint">Three quick steps. Change anything later.</div>';
- }else if(onStep===1){
-  content='<div class="ob-progress-top"><span>YOUR PROFILE</span><strong>1 OF 3</strong></div><div class="progress-track"><i style="width:38%"></i></div><div class="ob-step-icon">👋🏽</div><h2>What should we call you?</h2><p class="ob-sub">Just a few quick choices.</p><label class="field">WHAT SHOULD WE CALL YOU? <small>OPTIONAL</small><input id="ob-name" maxlength="40" value="'+esc(profile.name||'')+'" placeholder="Your first name"></label><div class="field">WHICH DESCRIBES YOU BEST?</div><div class="choice-list">'+[
-   ['student','🎓','University student','I’m at university.'],
-   ['hustler','🧑🏽‍💻','Student + side hustler','I study and hustle.'],
-   ['young-pro','💼','Young professional','I’m working.']
-  ].map(function(p){return '<button class="choice '+(selectedPersona===p[0]?'selected':'')+'" data-persona="'+p[0]+'"><span class="choice-icon">'+p[1]+'</span><span class="choice-copy"><b>'+p[2]+'</b><small>'+p[3]+'</small></span><span class="checkmark">✓</span></button>';}).join('')+'</div><div class="ob-footer"><button class="button ghost" data-action="ob-back">← Back</button><div class="step-dots"><span></span><span class="active"></span><span></span><span></span></div><button class="button" data-action="ob-next">Next <span>→</span></button></div>';
- }else if(onStep===2){
-  content='<div class="ob-progress-top"><span>YOUR GOALS</span><strong>2 OF 3</strong></div><div class="progress-track"><i style="width:68%"></i></div><div class="ob-step-icon">🎯</div><h2>What are you working towards?</h2><p class="ob-sub">Pick up to 3 goals.</p><div class="goal-grid">'+goalOptions.map(function(g){var sel=selectedGoals.indexOf(g.id)>=0;return '<button class="goal-choice '+(sel?'selected':'')+'" data-goal="'+g.id+'"><span class="checkmark">'+(sel?'✓':'')+'</span><span class="g-emoji">'+g.emoji+'</span><b>'+g.title+'</b><small>'+g.detail+'</small></button>';}).join('')+'</div><p class="hint">Small goals count.</p><div class="ob-footer"><button class="button ghost" data-action="ob-back">← Back</button><div class="step-dots"><span></span><span></span><span class="active"></span><span></span></div><button class="button" data-action="ob-next">Next <span>→</span></button></div>';
- }else{
-  var bal=state.balance||0,allow=state.allowance||10000;
-  content='<div class="ob-progress-top"><span>YOUR STARTING POINT</span><strong>3 OF 3</strong></div><div class="progress-track"><i style="width:100%"></i></div><div class="ob-step-icon">💸</div><h2>Start with your balance.</h2><p class="ob-sub">Estimates only. Not linked to your accounts.</p><label class="field">HOW MUCH MONEY DO YOU HAVE RIGHT NOW? <small>EDITABLE EXAMPLE</small><input id="ob-balance" type="number" min="0" step="100" value="'+bal+'" inputmode="numeric"></label><label class="field">HOW MUCH MONEY DO YOU USUALLY RECEIVE? <small>ALLOWANCE, SALARY OR HUSTLE INCOME</small><input id="ob-allowance" type="number" min="0" step="500" value="'+allow+'" inputmode="numeric"></label><div class="field">HOW OFTEN DOES IT COME IN?</div><div class="budget-preset">'+[['weekly','Every week'],['monthly','Every month'],['irregular','It varies']].map(function(v){return '<button class="'+(allowanceCadence===v[0]?'active':'')+'" data-cadence="'+v[0]+'">'+v[1]+'</button>';}).join('')+'</div><div class="range-wrap"><div class="mini-label">WEEKLY SAVINGS TARGET</div><div class="range-value"><span id="ob-save-value">'+fmt(state.savingsTarget||2000)+'</span> <small>/ week</small></div><input id="ob-savings" type="range" min="0" max="10000" step="500" value="'+(state.savingsTarget||2000)+'"><div class="range-labels"><span>Start tiny</span><span>Build gradually</span></div></div><div class="note"><span>✨</span><span>We’ll make a starter budget. Change it anytime.</span></div><div class="ob-footer"><button class="button ghost" data-action="ob-back">← Back</button><div class="step-dots"><span></span><span></span><span></span><span class="active"></span></div><button class="button" data-action="ob-finish">Build my space ✨</button></div>';
+ var shellStart='<main class="onboarding"><header class="ob-top">'+brand()+'<button class="button ghost small" data-action="ob-skip">Skip</button></header>';
+ var shellEnd='<footer class="ob-bottom"><span>YOUR MONEY. YOUR NEXT MOVE.</span><span>FCFA · PRIVATE BY DEFAULT</span></footer></main>';
+ if(introStep===0){
+  var welcome='<section class="ob-welcome-screen screen"><div class="ob-welcome-copy"><div class="eyebrow">MADE FOR STUDENT LIFE 🇨🇲</div><h1>Your money.<br><span class="gradient">Your future.</span></h1><p>Track your FCFA. Set goals. Feel in control.</p><button class="button" data-action="intro-start">Get started <span>→</span></button><div class="ob-welcome-points"><span>🔒 Private by default</span><span>✨ No judgement</span></div></div><div class="ob-welcome-visual"><img src="./assets/student-hero.svg" alt="Students planning their money"><div class="welcome-float one">🌱 <b>Small goals</b></div><div class="welcome-float two">💜 <b>Big plans</b></div></div></section>';
+  app.innerHTML=shellStart+welcome+shellEnd;bindOnboarding();return;
  }
- var welcomeMarkup = `<section class="ob-welcome-screen screen"><div class="ob-welcome-copy"><div class="eyebrow">MADE FOR STUDENT LIFE 🇨🇲</div><h1>Make your money<br><span class="gradient">go further.</span></h1><p>Plan your FCFA. Save for what matters.</p><button class="button" data-action="ob-next">Get started <span>→</span></button><div class="ob-welcome-points"><span>🔒 Private by default</span><span>✨ No judgement</span></div></div><div class="ob-welcome-visual"><img src="./assets/student-hero-3d.webp" alt="Student planning their money"><div class="welcome-float one">🌱 <b>Small goals</b></div><div class="welcome-float two">💜 <b>Big plans</b></div></div></section>`;
- var formMarkup = `<div class="ob-body screen"><section class="ob-story compact-story"><div class="eyebrow">MADE FOR STUDENT LIFE 🇨🇲</div><h1>Money, <span class="gradient">made clearer.</span></h1><p>Track. Save. Feel in control.</p><div class="hero-art"><img src="./assets/student-hero-3d.webp" alt="Student planning their money"><div class="hero-badge one"><span style="font-size:19px">🌱</span><span>Small goals<small>Steady progress</small></span></div><div class="hero-badge two"><span style="font-size:19px">✨</span><span>Money clarity<small>One step at a time</small></span></div></div><div class="ob-feature-row"><span class="ob-feature"><i>🔒</i> Private</span><span class="ob-feature"><i>🇨🇲</i> FCFA-ready</span></div></section><section class="ob-card" id="ob-card">`+content+`</section></div>`;
- app.innerHTML='<main class="onboarding"><header class="ob-top">'+brand()+'<button class="button ghost small" data-action="ob-skip">Skip</button></header>'+(onStep===0?welcomeMarkup:formMarkup)+'<footer class="ob-bottom"><span>YOUR MONEY. YOUR NEXT MOVE.</span><span>FCFA · PRIVATE BY DEFAULT</span></footer></main>';
-
- bindOnboarding();
+ if(introStep>=1&&introStep<=3){
+  var slides=[
+   {tag:'YOUR MONEY, IN FOCUS',title:'Take control<br>of your money.',body:'Track income, expenses and the little things that add up.',image:'./assets/student-hero.svg',extra:'<div class="preview-mini"><span>🍲 Food</span><b>5,000 FCFA</b></div><div class="preview-mini"><span>🚌 Transport</span><b>2,400 FCFA</b></div><div class="preview-mini"><span>💚 Savings</span><b>2,000 FCFA</b></div>'},
+   {tag:'MAKE ROOM FOR YOUR GOALS',title:'Big goals.<br>Small steps.',body:'Save for school fees, a laptop, a trip or your next idea.',image:'./assets/student-hero.svg',extra:'<div class="preview-goal"><span>💻</span><div><b>New laptop</b><div class="bar"><i style="width:65%;background:#2dbc87"></i></div><small>65% of goal</small></div></div><div class="preview-goal"><span>🎓</span><div><b>School fees</b><div class="bar"><i style="width:40%;background:#5d9bf1"></i></div><small>40% of goal</small></div></div>'},
+   {tag:'A LITTLE HELP, WHEN YOU NEED IT',title:'Meet your<br>Money Coach.',body:'Ask about your budget, a purchase or your savings plan.',image:'./assets/money-coach.svg',extra:'<div class="preview-chat"><span>💬</span> Can I afford this?</div><div class="preview-chat"><span>✨</span> Help me plan my week.</div>'}
+  ][introStep-1];
+  var dots='<div class="step-dots">'+[1,2,3].map(function(n){return '<span class="'+(n===introStep?'active':'')+'"></span>';}).join('')+'</div>';
+  var slide='<section class="intro-slide screen"><div class="intro-visual intro-tone-'+introStep+'"><img src="'+slides.image+'" alt=""><div class="intro-preview">'+slides.extra+'</div></div><div class="intro-copy"><div class="eyebrow">'+slides.tag+'</div><h1>'+slides.title+'</h1><p>'+slides.body+'</p><div class="intro-foot">'+dots+'<div class="intro-buttons"><button class="button ghost" data-action="intro-back">←</button><button class="button" data-action="intro-next">'+(introStep===3?'Set up my money':'Next')+' →</button></div></div></div></section>';
+  app.innerHTML=shellStart+slide+shellEnd;bindOnboarding();return;
+ }
+ var content='';
+ if(onStep===1){
+  content='<div class="ob-progress-top"><span>YOUR PROFILE</span><strong>1 OF 3</strong></div><div class="progress-track"><i style="width:33%"></i></div><div class="ob-step-icon">👋🏽</div><h2>What describes you?</h2><p class="ob-sub">We’ll make your money space fit your life.</p><label class="field">YOUR FIRST NAME <small>OPTIONAL</small><input id="ob-name" maxlength="40" value="'+esc(profile.name||'')+'" placeholder="e.g. Alex"></label><div class="choice-list">'+[
+    ['student','🎓','University student','I’m currently in school.'],
+    ['hustler','💻','Student + side hustler','I study and earn too.'],
+    ['young-pro','💼','Young professional','I work and earn regularly.']
+   ].map(function(p){return '<button class="choice '+(selectedPersona===p[0]?'selected':'')+'" data-persona="'+p[0]+'"><span class="choice-icon">'+p[1]+'</span><span class="choice-copy"><b>'+p[2]+'</b><small>'+p[3]+'</small></span><span class="checkmark">✓</span></button>';}).join('')+'</div><div class="ob-footer"><button class="button ghost" data-action="ob-back">← Back</button><div class="step-dots"><span class="active"></span><span></span><span></span></div><button class="button" data-action="ob-next">Continue →</button></div>';
+ }else if(onStep===2){
+  content='<div class="ob-progress-top"><span>YOUR GOALS</span><strong>2 OF 3</strong></div><div class="progress-track"><i style="width:66%"></i></div><div class="ob-step-icon">🎯</div><h2>What are you saving for?</h2><p class="ob-sub">Pick up to three goals. Change them anytime.</p><div class="goal-grid">'+goalOptions.map(function(g){var sel=selectedGoals.indexOf(g.id)>=0;return '<button class="goal-choice '+(sel?'selected':'')+'" data-goal="'+g.id+'"><span class="checkmark">'+(sel?'✓':'')+'</span><span class="g-emoji">'+g.emoji+'</span><b>'+g.title+'</b><small>'+g.detail+'</small></button>';}).join('')+'</div><div class="ob-footer"><button class="button ghost" data-action="ob-back">← Back</button><div class="step-dots"><span></span><span class="active"></span><span></span></div><button class="button" data-action="ob-next">Continue →</button></div>';
+ }else if(onStep===3){
+  content='<div class="ob-progress-top"><span>YOUR STARTING POINT</span><strong>3 OF 3</strong></div><div class="progress-track"><i style="width:100%"></i></div><div class="ob-step-icon">💸</div><h2>Set your monthly budget.</h2><p class="ob-sub">A starting point, not a strict rule.</p><label class="field">MONEY YOU HAVE NOW <input id="ob-balance" type="number" min="0" step="100" value="'+Math.max(0,Number(state.balance)||0)+'" inputmode="numeric"></label><label class="field">TYPICAL ALLOWANCE OR INCOME <input id="ob-allowance" type="number" min="0" step="500" value="'+Math.max(0,Number(state.allowance)||10000)+'" inputmode="numeric"></label><div class="budget-preset">'+[['weekly','Weekly'],['monthly','Monthly'],['irregular','It varies']].map(function(v){return '<button class="'+(allowanceCadence===v[0]?'active':'')+'" data-cadence="'+v[0]+'">'+v[1]+'</button>';}).join('')+'</div><div class="range-wrap"><div class="mini-label">SAVINGS TARGET</div><div class="range-value"><span id="ob-save-value">'+fmt(state.savingsTarget||2000)+'</span> <small>/ week</small></div><input id="ob-savings" type="range" min="0" max="10000" step="500" value="'+(state.savingsTarget||2000)+'"><div class="range-labels"><span>Start small</span><span>Build steadily</span></div></div><div class="ob-footer"><button class="button ghost" data-action="ob-back">← Back</button><div class="step-dots"><span></span><span></span><span class="active"></span></div><button class="button" data-action="ob-next">Looks good →</button></div>';
+ }else{
+  content='<div class="ob-progress-top"><span>ALL SET</span><strong>✓ READY</strong></div><div class="progress-track"><i style="width:100%"></i></div><div class="setup-complete-art"><img src="./assets/student-hero.svg" alt=""></div><h2>You’re all set! 🎉</h2><p class="ob-sub">Your money space is ready. Let’s make your next move a smart one.</p><div class="note"><span>💜</span><span>Your entries stay on this device in this preview. No bank connection is active.</span></div><button class="button full" data-action="ob-finish">Go to my dashboard →</button>';
+ }
+ var setup='<div class="ob-body screen"><section class="ob-story compact-story"><div class="eyebrow">MADE FOR STUDENT LIFE 🇨🇲</div><h1>Money,<br><span class="gradient">made clearer.</span></h1><p>Track. Save. Feel in control.</p><div class="hero-art"><img src="./assets/student-hero.svg" alt="Student planning their money"></div><div class="ob-feature-row"><span class="ob-feature"><i>🔒</i> Private</span><span class="ob-feature"><i>🇨🇲</i> FCFA-ready</span></div></section><section class="ob-card" id="ob-card">'+content+'</section></div>';
+ app.innerHTML=shellStart+setup+shellEnd;bindOnboarding();
 }
 function bindOnboarding(){
  var skip=document.querySelector('[data-action="ob-skip"]');
  if(skip)skip.onclick=function(){finishOnboarding(true);};
+ var start=document.querySelector('[data-action="intro-start"]');
+ if(start)start.onclick=function(){introStep=1;renderOnboarding();};
+ var nextIntro=document.querySelector('[data-action="intro-next"]');
+ if(nextIntro)nextIntro.onclick=function(){if(introStep<3)introStep++;else{introStep=4;onStep=1;}renderOnboarding();};
+ var backIntro=document.querySelector('[data-action="intro-back"]');
+ if(backIntro)backIntro.onclick=function(){introStep=Math.max(0,introStep-1);renderOnboarding();};
  var card=document.getElementById('ob-card');
- if(!card){
-  document.querySelector('[data-action="ob-next"]')?.addEventListener('click',nextOnboarding);
-  return;
- }
- card.querySelectorAll('[data-persona]').forEach(function(b){b.onclick=function(){selectedPersona=b.dataset.persona;renderOnboarding();};});
- card.querySelectorAll('[data-goal]').forEach(function(b){b.onclick=function(){var id=b.dataset.goal;var i=selectedGoals.indexOf(id);if(i>=0)selectedGoals.splice(i,1);else if(selectedGoals.length<3)selectedGoals.push(id);else showToast('Choose up to 3 goals.');renderOnboarding();};});
- card.querySelectorAll('[data-cadence]').forEach(function(b){b.onclick=function(){allowanceCadence=b.dataset.cadence;renderOnboarding();};});
+ if(!card)return;
+ card.querySelectorAll('[data-persona]').forEach(function(b){b.onclick=function(){saveOnboardingFields();selectedPersona=b.dataset.persona;renderOnboarding();};});
+ card.querySelectorAll('[data-goal]').forEach(function(b){b.onclick=function(){saveOnboardingFields();var id=b.dataset.goal;var i=selectedGoals.indexOf(id);if(i>=0)selectedGoals.splice(i,1);else if(selectedGoals.length<3)selectedGoals.push(id);else showToast('Pick up to 3 goals.');renderOnboarding();};});
+ card.querySelectorAll('[data-cadence]').forEach(function(b){b.onclick=function(){saveOnboardingFields();allowanceCadence=b.dataset.cadence;renderOnboarding();};});
  card.querySelector('[data-action="ob-next"]')?.addEventListener('click',nextOnboarding);
- card.querySelector('[data-action="ob-back"]')?.addEventListener('click',function(){saveOnboardingFields();onStep=Math.max(0,onStep-1);renderOnboarding();});
+ card.querySelector('[data-action="ob-back"]')?.addEventListener('click',function(){saveOnboardingFields();if(onStep>1){onStep--;renderOnboarding();}else{introStep=3;renderOnboarding();}});
  card.querySelector('[data-action="ob-finish"]')?.addEventListener('click',function(){saveOnboardingFields();finishOnboarding(false);});
  card.querySelector('#ob-savings')?.addEventListener('input',function(e){state.savingsTarget=Number(e.target.value);var v=document.getElementById('ob-save-value');if(v)v.textContent=fmt(state.savingsTarget);});
  var startX=0;
  card.addEventListener('touchstart',function(e){startX=e.changedTouches[0].clientX;},{passive:true});
- card.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>75){if(dx<0)nextOnboarding();else if(onStep>0){saveOnboardingFields();onStep--;renderOnboarding();}}},{passive:true});
+ card.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>75){if(dx<0)nextOnboarding();else if(onStep>1){saveOnboardingFields();onStep--;renderOnboarding();}}},{passive:true});
 }
 function saveOnboardingFields(){
  var name=document.getElementById('ob-name');if(name)profile.name=name.value.trim();
  var balance=document.getElementById('ob-balance');if(balance)state.balance=Math.max(0,Number(balance.value)||0);
  var allowance=document.getElementById('ob-allowance');if(allowance)state.allowance=Math.max(0,Number(allowance.value)||0);
 }
-function nextOnboarding(){saveOnboardingFields();if(onStep===1&&!(profile.name||'').trim())profile.name='Student';if(onStep===2&&selectedGoals.length===0){showToast('Choose at least one goal — or skip setup.');return;}onStep=Math.min(3,onStep+1);renderOnboarding();}
+function nextOnboarding(){
+ saveOnboardingFields();
+ if(onStep===1){if(!(profile.name||'').trim())profile.name='Student';onStep=2;renderOnboarding();return;}
+ if(onStep===2){if(!selectedGoals.length){showToast('Choose at least one goal.');return;}onStep=3;renderOnboarding();return;}
+ if(onStep===3){onStep=4;renderOnboarding();return;}
+ finishOnboarding(false);
+}
 function finishOnboarding(skip){
  saveOnboardingFields();
  if(!profile.name)profile.name='Student';
