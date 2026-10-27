@@ -212,3 +212,39 @@ body[data-palette="midnight"] .goal-idea-copy small,body[data-palette="midnight"
  .settings-actions{display:grid;grid-template-columns:1fr}
  .settings-actions .button{width:100%;justify-content:center}
 }
+
+/* Nkem marketplace and opportunity discovery */
+.market-hero,.opportunity-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,220px);align-items:center;gap:20px;padding:clamp(20px,4vw,36px);border-radius:28px;background:linear-gradient(125deg,#f0edff,#fff7e9 70%,#e3f8ef);border:1px solid rgba(101,88,237,.10);margin-bottom:24px;overflow:hidden}
+.market-hero h2,.opportunity-hero h2{font-size:clamp(24px,3.3vw,38px);line-height:1.1;letter-spacing:-.04em;margin:12px 0}
+.market-hero p,.opportunity-hero p{max-width:620px;color:var(--muted);line-height:1.65}
+.market-hero img,.opportunity-hero img{width:100%;max-height:190px;object-fit:contain}
+.opportunity-hero{background:linear-gradient(125deg,#e5f8ec,#f7fff9 60%,#e4f1ff)}
+.market-controls{display:grid;gap:14px;margin-bottom:16px}
+.market-search{display:flex;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:0 14px;min-height:48px;color:var(--purple)}
+.market-search input{border:0!important;outline:0!important;box-shadow:none!important;width:100%;background:transparent!important;color:var(--ink);min-height:44px}
+.market-categories{display:flex;gap:8px;overflow-x:auto;padding:3px 0 8px}
+.market-trust-note{display:flex;gap:10px;align-items:flex-start;padding:13px 15px;background:#fff7df;border:1px solid #f2e7bd;border-radius:14px;color:#705923;font-size:12px;line-height:1.55;margin:12px 0 20px}
+.market-listing-grid,.opportunity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.market-listing,.opportunity-card{background:var(--paper);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(39,34,93,.045);min-width:0}
+.market-listing-art{height:130px;display:grid;place-items:center;position:relative;background:linear-gradient(135deg,#f1edff,#e4f7ef);font-size:50px}
+.save-listing{position:absolute;right:12px;top:12px;width:36px;height:36px;border:0;border-radius:50%;background:#fff;color:#6558ed;font-size:20px;cursor:pointer}
+.save-listing.saved{color:#d64c83}
+.market-listing-body,.opportunity-body{padding:16px}
+.listing-category{display:inline-block;color:var(--purple);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+.market-listing h3,.opportunity-card h3{font-size:16px;margin:7px 0}
+.market-listing p,.opportunity-card p{font-size:12px;color:var(--muted);line-height:1.55;min-height:56px}
+.listing-provider{font-size:11px;font-weight:700;margin-top:12px}
+.listing-provider small{display:block;font-weight:500;color:var(--muted);margin-top:4px}
+.listing-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.listing-footer>b{font-size:14px;white-space:nowrap}
+.market-footnote{font-size:11px;line-height:1.6;color:var(--muted);margin:20px 0}
+.opportunity-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.opportunity-pills span{font-size:11px;font-weight:700;padding:8px 10px;border-radius:999px;background:#fff;color:#28754d}
+.opportunity-art{min-height:125px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:42px;background:linear-gradient(135deg,#e5f8ec,#f7faff)}
+.opportunity-art span{font-size:9px;letter-spacing:.06em;font-weight:800;color:#2d7a55;max-width:90px}
+.opportunity-status{font-size:10px;color:#8b5a14;background:#fff4d9;padding:8px 10px;border-radius:10px;margin-top:10px}
+.risk-education{display:flex;gap:16px;margin-top:24px;padding:22px;border-radius:20px;background:#f0faf4;border:1px solid #d7eee0}
+.risk-education h3{margin:0 0 8px}.risk-education p{font-size:12px;line-height:1.65;color:#52685c}
+.detail-emoji{font-size:48px;margin:12px 0}
+@media(max-width:900px){.market-listing-grid,.opportunity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.market-hero,.opportunity-hero{grid-template-columns:minmax(0,1fr) 92px;gap:10px;padding:18px;border-radius:20px}.market-hero img,.opportunity-hero img{max-height:110px}.market-listing-grid,.opportunity-grid{grid-template-columns:minmax(0,1fr)}.market-listing-art{height:115px}.market-listing p,.opportunity-card p{min-height:0}.risk-education{padding:16px}}
