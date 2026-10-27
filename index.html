@@ -363,7 +363,7 @@ function exportCSV(){
  var csv=rows.map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
  var a=document.createElement('a'),url=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.href=url;a.download='student-money-records.csv';a.click();URL.revokeObjectURL(url);showToast('Your CSV export is ready.');
 }
-function resetData(){if(!confirm('Clear all money records and show the new onboarding again? This cannot be undone.'))return;localStorage.removeItem(STORE);localStorage.removeItem(PROFILE);localStorage.removeItem(TOUR);state=loadState();profile={};onStep=0;selectedGoals=[];page='dashboard';closeModal();renderOnboarding();}
+function resetData(){if(!confirm('Clear all money records and show the new onboarding again? This cannot be undone.'))return;localStorage.removeItem(STORE);localStorage.removeItem(PROFILE);localStorage.removeItem(TOUR);state=loadState();profile={};onStep=0;onboardingStep=0;selectedGoals=['emergency','school'];selectedPersona='student';allowanceCadence='weekly';payday='Tuesday';selectedSources=['cash','orange','mtn'];weeklyNeeds={'Food':5000,'Transport':2400,'Airtime & data':3500,'School / personal':1000,'Other':0,'Debt owed':0};planValues={'Food':3500,'Transport':1500,'Airtime & data':1000,'School / personal':1000,'Emergency buffer':1000};page='dashboard';closeModal();renderOnboarding();}
 
 /* Focused, personalized onboarding override */
 var onboardingStep=0;
@@ -383,7 +383,7 @@ function renderOnboarding(){
   app.innerHTML=shellStart+welcome+shellEnd;bindOnboarding();return;
  }
  var totalSteps=7;
- var income=Math.max(0,Number(state.allowance)||10000);
+ var income=Math.max(0,Number(weeklyAllowance())||0);var incomeAmount=Math.max(0,Number(state.allowance)||0);
  var savings=Math.max(0,Number(state.savingsTarget===undefined?2000:state.savingsTarget)||0);
  var balance=Math.max(0,Number(state.balance)||0);
  var weeklySpend=Number(weeklyNeeds.Food||0)+Number(weeklyNeeds.Transport||0)+Number(weeklyNeeds['Airtime & data']||0)+Number(weeklyNeeds['School / personal']||0)+Number(weeklyNeeds.Other||0);
@@ -418,7 +418,7 @@ function renderOnboarding(){
   stepTitle='How much do you want to save?';
   stepCopy='Start small. Consistency wins.';
   var target=state.savingsTarget===undefined?2000:Number(state.savingsTarget);
-  stepBody='<div class="savings-hero"><div class="mini-label">WEEKLY SAVINGS GOAL</div><div class="range-value"><span id="ob-save-value">'+fmt(target)+'</span></div><input id="ob-savings" type="range" min="0" max="10000" step="500" value="'+target+'"><div class="range-labels"><span>0 FCFA</span><span>10,000 FCFA</span></div><div class="savings-presets">'+[500,1000,2000,3000,5000].map(function(v){return '<button type="button" class="'+(target===v?'active':'')+'" data-saving-preset="'+v+'">'+shortMoney(v)+'</button>';}).join('')+'</div></div><div class="savings-feedback" id="savings-feedback"><span>🎯</span><div><b>'+percent+'% of your income</b><small>'+(percent<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div></div><div class="info-strip">💡 <span>At 2,000 FCFA per week, you’d save about <b>104,000 FCFA in a year</b> if you stay consistent.</span></div>';
+  stepBody='<div class="savings-hero"><div class="mini-label">WEEKLY SAVINGS GOAL</div><div class="range-value"><span id="ob-save-value">'+fmt(target)+'</span></div><input id="ob-savings" type="range" min="0" max="10000" step="500" value="'+target+'"><div class="range-labels"><span>0 FCFA</span><span>10,000 FCFA</span></div><div class="savings-presets">'+[500,1000,2000,3000,5000].map(function(v){return '<button type="button" class="'+(target===v?'active':'')+'" data-saving-preset="'+v+'">'+shortMoney(v)+'</button>';}).join('')+'</div></div><div class="savings-feedback" id="savings-feedback"><span>🎯</span><div><b>'+percent+'% of your income</b><small>'+(percent<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div></div><div class="info-strip">💡 <span>At <b id="savings-year-target">'+fmt(target)+'</b> per week, you’d save about <b id="savings-year-total">'+fmt(target*52)+'</b> in a year.</span></div>';
  }else if(onboardingStep===6){
   stepTitle='What do you usually need?';
   stepCopy='Let’s use your real costs, not guesses.';
@@ -482,12 +482,12 @@ function nextOnboarding(){
 }
 function updateSavingsFeedback(){
  var el=document.getElementById('savings-feedback');if(!el)return;
- var income=Math.max(0,Number(state.allowance)||10000),s=Math.max(0,Number(state.savingsTarget)||0),p=income?Math.round(s/income*100):0;
- el.innerHTML='<span>🎯</span><div><b>'+p+'% of your income</b><small>'+(p<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div>';
+ var income=Math.max(0,Number(weeklyAllowance())||0),s=Math.max(0,Number(state.savingsTarget)||0),p=income?Math.round(s/income*100):0;
+ el.innerHTML='<span>🎯</span><div><b>'+p+'% of your income</b><small>'+(p<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div>';var yr=document.getElementById('savings-year-target'),yrTotal=document.getElementById('savings-year-total');if(yr)yr.textContent=fmt(s);if(yrTotal)yrTotal.textContent=fmt(s*52);
 }
 function updatePlanSummary(){
  var total=0;document.querySelectorAll('[data-plan]').forEach(function(el){var n=Math.max(0,Number(el.value)||0);planValues[el.dataset.plan]=n;total+=n;});
- var savings=Math.max(0,Number(state.savingsTarget)||0),income=Math.max(0,Number(state.allowance)||10000),allocated=total+savings,left=income-allocated,over=Math.max(0,-left);
+ var savings=Math.max(0,Number(state.savingsTarget)||0),income=Math.max(0,Number(weeklyAllowance())||0),allocated=total+savings,left=income-allocated,over=Math.max(0,-left);
  var t=document.getElementById('plan-total'),a=document.getElementById('plan-allocated'),box=document.getElementById('plan-balance-alert'),copy=document.getElementById('plan-balance-copy');
  if(t)t.textContent=fmt(total);if(a)a.textContent=fmt(allocated);
  if(box){box.className='needs-alert '+(over?'warning':'good');box.querySelector('span').textContent=over?'⚠️':'✅';box.querySelector('b').textContent=over?'This plan is over your income.':'Your plan balances.';}
@@ -498,7 +498,7 @@ function finishOnboarding(skip){
  if(!profile.name)profile.name='Student';
  profile.persona=selectedPersona;profile.payday=payday;profile.moneySources=selectedSources.slice();
  profile.weeklyNeeds=Object.assign({},weeklyNeeds);
- profile.weeklyIncome=Math.max(0,Number(state.allowance)||0);
+ profile.weeklyIncome=Math.max(0,Number(weeklyAllowance())||0);
  profile.weeklySavingsGoal=Math.max(0,Number(state.savingsTarget)||0);
  if(!selectedGoals.length)selectedGoals=['emergency'];
  state.cadence=allowanceCadence;state.payday=payday;
