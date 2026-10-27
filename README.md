@@ -1,33 +1,21 @@
-# Student Money — experience prototype
+# Student Money — student finance and discipline prototype
 
-A colourful, mobile-first money-management website concept for students in Cameroon. The final Cameroonian-language brand name is still undecided; **Student Money** is a temporary working label.
+A colourful, mobile-first money management website concept for students in Cameroon. The permanent brand name is undecided; **Student Money** is a temporary working label.
 
-## Personalized onboarding
+## New onboarding and discipline coach
 
-The first-run experience now asks students about:
-1. Profile and student/work situation
-2. Up to three personal money goals
-3. Income amount, frequency and usual payday
-4. Current available balance and where they keep money
-5. A weekly savings target
-6. Weekly expenses, school/personal estimates and debts owed
-7. An editable starter budget, with a warning when allocations exceed expected income
-
-The starting values are examples based on the user's current tracker setup (5,000 FCFA starting balance, 10,000 FCFA weekly income, Tuesday payday and 2,000 FCFA weekly savings goal). All are editable.
-
-## Included
-
-- Large photo-style student welcome visual and matching setup artwork
-- Responsive 7-step onboarding, live savings math and weekly expense gap feedback
-- FCFA dashboard, income/expense logging, category budgets and savings goals
-- Searchable activity and CSV export
-- White chat-style Money Coach preview
-- Campus Marketplace and Invest “Coming Soon” sections
-- Mobile bottom navigation, desktop sidebar, transitions and basic offline shell
+- Full-screen, edge-to-edge photo backgrounds on the welcome and setup steps
+- Personalized profile, goals, payday/income, available balance, money sources, weekly needs and debt questions
+- Editable budget that checks spending allocation against expected weekly income
+- Goal-aware Money Coach: suggestions based on saved goals, the selected savings target, entered debt and recent recorded spending
+- Daily discipline routine: track spending, pause before impulse buys, and review the top goal
+- A daily streak counts completed routines stored in this browser
+- Dashboard advice card and a goal-focused coach view
+- Campus Marketplace and Invest remain Coming Soon pages
 
 ## Preview locally
 
-No Node.js, npm or Android Studio is required for this static prototype.
+No Node.js, npm or Android Studio is required.
 
 **Computer**
 ```bash
@@ -44,20 +32,15 @@ cd money
 python -m http.server 8080
 ```
 
-Open **http://127.0.0.1:8080** and keep the server running. For later updates, run `git pull` inside the repository first.
+Open **http://127.0.0.1:8080** and leave the server running. Pull updates with `git pull` from inside the repository.
 
-To see onboarding again after finishing it, use **More → Settings → Reset local data**. This deletes locally stored demo entries.
+To replay the onboarding, use **More → Settings → Reset local data**. This clears the current browser's demo records and streak.
 
-## Free hosting
+## Important prototype limits
 
-Enable GitHub Pages under **Settings → Pages → Deploy from a branch → main → /(root)**. Save and wait for GitHub to publish the site; hosting has not been enabled automatically.
+- Money, habits and progress are saved in this browser only. They do not sync across devices or have secure cloud backup.
+- Advice is personalized using local rules and the information entered by the user. This is **not a connected AI model**, financial adviser, bank or wallet.
+- The balance and transactions are manually entered. No Orange Money, MTN MoMo, bank, payment, receipt scanning, advertising or notifications service is connected.
+- Marketplace and Invest are Coming Soon. Invest does not collect funds, make investments or promise returns.
 
-## Prototype limits
-
-- Data is stored in the current browser only. There is no account sync or secure cloud backup.
-- Money Coach uses local rules, not a connected AI model.
-- Receipt scanning, user authentication, real bank/mobile-money connection, payment processing, ads and notifications are not connected.
-- Marketplace and Invest are coming-soon pages. Invest does not accept money or offer investments.
-- The product is a budgeting prototype, not a bank, wallet, investment service or financial adviser.
-
-Before production, add secure backend storage, privacy/security controls, automated tests, and legal review for advertising, payments or financial products.
+Before production, add secure accounts and cloud storage, tests, privacy/security controls, server-side AI with cost/privacy safeguards, and legal review for financial and investment features.
