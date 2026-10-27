@@ -383,7 +383,7 @@ function renderOnboarding(){
   app.innerHTML=shellStart+welcome+shellEnd;bindOnboarding();return;
  }
  var totalSteps=7;
- var income=Math.max(0,Number(weeklyAllowance())||0);var incomeAmount=Math.max(0,Number(state.allowance)||0);
+ var incomeAmount=Math.max(0,Number(state.allowance)||0);var income=onboardingIncomeWeekly();
  var savings=Math.max(0,Number(state.savingsTarget===undefined?2000:state.savingsTarget)||0);
  var balance=Math.max(0,Number(state.balance)||0);
  var weeklySpend=Number(weeklyNeeds.Food||0)+Number(weeklyNeeds.Transport||0)+Number(weeklyNeeds['Airtime & data']||0)+Number(weeklyNeeds['School / personal']||0)+Number(weeklyNeeds.Other||0);
@@ -461,6 +461,7 @@ function bindOnboarding(){
  card.querySelector('[data-action="ob-finish"]')?.addEventListener('click',function(){saveOnboardingFields();finishOnboarding(false);});
  card.querySelector('#ob-savings')?.addEventListener('input',function(e){state.savingsTarget=Math.max(0,Number(e.target.value)||0);var v=document.getElementById('ob-save-value');if(v)v.textContent=fmt(state.savingsTarget);updateSavingsFeedback();});
  card.querySelectorAll('[data-plan]').forEach(function(inp){inp.addEventListener('input',updatePlanSummary);});
+ card.querySelectorAll('[data-need]').forEach(function(inp){inp.addEventListener('input',updateNeedsSummary);});
 }
 function saveOnboardingFields(){
  var name=document.getElementById('ob-name');if(name)profile.name=name.value.trim();
@@ -474,20 +475,33 @@ function nextOnboarding(){
  saveOnboardingFields();
  if(onboardingStep===1){if(!(profile.name||'').trim())profile.name='Student';onboardingStep=2;renderOnboarding();return;}
  if(onboardingStep===2){if(!selectedGoals.length){showToast('Choose at least one goal.');return;}onboardingStep=3;renderOnboarding();return;}
- if(onboardingStep===3){if(Number(state.allowance)<1){showToast('Add income or choose “It varies” and enter a realistic estimate.');return;}onboardingStep=4;renderOnboarding();return;}
+ if(onboardingStep===3){onboardingStep=4;renderOnboarding();return;}
  if(onboardingStep===4){onboardingStep=5;renderOnboarding();return;}
  if(onboardingStep===5){onboardingStep=6;renderOnboarding();return;}
  if(onboardingStep===6){onboardingStep=7;renderOnboarding();return;}
  finishOnboarding(false);
 }
+function onboardingIncomeWeekly(){var amount=Math.max(0,Number(state.allowance)||0);return allowanceCadence==='monthly'?Math.round(amount/4.33):amount;}
 function updateSavingsFeedback(){
  var el=document.getElementById('savings-feedback');if(!el)return;
- var income=Math.max(0,Number(weeklyAllowance())||0),s=Math.max(0,Number(state.savingsTarget)||0),p=income?Math.round(s/income*100):0;
+ var income=onboardingIncomeWeekly(),s=Math.max(0,Number(state.savingsTarget)||0),p=income?Math.round(s/income*100):0;
  el.innerHTML='<span>🎯</span><div><b>'+p+'% of your income</b><small>'+(p<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div>';var yr=document.getElementById('savings-year-target'),yrTotal=document.getElementById('savings-year-total');if(yr)yr.textContent=fmt(s);if(yrTotal)yrTotal.textContent=fmt(s*52);
+}
+function updateNeedsSummary(){
+ var keys=['Food','Transport','Airtime & data','School / personal','Other'];
+ keys.forEach(function(k){var el=document.querySelector('[data-need="'+k+'"]');if(el)weeklyNeeds[k]=Math.max(0,Number(el.value)||0);});
+ var total=keys.reduce(function(s,k){return s+Number(weeklyNeeds[k]||0);},0);
+ var income=onboardingIncomeWeekly(),savings=Math.max(0,Number(state.savingsTarget)||0),spendLimit=Math.max(0,income-savings),gap=Math.max(0,total-spendLimit);
+ var totalEl=document.getElementById('needs-weekly-total'),box=document.getElementById('needs-alert-box'),ico=document.getElementById('needs-alert-icon'),title=document.getElementById('needs-alert-title'),copy=document.getElementById('needs-alert-copy');
+ if(totalEl)totalEl.textContent=fmt(total);
+ if(box){box.className='needs-alert '+(gap?'warning':'good');}
+ if(ico)ico.textContent=gap?'⚠️':'✅';
+ if(title)title.textContent=gap?'Your current estimate is above your target.':'Your weekly target looks workable.';
+ if(copy)copy.textContent=gap?'After saving '+fmt(savings)+', your spending target is '+fmt(spendLimit)+'. Your entered needs are '+fmt(gap)+' above that, before debt repayments. We’ll create an adjustable plan next.':'Your entered weekly needs fit within the money available after savings.';
 }
 function updatePlanSummary(){
  var total=0;document.querySelectorAll('[data-plan]').forEach(function(el){var n=Math.max(0,Number(el.value)||0);planValues[el.dataset.plan]=n;total+=n;});
- var savings=Math.max(0,Number(state.savingsTarget)||0),income=Math.max(0,Number(weeklyAllowance())||0),allocated=total+savings,left=income-allocated,over=Math.max(0,-left);
+ var savings=Math.max(0,Number(state.savingsTarget)||0),income=onboardingIncomeWeekly(),allocated=total+savings,left=income-allocated,over=Math.max(0,-left);
  var t=document.getElementById('plan-total'),a=document.getElementById('plan-allocated'),box=document.getElementById('plan-balance-alert'),copy=document.getElementById('plan-balance-copy');
  if(t)t.textContent=fmt(total);if(a)a.textContent=fmt(allocated);
  if(box){box.className='needs-alert '+(over?'warning':'good');box.querySelector('span').textContent=over?'⚠️':'✅';box.querySelector('b').textContent=over?'This plan is over your income.':'Your plan balances.';}
@@ -498,7 +512,7 @@ function finishOnboarding(skip){
  if(!profile.name)profile.name='Student';
  profile.persona=selectedPersona;profile.payday=payday;profile.moneySources=selectedSources.slice();
  profile.weeklyNeeds=Object.assign({},weeklyNeeds);
- profile.weeklyIncome=Math.max(0,Number(weeklyAllowance())||0);
+ profile.weeklyIncome=onboardingIncomeWeekly();
  profile.weeklySavingsGoal=Math.max(0,Number(state.savingsTarget)||0);
  if(!selectedGoals.length)selectedGoals=['emergency'];
  state.cadence=allowanceCadence;state.payday=payday;
