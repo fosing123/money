@@ -1,10 +1,11 @@
-const CACHE = "student-money-shell-v3";
+const CACHE = "student-money-shell-v4";
 const SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./money-mark.svg",
   "./assets/student-hero.svg",
+  "./assets/student-hero-3d.webp",
   "./assets/money-coach.svg",
   "./assets/marketplace.svg",
   "./assets/invest.svg"
