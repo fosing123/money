@@ -314,7 +314,6 @@ function renderApp(){
 }
 function bindApp(){
  document.querySelectorAll('[data-action="habit-toggle"]').forEach(function(b){b.addEventListener('click',function(){toggleMoneyHabit(b.dataset.habit);});});
- document.querySelectorAll('[data-action="discipline-complete"]').forEach(function(b){b.addEventListener('click',finishMoneyHabits);});
  document.querySelectorAll('[data-page]').forEach(function(b){b.addEventListener('click',function(){page=b.dataset.page;renderApp();window.scrollTo({top:0,behavior:'smooth'});});});
  document.querySelectorAll('[data-action="add-tx"]').forEach(function(b){b.addEventListener('click',function(){openTx(b.dataset.type||'expense');});});
  document.querySelectorAll('[data-action="scan-receipt"]').forEach(function(b){b.addEventListener('click',function(){showToast('Receipt scanning is coming soon. Add the total manually for now.');});});
@@ -414,7 +413,7 @@ function exportCSV(){
  var csv=rows.map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
  var a=document.createElement('a'),url=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.href=url;a.download='student-money-records.csv';a.click();URL.revokeObjectURL(url);showToast('Your CSV export is ready.');
 }
-function resetData(){if(!confirm('Clear all money records and show the new onboarding again? This cannot be undone.'))return;localStorage.removeItem(STORE);localStorage.removeItem(PROFILE);localStorage.removeItem(TOUR);state=loadState();profile={};onStep=0;onboardingStep=0;selectedGoals=['emergency','school'];selectedPersona='student';allowanceCadence='weekly';payday='Tuesday';selectedSources=['cash','orange','mtn'];weeklyNeeds={'Food':5000,'Transport':2400,'Airtime & data':3500,'School / personal':1000,'Other':0,'Debt owed':0};planValues={'Food':3500,'Transport':1500,'Airtime & data':1000,'School / personal':1000,'Emergency buffer':1000};page='dashboard';closeModal();renderOnboarding();}
+function resetData(){if(!confirm('Clear all money records and show the new onboarding again? This cannot be undone.'))return;chatMessages=[];activityFilter='all';activitySearch='';localStorage.removeItem(STORE);localStorage.removeItem(PROFILE);localStorage.removeItem(TOUR);state=loadState();profile={};onStep=0;onboardingStep=0;selectedGoals=['emergency','school'];selectedPersona='student';allowanceCadence='weekly';payday='Tuesday';selectedSources=['cash','orange','mtn'];weeklyNeeds={'Food':5000,'Transport':2400,'Airtime & data':3500,'School / personal':1000,'Other':0,'Debt owed':0};planValues={'Food':3500,'Transport':1500,'Airtime & data':1000,'School / personal':1000,'Emergency buffer':1000};page='dashboard';closeModal();renderOnboarding();}
 
 
 function localDateKey(d){
@@ -437,13 +436,10 @@ function toggleMoneyHabit(key){
  if(['track','pause','goal'].indexOf(key)<0)return;
  var habits=todaysMoneyHabits();habits[key]=!habits[key];persist();renderApp();
 }
-function finishMoneyHabits(){
- var habits=todaysMoneyHabits();habits.track=true;habits.pause=true;habits.goal=true;persist();renderApp();showToast('Daily money routine complete. Consistency is the win. 🌱');
-}
 function moneyAdviceSnapshot(){
  var goals=Array.isArray(state.goals)?state.goals:[],goal=goals[0]||null;
  var weeklyIncome=Math.max(0,Number(weeklyAllowance())||0),savingsTarget=Math.max(0,Number(state.savingsTarget)||0);
- var tx=Array.isArray(state.transactions)?state.transactions:[],since=Date.now()-7*24*60*60*1000;
+ var tx=Array.isArray(state.transactions)?state.transactions:[],since=weekStartTimestamp();
  var recent=tx.filter(function(t){return t.type==='expense'&&Number(t.amount)>0&&Number(t.createdAt||0)>=since;});
  var categorySpent={};recent.forEach(function(t){var cat=t.category||'Other';categorySpent[cat]=(categorySpent[cat]||0)+Number(t.amount||0);});
  var limits=state.budget||{},overs=[];
@@ -481,7 +477,7 @@ function disciplinePanel(){
  '<div class="discipline-focus"><div class="focus-icon">🧭</div><div><span class="focus-label">YOUR FOCUS · '+esc(a.goalName.toUpperCase())+'</span><p>'+esc(a.focus)+'</p></div></div>'+
  '<div class="discipline-progress"><span>'+completed+' of 3 habits completed</span><div class="bar"><i style="width:'+(completed/3*100)+'%"></i></div></div>'+
  '<div class="habit-checklist">'+definitions.map(function(x){return '<button type="button" class="habit-row '+(habits[x[0]]?'done':'')+'" data-action="habit-toggle" data-habit="'+x[0]+'" aria-pressed="'+(habits[x[0]]?'true':'false')+'"><span class="habit-check">'+(habits[x[0]]?'✓':x[1])+'</span><span class="habit-copy"><b>'+x[2]+'</b><small>'+x[3]+'</small></span><span class="habit-state">'+(habits[x[0]]?'Done':'Mark done')+'</span></button>';}).join('')+'</div>'+
- '<div class="discipline-footer"><div><b>One move for today</b><small>'+esc(a.nextAction)+'</small></div><button type="button" class="button small '+(completed===3?'secondary':'')+'" data-action="discipline-complete" '+(completed===3?'disabled':'')+'>'+(completed===3?'Completed ✓':'Finish routine')+'</button></div></section>';
+ '<div class="discipline-footer"><div><b>One move for today</b><small>'+esc(a.nextAction)+'</small></div><button type="button" class="button small secondary" data-page="coach">Get guidance →</button></div></section>';
 }
 function coachGuidancePanel(){
  var a=moneyAdviceSnapshot(),prompts=['Help me stay disciplined this week','Help me reach my '+a.goalName.toLowerCase()+' goal','Plan my allowance around payday'];
