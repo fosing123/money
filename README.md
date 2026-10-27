@@ -1,6 +1,6 @@
 # Student Money — prototype
 
-A mobile-first money-management website for students in Cameroon. The permanent Cameroonian-language brand name is intentionally undecided; “Student Money” is a temporary working label, not the final brand.
+A mobile-first, installable web prototype for student money management in Cameroon. The permanent Cameroonian-language brand name is intentionally undecided; “Student Money” is a temporary working label, not the final brand.
 
 ## MVP
 - Friendly first-run onboarding
@@ -9,7 +9,7 @@ A mobile-first money-management website for students in Cameroon. The permanent 
 - Local budget and savings goals
 - Rule-based money helper (not a connected AI model)
 - Campus Marketplace and Invest coming-soon pages
-- Responsive, browser-based experience
+- Responsive, browser-based experience with a basic cached app shell for repeat/offline opening
 
 ## Preview locally
 This repository is a no-build static website. Download or clone it, then open `index.html` in a browser. For a local server, run `python -m http.server 8000` in the repository directory and open `http://localhost:8000`.
