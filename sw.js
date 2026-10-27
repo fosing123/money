@@ -1,4 +1,4 @@
-const CACHE = "student-money-shell-v10";
+const CACHE = "student-money-shell-v11";
 const SHELL = [
   "./",
   "./index.html",
