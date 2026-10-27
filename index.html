@@ -551,6 +551,7 @@ var selectedSources=['cash','orange','mtn'];
 var weeklyNeeds={'Food':5000,'Transport':2400,'Airtime & data':3500,'School / personal':1000,'Other':0,'Debt owed':0};
 var planValues={'Food':3500,'Transport':1500,'Airtime & data':1000,'School / personal':1000,'Emergency buffer':1000};
 
+function onboardingIncomeWeekly(){var amount=Math.max(0,Number(state.allowance)||0);return allowanceCadence==='monthly'?Math.round(amount/4.33):amount;}
 function renderOnboarding(){
  var shellStart='<main class="onboarding"><header class="ob-top">'+brand()+'<button class="button ghost small" data-action="ob-skip">Skip setup</button></header>';
  var shellEnd='<footer class="ob-bottom"><span>YOUR MONEY. YOUR NEXT MOVE.</span><span>FCFA · PRIVATE BY DEFAULT</span></footer></main>';
@@ -559,7 +560,7 @@ function renderOnboarding(){
   app.innerHTML=shellStart+welcome+shellEnd;bindOnboarding();return;
  }
  var totalSteps=7;
- var income=Math.max(0,Number(state.allowance)||10000);
+ var incomeAmount=Math.max(0,Number(state.allowance)||0);var income=onboardingIncomeWeekly();
  var savings=Math.max(0,Number(state.savingsTarget===undefined?2000:state.savingsTarget)||0);
  var balance=Math.max(0,Number(state.balance)||0);
  var weeklySpend=Number(weeklyNeeds.Food||0)+Number(weeklyNeeds.Transport||0)+Number(weeklyNeeds['Airtime & data']||0)+Number(weeklyNeeds['School / personal']||0)+Number(weeklyNeeds.Other||0);
@@ -584,7 +585,7 @@ function renderOnboarding(){
  }else if(onboardingStep===3){
   stepTitle='How do you receive money?';
   stepCopy='We’ll plan around your real payday.';
-  stepBody='<div class="field-label-static">HOW OFTEN?</div><div class="cadence-options">'+[['weekly','Every week'],['monthly','Every month'],['irregular','It varies']].map(function(v){return '<button type="button" class="'+(allowanceCadence===v[0]?'cadence-selected':'')+'" data-cadence="'+v[0]+'">'+v[1]+'</button>';}).join('')+'</div><label class="field">TYPICAL INCOME / ALLOWANCE<div class="onboard-amount"><input id="ob-allowance" type="number" min="0" max="100000000" step="500" value="'+income+'" inputmode="numeric"><span>FCFA</span></div></label><div class="field-label-static">'+(allowanceCadence==='weekly'?'WHICH DAY DOES IT ARRIVE?':'WHICH DAY SHOULD WE USE FOR REMINDERS?')+'</div><div class="weekday-grid">'+['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(function(d){return '<button type="button" class="'+(payday===d?'active':'')+'" data-payday="'+d+'">'+d.slice(0,3)+'</button>';}).join('')+'</div><div class="info-strip">📅 <span>We’ll use <b>'+esc(payday)+'</b> for your payday plan and reminder settings.</span></div>';
+  stepBody='<div class="field-label-static">HOW OFTEN?</div><div class="cadence-options">'+[['weekly','Every week'],['monthly','Every month'],['irregular','It varies']].map(function(v){return '<button type="button" class="'+(allowanceCadence===v[0]?'cadence-selected':'')+'" data-cadence="'+v[0]+'">'+v[1]+'</button>';}).join('')+'</div><label class="field">TYPICAL INCOME / ALLOWANCE<div class="onboard-amount"><input id="ob-allowance" type="number" min="0" max="100000000" step="500" value="'+incomeAmount+'" inputmode="numeric"><span>FCFA</span></div></label><div class="field-label-static">'+(allowanceCadence==='weekly'?'WHICH DAY DOES IT ARRIVE?':'WHICH DAY SHOULD WE USE FOR REMINDERS?')+'</div><div class="weekday-grid">'+['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(function(d){return '<button type="button" class="'+(payday===d?'active':'')+'" data-payday="'+d+'">'+d.slice(0,3)+'</button>';}).join('')+'</div><div class="info-strip">📅 <span>We’ll use <b>'+esc(payday)+'</b> for your payday plan and reminder settings.</span></div>';
  }else if(onboardingStep===4){
   stepTitle='How much do you have now?';
   stepCopy='Add everything you can access. Estimates are okay.';
@@ -594,7 +595,7 @@ function renderOnboarding(){
   stepTitle='How much do you want to save?';
   stepCopy='Start small. Consistency wins.';
   var target=state.savingsTarget===undefined?2000:Number(state.savingsTarget);
-  stepBody='<div class="savings-hero"><div class="mini-label">WEEKLY SAVINGS GOAL</div><div class="range-value"><span id="ob-save-value">'+fmt(target)+'</span></div><input id="ob-savings" type="range" min="0" max="10000" step="500" value="'+target+'"><div class="range-labels"><span>0 FCFA</span><span>10,000 FCFA</span></div><div class="savings-presets">'+[500,1000,2000,3000,5000].map(function(v){return '<button type="button" class="'+(target===v?'active':'')+'" data-saving-preset="'+v+'">'+shortMoney(v)+'</button>';}).join('')+'</div></div><div class="savings-feedback" id="savings-feedback"><span>🎯</span><div><b>'+percent+'% of your income</b><small>'+(percent<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div></div><div class="info-strip">💡 <span>At 2,000 FCFA per week, you’d save about <b>104,000 FCFA in a year</b> if you stay consistent.</span></div>';
+  stepBody='<div class="savings-hero"><div class="mini-label">WEEKLY SAVINGS GOAL</div><div class="range-value"><span id="ob-save-value">'+fmt(target)+'</span></div><input id="ob-savings" type="range" min="0" max="10000" step="500" value="'+target+'"><div class="range-labels"><span>0 FCFA</span><span>10,000 FCFA</span></div><div class="savings-presets">'+[500,1000,2000,3000,5000].map(function(v){return '<button type="button" class="'+(target===v?'active':'')+'" data-saving-preset="'+v+'">'+shortMoney(v)+'</button>';}).join('')+'</div></div><div class="savings-feedback" id="savings-feedback"><span>🎯</span><div><b>'+percent+'% of your income</b><small>'+(percent<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div></div><div class="info-strip">💡 <span>At <b id="savings-year-target">'+fmt(target)+'</b> per week, you’d save about <b id="savings-year-total">'+fmt(target*52)+'</b> in a year.</span></div>';
  }else if(onboardingStep===6){
   stepTitle='What do you usually need?';
   stepCopy='Let’s use your real costs, not guesses.';
@@ -611,6 +612,13 @@ function renderOnboarding(){
   var planTotal=planItems.reduce(function(sum,p){return sum+Number(planValues[p[0]]||0);},0);
   var over=Math.max(0,planTotal+savings-income),left=income-planTotal-savings;
   stepBody='<div class="plan-summary-top"><div><small>WEEKLY INCOME</small><b>'+fmt(income)+'</b></div><div><small>SAVINGS GOAL</small><b>'+fmt(savings)+'</b></div></div><div class="plan-list">'+planItems.map(function(p){return '<label class="plan-row"><span class="plan-icon">'+p[1]+'</span><span class="plan-label"><b>'+p[0]+'</b><small>'+p[2]+'</small></span><span class="plan-value"><input type="number" min="0" max="100000000" step="100" inputmode="numeric" data-plan="'+p[0]+'" value="'+Number(planValues[p[0]]||0)+'"><small>FCFA</small></span></label>';}).join('')+'</div><div class="plan-total"><span>Planned spending</span><b id="plan-total">'+fmt(planTotal)+'</b></div><div class="plan-total savings"><span>Weekly savings</span><b>'+fmt(savings)+'</b></div><div class="plan-total final"><span>Total allocated</span><b id="plan-allocated">'+fmt(planTotal+savings)+'</b></div><div class="needs-alert '+(over?'warning':'good')+'" id="plan-balance-alert"><span>'+(over?'⚠️':'✅')+'</span><div><b>'+(over?'This plan is over your income.':'Your plan balances.')+'</b><small id="plan-balance-copy">'+(over?'Reduce allocations by '+fmt(over)+' or update your income.':fmt(Math.max(0,left))+' left unallocated. Keep it for flexibility or add it to a category.')+'</small></div></div><div class="info-strip">🧠 <span>Your estimated needs are <b>'+fmt(weeklySpend)+'/week</b>. This is a suggested target, not a promise that every cost will fit.</span></div>';
+ }
+ if(onboardingStep===6){
+  stepBody=stepBody.replace('<b>'+fmt(weeklySpend)+'</b>','<b id="needs-weekly-total">'+fmt(weeklySpend)+'</b>');
+  stepBody=stepBody.replace('class="needs-alert '+(gap?'warning':'good')+'"','class="needs-alert '+(gap?'warning':'good')+'" id="needs-alert-box"');
+  stepBody=stepBody.replace('<span>'+(gap?'⚠️':'✅')+'</span>','<span id="needs-alert-icon">'+(gap?'⚠️':'✅')+'</span>');
+  stepBody=stepBody.replace('<b>'+(gap?'Your current estimate is above your target.':'Your weekly target looks workable.')+'</b>','<b id="needs-alert-title">'+(gap?'Your current estimate is above your target.':'Your weekly target looks workable.')+'</b>');
+  stepBody=stepBody.replace('<small>'+(gap?'After saving '+fmt(savings)+', your spending target is '+fmt(spendAfterSavings)+'. The numbers entered are '+fmt(gap)+' above that, before debt repayments. We’ll create an adjustable plan next.':'Your entered weekly needs fit within the money available after savings.')+'</small>','<small id="needs-alert-copy">'+(gap?'After saving '+fmt(savings)+', your spending target is '+fmt(spendAfterSavings)+'. The numbers entered are '+fmt(gap)+' above that, before debt repayments. We’ll create an adjustable plan next.':'Your entered weekly needs fit within the money available after savings.')+'</small>');
  }
  var sideTitle=onboardingStep===1?'Let’s make this yours.':onboardingStep===2?'Make room for what matters.':onboardingStep===3?'Plan around payday.':onboardingStep===4?'Know what you have.':onboardingStep===5?'Small steps build freedom.':onboardingStep===6?'Real numbers. Better plans.':'Your first plan, made for you.';
  var sideCopy=onboardingStep===6?'We’ll compare what you need with what comes in.':onboardingStep===7?'Your plan stays editable as life changes.':'A money space that fits student life in Cameroon.';
@@ -637,6 +645,7 @@ function bindOnboarding(){
  card.querySelector('[data-action="ob-finish"]')?.addEventListener('click',function(){saveOnboardingFields();finishOnboarding(false);});
  card.querySelector('#ob-savings')?.addEventListener('input',function(e){state.savingsTarget=Math.max(0,Number(e.target.value)||0);var v=document.getElementById('ob-save-value');if(v)v.textContent=fmt(state.savingsTarget);updateSavingsFeedback();});
  card.querySelectorAll('[data-plan]').forEach(function(inp){inp.addEventListener('input',updatePlanSummary);});
+ card.querySelectorAll('[data-need]').forEach(function(inp){inp.addEventListener('input',updateNeedsSummary);});
 }
 function saveOnboardingFields(){
  var name=document.getElementById('ob-name');if(name)profile.name=name.value.trim();
@@ -650,7 +659,7 @@ function nextOnboarding(){
  saveOnboardingFields();
  if(onboardingStep===1){if(!(profile.name||'').trim())profile.name='Student';onboardingStep=2;renderOnboarding();return;}
  if(onboardingStep===2){if(!selectedGoals.length){showToast('Choose at least one goal.');return;}onboardingStep=3;renderOnboarding();return;}
- if(onboardingStep===3){if(Number(state.allowance)<1){showToast('Add income or choose “It varies” and enter a realistic estimate.');return;}onboardingStep=4;renderOnboarding();return;}
+ if(onboardingStep===3){onboardingStep=4;renderOnboarding();return;}
  if(onboardingStep===4){onboardingStep=5;renderOnboarding();return;}
  if(onboardingStep===5){onboardingStep=6;renderOnboarding();return;}
  if(onboardingStep===6){onboardingStep=7;renderOnboarding();return;}
@@ -658,12 +667,24 @@ function nextOnboarding(){
 }
 function updateSavingsFeedback(){
  var el=document.getElementById('savings-feedback');if(!el)return;
- var income=Math.max(0,Number(state.allowance)||10000),s=Math.max(0,Number(state.savingsTarget)||0),p=income?Math.round(s/income*100):0;
- el.innerHTML='<span>🎯</span><div><b>'+p+'% of your income</b><small>'+(p<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div>';
+ var income=onboardingIncomeWeekly(),s=Math.max(0,Number(state.savingsTarget)||0),p=income?Math.round(s/income*100):0;
+ el.innerHTML='<span>🎯</span><div><b>'+p+'% of your income</b><small>'+(p<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div>';var yr=document.getElementById('savings-year-target'),yrTotal=document.getElementById('savings-year-total');if(yr)yr.textContent=fmt(s);if(yrTotal)yrTotal.textContent=fmt(s*52);
+}
+function updateNeedsSummary(){
+ var keys=['Food','Transport','Airtime & data','School / personal','Other'];
+ keys.forEach(function(k){var el=document.querySelector('[data-need="'+k+'"]');if(el)weeklyNeeds[k]=Math.max(0,Number(el.value)||0);});
+ var total=keys.reduce(function(s,k){return s+Number(weeklyNeeds[k]||0);},0);
+ var income=onboardingIncomeWeekly(),savings=Math.max(0,Number(state.savingsTarget)||0),spendLimit=Math.max(0,income-savings),gap=Math.max(0,total-spendLimit);
+ var totalEl=document.getElementById('needs-weekly-total'),box=document.getElementById('needs-alert-box'),ico=document.getElementById('needs-alert-icon'),title=document.getElementById('needs-alert-title'),copy=document.getElementById('needs-alert-copy');
+ if(totalEl)totalEl.textContent=fmt(total);
+ if(box)box.className='needs-alert '+(gap?'warning':'good');
+ if(ico)ico.textContent=gap?'⚠️':'✅';
+ if(title)title.textContent=gap?'Your current estimate is above your target.':'Your weekly target looks workable.';
+ if(copy)copy.textContent=gap?'After saving '+fmt(savings)+', your spending target is '+fmt(spendLimit)+'. Your entered needs are '+fmt(gap)+' above that, before debt repayments. We’ll create an adjustable plan next.':'Your entered weekly needs fit within the money available after savings.';
 }
 function updatePlanSummary(){
  var total=0;document.querySelectorAll('[data-plan]').forEach(function(el){var n=Math.max(0,Number(el.value)||0);planValues[el.dataset.plan]=n;total+=n;});
- var savings=Math.max(0,Number(state.savingsTarget)||0),income=Math.max(0,Number(state.allowance)||10000),allocated=total+savings,left=income-allocated,over=Math.max(0,-left);
+ var savings=Math.max(0,Number(state.savingsTarget)||0),income=onboardingIncomeWeekly(),allocated=total+savings,left=income-allocated,over=Math.max(0,-left);
  var t=document.getElementById('plan-total'),a=document.getElementById('plan-allocated'),box=document.getElementById('plan-balance-alert'),copy=document.getElementById('plan-balance-copy');
  if(t)t.textContent=fmt(total);if(a)a.textContent=fmt(allocated);
  if(box){box.className='needs-alert '+(over?'warning':'good');box.querySelector('span').textContent=over?'⚠️':'✅';box.querySelector('b').textContent=over?'This plan is over your income.':'Your plan balances.';}
@@ -674,7 +695,7 @@ function finishOnboarding(skip){
  if(!profile.name)profile.name='Student';
  profile.persona=selectedPersona;profile.payday=payday;profile.moneySources=selectedSources.slice();
  profile.weeklyNeeds=Object.assign({},weeklyNeeds);
- profile.weeklyIncome=Math.max(0,Number(state.allowance)||0);
+ profile.weeklyIncome=onboardingIncomeWeekly();
  profile.weeklySavingsGoal=Math.max(0,Number(state.savingsTarget)||0);
  if(!selectedGoals.length)selectedGoals=['emergency'];
  state.cadence=allowanceCadence;state.payday=payday;
