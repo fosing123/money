@@ -21,7 +21,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 20
       - name: Check JavaScript syntax
@@ -43,10 +43,11 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+      # First-time setup: Repository Settings → Pages → Source → GitHub Actions.
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Upload static site
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: |
             index.html
@@ -71,4 +72,4 @@ jobs:
     steps:
       - name: Deploy GitHub Pages artifact
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
