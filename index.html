@@ -72,6 +72,26 @@
 @media(max-width:860px){.donut-layout{grid-template-columns:1fr}.donut-chart{width:145px}.spend-legend{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.ai-tip{grid-template-columns:52px minmax(0,1fr)}.ai-tip img{width:52px;height:52px}.ai-tip .button{grid-column:2;justify-self:start}.intro-slide{gap:22px}.intro-visual{min-height:300px}.intro-preview{right:8px;bottom:8px}}
 @media(max-width:640px){.balance-card{padding:19px 16px;border-radius:21px}.balance-number{font-size:34px}.balance-metrics{padding:10px 11px;gap:8px}.balance-metrics strong{font-size:12px}.quick-actions{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.quick-action{padding:10px 2px;gap:7px;border-radius:13px}.quick-action .iconbox{width:33px;height:33px;font-size:16px;border-radius:12px}.quick-action b{font-size:8px}.quick-action small{display:none}.dashboard-grid{grid-template-columns:1fr}.spending-panel .donut-layout{grid-template-columns:135px minmax(0,1fr);gap:12px}.spending-panel .donut-chart{width:135px}.spending-panel .spend-legend{grid-template-columns:1fr;gap:9px}.donut-hole b{font-size:15px}.ai-tip{grid-template-columns:44px minmax(0,1fr);gap:10px;padding:11px}.ai-tip img{height:44px;width:44px}.ai-tip b{font-size:9px}.ai-tip p{font-size:7px}.ai-tip .button{grid-column:2}.more-grid{gap:8px}.more-product{padding:13px;min-height:190px;border-radius:17px}.more-product .more-product-icon{width:32px;height:32px;font-size:17px}.more-product .soon{right:8px;top:10px;font-size:6px}.more-product h2{font-size:14px;margin:11px 0 5px}.more-product p{font-size:8px}.more-product img{width:100px;height:85px;right:0;bottom:-5px}.intro-slide{display:flex;flex-direction:column;justify-content:center;gap:18px;min-height:0;padding:14px 0 24px}.intro-visual{min-height:230px;width:100%;max-width:410px;flex-shrink:0;border-radius:22px}.intro-visual>img{max-height:205px;width:min(85%,250px)}.intro-preview{width:min(58%,190px);right:7px;bottom:7px;padding:8px;gap:5px;border-radius:13px}.intro-copy h1{font-size:31px;letter-spacing:-1.4px;margin:9px 0}.intro-copy p{font-size:10px;line-height:1.6;margin:0}.intro-foot{margin-top:17px}.intro-copy .eyebrow{font-size:8px}.ob-welcome-screen{min-height:0;display:flex;flex-direction:column-reverse;justify-content:center;text-align:center;gap:4px;padding:15px 0 30px}.ob-welcome-visual{width:min(100%,330px);margin:0 auto -3px;animation:none}.ob-welcome-visual img{max-height:240px;object-fit:cover;border-radius:22px}.ob-welcome-copy h1{font-size:37px;letter-spacing:-2px;margin:9px 0}.ob-welcome-copy p{font-size:11px;margin:0 0 15px}.ob-welcome-copy .button{width:min(100%,320px)}.ob-welcome-points{justify-content:center;margin-top:12px}.ob-welcome-points span{font-size:8px;padding:7px 9px}.welcome-float{display:none}.compact-story .hero-art{display:block;width:min(100%,190px);margin:6px auto 0}.compact-story .hero-art img{max-height:105px;object-fit:contain}.setup-complete-art{height:125px;margin:-2px auto 12px;overflow:hidden;display:grid;place-items:center}.setup-complete-art img{height:145px;width:200px;object-fit:cover;border-radius:20px;mix-blend-mode:multiply}.ob-card h2{font-size:20px}.ob-sub{font-size:9px;margin:6px 0 12px}}
 
+
+/* Personalized onboarding: a large editorial student photo and concise money setup */
+.ob-welcome-screen{width:min(1160px,100%);margin:auto;min-height:min(700px,calc(100svh - 125px));display:grid;grid-template-columns:minmax(0,.88fr) minmax(420px,1.12fr);align-items:center;gap:clamp(25px,5vw,75px);padding:26px 0 36px}
+.ob-welcome-copy{animation:pageIn .45s both}.ob-welcome-copy h1{font:800 clamp(46px,5.5vw,72px)/.99 Manrope,sans-serif;letter-spacing:-3.8px;margin:19px 0 17px}.ob-welcome-copy p{max-width:420px;color:#777b94;font-size:13px;line-height:1.75;margin:0 0 25px}.ob-welcome-copy .button{min-width:210px;padding:15px 18px}.ob-welcome-points{display:flex;flex-wrap:wrap;gap:7px;margin-top:22px}.ob-welcome-points span{font-size:9px;font-weight:800;color:#777b94;background:#ffffffd9;border:1px solid #ece9f9;padding:9px 11px;border-radius:999px}
+.ob-welcome-visual{position:relative;width:100%;min-height:500px;height:min(64vh,650px);max-height:690px;justify-self:end;border-radius:32px;overflow:hidden;background:#d9e8fb;box-shadow:0 25px 70px #3430721a;animation:pageIn .5s both}.ob-welcome-visual>img{width:100%;height:100%;object-fit:cover;object-position:center 48%;display:block;transform:scale(1.015)}.ob-welcome-visual:after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(180deg,transparent,rgba(20,26,53,.2));pointer-events:none}
+.ob-welcome-visual .welcome-float{z-index:2;display:flex;align-items:center;gap:10px;background:#ffffffee;border:1px solid #ffffffc7;border-radius:16px;padding:12px 15px;box-shadow:0 15px 34px #17234f1c;font-size:20px;backdrop-filter:blur(15px);animation:bob 4.5s ease-in-out infinite}.ob-welcome-visual .welcome-float b{display:block;font:800 12px Manrope,sans-serif;color:#292b48}.ob-welcome-visual .welcome-float small{display:block;font:600 9px 'DM Sans',sans-serif;color:#8a8da3;margin-top:3px}.ob-welcome-visual .welcome-float.one{left:15px;top:16%}.ob-welcome-visual .welcome-float.two{right:15px;bottom:13%;animation-delay:1s}
+.ob-body{width:min(1160px,100%);grid-template-columns:minmax(300px,.86fr) minmax(440px,1.14fr);gap:clamp(22px,4vw,52px);padding:26px 0 34px;align-items:stretch}
+.ob-photo-panel{position:relative;min-height:570px;border-radius:29px;overflow:hidden;background:#cad9f3;box-shadow:0 20px 55px #34307214}.ob-photo-panel>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:51% center}.ob-photo-panel:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,24,51,.06) 8%,rgba(20,24,51,.07) 32%,rgba(20,24,51,.88) 100%)}.ob-photo-overlay{position:absolute;z-index:1;left:25px;right:25px;bottom:25px;color:white}.ob-photo-tag{display:inline-block;font-size:8px;font-weight:800;letter-spacing:1.4px;color:#e1e6ff;background:#ffffff19;border:1px solid #ffffff36;padding:8px 10px;border-radius:999px}.ob-photo-overlay h2{font:800 clamp(26px,3vw,39px)/1.05 Manrope,sans-serif;letter-spacing:-1.4px;margin:14px 0 10px;max-width:360px}.ob-photo-overlay p{font-size:10px;line-height:1.7;color:#f2f1ff;max-width:335px;margin:0}.on-side-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:17px}.on-side-metrics>div{border:1px solid #ffffff30;background:#ffffff18;backdrop-filter:blur(14px);border-radius:13px;padding:11px 12px}.on-side-metrics small{display:block;color:#e1e3fa;font-size:7px;letter-spacing:1px;font-weight:800}.on-side-metrics b{display:block;color:white;font:800 14px Manrope,sans-serif;margin-top:6px}
+.ob-card{padding:clamp(20px,2.5vw,31px);border-radius:26px;align-self:stretch}.ob-card h2{font-size:clamp(22px,2.5vw,29px);letter-spacing:-1px}.ob-card .ob-sub{font-size:11px;max-width:430px;line-height:1.65;margin:7px 0 17px}.ob-progress-top{font-size:8px;letter-spacing:1.25px}.ob-step-icon{height:42px;width:42px;margin-bottom:12px;border-radius:14px}.field-label-static{font-size:8px;letter-spacing:1.1px;font-weight:800;color:#9294a9;margin:16px 0 9px}
+.ob-card .choice-list{gap:8px}.ob-card .choice{padding:10px 11px;border-radius:13px}.ob-card .choice-icon{height:37px;width:37px;font-size:19px}.ob-card .choice b{font-size:10px}.ob-card .choice small{font-size:8px;margin-top:3px}.ob-card .goal-grid{gap:8px}.ob-card .goal-choice{min-height:92px;padding:10px;border-radius:13px}.ob-card .goal-choice .g-emoji{height:32px;width:32px;font-size:18px;margin-bottom:7px}.ob-card .goal-choice b{font-size:9px}.ob-card .goal-choice small{font-size:8px}
+.ob-card .field{margin:12px 0}.ob-card .field input,.ob-card .field select{padding:12px 13px;border-radius:11px}.ob-card .onboard-amount input{font:800 25px Manrope,sans-serif;padding:10px 12px}.ob-card .onboard-amount.big{background:#f4f2ff;border:1px solid #e4e0ff;border-radius:16px;padding:8px 12px}.ob-card .onboard-amount.big input{background:transparent;border:0;font-size:32px;letter-spacing:-1px}.ob-card .onboard-amount.big span{font-size:10px;font-weight:800;color:#7976a3}
+.ob-card .cadence-options button{padding:10px 8px;border-radius:11px;font-size:9px}.weekday-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:8px 0 12px}.weekday-grid button{border:1px solid #e9e7f5;background:#fff;border-radius:9px;padding:10px 1px;color:#7c8099;font-size:8px;font-weight:800}.weekday-grid button.active{background:#6558ed;border-color:#6558ed;color:#fff;box-shadow:0 6px 14px #6558ed2d}
+.balance-entry{background:linear-gradient(115deg,#eceaff,#eef8ff);border:1px solid #e3e1fc;padding:16px;border-radius:17px;margin-bottom:17px}.balance-entry .range-value{margin:8px 0 4px}.quick-amounts{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.quick-amounts button{border:1px solid #dcd9fa;background:#fff;color:#716aa4;padding:7px 10px;border-radius:9px;font-size:8px;font-weight:800}
+.source-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.source-choice{display:flex;align-items:center;gap:9px;border:1px solid #e7e5f3;background:#fff;border-radius:12px;padding:11px;text-align:left;color:#6f728d}.source-choice span{font-size:19px}.source-choice b{font-size:9px;flex:1}.source-choice i{font-style:normal;font-size:11px;width:20px;height:20px;border:1px solid #e4e2f0;border-radius:7px;display:grid;place-items:center;color:#9697ac}.source-choice.selected{background:#f5f3ff;border-color:#bdb6ff;color:#554bcf}.source-choice.selected i{background:#6558ed;border-color:#6558ed;color:#fff}
+.savings-hero{background:linear-gradient(140deg,#f0edff,#eefaff 65%,#eaf9f0);border:1px solid #e7e3fb;border-radius:19px;padding:18px}.savings-hero .range-value{font:800 clamp(25px,3vw,34px) Manrope,sans-serif;letter-spacing:-1px;color:#5449d2;margin:10px 0}.savings-hero input[type=range]{width:100%;accent-color:#6558ed;margin:12px 0}.savings-presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.savings-presets button{border:1px solid #e4e1f7;background:#fff;color:#7d7c9a;padding:9px 12px;border-radius:10px;font-size:9px;font-weight:800}.savings-presets button.active{background:#6558ed;color:#fff;border-color:#6558ed}.savings-feedback{display:flex;align-items:center;gap:11px;padding:13px;border:1px solid #dff0e3;background:#effbf2;border-radius:13px;margin-top:12px}.savings-feedback>span{font-size:25px}.savings-feedback b{display:block;font-size:10px;color:#3e7958}.savings-feedback small{display:block;font-size:8px;color:#7a9a86;margin-top:4px}
+.needs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.need-field{min-width:0;border:1px solid #eae8f4;border-radius:13px;background:#fff;display:grid;grid-template-columns:30px minmax(0,1fr);gap:7px;padding:10px}.need-icon{height:29px;width:29px;border-radius:10px;background:#f1efff;display:grid;place-items:center;font-size:15px}.need-label{min-width:0;align-self:center}.need-label b{display:block;font-size:9px}.need-label small{display:block;font-size:7px;color:#999bb0;line-height:1.4;margin-top:3px}.need-input-wrap{grid-column:1/-1;display:flex;align-items:center;border:1px solid #ecebf4;background:#fbfbff;border-radius:9px;padding:0 8px}.need-input-wrap input{border:0;background:transparent;min-width:0;width:100%;padding:9px 0;font:800 13px Manrope,sans-serif;color:#33344f;outline:none}.need-input-wrap small{color:#999bb0;font-size:7px;white-space:nowrap}.needs-summary,.plan-total{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 2px;border-bottom:1px solid #f0eef7;font-size:9px;color:#7e8097}.needs-summary b,.plan-total b{font:800 12px Manrope,sans-serif;color:#343652}.needs-alert{display:flex;gap:10px;padding:12px;border-radius:13px;margin-top:12px;border:1px solid #f2e1b1;background:#fff8e6}.needs-alert.warning{border-color:#f2e1b1;background:#fff8e6}.needs-alert.good{border-color:#dcefe2;background:#f0faf2}.needs-alert>span{font-size:17px}.needs-alert b{display:block;font-size:9px;color:#795f26}.needs-alert.good b{color:#347b55}.needs-alert small{display:block;color:#908263;font-size:8px;line-height:1.55;margin-top:4px}.needs-alert.good small{color:#7b9b86}
+.plan-summary-top{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px}.plan-summary-top>div{border:1px solid #e5e2fc;background:#f3f1ff;border-radius:13px;padding:12px}.plan-summary-top small{display:block;font-size:7px;letter-spacing:1px;color:#8885a9;font-weight:800}.plan-summary-top b{display:block;font:800 16px Manrope,sans-serif;color:#574dcf;margin-top:6px}.plan-list{display:grid;gap:7px}.plan-row{display:grid;grid-template-columns:30px minmax(0,1fr) minmax(120px,.7fr);gap:8px;align-items:center;border:1px solid #eeedf6;background:white;border-radius:12px;padding:9px}.plan-icon{height:29px;width:29px;display:grid;place-items:center;border-radius:10px;background:#f1efff;font-size:15px}.plan-label b{display:block;font-size:9px}.plan-label small{display:block;color:#9a9caf;font-size:7px;margin-top:3px}.plan-value{display:flex;align-items:center;gap:5px;background:#fafaff;border:1px solid #eeedf6;border-radius:8px;padding:0 7px}.plan-value input{min-width:0;width:100%;border:0;outline:none;background:transparent;padding:8px 0;font:800 11px Manrope,sans-serif;color:#403c70;text-align:right}.plan-value small{font-size:7px;color:#9a9caf}.plan-total.savings b{color:#279466}.plan-total.final{border:0;background:#f0efff;border-radius:11px;padding:12px;margin-top:5px;color:#5d52ce;font-weight:800}.plan-total.final b{color:#5046cd;font-size:14px}.ob-card .ob-footer{margin-top:17px}.ob-privacy{margin-top:11px;text-align:center;font-size:7px;color:#a1a2b4}
+@media(max-width:860px){.ob-welcome-screen{grid-template-columns:minmax(0,.9fr) minmax(300px,1.1fr);gap:22px}.ob-welcome-copy h1{font-size:48px}.ob-body{grid-template-columns:minmax(240px,.75fr) minmax(360px,1.25fr);gap:17px}.ob-photo-panel{min-height:530px}.ob-photo-overlay{left:19px;right:19px;bottom:18px}.ob-photo-overlay h2{font-size:28px}}
+@media(max-width:640px){.ob-welcome-screen{display:flex;flex-direction:column-reverse;justify-content:center;gap:0;min-height:0;padding:10px 0 25px;text-align:center}.ob-welcome-copy h1{font-size:37px;letter-spacing:-2px;margin:10px 0}.ob-welcome-copy p{font-size:11px;line-height:1.6;margin:0 auto 17px;max-width:340px}.ob-welcome-copy .button{width:min(100%,340px)}.ob-welcome-points{justify-content:center;margin-top:13px}.ob-welcome-points span{font-size:8px;padding:7px 9px}.ob-welcome-visual{min-height:0;height:260px;width:100%;max-width:460px;margin:0 auto 15px;border-radius:24px;animation:none}.ob-welcome-visual>img{object-position:50% 46%}.ob-welcome-visual .welcome-float{padding:8px 10px;border-radius:12px;gap:6px;font-size:15px}.ob-welcome-visual .welcome-float b{font-size:9px}.ob-welcome-visual .welcome-float small{font-size:7px}.ob-welcome-visual .welcome-float.one{top:9px;left:8px}.ob-welcome-visual .welcome-float.two{bottom:9px;right:8px}.ob-body{display:flex;flex-direction:column;gap:12px;padding:14px 0 20px}.ob-photo-panel{min-height:0;height:205px;flex-shrink:0;border-radius:21px}.ob-photo-panel>img{object-position:50% 42%}.ob-photo-panel:after{background:linear-gradient(90deg,rgba(20,24,51,.75),rgba(20,24,51,.22) 75%),linear-gradient(0deg,rgba(20,24,51,.35),transparent 70%)}.ob-photo-overlay{left:17px;right:17px;bottom:14px;top:14px;display:flex;flex-direction:column;justify-content:flex-end}.ob-photo-tag{align-self:flex-start;font-size:7px;padding:6px 8px}.ob-photo-overlay h2{font-size:23px;max-width:290px;margin:8px 0 5px}.ob-photo-overlay p{font-size:8px;line-height:1.4;max-width:290px}.on-side-metrics{display:none}.ob-card{padding:18px 15px;border-radius:21px}.ob-card h2{font-size:21px}.ob-card .ob-sub{font-size:10px;margin:6px 0 13px}.ob-card .goal-choice{min-height:91px}.ob-card .ob-footer{margin-top:14px}.ob-card .step-dots{gap:3px}.ob-card .step-dots span{width:4px}.ob-card .step-dots span.active{width:13px}.needs-grid{gap:6px}.need-field{padding:8px;gap:6px}.need-label b{font-size:8px}.need-label small{font-size:6px}.need-input-wrap input{font-size:12px}.plan-row{grid-template-columns:28px minmax(0,1fr) minmax(105px,.8fr);padding:8px 7px;gap:7px}.plan-label b{font-size:8px}.plan-label small{font-size:6px}.plan-value input{font-size:10px}.ob-bottom{padding-top:10px;font-size:6px}}
+
 </style>
 </head>
 <body>
@@ -218,7 +238,7 @@ function dashboardPage(){
  '<section class="balance-card screen" data-tour-target="balance"><div class="balance-info"><div class="balance-label">AVAILABLE BALANCE <span style="font-size:12px;opacity:.9">◉</span></div><div class="balance-number">'+fmt(state.balance)+'</div><div class="balance-sub">Your recorded money · Update anytime</div></div><div class="balance-metrics"><div><span>↙ Money in</span><strong>'+fmt(t.income)+'</strong><small>Recorded income</small></div><div><span>↗ Expenses</span><strong>'+fmt(t.spent)+'</strong><small>Recorded spending</small></div></div></section>'+
  '<section class="quick-actions screen" data-tour-target="quick"><button class="quick-action" data-action="add-tx" data-type="income"><span class="iconbox mint">＋</span><span><b>Add income</b><small>Allowance, gig, gift</small></span></button><button class="quick-action" data-action="add-tx" data-type="expense"><span class="iconbox peach">−</span><span><b>Add expense</b><small>Everyday spending</small></span></button><button class="quick-action" data-action="scan-receipt"><span class="iconbox yellow">🧾</span><span><b>Scan receipt</b><small>Coming soon</small></span></button><button class="quick-action" data-page="coach"><span class="iconbox purple">✳</span><span><b>AI chat</b><small>Ask your coach</small></span></button></section>'+
  '<div class="dashboard-grid screen"><section class="panel"><div class="panel-head"><div><div class="mini-label">YOUR MONEY, IN MOTION</div><h2>Recent transactions</h2></div><button class="text-button" data-page="activity">See all →</button></div><div class="tx-list">'+(state.transactions.slice(0,5).map(txHtml).join('')||'<div class="empty-state"><div class="emoji">🌱</div><b>Your story starts here.</b><br>Add your first entry to see it here.</div>')+'</div><button class="bottom-link" data-action="add-tx" data-type="expense">＋ Add a transaction</button></section>'+
- '<section style="display:grid;gap:14px"><section class="panel spending-panel"><div class="panel-head"><div><div class="mini-label">YOUR SPENDING OVERVIEW</div><h2>Where it goes</h2></div><span class="pill">This month</span></div><div class="donut-layout"><div class="donut-chart" style="background:'+donutStyle+'"><div class="donut-hole"><small>THIS MONTH</small><b>'+shortMoney(spent)+'</b><span>FCFA</span></div></div><div class="spend-legend">'+(legend||'<p class="sub">Your categories will appear after you add expenses.</p>')+'</div></div></section>'+
+ '<section style="display:grid;gap:14px"><section class="panel spending-panel"><div class="panel-head"><div><div class="mini-label">YOUR SPENDING OVERVIEW</div><h2>Where it goes</h2></div><span class="pill">This week</span></div><div class="donut-layout"><div class="donut-chart" style="background:'+donutStyle+'"><div class="donut-hole"><small>THIS MONTH</small><b>'+shortMoney(spent)+'</b><span>FCFA</span></div></div><div class="spend-legend">'+(legend||'<p class="sub">Your categories will appear after you add expenses.</p>')+'</div></div></section>'+
  '<section class="panel"><div class="panel-head"><div><div class="mini-label">FUTURE YOU</div><h2>Savings goals</h2></div><button class="text-button" data-page="goals">See all →</button></div><div class="goal-mini">'+(goalRows||'<div class="empty-state">Choose a goal and start small.</div>')+'</div><button class="bottom-link" data-page="goals">＋ Add a new goal</button></section></section></div>'+
  '<section class="ai-tip screen"><img src="./assets/money-coach.svg" alt=""><div><div class="mini-label">A LITTLE MONEY TIP ✨</div><b>'+esc(tip)+'</b><p>Small steps count. You’re doing great by keeping track.</p></div><button class="button secondary small" data-page="coach">Ask coach →</button></section>';
 }
@@ -227,8 +247,8 @@ function activityPage(){
  return pageHead('TRANSACTIONS','Income & expenses.','Search or filter your entries.')+'<section class="panel"><div class="toolbar"><input class="search" id="activity-search" value="'+esc(activitySearch)+'" placeholder="Search transactions…"><button class="button small" data-action="add-tx" data-type="expense">＋ Add entry</button></div><div class="filter-row">'+[['all','Everything'],['income','Money in'],['expense','Money out']].map(function(v){return '<button class="filter '+(activityFilter===v[0]?'active':'')+'" data-filter="'+v[0]+'">'+v[1]+'</button>';}).join('')+'</div><div class="tx-list">'+(items.map(txHtml).join('')||'<div class="empty-state"><div class="emoji">🔎</div><b>No matching transactions.</b><br>Try another search or add your first entry.</div>')+'</div></section><div class="note" style="margin-top:14px">🔒 These are manually recorded demo entries, not live bank or Mobile Money transactions.</div>';
 }
 function budgetsPage(){
- var cats=Object.keys(state.budget).map(function(c){var inf=iconInfo(c),used=budgetSpent(c),limit=Number(state.budget[c])||0;var pct=limit?Math.min(100,Math.round(used/limit*100)):0;return '<section class="panel budget-card"><div class="budget-title"><span class="iconbox" style="background:'+inf.color+';color:'+inf.ink+'">'+inf.emoji+'</span><span><b>'+esc(c)+'</b><small>Monthly spending limit</small></span></div><div class="budget-number">'+fmt(used)+' <span style="font:600 9px DM Sans;color:#9597ab">of '+fmt(limit)+'</span></div><div class="bar"><i style="width:'+pct+'%;background:'+inf.ink+'"></i></div><div class="budget-details"><span>'+pct+'% used</span><span>'+fmt(Math.max(0,limit-used))+' left</span></div></section>';}).join('');
- return pageHead('FLEXIBLE BUDGET','Plan your spending.','Set limits that fit your life.')+'<div class="toolbar"><span class="pill">🗓️ Monthly plan · '+fmt(budgetTotal())+'</span><button class="button small" data-action="edit-budget">✎ Edit limits</button></div><div class="budget-grid">'+cats+'</div><div class="note" style="margin-top:15px">💡 Tip: start by covering food, transport, school and data. It’s okay if your budget changes when life does.</div>';
+ var cats=Object.keys(state.budget).map(function(c){var inf=iconInfo(c),used=budgetSpent(c),limit=Number(state.budget[c])||0;var pct=limit?Math.min(100,Math.round(used/limit*100)):0;return '<section class="panel budget-card"><div class="budget-title"><span class="iconbox" style="background:'+inf.color+';color:'+inf.ink+'">'+inf.emoji+'</span><span><b>'+esc(c)+'</b><small>Weekly spending limit</small></span></div><div class="budget-number">'+fmt(used)+' <span style="font:600 9px DM Sans;color:#9597ab">of '+fmt(limit)+'</span></div><div class="bar"><i style="width:'+pct+'%;background:'+inf.ink+'"></i></div><div class="budget-details"><span>'+pct+'% used</span><span>'+fmt(Math.max(0,limit-used))+' left</span></div></section>';}).join('');
+ return pageHead('FLEXIBLE BUDGET','Plan your spending.','Set limits that fit your life.')+'<div class="toolbar"><span class="pill">🗓️ Weekly plan · '+fmt(budgetTotal())+'</span><button class="button small" data-action="edit-budget">✎ Edit limits</button></div><div class="budget-grid">'+cats+'</div><div class="note" style="margin-top:15px">💡 Tip: start by covering food, transport, school and data. It’s okay if your budget changes when life does.</div>';
 }
 function goalsPage(){
  return pageHead('FUTURE YOU IS ROOTING FOR YOU','Goals that matter.','Track progress. Save at your pace.')+'<div class="toolbar"><span class="pill">🎯 '+state.goals.length+' active goals</span><button class="button small" data-action="new-goal">＋ New goal</button></div><div class="goal-grid-app">'+(state.goals.map(function(g){var pct=Math.min(100,Math.round(g.saved/Math.max(1,g.target)*100));return '<section class="panel goal-card"><div class="goal-card-head"><div class="goal-card-icon">'+esc(g.emoji||'🎯')+'</div><button class="text-button" data-action="goal-menu" data-id="'+esc(g.id)+'">•••</button></div><h3>'+esc(g.name)+'</h3><p>Every little deposit brings you closer.</p><div class="goal-saved">'+fmt(g.saved)+' <small>of '+fmt(g.target)+'</small></div><div class="bar"><i style="width:'+pct+'%;background:linear-gradient(90deg,#6558ed,#d45fa8)"></i></div><div class="goal-bottom"><span>'+pct+'% there</span><span>'+fmt(Math.max(0,g.target-g.saved))+' to go</span></div><button class="button secondary full small" style="margin-top:16px" data-action="add-saving" data-id="'+esc(g.id)+'">＋ Add savings</button></section>';}).join('')||'<div class="empty-state"><div class="emoji">🌱</div><b>What are you dreaming about?</b><br>Add your first savings goal and start small.</div>')+'</div>';
@@ -344,6 +364,316 @@ function exportCSV(){
  var a=document.createElement('a'),url=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.href=url;a.download='student-money-records.csv';a.click();URL.revokeObjectURL(url);showToast('Your CSV export is ready.');
 }
 function resetData(){if(!confirm('Clear all money records and show the new onboarding again? This cannot be undone.'))return;localStorage.removeItem(STORE);localStorage.removeItem(PROFILE);localStorage.removeItem(TOUR);state=loadState();profile={};onStep=0;selectedGoals=[];page='dashboard';closeModal();renderOnboarding();}
+
+/* Focused, personalized onboarding override */
+var onboardingStep=0;
+selectedGoals=['emergency','school'];
+selectedPersona='student';
+allowanceCadence='weekly';
+var payday='Tuesday';
+var selectedSources=['cash','orange','mtn'];
+var weeklyNeeds={'Food':5000,'Transport':2400,'Airtime & data':3500,'School / personal':1000,'Other':0,'Debt owed':0};
+var planValues={'Food':3500,'Transport':1500,'Airtime & data':1000,'School / personal':1000,'Emergency buffer':1000};
+
+function renderOnboarding(){
+ var shellStart='<main class="onboarding"><header class="ob-top">'+brand()+'<button class="button ghost small" data-action="ob-skip">Skip setup</button></header>';
+ var shellEnd='<footer class="ob-bottom"><span>YOUR MONEY. YOUR NEXT MOVE.</span><span>FCFA · PRIVATE BY DEFAULT</span></footer></main>';
+ if(onboardingStep===0){
+  var welcome='<section class="ob-welcome-screen screen"><div class="ob-welcome-copy"><div class="eyebrow">MADE FOR STUDENT LIFE · CAMEROON</div><h1>Your money.<br><span class="gradient">Your next move.</span></h1><p>Plan your FCFA, save for what matters, and know where you stand every week.</p><button class="button" data-action="ob-start">Build my money plan <span>→</span></button><div class="ob-welcome-points"><span>🇨🇲 Built for FCFA</span><span>🔒 Private by default</span><span>✨ No judgement</span></div></div><div class="ob-welcome-visual"><img src="./assets/student-onboarding-photo.webp" alt="University student using a phone on campus"><div class="welcome-float one"><span>💸</span><b>10,000 FCFA <small>weekly income</small></b></div><div class="welcome-float two"><span>🎯</span><b>2,000 FCFA <small>weekly savings goal</small></b></div></div></section>';
+  app.innerHTML=shellStart+welcome+shellEnd;bindOnboarding();return;
+ }
+ var totalSteps=7;
+ var income=Math.max(0,Number(state.allowance)||10000);
+ var savings=Math.max(0,Number(state.savingsTarget===undefined?2000:state.savingsTarget)||0);
+ var balance=Math.max(0,Number(state.balance)||0);
+ var weeklySpend=Number(weeklyNeeds.Food||0)+Number(weeklyNeeds.Transport||0)+Number(weeklyNeeds['Airtime & data']||0)+Number(weeklyNeeds['School / personal']||0)+Number(weeklyNeeds.Other||0);
+ var spendAfterSavings=Math.max(0,income-savings);
+ var gap=Math.max(0,weeklySpend-spendAfterSavings);
+ var percent=income?Math.round(savings/income*100):0;
+ var stepTitle='',stepCopy='',stepBody='';
+ var progress=Math.min(100,Math.round(onboardingStep/totalSteps*100));
+ if(onboardingStep===1){
+  stepTitle='Tell us about you';
+  stepCopy='We’ll make your money space fit your life.';
+  stepBody='<label class="field">YOUR FIRST NAME <small>OPTIONAL</small><input id="ob-name" maxlength="40" value="'+esc(profile.name||'')+'" placeholder="e.g. Alex"></label><div class="field-label-static">WHICH DESCRIBES YOU BEST?</div><div class="choice-list">'+[
+   ['student','🎓','University student','I’m studying right now.'],
+   ['hustler','💻','Student + side hustle','I study and earn too.'],
+   ['young-pro','💼','Young professional','I work and earn regularly.'],
+   ['entrepreneur','🚀','Student entrepreneur','I’m building a business.']
+  ].map(function(p){return '<button class="choice '+(selectedPersona===p[0]?'selected':'')+'" data-persona="'+p[0]+'"><span class="choice-icon">'+p[1]+'</span><span class="choice-copy"><b>'+p[2]+'</b><small>'+p[3]+'</small></span><span class="checkmark">✓</span></button>';}).join('')+'</div>';
+ }else if(onboardingStep===2){
+  stepTitle='What are your goals?';
+  stepCopy='Choose up to 3. You can change them later.';
+  stepBody='<div class="goal-grid">'+goalOptions.map(function(g){var sel=selectedGoals.indexOf(g.id)>=0;return '<button class="goal-choice '+(sel?'selected':'')+'" data-goal="'+g.id+'"><span class="checkmark">'+(sel?'✓':'')+'</span><span class="g-emoji">'+g.emoji+'</span><b>'+g.title+'</b><small>'+g.detail+'</small></button>';}).join('')+'</div><div class="hint">Pick the goals that matter most to you right now.</div>';
+ }else if(onboardingStep===3){
+  stepTitle='How do you receive money?';
+  stepCopy='We’ll plan around your real payday.';
+  stepBody='<div class="field-label-static">HOW OFTEN?</div><div class="cadence-options">'+[['weekly','Every week'],['monthly','Every month'],['irregular','It varies']].map(function(v){return '<button type="button" class="'+(allowanceCadence===v[0]?'cadence-selected':'')+'" data-cadence="'+v[0]+'">'+v[1]+'</button>';}).join('')+'</div><label class="field">TYPICAL INCOME / ALLOWANCE<div class="onboard-amount"><input id="ob-allowance" type="number" min="0" max="100000000" step="500" value="'+income+'" inputmode="numeric"><span>FCFA</span></div></label><div class="field-label-static">'+(allowanceCadence==='weekly'?'WHICH DAY DOES IT ARRIVE?':'WHICH DAY SHOULD WE USE FOR REMINDERS?')+'</div><div class="weekday-grid">'+['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(function(d){return '<button type="button" class="'+(payday===d?'active':'')+'" data-payday="'+d+'">'+d.slice(0,3)+'</button>';}).join('')+'</div><div class="info-strip">📅 <span>We’ll use <b>'+esc(payday)+'</b> for your payday plan and reminder settings.</span></div>';
+ }else if(onboardingStep===4){
+  stepTitle='How much do you have now?';
+  stepCopy='Add everything you can access. Estimates are okay.';
+  var sourceDefs=[['cash','💵','Cash'],['orange','🟠','Orange Money'],['mtn','🟡','MTN MoMo'],['bank','🏦','Bank account']];
+  stepBody='<div class="balance-entry"><div class="mini-label">TOTAL AVAILABLE MONEY</div><div class="onboard-amount big"><input id="ob-balance" type="number" min="0" max="100000000" step="100" value="'+balance+'" inputmode="numeric"><span>FCFA</span></div><div class="quick-amounts">'+[0,5000,10000,25000].map(function(v){return '<button type="button" data-balance-preset="'+v+'">'+(v===0?'0':shortMoney(v))+'</button>';}).join('')+'</div></div><div class="field-label-static">WHERE DO YOU KEEP YOUR MONEY?</div><div class="source-grid">'+sourceDefs.map(function(s){var yes=selectedSources.indexOf(s[0])>=0;return '<button type="button" class="source-choice '+(yes?'selected':'')+'" data-source="'+s[0]+'"><span>'+s[1]+'</span><b>'+s[2]+'</b><i>'+(yes?'✓':'+')+'</i></button>';}).join('')+'</div><div class="hint">We’ll record your total for now. No wallet or bank account is connected.</div>';
+ }else if(onboardingStep===5){
+  stepTitle='How much do you want to save?';
+  stepCopy='Start small. Consistency wins.';
+  var target=state.savingsTarget===undefined?2000:Number(state.savingsTarget);
+  stepBody='<div class="savings-hero"><div class="mini-label">WEEKLY SAVINGS GOAL</div><div class="range-value"><span id="ob-save-value">'+fmt(target)+'</span></div><input id="ob-savings" type="range" min="0" max="10000" step="500" value="'+target+'"><div class="range-labels"><span>0 FCFA</span><span>10,000 FCFA</span></div><div class="savings-presets">'+[500,1000,2000,3000,5000].map(function(v){return '<button type="button" class="'+(target===v?'active':'')+'" data-saving-preset="'+v+'">'+shortMoney(v)+'</button>';}).join('')+'</div></div><div class="savings-feedback" id="savings-feedback"><span>🎯</span><div><b>'+percent+'% of your income</b><small>'+(percent<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div></div><div class="info-strip">💡 <span>At 2,000 FCFA per week, you’d save about <b>104,000 FCFA in a year</b> if you stay consistent.</span></div>';
+ }else if(onboardingStep===6){
+  stepTitle='What do you usually need?';
+  stepCopy='Let’s use your real costs, not guesses.';
+  var needRows=[
+   ['Food','🍲','Food / week','Based on your estimate'],['Transport','🚌','Transport / week','Getting around'],['Airtime & data','📱','Internet & airtime / week','Based on 1,000 FCFA every 2 days'],['School / personal','📚','School & personal / week','Starter estimate · edit anytime'],['Other','✨','Other costs / week','Regular extras'],['Debt owed','🧾','Total debts you owe','Outstanding total, not weekly spending']
+  ];
+  stepBody='<div class="needs-grid">'+needRows.map(function(n){var val=Number(weeklyNeeds[n[0]]||0);return '<label class="need-field"><span class="need-icon">'+n[1]+'</span><span class="need-label"><b>'+n[2]+'</b><small>'+n[3]+'</small></span><span class="need-input-wrap"><input type="number" min="0" max="100000000" step="100" inputmode="numeric" data-need="'+n[0]+'" value="'+val+'"><small>FCFA</small></span></label>';}).join('')+'</div><div class="needs-summary"><span>Estimated weekly needs</span><b>'+fmt(weeklySpend)+'</b></div><div class="needs-alert '+(gap?'warning':'good')+'"><span>'+(gap?'⚠️':'✅')+'</span><div><b>'+(gap?'Your current estimate is above your target.':'Your weekly target looks workable.')+'</b><small>'+(gap?'After saving '+fmt(savings)+', your spending target is '+fmt(spendAfterSavings)+'. The numbers entered are '+fmt(gap)+' above that, before debt repayments. We’ll create an adjustable plan next.':'Your entered weekly needs fit within the money available after savings.')+'</small></div></div>';
+ }else{
+  stepTitle='Here’s your first budget plan';
+  stepCopy='A starting point. Adjust any amount.';
+  var planItems=[
+   ['Food','🍲','Food and meals'],['Transport','🚌','Getting around'],['Airtime & data','📱','Internet & airtime'],['School / personal','📚','School and personal'],['Emergency buffer','🛟','Keep a little aside']
+  ];
+  var planTotal=planItems.reduce(function(sum,p){return sum+Number(planValues[p[0]]||0);},0);
+  var over=Math.max(0,planTotal+savings-income),left=income-planTotal-savings;
+  stepBody='<div class="plan-summary-top"><div><small>WEEKLY INCOME</small><b>'+fmt(income)+'</b></div><div><small>SAVINGS GOAL</small><b>'+fmt(savings)+'</b></div></div><div class="plan-list">'+planItems.map(function(p){return '<label class="plan-row"><span class="plan-icon">'+p[1]+'</span><span class="plan-label"><b>'+p[0]+'</b><small>'+p[2]+'</small></span><span class="plan-value"><input type="number" min="0" max="100000000" step="100" inputmode="numeric" data-plan="'+p[0]+'" value="'+Number(planValues[p[0]]||0)+'"><small>FCFA</small></span></label>';}).join('')+'</div><div class="plan-total"><span>Planned spending</span><b id="plan-total">'+fmt(planTotal)+'</b></div><div class="plan-total savings"><span>Weekly savings</span><b>'+fmt(savings)+'</b></div><div class="plan-total final"><span>Total allocated</span><b id="plan-allocated">'+fmt(planTotal+savings)+'</b></div><div class="needs-alert '+(over?'warning':'good')+'" id="plan-balance-alert"><span>'+(over?'⚠️':'✅')+'</span><div><b>'+(over?'This plan is over your income.':'Your plan balances.')+'</b><small id="plan-balance-copy">'+(over?'Reduce allocations by '+fmt(over)+' or update your income.':fmt(Math.max(0,left))+' left unallocated. Keep it for flexibility or add it to a category.')+'</small></div></div><div class="info-strip">🧠 <span>Your estimated needs are <b>'+fmt(weeklySpend)+'/week</b>. This is a suggested target, not a promise that every cost will fit.</span></div>';
+ }
+ var sideTitle=onboardingStep===1?'Let’s make this yours.':onboardingStep===2?'Make room for what matters.':onboardingStep===3?'Plan around payday.':onboardingStep===4?'Know what you have.':onboardingStep===5?'Small steps build freedom.':onboardingStep===6?'Real numbers. Better plans.':'Your first plan, made for you.';
+ var sideCopy=onboardingStep===6?'We’ll compare what you need with what comes in.':onboardingStep===7?'Your plan stays editable as life changes.':'A money space that fits student life in Cameroon.';
+ var sideMetrics='<div class="on-side-metrics"><div><small>WEEKLY INCOME</small><b>'+fmt(income)+'</b></div><div><small>SAVINGS GOAL</small><b>'+fmt(savings)+'</b></div></div>';
+ var setup='<div class="ob-body screen"><section class="ob-photo-panel"><img src="./assets/student-onboarding-photo.webp" alt="University student using a phone on campus"><div class="ob-photo-overlay"><span class="ob-photo-tag">YOUR MONEY, YOUR FUTURE</span><h2>'+sideTitle+'</h2><p>'+sideCopy+'</p>'+sideMetrics+'</div></section><section class="ob-card" id="ob-card"><div class="ob-progress-top"><span>SET UP YOUR MONEY</span><strong>'+onboardingStep+' / '+totalSteps+'</strong></div><div class="progress-track"><i style="width:'+progress+'%"></i></div><div class="ob-step-icon">'+({1:'👋🏽',2:'🎯',3:'🗓️',4:'💸',5:'🌱',6:'🧾',7:'✨'})[onboardingStep]+'</div><h2>'+stepTitle+'</h2><p class="ob-sub">'+stepCopy+'</p>'+stepBody+'<div class="ob-footer"><button class="button ghost" data-action="ob-back">← Back</button><div class="step-dots">'+['Profile','Goals','Income','Balance','Savings','Needs','Plan'].map(function(_,i){return '<span class="'+(i+1===onboardingStep?'active':'')+'"></span>';}).join('')+'</div><button class="button" data-action="'+(onboardingStep===7?'ob-finish':'ob-next')+'">'+(onboardingStep===7?'Create my plan':'Continue')+' →</button></div><div class="ob-privacy">🔒 Saved in this browser for this preview.</div></section></div>';
+ app.innerHTML=shellStart+setup+shellEnd;
+ bindOnboarding();
+}
+function bindOnboarding(){
+ var skip=document.querySelector('[data-action="ob-skip"]');
+ if(skip)skip.onclick=function(){saveOnboardingFields();finishOnboarding(true);};
+ var start=document.querySelector('[data-action="ob-start"]');
+ if(start)start.onclick=function(){onboardingStep=1;renderOnboarding();};
+ var card=document.getElementById('ob-card');if(!card)return;
+ card.querySelectorAll('[data-persona]').forEach(function(b){b.onclick=function(){saveOnboardingFields();selectedPersona=b.dataset.persona;renderOnboarding();};});
+ card.querySelectorAll('[data-goal]').forEach(function(b){b.onclick=function(){saveOnboardingFields();var id=b.dataset.goal;var i=selectedGoals.indexOf(id);if(i>=0)selectedGoals.splice(i,1);else if(selectedGoals.length<3)selectedGoals.push(id);else showToast('Choose up to 3 goals.');renderOnboarding();};});
+ card.querySelectorAll('[data-cadence]').forEach(function(b){b.onclick=function(){saveOnboardingFields();allowanceCadence=b.dataset.cadence;renderOnboarding();};});
+ card.querySelectorAll('[data-payday]').forEach(function(b){b.onclick=function(){saveOnboardingFields();payday=b.dataset.payday;renderOnboarding();};});
+ card.querySelectorAll('[data-source]').forEach(function(b){b.onclick=function(){saveOnboardingFields();var id=b.dataset.source;var i=selectedSources.indexOf(id);if(i>=0)selectedSources.splice(i,1);else selectedSources.push(id);renderOnboarding();};});
+ card.querySelectorAll('[data-balance-preset]').forEach(function(b){b.onclick=function(){saveOnboardingFields();state.balance=Number(b.dataset.balancePreset);renderOnboarding();};});
+ card.querySelectorAll('[data-saving-preset]').forEach(function(b){b.onclick=function(){saveOnboardingFields();state.savingsTarget=Number(b.dataset.savingPreset);renderOnboarding();};});
+ card.querySelector('[data-action="ob-next"]')?.addEventListener('click',nextOnboarding);
+ card.querySelector('[data-action="ob-back"]')?.addEventListener('click',function(){saveOnboardingFields();onboardingStep=Math.max(0,onboardingStep-1);renderOnboarding();});
+ card.querySelector('[data-action="ob-finish"]')?.addEventListener('click',function(){saveOnboardingFields();finishOnboarding(false);});
+ card.querySelector('#ob-savings')?.addEventListener('input',function(e){state.savingsTarget=Math.max(0,Number(e.target.value)||0);var v=document.getElementById('ob-save-value');if(v)v.textContent=fmt(state.savingsTarget);updateSavingsFeedback();});
+ card.querySelectorAll('[data-plan]').forEach(function(inp){inp.addEventListener('input',updatePlanSummary);});
+}
+function saveOnboardingFields(){
+ var name=document.getElementById('ob-name');if(name)profile.name=name.value.trim();
+ var bal=document.getElementById('ob-balance');if(bal)state.balance=Math.max(0,Number(bal.value)||0);
+ var allowance=document.getElementById('ob-allowance');if(allowance)state.allowance=Math.max(0,Number(allowance.value)||0);
+ var savings=document.getElementById('ob-savings');if(savings)state.savingsTarget=Math.max(0,Number(savings.value)||0);
+ document.querySelectorAll('[data-need]').forEach(function(el){weeklyNeeds[el.dataset.need]=Math.max(0,Number(el.value)||0);});
+ document.querySelectorAll('[data-plan]').forEach(function(el){planValues[el.dataset.plan]=Math.max(0,Number(el.value)||0);});
+}
+function nextOnboarding(){
+ saveOnboardingFields();
+ if(onboardingStep===1){if(!(profile.name||'').trim())profile.name='Student';onboardingStep=2;renderOnboarding();return;}
+ if(onboardingStep===2){if(!selectedGoals.length){showToast('Choose at least one goal.');return;}onboardingStep=3;renderOnboarding();return;}
+ if(onboardingStep===3){if(Number(state.allowance)<1){showToast('Add income or choose “It varies” and enter a realistic estimate.');return;}onboardingStep=4;renderOnboarding();return;}
+ if(onboardingStep===4){onboardingStep=5;renderOnboarding();return;}
+ if(onboardingStep===5){onboardingStep=6;renderOnboarding();return;}
+ if(onboardingStep===6){onboardingStep=7;renderOnboarding();return;}
+ finishOnboarding(false);
+}
+function updateSavingsFeedback(){
+ var el=document.getElementById('savings-feedback');if(!el)return;
+ var income=Math.max(0,Number(state.allowance)||10000),s=Math.max(0,Number(state.savingsTarget)||0),p=income?Math.round(s/income*100):0;
+ el.innerHTML='<span>🎯</span><div><b>'+p+'% of your income</b><small>'+(p<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div>';
+}
+function updatePlanSummary(){
+ var total=0;document.querySelectorAll('[data-plan]').forEach(function(el){var n=Math.max(0,Number(el.value)||0);planValues[el.dataset.plan]=n;total+=n;});
+ var savings=Math.max(0,Number(state.savingsTarget)||0),income=Math.max(0,Number(state.allowance)||10000),allocated=total+savings,left=income-allocated,over=Math.max(0,-left);
+ var t=document.getElementById('plan-total'),a=document.getElementById('plan-allocated'),box=document.getElementById('plan-balance-alert'),copy=document.getElementById('plan-balance-copy');
+ if(t)t.textContent=fmt(total);if(a)a.textContent=fmt(allocated);
+ if(box){box.className='needs-alert '+(over?'warning':'good');box.querySelector('span').textContent=over?'⚠️':'✅';box.querySelector('b').textContent=over?'This plan is over your income.':'Your plan balances.';}
+ if(copy)copy.textContent=over?'Reduce allocations by '+fmt(over)+' or update your income.':fmt(left)+' left unallocated. Keep it for flexibility or add it to a category.';
+}
+function finishOnboarding(skip){
+ saveOnboardingFields();
+ if(!profile.name)profile.name='Student';
+ profile.persona=selectedPersona;profile.payday=payday;profile.moneySources=selectedSources.slice();
+ profile.weeklyNeeds=Object.assign({},weeklyNeeds);
+ profile.weeklyIncome=Math.max(0,Number(state.allowance)||0);
+ profile.weeklySavingsGoal=Math.max(0,Number(state.savingsTarget)||0);
+ if(!selectedGoals.length)selectedGoals=['emergency'];
+ state.cadence=allowanceCadence;state.payday=payday;
+ state.savingsTarget=Math.max(0,Number(state.savingsTarget)||0);
+ state.weeklyNeeds=Object.assign({},weeklyNeeds);
+ state.weeklyPlan=Object.assign({},planValues);
+ state.budget={
+  Food:Number(planValues.Food)||0,
+  Transport:Number(planValues.Transport)||0,
+  'Airtime & data':Number(planValues['Airtime & data'])||0,
+  School:Number(planValues['School / personal'])||0,
+  Housing:0,
+  Other:Number(planValues['Emergency buffer'])||0
+ };
+ state.budgetPeriod='weekly';
+ state.goals=selectedGoals.map(function(id){var g=goalOptions.find(function(x){return x.id===id;})||goalOptions[0];return {id:id,name:g.title.replace('Build a safety cushion','Emergency cushion'),target:g.target,saved:0,emoji:g.emoji};});
+ state.onboarded=true;state.tutorialDone=false;persist();
+ app.classList.add('celebrate');launchConfetti();page='dashboard';renderApp();if(!skip){tourStep=0;renderTour();}else{state.tutorialDone=true;persist();}
+}
+
+
+/* Focused, personalized onboarding override */
+var onboardingStep=0;
+selectedGoals=['emergency','school'];
+selectedPersona='student';
+allowanceCadence='weekly';
+var payday='Tuesday';
+var selectedSources=['cash','orange','mtn'];
+var weeklyNeeds={'Food':5000,'Transport':2400,'Airtime & data':3500,'School / personal':1000,'Other':0,'Debt owed':0};
+var planValues={'Food':3500,'Transport':1500,'Airtime & data':1000,'School / personal':1000,'Emergency buffer':1000};
+
+function renderOnboarding(){
+ var shellStart='<main class="onboarding"><header class="ob-top">'+brand()+'<button class="button ghost small" data-action="ob-skip">Skip setup</button></header>';
+ var shellEnd='<footer class="ob-bottom"><span>YOUR MONEY. YOUR NEXT MOVE.</span><span>FCFA · PRIVATE BY DEFAULT</span></footer></main>';
+ if(onboardingStep===0){
+  var welcome='<section class="ob-welcome-screen screen"><div class="ob-welcome-copy"><div class="eyebrow">MADE FOR STUDENT LIFE · CAMEROON</div><h1>Your money.<br><span class="gradient">Your next move.</span></h1><p>Plan your FCFA, save for what matters, and know where you stand every week.</p><button class="button" data-action="ob-start">Build my money plan <span>→</span></button><div class="ob-welcome-points"><span>🇨🇲 Built for FCFA</span><span>🔒 Private by default</span><span>✨ No judgement</span></div></div><div class="ob-welcome-visual"><img src="./assets/student-onboarding-photo.webp" alt="University student using a phone on campus"><div class="welcome-float one"><span>💸</span><b>10,000 FCFA <small>weekly income</small></b></div><div class="welcome-float two"><span>🎯</span><b>2,000 FCFA <small>weekly savings goal</small></b></div></div></section>';
+  app.innerHTML=shellStart+welcome+shellEnd;bindOnboarding();return;
+ }
+ var totalSteps=7;
+ var income=Math.max(0,Number(state.allowance)||10000);
+ var savings=Math.max(0,Number(state.savingsTarget===undefined?2000:state.savingsTarget)||0);
+ var balance=Math.max(0,Number(state.balance)||0);
+ var weeklySpend=Number(weeklyNeeds.Food||0)+Number(weeklyNeeds.Transport||0)+Number(weeklyNeeds['Airtime & data']||0)+Number(weeklyNeeds['School / personal']||0)+Number(weeklyNeeds.Other||0);
+ var spendAfterSavings=Math.max(0,income-savings);
+ var gap=Math.max(0,weeklySpend-spendAfterSavings);
+ var percent=income?Math.round(savings/income*100):0;
+ var stepTitle='',stepCopy='',stepBody='';
+ var progress=Math.min(100,Math.round(onboardingStep/totalSteps*100));
+ if(onboardingStep===1){
+  stepTitle='Tell us about you';
+  stepCopy='We’ll make your money space fit your life.';
+  stepBody='<label class="field">YOUR FIRST NAME <small>OPTIONAL</small><input id="ob-name" maxlength="40" value="'+esc(profile.name||'')+'" placeholder="e.g. Alex"></label><div class="field-label-static">WHICH DESCRIBES YOU BEST?</div><div class="choice-list">'+[
+   ['student','🎓','University student','I’m studying right now.'],
+   ['hustler','💻','Student + side hustle','I study and earn too.'],
+   ['young-pro','💼','Young professional','I work and earn regularly.'],
+   ['entrepreneur','🚀','Student entrepreneur','I’m building a business.']
+  ].map(function(p){return '<button class="choice '+(selectedPersona===p[0]?'selected':'')+'" data-persona="'+p[0]+'"><span class="choice-icon">'+p[1]+'</span><span class="choice-copy"><b>'+p[2]+'</b><small>'+p[3]+'</small></span><span class="checkmark">✓</span></button>';}).join('')+'</div>';
+ }else if(onboardingStep===2){
+  stepTitle='What are your goals?';
+  stepCopy='Choose up to 3. You can change them later.';
+  stepBody='<div class="goal-grid">'+goalOptions.map(function(g){var sel=selectedGoals.indexOf(g.id)>=0;return '<button class="goal-choice '+(sel?'selected':'')+'" data-goal="'+g.id+'"><span class="checkmark">'+(sel?'✓':'')+'</span><span class="g-emoji">'+g.emoji+'</span><b>'+g.title+'</b><small>'+g.detail+'</small></button>';}).join('')+'</div><div class="hint">Pick the goals that matter most to you right now.</div>';
+ }else if(onboardingStep===3){
+  stepTitle='How do you receive money?';
+  stepCopy='We’ll plan around your real payday.';
+  stepBody='<div class="field-label-static">HOW OFTEN?</div><div class="cadence-options">'+[['weekly','Every week'],['monthly','Every month'],['irregular','It varies']].map(function(v){return '<button type="button" class="'+(allowanceCadence===v[0]?'cadence-selected':'')+'" data-cadence="'+v[0]+'">'+v[1]+'</button>';}).join('')+'</div><label class="field">TYPICAL INCOME / ALLOWANCE<div class="onboard-amount"><input id="ob-allowance" type="number" min="0" max="100000000" step="500" value="'+income+'" inputmode="numeric"><span>FCFA</span></div></label><div class="field-label-static">'+(allowanceCadence==='weekly'?'WHICH DAY DOES IT ARRIVE?':'WHICH DAY SHOULD WE USE FOR REMINDERS?')+'</div><div class="weekday-grid">'+['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(function(d){return '<button type="button" class="'+(payday===d?'active':'')+'" data-payday="'+d+'">'+d.slice(0,3)+'</button>';}).join('')+'</div><div class="info-strip">📅 <span>We’ll use <b>'+esc(payday)+'</b> for your payday plan and reminder settings.</span></div>';
+ }else if(onboardingStep===4){
+  stepTitle='How much do you have now?';
+  stepCopy='Add everything you can access. Estimates are okay.';
+  var sourceDefs=[['cash','💵','Cash'],['orange','🟠','Orange Money'],['mtn','🟡','MTN MoMo'],['bank','🏦','Bank account']];
+  stepBody='<div class="balance-entry"><div class="mini-label">TOTAL AVAILABLE MONEY</div><div class="onboard-amount big"><input id="ob-balance" type="number" min="0" max="100000000" step="100" value="'+balance+'" inputmode="numeric"><span>FCFA</span></div><div class="quick-amounts">'+[0,5000,10000,25000].map(function(v){return '<button type="button" data-balance-preset="'+v+'">'+(v===0?'0':shortMoney(v))+'</button>';}).join('')+'</div></div><div class="field-label-static">WHERE DO YOU KEEP YOUR MONEY?</div><div class="source-grid">'+sourceDefs.map(function(s){var yes=selectedSources.indexOf(s[0])>=0;return '<button type="button" class="source-choice '+(yes?'selected':'')+'" data-source="'+s[0]+'"><span>'+s[1]+'</span><b>'+s[2]+'</b><i>'+(yes?'✓':'+')+'</i></button>';}).join('')+'</div><div class="hint">We’ll record your total for now. No wallet or bank account is connected.</div>';
+ }else if(onboardingStep===5){
+  stepTitle='How much do you want to save?';
+  stepCopy='Start small. Consistency wins.';
+  var target=state.savingsTarget===undefined?2000:Number(state.savingsTarget);
+  stepBody='<div class="savings-hero"><div class="mini-label">WEEKLY SAVINGS GOAL</div><div class="range-value"><span id="ob-save-value">'+fmt(target)+'</span></div><input id="ob-savings" type="range" min="0" max="10000" step="500" value="'+target+'"><div class="range-labels"><span>0 FCFA</span><span>10,000 FCFA</span></div><div class="savings-presets">'+[500,1000,2000,3000,5000].map(function(v){return '<button type="button" class="'+(target===v?'active':'')+'" data-saving-preset="'+v+'">'+shortMoney(v)+'</button>';}).join('')+'</div></div><div class="savings-feedback" id="savings-feedback"><span>🎯</span><div><b>'+percent+'% of your income</b><small>'+(percent<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div></div><div class="info-strip">💡 <span>At 2,000 FCFA per week, you’d save about <b>104,000 FCFA in a year</b> if you stay consistent.</span></div>';
+ }else if(onboardingStep===6){
+  stepTitle='What do you usually need?';
+  stepCopy='Let’s use your real costs, not guesses.';
+  var needRows=[
+   ['Food','🍲','Food / week','Based on your estimate'],['Transport','🚌','Transport / week','Getting around'],['Airtime & data','📱','Internet & airtime / week','Based on 1,000 FCFA every 2 days'],['School / personal','📚','School & personal / week','Starter estimate · edit anytime'],['Other','✨','Other costs / week','Regular extras'],['Debt owed','🧾','Total debts you owe','Outstanding total, not weekly spending']
+  ];
+  stepBody='<div class="needs-grid">'+needRows.map(function(n){var val=Number(weeklyNeeds[n[0]]||0);return '<label class="need-field"><span class="need-icon">'+n[1]+'</span><span class="need-label"><b>'+n[2]+'</b><small>'+n[3]+'</small></span><span class="need-input-wrap"><input type="number" min="0" max="100000000" step="100" inputmode="numeric" data-need="'+n[0]+'" value="'+val+'"><small>FCFA</small></span></label>';}).join('')+'</div><div class="needs-summary"><span>Estimated weekly needs</span><b>'+fmt(weeklySpend)+'</b></div><div class="needs-alert '+(gap?'warning':'good')+'"><span>'+(gap?'⚠️':'✅')+'</span><div><b>'+(gap?'Your current estimate is above your target.':'Your weekly target looks workable.')+'</b><small>'+(gap?'After saving '+fmt(savings)+', your spending target is '+fmt(spendAfterSavings)+'. The numbers entered are '+fmt(gap)+' above that, before debt repayments. We’ll create an adjustable plan next.':'Your entered weekly needs fit within the money available after savings.')+'</small></div></div>';
+ }else{
+  stepTitle='Here’s your first budget plan';
+  stepCopy='A starting point. Adjust any amount.';
+  var planItems=[
+   ['Food','🍲','Food and meals'],['Transport','🚌','Getting around'],['Airtime & data','📱','Internet & airtime'],['School / personal','📚','School and personal'],['Emergency buffer','🛟','Keep a little aside']
+  ];
+  var planTotal=planItems.reduce(function(sum,p){return sum+Number(planValues[p[0]]||0);},0);
+  var over=Math.max(0,planTotal+savings-income),left=income-planTotal-savings;
+  stepBody='<div class="plan-summary-top"><div><small>WEEKLY INCOME</small><b>'+fmt(income)+'</b></div><div><small>SAVINGS GOAL</small><b>'+fmt(savings)+'</b></div></div><div class="plan-list">'+planItems.map(function(p){return '<label class="plan-row"><span class="plan-icon">'+p[1]+'</span><span class="plan-label"><b>'+p[0]+'</b><small>'+p[2]+'</small></span><span class="plan-value"><input type="number" min="0" max="100000000" step="100" inputmode="numeric" data-plan="'+p[0]+'" value="'+Number(planValues[p[0]]||0)+'"><small>FCFA</small></span></label>';}).join('')+'</div><div class="plan-total"><span>Planned spending</span><b id="plan-total">'+fmt(planTotal)+'</b></div><div class="plan-total savings"><span>Weekly savings</span><b>'+fmt(savings)+'</b></div><div class="plan-total final"><span>Total allocated</span><b id="plan-allocated">'+fmt(planTotal+savings)+'</b></div><div class="needs-alert '+(over?'warning':'good')+'" id="plan-balance-alert"><span>'+(over?'⚠️':'✅')+'</span><div><b>'+(over?'This plan is over your income.':'Your plan balances.')+'</b><small id="plan-balance-copy">'+(over?'Reduce allocations by '+fmt(over)+' or update your income.':fmt(Math.max(0,left))+' left unallocated. Keep it for flexibility or add it to a category.')+'</small></div></div><div class="info-strip">🧠 <span>Your estimated needs are <b>'+fmt(weeklySpend)+'/week</b>. This is a suggested target, not a promise that every cost will fit.</span></div>';
+ }
+ var sideTitle=onboardingStep===1?'Let’s make this yours.':onboardingStep===2?'Make room for what matters.':onboardingStep===3?'Plan around payday.':onboardingStep===4?'Know what you have.':onboardingStep===5?'Small steps build freedom.':onboardingStep===6?'Real numbers. Better plans.':'Your first plan, made for you.';
+ var sideCopy=onboardingStep===6?'We’ll compare what you need with what comes in.':onboardingStep===7?'Your plan stays editable as life changes.':'A money space that fits student life in Cameroon.';
+ var sideMetrics='<div class="on-side-metrics"><div><small>WEEKLY INCOME</small><b>'+fmt(income)+'</b></div><div><small>SAVINGS GOAL</small><b>'+fmt(savings)+'</b></div></div>';
+ var setup='<div class="ob-body screen"><section class="ob-photo-panel"><img src="./assets/student-onboarding-photo.webp" alt="University student using a phone on campus"><div class="ob-photo-overlay"><span class="ob-photo-tag">YOUR MONEY, YOUR FUTURE</span><h2>'+sideTitle+'</h2><p>'+sideCopy+'</p>'+sideMetrics+'</div></section><section class="ob-card" id="ob-card"><div class="ob-progress-top"><span>SET UP YOUR MONEY</span><strong>'+onboardingStep+' / '+totalSteps+'</strong></div><div class="progress-track"><i style="width:'+progress+'%"></i></div><div class="ob-step-icon">'+({1:'👋🏽',2:'🎯',3:'🗓️',4:'💸',5:'🌱',6:'🧾',7:'✨'})[onboardingStep]+'</div><h2>'+stepTitle+'</h2><p class="ob-sub">'+stepCopy+'</p>'+stepBody+'<div class="ob-footer"><button class="button ghost" data-action="ob-back">← Back</button><div class="step-dots">'+['Profile','Goals','Income','Balance','Savings','Needs','Plan'].map(function(_,i){return '<span class="'+(i+1===onboardingStep?'active':'')+'"></span>';}).join('')+'</div><button class="button" data-action="'+(onboardingStep===7?'ob-finish':'ob-next')+'">'+(onboardingStep===7?'Create my plan':'Continue')+' →</button></div><div class="ob-privacy">🔒 Saved in this browser for this preview.</div></section></div>';
+ app.innerHTML=shellStart+setup+shellEnd;
+ bindOnboarding();
+}
+function bindOnboarding(){
+ var skip=document.querySelector('[data-action="ob-skip"]');
+ if(skip)skip.onclick=function(){saveOnboardingFields();finishOnboarding(true);};
+ var start=document.querySelector('[data-action="ob-start"]');
+ if(start)start.onclick=function(){onboardingStep=1;renderOnboarding();};
+ var card=document.getElementById('ob-card');if(!card)return;
+ card.querySelectorAll('[data-persona]').forEach(function(b){b.onclick=function(){saveOnboardingFields();selectedPersona=b.dataset.persona;renderOnboarding();};});
+ card.querySelectorAll('[data-goal]').forEach(function(b){b.onclick=function(){saveOnboardingFields();var id=b.dataset.goal;var i=selectedGoals.indexOf(id);if(i>=0)selectedGoals.splice(i,1);else if(selectedGoals.length<3)selectedGoals.push(id);else showToast('Choose up to 3 goals.');renderOnboarding();};});
+ card.querySelectorAll('[data-cadence]').forEach(function(b){b.onclick=function(){saveOnboardingFields();allowanceCadence=b.dataset.cadence;renderOnboarding();};});
+ card.querySelectorAll('[data-payday]').forEach(function(b){b.onclick=function(){saveOnboardingFields();payday=b.dataset.payday;renderOnboarding();};});
+ card.querySelectorAll('[data-source]').forEach(function(b){b.onclick=function(){saveOnboardingFields();var id=b.dataset.source;var i=selectedSources.indexOf(id);if(i>=0)selectedSources.splice(i,1);else selectedSources.push(id);renderOnboarding();};});
+ card.querySelectorAll('[data-balance-preset]').forEach(function(b){b.onclick=function(){saveOnboardingFields();state.balance=Number(b.dataset.balancePreset);renderOnboarding();};});
+ card.querySelectorAll('[data-saving-preset]').forEach(function(b){b.onclick=function(){saveOnboardingFields();state.savingsTarget=Number(b.dataset.savingPreset);renderOnboarding();};});
+ card.querySelector('[data-action="ob-next"]')?.addEventListener('click',nextOnboarding);
+ card.querySelector('[data-action="ob-back"]')?.addEventListener('click',function(){saveOnboardingFields();onboardingStep=Math.max(0,onboardingStep-1);renderOnboarding();});
+ card.querySelector('[data-action="ob-finish"]')?.addEventListener('click',function(){saveOnboardingFields();finishOnboarding(false);});
+ card.querySelector('#ob-savings')?.addEventListener('input',function(e){state.savingsTarget=Math.max(0,Number(e.target.value)||0);var v=document.getElementById('ob-save-value');if(v)v.textContent=fmt(state.savingsTarget);updateSavingsFeedback();});
+ card.querySelectorAll('[data-plan]').forEach(function(inp){inp.addEventListener('input',updatePlanSummary);});
+}
+function saveOnboardingFields(){
+ var name=document.getElementById('ob-name');if(name)profile.name=name.value.trim();
+ var bal=document.getElementById('ob-balance');if(bal)state.balance=Math.max(0,Number(bal.value)||0);
+ var allowance=document.getElementById('ob-allowance');if(allowance)state.allowance=Math.max(0,Number(allowance.value)||0);
+ var savings=document.getElementById('ob-savings');if(savings)state.savingsTarget=Math.max(0,Number(savings.value)||0);
+ document.querySelectorAll('[data-need]').forEach(function(el){weeklyNeeds[el.dataset.need]=Math.max(0,Number(el.value)||0);});
+ document.querySelectorAll('[data-plan]').forEach(function(el){planValues[el.dataset.plan]=Math.max(0,Number(el.value)||0);});
+}
+function nextOnboarding(){
+ saveOnboardingFields();
+ if(onboardingStep===1){if(!(profile.name||'').trim())profile.name='Student';onboardingStep=2;renderOnboarding();return;}
+ if(onboardingStep===2){if(!selectedGoals.length){showToast('Choose at least one goal.');return;}onboardingStep=3;renderOnboarding();return;}
+ if(onboardingStep===3){if(Number(state.allowance)<1){showToast('Add income or choose “It varies” and enter a realistic estimate.');return;}onboardingStep=4;renderOnboarding();return;}
+ if(onboardingStep===4){onboardingStep=5;renderOnboarding();return;}
+ if(onboardingStep===5){onboardingStep=6;renderOnboarding();return;}
+ if(onboardingStep===6){onboardingStep=7;renderOnboarding();return;}
+ finishOnboarding(false);
+}
+function updateSavingsFeedback(){
+ var el=document.getElementById('savings-feedback');if(!el)return;
+ var income=Math.max(0,Number(state.allowance)||10000),s=Math.max(0,Number(state.savingsTarget)||0),p=income?Math.round(s/income*100):0;
+ el.innerHTML='<span>🎯</span><div><b>'+p+'% of your income</b><small>'+(p<=20?'A steady goal that leaves more room for weekly needs.':'A bigger target. We’ll check if it fits your weekly expenses.')+'</small></div>';
+}
+function updatePlanSummary(){
+ var total=0;document.querySelectorAll('[data-plan]').forEach(function(el){var n=Math.max(0,Number(el.value)||0);planValues[el.dataset.plan]=n;total+=n;});
+ var savings=Math.max(0,Number(state.savingsTarget)||0),income=Math.max(0,Number(state.allowance)||10000),allocated=total+savings,left=income-allocated,over=Math.max(0,-left);
+ var t=document.getElementById('plan-total'),a=document.getElementById('plan-allocated'),box=document.getElementById('plan-balance-alert'),copy=document.getElementById('plan-balance-copy');
+ if(t)t.textContent=fmt(total);if(a)a.textContent=fmt(allocated);
+ if(box){box.className='needs-alert '+(over?'warning':'good');box.querySelector('span').textContent=over?'⚠️':'✅';box.querySelector('b').textContent=over?'This plan is over your income.':'Your plan balances.';}
+ if(copy)copy.textContent=over?'Reduce allocations by '+fmt(over)+' or update your income.':fmt(left)+' left unallocated. Keep it for flexibility or add it to a category.';
+}
+function finishOnboarding(skip){
+ saveOnboardingFields();
+ if(!profile.name)profile.name='Student';
+ profile.persona=selectedPersona;profile.payday=payday;profile.moneySources=selectedSources.slice();
+ profile.weeklyNeeds=Object.assign({},weeklyNeeds);
+ profile.weeklyIncome=Math.max(0,Number(state.allowance)||0);
+ profile.weeklySavingsGoal=Math.max(0,Number(state.savingsTarget)||0);
+ if(!selectedGoals.length)selectedGoals=['emergency'];
+ state.cadence=allowanceCadence;state.payday=payday;
+ state.savingsTarget=Math.max(0,Number(state.savingsTarget)||0);
+ state.weeklyNeeds=Object.assign({},weeklyNeeds);
+ state.weeklyPlan=Object.assign({},planValues);
+ state.budget={
+  Food:Number(planValues.Food)||0,
+  Transport:Number(planValues.Transport)||0,
+  'Airtime & data':Number(planValues['Airtime & data'])||0,
+  School:Number(planValues['School / personal'])||0,
+  Housing:0,
+  Other:Number(planValues['Emergency buffer'])||0
+ };
+ state.budgetPeriod='weekly';
+ state.goals=selectedGoals.map(function(id){var g=goalOptions.find(function(x){return x.id===id;})||goalOptions[0];return {id:id,name:g.title.replace('Build a safety cushion','Emergency cushion'),target:g.target,saved:0,emoji:g.emoji};});
+ state.onboarded=true;state.tutorialDone=false;persist();
+ app.classList.add('celebrate');launchConfetti();page='dashboard';renderApp();if(!skip){tourStep=0;renderTour();}else{state.tutorialDone=true;persist();}
+}
+
 if(state.onboarded){page='dashboard';renderApp();if(!state.tutorialDone){tourStep=0;renderTour();}}else{state.balance=state.balance||5000;state.allowance=state.allowance||10000;state.budget=state.budget||Object.assign({},categoryDefaults);if(!Array.isArray(selectedGoals)||!selectedGoals.length)selectedGoals=['emergency','school'];renderOnboarding();}
 if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){navigator.serviceWorker.register('./sw.js').catch(function(){});}
 })();
