@@ -199,7 +199,22 @@ function transactionMatchesFilter(t,filter){
  return filter==='all'||(filter==='savings'?t.type==='transfer':t.type===filter);
 }
 function weeklyAllowance(){if(state.cadence==='monthly')return Math.round(state.allowance/4.33);if(state.cadence==='irregular')return state.allowance;return state.allowance;}
-function categoryFor(text){var s=String(text||'').toLowerCase();if(/food|lunch|dinner|breakfast|bread|meal|restaurant|chop|snack|drink/.test(s))return 'Food';if(/taxi|transport|bus|bike|ride|fuel|car/.test(s))return 'Transport';if(/airtime|data bundle|internet|mtn|orange money|wifi|megabyte/.test(s))return 'Airtime & data';if(/school|book|print|exam|course|tuition|photocopy|note/.test(s))return 'School';if(/rent|room|house|water|electricity|light bill/.test(s))return 'Housing';return 'Other';}
+function categoryFor(text){
+ var s=String(text||'').toLowerCase();
+ if(/food|lunch|dinner|breakfast|bread|meal|restaurant|chop|snack|drink|nourriture|repas|déjeuner|dejeuner|dîner|diner|petit-déjeuner|pain|beignet|boisson|manger/.test(s))return 'Food';
+ if(/taxi|transport|bus|bike|ride|fuel|car|moto|mototaxi|essence|carburant|trajet|déplacement|deplacement/.test(s))return 'Transport';
+ if(/airtime|data bundle|internet|mtn|orange money|wifi|megabyte|forfait|connexion|crédit téléphonique|credit telephonique|méga|mega/.test(s))return 'Airtime & data';
+ if(/school|book|print|exam|course|tuition|photocopy|note|école|ecole|scolarité|scolarite|cahier|livre|impression|photocopie|examen|frais scolaires|frais de scolarité/.test(s))return 'School';
+ if(/rent|room|house|water|electricity|light bill|loyer|chambre|logement|eau|électricité|electricite|facture/.test(s))return 'Housing';
+ return 'Other';
+}
+function extractAmount(text){
+ var source=String(text||'').replace(/\u00a0/g,' ');
+ var match=source.match(/(?:^|[^\d])(\d{1,3}(?:[ .,,'’]\d{3})+|\d+)(?:\s*(?:fcfa|xaf|frs))?/i);
+ if(!match)return 0;
+ var amount=Number(String(match[1]).replace(/\D/g,''));
+ return Number.isFinite(amount)?Math.round(amount):0;
+}
 function brand(){return '<div class="brand"><div class="brand-symbol">✳</div><div>Money, made clearer.<small>STUDENT MONEY · CAMEROON</small></div></div>';}
 function launchConfetti(){var colors=['#6558ed','#ff9c72','#5dce9c','#ffc95d','#e975ad'];for(var i=0;i<26;i++){var el=document.createElement('i');el.className='confetti';el.style.left=(Math.random()*100)+'vw';el.style.background=colors[i%colors.length];el.style.animationDelay=(Math.random()*.55)+'s';el.style.transform='rotate('+(Math.random()*120)+'deg)';document.body.appendChild(el);setTimeout(function(x){x.remove();},1800,el);}}
 function showToast(text){toastRoot.innerHTML='<div class="toast" role="status">'+esc(text)+'</div>';setTimeout(function(){toastRoot.innerHTML='';},2800);}
@@ -378,7 +393,7 @@ function sendMessage(preset){
  chatMessages.push({role:'user',text:text});var reply=moneyReply(text);chatMessages.push({role:'assistant',text:reply});if(chatMessages.length>28)chatMessages=chatMessages.slice(-28);page='coach';renderApp();var box=document.getElementById('messages');if(box)box.scrollTop=box.scrollHeight;
 }
 function basicMoneyReply(text){
- var s=text.toLowerCase(),m=s.replace(/,/g,'').match(/(\d+(?:\.\d+)?)\s*(?:fcfa|xaf|frs)?/i),amount=m?Math.round(Number(m[1])):0;
+ var s=String(text||'').toLowerCase(),amount=extractAmount(text);
  if(amount&&/\b(spent|paid|bought|used|cost me|expense|lunch|taxi|food|data bundle)\b/.test(s)){var cat=categoryFor(text);addTransaction(text,amount,'expense',cat);return 'Got it — I added '+fmt(amount)+' to '+cat+'. Please check the entry in Activity if the description or category needs changing. Small steps help your money picture stay honest. ✅';}
  if(amount&&/\b(received|earned|allowance|salary|got paid|sold|income|made)\b/.test(s)){addTransaction(text,amount,'income','Income');return 'Nice! I recorded '+fmt(amount)+' as money in. 🎉 You can now see it in your balance and recent activity.';}
  if(/\b(afford|buy|purchase|should i get|can i get)\b/.test(s)){
@@ -485,11 +500,42 @@ function coachGuidancePanel(){
  return '<section class="coach-guidance"><div class="coach-guidance-top"><div><div class="mini-label">YOUR PERSONAL MONEY PLAN</div><h2>Advice for your real life.</h2></div><span class="pill">Goal-based</span></div><div class="coach-guidance-grid"><div class="coach-guidance-card"><span class="coach-card-icon">🧭</span><div class="mini-label">TODAY’S FOCUS</div><p>'+esc(a.focus)+'</p></div><div class="coach-guidance-card goal-advice"><span class="coach-card-icon">🎯</span><div class="mini-label">YOUR GOAL · '+esc(a.goalName.toUpperCase())+'</div><p>'+esc(a.goalAdvice)+'</p></div></div><div class="coach-prompt-row">'+prompts.map(function(p){return '<button type="button" data-prompt="'+esc(p)+'">✦ '+esc(p)+'</button>';}).join('')+'</div><div class="coach-rule-note">Personalized from your saved goals, budget and recorded spending. This prototype uses local rules, not a connected AI model.</div></section>';
 }
 function moneyReply(text){
- var s=String(text||'').toLowerCase(),a=moneyAdviceSnapshot();
+ var s=String(text||'').toLowerCase(),a=moneyAdviceSnapshot(),amount=extractAmount(text);
+ var frenchExpense=/j['’ ]?ai\s+(?:dépens|depens|payé|paye|acheté|achete|pris|commandé|commande)|(?:dépensé|depense|dépense|payé|payee|acheté)\s+\d+/.test(s);
+ var frenchIncome=/j['’ ]?ai\s+(?:reçu|recu|gagné|gagne|encaissé|encaisse|vendu)|argent de poche|salaire|allocation|revenu reçu|paiement reçu/.test(s);
+ if(amount&&frenchExpense){
+  var cat=categoryFor(text);addTransaction(text,amount,'expense',cat);
+  return 'C’est noté : '+fmt(amount)+' enregistrés dans « '+cat+' ». ✅ Continue à noter tes petites dépenses aussi — c’est comme ça que ton budget devient utile.';
+ }
+ if(amount&&frenchIncome){
+  addTransaction(text,amount,'income','Income');
+  return 'Bien joué ! J’ai enregistré '+fmt(amount)+' comme argent reçu. 🎉 Ton solde et ton activité sont à jour.';
+ }
+ if(/discipline|habitude|routine|gaspill|dépenser moins|depense moins|maîtriser mon argent|maitriser mon argent|mieux gérer|mieux gerer|achat impulsif|motivation|conseil/.test(s)){
+  return 'On va rendre la discipline simple. 💛 '+a.focus+'\n\nTon objectif principal est « '+a.goalName+' ». '+a.goalAdvice+'\n\nPour aujourd’hui : note chaque dépense, attends 24 heures avant un achat non essentiel, puis vérifie ton objectif ce soir. Ton objectif d’épargne est de '+fmt(a.savingsTarget)+' par semaine. La régularité compte plus que la perfection.';
+ }
+ if(amount&&/est-ce que je peux|puis-je|je peux me permettre|je peux acheter|acheter|achat|abordable|ça vaut|ca vaut|devrais-je/.test(s)){
+  var after=Number(state.balance||0)-amount,buffer=3000;
+  if(after<0)return 'Tu veux acheter quelque chose à '+fmt(amount)+', mais ton solde enregistré est de '+fmt(state.balance)+'. Il manquerait '+fmt(Math.abs(after))+'. Le choix le plus prudent est d’attendre, d’épargner ou de vérifier si tu as d’autres fonds non enregistrés.';
+  if(after<buffer)return 'C’est peut-être possible, mais il ne resterait que '+fmt(after)+'. C’est moins que la réserve indicative de 3 000 FCFA. Vérifie d’abord nourriture, transport, internet et les paiements qui arrivent. 💛';
+  return 'Après cet achat, il resterait environ '+fmt(after)+'. Sur le papier, ça semble possible ; vérifie quand même que tes besoins essentiels et tes paiements à venir sont couverts. C’est une estimation basée sur ton solde saisi.';
+ }
+ if(/où va|ou va|où part|ou part|dépense|depense|dépenses|depenses|argent part|catégorie|categorie|mes dépenses|mes depenses/.test(s)){
+  var frTotals=Object.keys(state.budget).map(function(c){return {name:c,total:budgetSpent(c)};}).sort(function(x,y){return y.total-x.total;}),frTop=frTotals[0];
+  return frTop&&frTop.total?'Ta catégorie la plus dépensière cette semaine est '+frTop.name+' avec '+fmt(frTop.total)+'. Compare ce montant à ta limite et décide d’un petit ajustement pour les prochains jours.':'Je n’ai pas encore de dépenses enregistrées cette semaine. Note quelques achats, même petits, et je t’aiderai à repérer les tendances.';
+ }
+ if(/épargn|epargn|économis|economis|objectif|ordinateur|frais de scolarité|frais scolaires|fonds d'urgence|fonds d’urgence|voyage|entreprise/.test(s)){
+  var frGoal=state.goals[0];
+  if(frGoal)return 'On avance vers « '+frGoal.name+' ». '+a.goalAdvice+'\n\nTon objectif d’épargne est de '+fmt(a.savingsTarget)+' par semaine. Protège d’abord nourriture, transport, école et paiements dus ; baisse temporairement l’objectif si la semaine devient trop serrée.';
+  return 'Crée d’abord un objectif, puis on calculera le montant hebdomadaire à mettre de côté.';
+ }
+ if(/planifier|plan de la semaine|budget|allocation|argent de poche|jour de paie|prochaine paie|semaine prochaine|comment organiser mon argent/.test(s)){
+  return 'Voici une routine simple pour le jour de paie ('+a.payday+') : 1) couvre les besoins essentiels et les dettes dues, 2) mets de côté les '+fmt(a.savingsTarget)+' prévus seulement si c’est raisonnable, 3) répartis le reste dans tes limites hebdomadaires, 4) vérifie ton plan avant la prochaine paie. Solde enregistré : '+fmt(a.balance)+'. Aucun transfert automatique n’est connecté.';
+ }
  if(/\b(disciplin|habit|routine|stay on track|motivat|daily plan|challenge|stop wasting|control my spending|what should i do|personalized advice|advic|feel overwhelmed|impulse)\b/.test(s)){
   return 'Let’s make discipline practical, '+(profile.name||'friend')+'. 💛 '+a.focus+'\n\nYour main goal is “'+a.goalName+'”. '+a.goalAdvice+'\n\nFor today: (1) record every spend, (2) pause 24 hours before a non-essential purchase, and (3) check your goal before bedtime. Your savings target is '+fmt(a.savingsTarget)+' per week, and your usual payday is '+a.payday+'. Aim for consistency, not perfection.';
  }
- if(/\b(reach|achieve|goal|save for|savings plan|laptop|school fees|emergency fund|start a business|travel fund)\b/.test(s)&&/\b(how|help|plan|save|goal|reach|achieve|should|advice|target|for)\b/.test(s)){
+ if(/\b(reach|achieve|goal|save more|spend less|save for|savings plan|laptop|school fees|emergency fund|start a business|travel fund)\b/.test(s)&&/\b(how|help|plan|save|goal|reach|achieve|should|advice|target|for|more|less)\b/.test(s)){
   return 'Let’s work towards “'+a.goalName+'”. '+a.goalAdvice+'\n\nYour planned weekly savings amount is '+fmt(a.savingsTarget)+'. Keep food, transport, school and due payments covered first; if that target makes the week too tight, lower it and stay consistent.';
  }
  if(/\b(plan my allowance|plan my week|payday routine|weekly plan|what should i do today)\b/.test(s)){
