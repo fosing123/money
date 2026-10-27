@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "student-money-shell-";
-const CACHE = "student-money-shell-v12";
+const CACHE = "nkem-shell-v13";
 const SHELL = [
   "./",
   "./index.html",
