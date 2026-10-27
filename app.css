@@ -203,3 +203,12 @@ body[data-palette="midnight"] .goal-idea-copy small,body[data-palette="midnight"
 @media(max-width:900px){.goal-category-rail{grid-template-columns:repeat(2,minmax(0,1fr))}.goal-ideas-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.palette-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.goal-hero-panel{grid-template-columns:minmax(0,1fr);padding:23px;border-radius:22px}.goal-hero-orbit{width:140px;height:140px;margin:0 auto -5px}.goal-hero-orbit>div{width:65px;height:65px;border-radius:22px;font-size:8px}.goal-hero-orbit>span{width:32px;height:32px;font-size:16px}.goal-hero-orbit>span:nth-child(1){left:53px}.goal-hero-orbit>span:nth-child(2){right:0;top:56px}.goal-hero-orbit>span:nth-child(3){left:9px;bottom:12px}.goal-hero-orbit>span:nth-child(4){right:17px;bottom:2px}.goal-category-rail{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.goal-category-chip{padding:9px;gap:7px}.goal-category-chip>span{width:29px;height:29px;font-size:16px}.goal-category-chip b{font-size:9px}.goal-ideas-grid{grid-template-columns:minmax(0,1fr);gap:8px}.goal-idea-card{padding:11px}.goal-section-heading{align-items:start;flex-direction:column}.palette-feature{grid-template-columns:minmax(0,1fr);gap:18px;border-radius:21px}.palette-preview{padding:18px}.palette-grid{gap:8px}.palette-card{padding:10px;border-radius:15px}.palette-card.selected{padding:9px}.palette-swatches{height:42px}.palette-card-name{font-size:10px}.palette-card small{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+/* BACKUP / RESTORE CONTROLS */
+.settings-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.settings-actions .button{min-height:38px}
+.settings-actions input[type=file]{max-width:100%}
+@media(max-width:520px){
+ .settings-actions{display:grid;grid-template-columns:1fr}
+ .settings-actions .button{width:100%;justify-content:center}
+}
