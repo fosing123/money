@@ -12,6 +12,43 @@ var goalOptions=[
  {id:'travel',emoji:'✈️',title:'Save for a trip',detail:'Make a memory',target:100000,color:'pink'},
  {id:'freedom',emoji:'🌱',title:'Feel financially free',detail:'Build better money habits',target:50000,color:'yellow'}
 ];
+var goalCategories=[
+ {id:'education',label:'Education & career',emoji:'🎓',hint:'Fees, books, certifications, exam prep'},
+ {id:'tech',label:'Tech & creative work',emoji:'💻',hint:'Laptop, phone, software, creative tools'},
+ {id:'business',label:'Business & side hustle',emoji:'🚀',hint:'Stock, equipment, first customers'},
+ {id:'health',label:'Health & wellbeing',emoji:'🌿',hint:'Health needs, fitness, personal care'},
+ {id:'independence',label:'Independence & home',emoji:'🏡',hint:'Rent, furniture, moving out'},
+ {id:'family',label:'Family & community',emoji:'🤝',hint:'Support loved ones and community'},
+ {id:'travel',label:'Travel & experiences',emoji:'✈️',hint:'Trips, events, memorable experiences'},
+ {id:'safety',label:'Safety & peace of mind',emoji:'🛟',hint:'Emergency fund and unexpected costs'},
+ {id:'personal',label:'Personal dream',emoji:'✨',hint:'Anything meaningful to you'}
+];
+var goalIdeas=[
+ {id:'fees',category:'education',name:'School fees',emoji:'🎓',target:150000},
+ {id:'cert',category:'education',name:'Certification or exam',emoji:'📜',target:50000},
+ {id:'books',category:'education',name:'Books and study materials',emoji:'📚',target:30000},
+ {id:'laptop',category:'tech',name:'Laptop for my future',emoji:'💻',target:250000},
+ {id:'phone',category:'tech',name:'Phone or creative gear',emoji:'📱',target:120000},
+ {id:'portfolio',category:'tech',name:'Creative tools and portfolio',emoji:'🎨',target:50000},
+ {id:'business-stock',category:'business',name:'First business stock',emoji:'🛍️',target:75000},
+ {id:'business-tools',category:'business',name:'Tools for my side hustle',emoji:'🧰',target:100000},
+ {id:'business-launch',category:'business',name:'Launch my idea',emoji:'🚀',target:50000},
+ {id:'health',category:'health',name:'Health and wellbeing',emoji:'🌿',target:30000},
+ {id:'rent',category:'independence',name:'Moving out / rent fund',emoji:'🏡',target:200000},
+ {id:'home',category:'independence',name:'Room essentials',emoji:'🪴',target:80000},
+ {id:'family',category:'family',name:'Support my family',emoji:'🤝',target:50000},
+ {id:'trip',category:'travel',name:'My next trip',emoji:'✈️',target:100000},
+ {id:'emergency',category:'safety',name:'Emergency cushion',emoji:'🛟',target:30000},
+ {id:'dream',category:'personal',name:'My own big dream',emoji:'✨',target:50000}
+];
+var palettes=[
+ {id:'violet',name:'Dreamy violet',desc:'Creative, confident, modern',colors:['#6658e8','#b8a7ff','#f0edff','#292448']},
+ {id:'ocean',name:'Ocean calm',desc:'Clear, cool, focused',colors:['#087e8b','#5bc0be','#e2f6f5','#143b4a']},
+ {id:'sunset',name:'Sunset glow',desc:'Warm, bold, optimistic',colors:['#e76f51','#f4a261','#fff0df','#5d2d25']},
+ {id:'forest',name:'Forest fresh',desc:'Grounded, peaceful, natural',colors:['#26845b','#7cc8a3','#e4f7ec','#183d2c']},
+ {id:'rose',name:'Rose studio',desc:'Soft, expressive, stylish',colors:['#c45183','#f0a6ca','#fff0f6','#54263f']},
+ {id:'midnight',name:'Midnight neon',desc:'Esports energy, deep and electric',colors:['#8a5cf6','#36d6c5','#17172c','#f4f1ff']}
+];
 var categoryDefaults={Food:5000,Transport:2400,'Airtime & data':3000,School:5000,Housing:10000,Other:3000};
 var categoryInfo={
  'Food':{emoji:'🍲',color:'#ffe7d8',ink:'#cf6e43'},'Transport':{emoji:'🛵',color:'#e2edff',ink:'#3976cf'},
@@ -97,7 +134,23 @@ function budgetsPage(){
  return pageHead('FLEXIBLE BUDGET','Plan your spending.','Set limits that fit your life.')+'<div class="toolbar"><span class="pill">🗓️ Weekly plan · '+fmt(budgetTotal())+'</span><button class="button small" data-action="edit-budget">✎ Edit limits</button></div><div class="budget-grid">'+cats+'</div><div class="note" style="margin-top:15px">💡 Tip: start by covering food, transport, school and data. It’s okay if your budget changes when life does.</div>';
 }
 function goalsPage(){
- return pageHead('FUTURE YOU IS ROOTING FOR YOU','Goals that matter.','Track progress. Save at your pace.')+'<div class="toolbar"><span class="pill">🎯 '+state.goals.length+' active goals</span><button class="button small" data-action="new-goal">＋ New goal</button></div><div class="goal-grid-app">'+(state.goals.map(function(g){var pct=Math.min(100,Math.round(g.saved/Math.max(1,g.target)*100));return '<section class="panel goal-card"><div class="goal-card-head"><div class="goal-card-icon">'+esc(g.emoji||'🎯')+'</div><button class="text-button" data-action="goal-menu" data-id="'+esc(g.id)+'">•••</button></div><h3>'+esc(g.name)+'</h3><p>Every little deposit brings you closer.</p><div class="goal-saved">'+fmt(g.saved)+' <small>of '+fmt(g.target)+'</small></div><div class="bar"><i style="width:'+pct+'%;background:linear-gradient(90deg,#6558ed,#d45fa8)"></i></div><div class="goal-bottom"><span>'+pct+'% there</span><span>'+fmt(Math.max(0,g.target-g.saved))+' to go</span></div><button class="button secondary full small" style="margin-top:16px" data-action="add-saving" data-id="'+esc(g.id)+'">＋ Add savings</button></section>';}).join('')||'<div class="empty-state"><div class="emoji">🌱</div><b>What are you dreaming about?</b><br>Add your first savings goal and start small.</div>')+'</div>';
+ var activeCategory=window.__goalCategory||'education';
+ var categories=goalCategories.map(function(c){return '<button class="goal-category-chip '+(activeCategory===c.id?'active':'')+'" data-goal-category="'+c.id+'"><span>'+c.emoji+'</span><b>'+esc(c.label)+'</b></button>';}).join('');
+ var ideas=goalIdeas.filter(function(g){return g.category===activeCategory;}).map(function(g){
+  var exists=state.goals.some(function(x){return x.ideaId===g.id||x.name===g.name;});
+  return '<button class="goal-idea-card" data-goal-idea="'+g.id+'"><span class="goal-idea-emoji">'+g.emoji+'</span><span class="goal-idea-copy"><b>'+esc(g.name)+'</b><small>Suggested target · '+fmt(g.target)+'</small></span><span class="goal-idea-add">'+(exists?'✓':'＋')+'</span></button>';
+ }).join('');
+ var cards=state.goals.map(function(g){
+  var pct=Math.min(100,Math.round((Number(g.saved)||0)/Math.max(1,Number(g.target)||1)*100));
+  var category=goalCategories.find(function(c){return c.id===g.category;});
+  return '<section class="panel goal-card premium-goal-card"><div class="goal-card-head"><div class="goal-card-icon">'+esc(g.emoji||'🎯')+'</div><button class="text-button" data-action="goal-menu" data-id="'+esc(g.id)+'">•••</button></div><div class="goal-personal-tag">'+esc(category?category.label:(g.category||'Personal dream'))+'</div><h3>'+esc(g.name)+'</h3><p>'+esc(g.note||'Your dream, your pace. Every small step counts.')+'</p><div class="goal-saved">'+fmt(g.saved)+' <small>of '+fmt(g.target)+'</small></div><div class="bar"><i style="width:'+pct+'%;background:linear-gradient(90deg,var(--purple),var(--accent-2))"></i></div><div class="goal-bottom"><span>'+pct+'% there</span><span>'+fmt(Math.max(0,g.target-g.saved))+' to go</span></div><button class="button secondary full small" style="margin-top:16px" data-action="add-saving" data-id="'+esc(g.id)+'">＋ Add savings</button></section>';
+ }).join('');
+ return pageHead('YOUR LIFE, YOUR GOALS','Build a future that feels like yours.','Different dreams. Different paths. One plan shaped around you.')+
+ '<section class="goal-hero-panel"><div><div class="goal-hero-kicker">A LITTLE CLOSER, EVERY WEEK ✨</div><h2>What matters to <em>you?</em></h2><p>Choose a career, a personal milestone, or a dream nobody else needs to understand. Your goals should fit your life—not a template.</p><button class="button light" data-action="new-goal">＋ Create a personal goal</button></div><div class="goal-hero-orbit"><span>🎓</span><span>💻</span><span>🚀</span><span>🏡</span><div>YOUR<br>FUTURE</div></div></section>'+
+ '<div class="goal-section-heading"><div><div class="mini-label">MADE FOR DIFFERENT JOURNEYS</div><h2>Explore goal paths</h2></div><span class="pill">'+goalIdeas.length+' ideas to get you started</span></div>'+
+ '<div class="goal-category-rail">'+categories+'</div><div class="goal-ideas-grid">'+(ideas||'<div class="empty-state">Your ideas are on the way.</div>')+'</div>'+
+ '<div class="goal-section-heading"><div><div class="mini-label">YOUR PERSONAL ROADMAP</div><h2>Goals you’re growing</h2></div><span class="pill">'+state.goals.length+' goals</span></div>'+
+ '<div class="goal-grid-app">'+(cards||'<div class="goal-empty-premium"><span>🌱</span><h3>Your next chapter starts here.</h3><p>Choose an idea above or create a goal that is completely your own.</p></div>')+'</div>';
 }
 function coachPage(){
  if(!chatMessages.length)chatMessages=[{role:'assistant',text:'Hey '+(profile.name||'friend')+'! 👋 I’m your Money Coach preview. You can tell me about a spend, ask if you can afford something, or get help planning your allowance.'}];
@@ -159,10 +212,16 @@ function morePage(){
  '<section class="panel more-list"><button data-page="insights"><span class="iconbox purple">📊</span><span><b>Insights & patterns</b><small>See trends and get your next step</small></span><strong>›</strong></button><button data-action="start-tour"><span class="iconbox purple">🧭</span><span><b>App tutorial</b><small>Take a quick guided tour</small></span><strong>›</strong></button><button data-page="settings"><span class="iconbox blue">⚙️</span><span><b>Settings</b><small>Export data or reset the demo</small></span><strong>›</strong></button><button data-action="help"><span class="iconbox mint">💬</span><span><b>Help & support</b><small>Learn how this preview works</small></span><strong>›</strong></button><button data-action="about"><span class="iconbox yellow">ⓘ</span><span><b>About</b><small>Prototype v0.2 · Cameroon</small></span><strong>›</strong></button></section>';
 }
 function settingsPage(){
- return pageHead('YOUR SPACE, YOUR CHOICES','Make it work for you.','Your records belong to you. Manage them with care.')+'<div class="settings-grid"><section class="panel settings-card"><div class="iconbox purple">🔒</div><h3>Your privacy</h3><p>Saved in this browser only. No cloud sync.</p><button class="button secondary small" data-action="export">Export my data (CSV)</button></section><section class="panel settings-card"><div class="iconbox mint">🧹</div><h3>Start fresh</h3><p>Clear this browser’s demo money records and return to the setup experience.</p><button class="button secondary small" data-action="reset">Reset local data</button></section><section class="panel settings-card"><div class="iconbox peach">🧪</div><h3>About this preview</h3><p>No real AI API, account login, bank/mobile-money connection, advertising network or payment processing is connected yet.</p><span class="pill">Prototype v0.2</span></section><section class="panel settings-card"><div class="iconbox yellow">🪄</div><h3>Need a refresher?</h3><p>Take a quick guided tour of your money dashboard and the main features.</p><button class="button small" data-action="start-tour">Start the tour →</button></section></div><div class="note" style="margin-top:15px">🛡️ This is a budgeting tool, not a bank, wallet, investment service or financial adviser. Your displayed balance is what you enter manually.</div>';
+ var selected=state.palette||'violet';
+ var paletteCards=palettes.map(function(p){return '<button class="palette-card '+(selected===p.id?'selected':'')+'" data-palette="'+p.id+'" aria-pressed="'+(selected===p.id?'true':'false')+'"><span class="palette-swatches">'+p.colors.map(function(c){return '<i style="background:'+c+'"></i>';}).join('')+'</span><span class="palette-card-name">'+esc(p.name)+'</span><small>'+esc(p.desc)+'</small><span class="palette-check">'+(selected===p.id?'✓ Selected':'Choose palette')+'</span></button>';}).join('');
+ return pageHead('YOUR SPACE, YOUR STYLE','Make it feel like you.','Your goals, your colours, your pace.')+
+ '<section class="palette-feature"><div><div class="goal-hero-kicker">A SMALL SPACE THAT FEELS LIKE YOURS</div><h2>Choose your colour story.</h2><p>Pick a palette that feels right. The app updates its accents, buttons, highlights and soft backgrounds while keeping text readable.</p></div><div class="palette-preview"><span>YOUR MONEY SPACE</span><b>Dream in colour.</b><button class="palette-preview-button">Your next move ↗</button></div></section>'+
+ '<div class="palette-grid">'+paletteCards+'</div>'+
+ '<div class="settings-grid" style="margin-top:20px"><section class="panel settings-card"><div class="iconbox purple">🔒</div><h3>Your privacy</h3><p>Saved in this browser only. No cloud sync.</p><button class="button secondary small" data-action="export">Export my data (CSV)</button></section><section class="panel settings-card"><div class="iconbox mint">🧹</div><h3>Start fresh</h3><p>Clear this browser’s demo money records and return to the setup experience.</p><button class="button secondary small" data-action="reset">Reset local data</button></section><section class="panel settings-card"><div class="iconbox peach">🧪</div><h3>About this preview</h3><p>No real AI API, account login, bank/mobile-money connection, advertising network or payment processing is connected yet.</p><span class="pill">Prototype v0.3</span></section><section class="panel settings-card"><div class="iconbox yellow">🪄</div><h3>Need a refresher?</h3><p>Take a quick guided tour of your money dashboard and the main features.</p><button class="button small" data-action="start-tour">Start the tour →</button></section></div><div class="note" style="margin-top:15px">🛡️ This is a budgeting tool, not a bank, wallet, investment service or financial adviser. Your displayed balance is what you enter manually.</div>';
 }
 function chatHtml(m){var user=m.role==='user';return '<div class="message-row '+(user?'user':'assistant')+'">'+(!user?'<img class="message-avatar" src="./assets/money-coach.svg" alt="">':'')+'<div class="bubble">'+esc(m.text)+'</div></div>';}
 function renderApp(){
+ document.body.dataset.palette=state.palette||'violet';
  if(!state.onboarded){renderOnboarding();return;}
  var pages={dashboard:dashboardPage,activity:activityPage,budgets:budgetsPage,goals:goalsPage,coach:coachPage,insights:insightsPage,more:morePage,marketplace:function(){return comingPage('marketplace');},invest:function(){return comingPage('invest');},settings:settingsPage};
  var title=({dashboard:'Your money, in focus',activity:'Transactions',budgets:'Budgets',goals:'Savings goals',coach:'Money Coach',insights:'Insights',more:'More',marketplace:'Campus Marketplace',invest:'Student Business Funding',settings:'Settings'})[page]||'Overview';
@@ -178,7 +237,10 @@ function bindApp(){
  document.querySelectorAll('[data-action="help"]').forEach(function(b){b.onclick=function(){openModal('<button class="modal-close" data-close>✕</button><div class="eyebrow">HELP & SUPPORT</div><h2>Need a hand?</h2><p>This preview stores entries in your browser. Add income or expenses manually, edit your budget, and use Money Coach for simple guidance. Real accounts, AI and notifications are not connected yet.</p><button class="button full" data-close>Got it</button>');};});
  document.querySelectorAll('[data-action="about"]').forEach(function(b){b.onclick=function(){openModal('<button class="modal-close" data-close>✕</button><div class="eyebrow">ABOUT THIS PREVIEW</div><h2>Money, made clearer.</h2><p>A student money-management concept for Cameroon. Built around FCFA budgeting, savings goals, a future campus marketplace and a future regulated business-funding experience.</p><div class="note">Prototype v0.2 · Local browser data · No payments accepted</div><button class="button full" data-close>Close</button>');};});
  document.querySelectorAll('[data-action="edit-budget"]').forEach(function(b){b.onclick=editBudget;});
- document.querySelectorAll('[data-action="new-goal"]').forEach(function(b){b.onclick=newGoal;});
+ document.querySelectorAll('[data-palette]').forEach(function(b){b.onclick=function(){state.palette=b.dataset.palette;persist();renderApp();showToast('Palette updated. Your space, your style. 🎨');};});
+ document.querySelectorAll('[data-action="new-goal"]').forEach(function(b){b.onclick=function(){newGoal();};});
+ document.querySelectorAll('[data-goal-category]').forEach(function(b){b.onclick=function(){window.__goalCategory=b.dataset.goalCategory;renderApp();};});
+ document.querySelectorAll('[data-goal-idea]').forEach(function(b){b.onclick=function(){var idea=goalIdeas.find(function(g){return g.id===b.dataset.goalIdea;});if(idea)newGoal(idea);};});
  document.querySelectorAll('[data-action="add-saving"]').forEach(function(b){b.onclick=function(){addSaving(b.dataset.id);};});
  document.querySelectorAll('[data-action="goal-menu"]').forEach(function(b){b.onclick=function(){goalMenu(b.dataset.id);};});
  document.querySelectorAll('[data-action="export"]').forEach(function(b){b.onclick=exportCSV;});
@@ -208,9 +270,10 @@ function editBudget(){
  openModal('<button class="modal-close" data-close>✕</button><div class="eyebrow">A FLEXIBLE PLAN</div><h2>Shape your weekly budget.</h2><p>These are spending limits to guide you. Change them whenever real life changes.</p><form class="modal-form" id="budget-form">'+fields+'<button class="button full" type="submit">Save my budget</button></form>');
  overlay.querySelector('#budget-form').onsubmit=function(e){e.preventDefault();overlay.querySelectorAll('[data-bval]').forEach(function(i){state.budget[i.dataset.bval]=Math.max(0,Number(i.value)||0);});persist();closeModal();renderApp();showToast('Budget updated. You’ve got this. 🌈');};
 }
-function newGoal(){
- openModal('<button class="modal-close" data-close>✕</button><div class="eyebrow">MAKE SPACE FOR A DREAM</div><h2>What are you saving for?</h2><p>Name your goal and set a target.</p><form class="modal-form" id="new-goal-form"><label>Goal name<input id="goal-name" required maxlength="70" placeholder="e.g. New laptop"></label><label>Target amount (FCFA)<input id="goal-target" type="number" min="100" max="100000000" required placeholder="150000"></label><label>Already saved (FCFA)<input id="goal-saved" type="number" min="0" max="100000000" value="0"></label><button class="button full" type="submit">Create my goal 🎯</button></form>');
- overlay.querySelector('#new-goal-form').onsubmit=function(e){e.preventDefault();state.goals.push({id:String(Date.now()),name:overlay.querySelector('#goal-name').value.trim(),target:Number(overlay.querySelector('#goal-target').value),saved:Number(overlay.querySelector('#goal-saved').value)||0,emoji:'🌱'});persist();closeModal();renderApp();showToast('Goal created. Future you says thanks. ✨');};
+function newGoal(prefill){
+ var preset=prefill||{},category=preset.category||'personal';
+ openModal('<button class="modal-close" data-close>✕</button><div class="eyebrow">YOUR DREAM, YOUR RULES</div><h2>Make it personal.</h2><p>Pick a path, name what matters, and set a target that feels realistic for your life.</p><form class="modal-form" id="new-goal-form"><label>Goal path<select id="goal-category">'+goalCategories.map(function(c){return '<option value="'+c.id+'" '+(c.id===category?'selected':'')+'>'+c.emoji+' '+esc(c.label)+'</option>';}).join('')+'</select></label><label>Goal name<input id="goal-name" required maxlength="70" value="'+esc(preset.name||'')+'" placeholder="e.g. Laptop for my engineering studies"></label><label>Why does this matter? (optional)<input id="goal-note" maxlength="160" placeholder="e.g. So I can practise coding and freelance"></label><label>Target amount (FCFA)<input id="goal-target" type="number" min="100" max="100000000" required value="'+(Number(preset.target)||'')+'" placeholder="150000"></label><label>Already saved (FCFA)<input id="goal-saved" type="number" min="0" max="100000000" value="0"></label><button class="button full" type="submit">Create my roadmap ✨</button></form>');
+ overlay.querySelector('#new-goal-form').onsubmit=function(e){e.preventDefault();var name=overlay.querySelector('#goal-name').value.trim(),target=Math.round(Number(overlay.querySelector('#goal-target').value)),saved=Math.max(0,Math.round(Number(overlay.querySelector('#goal-saved').value)||0)),cat=overlay.querySelector('#goal-category').value;if(!name||!Number.isFinite(target)||target<100){showToast('Add a goal name and a valid target.');return;}state.goals.push({id:String(Date.now()),ideaId:preset.id||null,name:name,target:target,saved:Math.min(saved,target),emoji:(goalCategories.find(function(c){return c.id===cat;})||{}).emoji||'✨',category:cat,note:overlay.querySelector('#goal-note').value.trim()});persist();closeModal();page='goals';renderApp();showToast('Your personal goal is ready. One step at a time. ✨');};
 }
 function addSaving(id){
  var goal=state.goals.find(function(g){return String(g.id)===String(id);});if(!goal)return;
