@@ -357,6 +357,7 @@ function newGoal(){
 function addSaving(id){
  var goal=state.goals.find(function(g){return String(g.id)===String(id);});if(!goal)return;
  var need=Math.max(0,Number(goal.target||0)-Number(goal.saved||0));
+ if(need<=0){showToast('You already reached this goal. Set a new target to keep going.');return;}
  openModal('<button class="modal-close" data-close>✕</button><div class="eyebrow">ONE STEP CLOSER</div><h2>Set money aside.</h2><p>'+esc(goal.name)+' · '+fmt(goal.saved)+' saved of '+fmt(goal.target)+'.</p><div class="note">Available balance: <b>'+fmt(state.balance)+'</b>. Saving moves money out of your spendable balance and into this goal.</div><form id="saving-form" class="modal-form"><label>Amount to set aside (FCFA)<input id="saving-amount" type="number" min="1" max="100000000" required placeholder="'+Math.min(1000,need)+'"></label><button class="button full" type="submit">Move into this goal ✓</button></form>');
  overlay.querySelector('#saving-form').onsubmit=function(e){
   e.preventDefault();var asked=Math.round(Number(overlay.querySelector('#saving-amount').value));
