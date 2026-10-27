@@ -1,4 +1,4 @@
-const CACHE = "student-money-shell-v6";
+const CACHE = "student-money-shell-v7";
 const SHELL = [
   "./",
   "./index.html",
@@ -6,6 +6,7 @@ const SHELL = [
   "./money-mark.svg",
   "./assets/student-hero.svg",
   "./assets/student-hero-3d.webp",
+  "./assets/student-onboarding-photo.webp",
   "./assets/money-coach.svg",
   "./assets/marketplace.svg",
   "./assets/invest.svg"
