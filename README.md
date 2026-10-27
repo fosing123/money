@@ -70,3 +70,24 @@ To replay onboarding, use **More → Settings → Reset local data**. Export you
 - Marketplace and Invest are coming-soon pages. Invest does not accept money, offer actual investments or promise returns.
 
 Before production, add secure accounts and cloud storage, automated browser tests, privacy/security controls, server-side AI with usage and privacy safeguards, and legal review before enabling financial or investment features.
+
+
+## Deploy on GitHub Pages
+
+This repository is a static web app, so it needs no server, database, build command or API key for the current prototype. A GitHub Actions workflow checks the JavaScript, validates the app shell and offline-cache assets, then publishes the site when code reaches `main`.
+
+**One-time setup**
+1. Open the repository on GitHub and go to **Settings → Pages**.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+3. Open **Actions** and allow workflows if GitHub asks.
+4. Merge or push the deployment workflow to `main`. Each later push to `main` will validate first and deploy automatically. You can also start the workflow from **Actions → Deploy Student Money → Run workflow**.
+
+GitHub Pages creates the live URL after the first successful deployment; find it in **Settings → Pages** or the deployment job's environment link. This workflow does not need repository secrets.
+
+## Back up your data
+
+Open **More → Settings → Your privacy** and choose **Download full backup (JSON)** to save your profile, budget, goals, settings and transaction records. Keep that file somewhere private. On the new device, open the same app, choose **Restore a backup**, and select the JSON file. Restore replaces the data stored in that browser, so export the current device first if you need to keep both sets of records. Transaction-only CSV export remains available for spreadsheets.
+
+## Before a public launch
+
+This version is an offline-capable budgeting prototype, not a real wallet or bank. User data remains in the current browser unless they export a backup. There is no user login, secure cloud sync, bank or mobile-money integration, payment processing, connected AI service, or actual investment offering. Do not enter account PINs or payment credentials. Add authentication, server-side storage, recovery, privacy controls and a security/legal review before offering shared accounts or money-moving features.
