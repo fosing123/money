@@ -58,7 +58,7 @@ var categoryInfo={
 };
 function loadState(){try{var o=JSON.parse(localStorage.getItem(STORE)||'null');return o&&typeof o==='object'?o:{onboarded:false,balance:5000,allowance:10000,budget:Object.assign({},categoryDefaults),transactions:[],goals:[],savingsTarget:2000,cadence:'weekly',notifications:[]};}catch(e){return {onboarded:false,balance:5000,allowance:10000,budget:Object.assign({},categoryDefaults),transactions:[],goals:[],savingsTarget:2000,cadence:'weekly',notifications:[]};}}
 function loadProfile(){try{return JSON.parse(localStorage.getItem(PROFILE)||'{}')}catch(e){return {};}}
-function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));localStorage.setItem(PROFILE,JSON.stringify(profile));}catch(e){showToast('Your browser could not save this change. Export your records as a backup.');}}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));localStorage.setItem(PROFILE,JSON.stringify(profile));return true;}catch(e){showToast('Your browser could not save this change. Export your records as a backup.');return false;}}
 function fmt(n){return new Intl.NumberFormat('fr-FR',{maximumFractionDigits:0}).format(Math.round(Number(n)||0))+' FCFA';}
 function shortMoney(n){n=Number(n)||0;if(n>=1000000)return (n/1000000).toFixed(1)+'M';if(n>=10000)return Math.round(n/1000)+'k';if(n>=1000)return (n/1000).toFixed(1)+'k';return String(Math.round(n));}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -217,7 +217,7 @@ function settingsPage(){
  return pageHead('YOUR SPACE, YOUR STYLE','Make it feel like you.','Your goals, your colours, your pace.')+
  '<section class="palette-feature"><div><div class="goal-hero-kicker">A SMALL SPACE THAT FEELS LIKE YOURS</div><h2>Choose your colour story.</h2><p>Pick a palette that feels right. The app updates its accents, buttons, highlights and soft backgrounds while keeping text readable.</p></div><div class="palette-preview"><span>YOUR MONEY SPACE</span><b>Dream in colour.</b><button class="palette-preview-button">Your next move ↗</button></div></section>'+
  '<div class="palette-grid">'+paletteCards+'</div>'+
- '<div class="settings-grid" style="margin-top:20px"><section class="panel settings-card"><div class="iconbox purple">🔒</div><h3>Your privacy</h3><p>Saved in this browser only. No cloud sync.</p><button class="button secondary small" data-action="export">Export my data (CSV)</button></section><section class="panel settings-card"><div class="iconbox mint">🧹</div><h3>Start fresh</h3><p>Clear this browser’s demo money records and return to the setup experience.</p><button class="button secondary small" data-action="reset">Reset local data</button></section><section class="panel settings-card"><div class="iconbox peach">🧪</div><h3>About this preview</h3><p>No real AI API, account login, bank/mobile-money connection, advertising network or payment processing is connected yet.</p><span class="pill">Prototype v0.3</span></section><section class="panel settings-card"><div class="iconbox yellow">🪄</div><h3>Need a refresher?</h3><p>Take a quick guided tour of your money dashboard and the main features.</p><button class="button small" data-action="start-tour">Start the tour →</button></section></div><div class="note" style="margin-top:15px">🛡️ This is a budgeting tool, not a bank, wallet, investment service or financial adviser. Your displayed balance is what you enter manually.</div>';
+ '<div class="settings-grid" style="margin-top:20px"><section class="panel settings-card"><div class="iconbox purple">🔒</div><h3>Your privacy</h3><p>Your records stay on this device. Save a full backup before clearing browser data or changing phones.</p><div class="settings-actions"><button class="button secondary small" data-action="export-backup">Download full backup (JSON)</button><button class="button secondary small" data-action="import-backup">Restore a backup</button><button class="button ghost small" data-action="export">Export transactions (CSV)</button><input id="backup-file" class="hide" type="file" accept="application/json,.json"></div></section><section class="panel settings-card"><div class="iconbox mint">🧹</div><h3>Start fresh</h3><p>Clear this browser’s demo money records and return to the setup experience.</p><button class="button secondary small" data-action="reset">Reset local data</button></section><section class="panel settings-card"><div class="iconbox peach">🧪</div><h3>About this preview</h3><p>No real AI API, account login, bank/mobile-money connection, advertising network or payment processing is connected yet.</p><span class="pill">Prototype v0.3</span></section><section class="panel settings-card"><div class="iconbox yellow">🪄</div><h3>Need a refresher?</h3><p>Take a quick guided tour of your money dashboard and the main features.</p><button class="button small" data-action="start-tour">Start the tour →</button></section></div><div class="note" style="margin-top:15px">🛡️ This is a budgeting tool, not a bank, wallet, investment service or financial adviser. Your displayed balance is what you enter manually.</div>';
 }
 function chatHtml(m){var user=m.role==='user';return '<div class="message-row '+(user?'user':'assistant')+'">'+(!user?'<img class="message-avatar" src="./assets/money-coach.svg" alt="">':'')+'<div class="bubble">'+esc(m.text)+'</div></div>';}
 function renderApp(){
@@ -244,6 +244,9 @@ function bindApp(){
  document.querySelectorAll('[data-action="add-saving"]').forEach(function(b){b.onclick=function(){addSaving(b.dataset.id);};});
  document.querySelectorAll('[data-action="goal-menu"]').forEach(function(b){b.onclick=function(){goalMenu(b.dataset.id);};});
  document.querySelectorAll('[data-action="export"]').forEach(function(b){b.onclick=exportCSV;});
+ document.querySelectorAll('[data-action="export-backup"]').forEach(function(b){b.onclick=exportBackup;});
+ document.querySelectorAll('[data-action="import-backup"]').forEach(function(b){b.onclick=function(){var input=document.getElementById("backup-file");if(input)input.click();};});
+ var backupInput=document.getElementById("backup-file");if(backupInput)backupInput.addEventListener("change",function(){var file=backupInput.files&&backupInput.files[0];if(file)restoreBackupFile(file);backupInput.value="";});
  document.querySelectorAll('[data-action="reset"]').forEach(function(b){b.onclick=resetData;});
  document.querySelectorAll('[data-action="start-tour"]').forEach(function(b){b.onclick=function(){tourStep=0;renderTour();};});
  document.querySelectorAll('[data-action="interest"]').forEach(function(b){b.onclick=function(){var p=b.dataset.product;state.notifications=state.notifications||[];if(state.notifications.indexOf(p)<0)state.notifications.push(p);persist();showToast('Interest saved on this device. No notification service is connected yet.');};});
@@ -330,6 +333,32 @@ function renderTour(){
  overlay.querySelectorAll('[data-action="tour-skip"]').forEach(function(b){b.onclick=finishTour;});overlay.querySelector('[data-action="tour-next"]').onclick=function(){if(tourStep<2){tourStep++;renderTour();}else finishTour();};
 }
 function finishTour(){state.tutorialDone=true;persist();overlay.innerHTML='';overlay.style.display='none';}
+function exportBackup(){
+ var payload={format:'student-money-backup',version:1,exportedAt:new Date().toISOString(),app:'Student Money',state:state,profile:profile};
+ var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='student-money-backup-'+localDateKey()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);
+ showToast('Full backup downloaded. Keep it somewhere safe. ✅');
+}
+function restoreBackupFile(file){
+ if(file.size>5*1024*1024){showToast('That backup is too large to import (5 MB maximum).');return;}
+ var reader=new FileReader();
+ reader.onerror=function(){showToast('The backup file could not be read.');};
+ reader.onload=function(){
+  var payload;
+  try{payload=JSON.parse(String(reader.result||''));}catch(e){showToast('This file is not valid JSON. Choose a Student Money backup.');return;}
+  if(!payload||payload.format!=='student-money-backup'||!payload.state||typeof payload.state!=='object'||Array.isArray(payload.state)||!Array.isArray(payload.state.transactions)||!Array.isArray(payload.state.goals)){
+   showToast('This is not a valid Student Money backup. Nothing was changed.');return;
+  }
+  if(!confirm('Restore this backup and replace the money records currently saved on this device? Export your current records first if you need to keep them.'))return;
+  var previousState=state,previousProfile=profile;
+  state=payload.state;profile=payload.profile&&typeof payload.profile==='object'&&!Array.isArray(payload.profile)?payload.profile:{};
+  state.budget=state.budget&&typeof state.budget==='object'&&!Array.isArray(state.budget)?state.budget:Object.assign({},categoryDefaults);
+  state.transactions=Array.isArray(state.transactions)?state.transactions:[];state.goals=Array.isArray(state.goals)?state.goals:[];
+  if(!persist()){state=previousState;profile=previousProfile;renderApp();return;}
+  page='dashboard';renderApp();showToast('Backup restored on this device. Your records are back. ✅');
+ };
+ reader.readAsText(file);
+}
 function exportCSV(){
  var rows=[['Description','Category','Type','Amount FCFA','Date']].concat(state.transactions.map(function(t){return [t.title,t.category,t.type,t.amount,t.date];}));
  var csv=rows.map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
