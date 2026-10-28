@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6558ed"/><stop offset="1" stop-color="#c46fda"/></linearGradient></defs><rect width="64" height="64" rx="19" fill="url(#g)"/><path d="M32 10l5.4 14.5L52 30l-14.6 5.5L32 50l-5.4-14.5L12 30l14.6-5.5z" fill="#fff"/><circle cx="48" cy="14" r="4" fill="#bff6d6"/><circle cx="14" cy="49" r="3" fill="#ffce7d"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Nkem">
+  <defs>
+    <linearGradient id="nkemGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#6c4ff6"/>
+      <stop offset="1" stop-color="#ad9cff"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="19" fill="url(#nkemGradient)"/>
+  <path d="M17 47V17h7l16 19V17h7v30h-7L24 28v19z" fill="#fff"/>
+  <path d="M46 8c6 0 10 3 10 8-6 2-11 0-13-5z" fill="#22d28d"/>
+</svg>
