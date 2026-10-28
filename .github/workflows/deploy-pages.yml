@@ -1,4 +1,4 @@
-name: Deploy Student Money
+name: Deploy TIANA
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: student-money-pages
+  group: tiana-pages
   cancel-in-progress: true
 
 jobs:
