@@ -11,7 +11,7 @@ const manifest = JSON.parse(read("manifest.webmanifest"));
 
 assert.match(html, /<!doctype html>/i, "index.html must declare HTML5");
 assert.match(html, /<html lang="en">/i, "The document must declare its language");
-assert.match(html, /<title>Student Money/i, "The page needs a useful document title");
+assert.match(html, /<title>Nkem\s*[—-]\s*Smart Money\. Brighter You\.<\/title>/i, "The page title must use the Nkem brand");
 assert.match(html, /name="description"/i, "The page needs a meta description");
 assert.match(html, /rel="manifest"/i, "The installable manifest must be linked");
 assert.match(html, /app\.css/, "The app stylesheet must be linked");
@@ -23,7 +23,7 @@ for (const [, ref] of html.matchAll(/\b(?:src|href)="([^"]+)"/g)) {
   assert.ok(existsSync(resolve(root, relative)), `index.html references a missing local file: ${ref}`);
 }
 
-assert.equal(manifest.name, "Student Money", "Manifest name should match the app");
+assert.equal(manifest.name, "Nkem", "Manifest name should match the Nkem brand");
 assert.equal(manifest.display, "standalone", "The app should be installable in standalone mode");
 assert.ok(Array.isArray(manifest.icons) && manifest.icons.length > 0, "Manifest must provide an icon");
 for (const icon of manifest.icons) {
@@ -41,7 +41,7 @@ for (const ref of shellRefs) {
   assert.ok(target === root || target.startsWith(root + sep), `Service-worker path escapes the repository: ${ref}`);
   assert.ok(existsSync(target), `Service worker references a missing offline asset: ${ref}`);
 }
-assert.match(sw, /const CACHE = "student-money-shell-v\d+"/, "Cache version must be explicit");
+assert.match(sw, /const CACHE = "nkem-shell-v\d+"/, "Nkem cache version must be explicit");
 assert.match(sw, /key\.startsWith\(CACHE_PREFIX\)/, "Cache cleanup must only affect this app's caches");
 
 assert.match(app, /function exportBackup\(/, "Full JSON backup must be available");
