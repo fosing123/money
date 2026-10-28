@@ -1,22 +1,27 @@
 # Nkem — Smart Money. Brighter You.
 
-Nkem is a mobile-first student money planner prototype for Cameroon, using FCFA/XAF. It currently runs as a static Progressive Web App with browser-local persistence.
+Nkem is a mobile-first student money-planning PWA designed around student life in Cameroon and FCFA/XAF. The current project is a **static frontend prototype** with local browser persistence.
 
-## Included today
-- Personal onboarding, career/life-path preferences and configurable weekly budget.
-- Income and expense entries, transaction history, budget tracking and expense insights.
-- Savings goals with local contribution tracking.
-- Six dynamic colour palettes and a responsive layout.
-- A rule-based Money Coach with clear disclosure that it is not a connected AI service.
-- Campus marketplace discovery with search, categories, saved sample listings, listing details and locally saved private seller drafts.
-- Student-business discovery, educational risk information, locally saved interest and privately saved business suggestions.
-- Offline app-shell caching and JSON/CSV export.
+## Nkem experience
+- Branded welcome screen and illustrated onboarding for spending, savings goals and money guidance.
+- Goal-based onboarding, optional life-stage/persona selection, income cadence, starting balance, weekly needs and editable starter budget.
+- Dashboard, recorded income and expenses, transaction search, budget tracking, spending insights and manually tracked savings goals.
+- Eight selectable colour themes: Nkem Violet, Mint Growth, Ocean Blue, Sunset Peach, Golden Hour, Midnight Pro, Rose Dream and Forest Wealth.
+- Rule-based Money Coach with a clear disclosure that it is not connected to a live AI model.
+- Campus Marketplace sample catalogue with category search, saved listings, listing details and local seller-draft functionality.
+- Student-business opportunity discovery examples, risk education, saved opportunities and locally saved interest.
+- Offline app-shell caching, JSON backup/restore and CSV transaction export.
+- Terms and Privacy pages that describe this preview accurately.
 
-## Important prototype boundaries
-This repository currently contains a **static frontend, not a backend service**. Personal data is saved in the current browser/device and is not cloud-synced or protected by server-side accounts. Marketplace entries are illustrative examples, not verified live offers; seller drafts and interest are saved locally and do not contact anyone. No payment, transfer, investment, OAuth, SMS, push notification, server-side AI or regulated investment execution is connected. The balance is a manually maintained local record and must not be treated as a bank balance. Do not collect real customers' sensitive financial data or represent this prototype as a production financial service.
+## Prototype boundaries — please read
+This repository does **not** currently include a backend service, database server, server-side accounts or a production authentication provider. Personal data remains in the current browser/device and is not cloud-synced or protected by server-side ownership controls. Google, email and phone account options are visual entry points that disclose they are not connected; the local preview can be continued without an account.
+
+Marketplace listings and student-business profiles are clearly illustrative examples, not verified live offers. Seller drafts and interest registrations remain local and do not contact providers. Payments, bank/mobile-money connections, fund transfers, push notifications and regulated investment execution are not connected. The displayed balance is a manually maintained local record, not a bank balance. The Money Coach is a rule-based local helper, not a live AI model, and should not be treated as personalized professional financial advice.
+
+Do not use the static preview to collect real customers' sensitive financial data or describe it as a production financial service. A production launch requires backend authentication and authorization, database persistence, server-authoritative and auditable financial state transitions, backups, monitoring, rate limits, marketplace moderation, verified providers, legal/privacy review and properly configured integrations. Live AI credentials must remain server-side. Investment execution requires separate legal/regulatory review and authorized providers.
 
 ## Run locally
-Requires Python 3 or another static HTTP server:
+Requires Python 3:
 ```bash
 git clone https://github.com/fosing123/money.git
 cd money
@@ -25,17 +30,20 @@ python -m http.server 8080
 Open `http://127.0.0.1:8080`.
 
 ## Deploy on GitHub Pages
-1. Push changes to `main`.
-2. In GitHub, open **Settings → Pages** and select **GitHub Actions** as the source if the repository workflow expects it.
-3. Check the **Actions** tab for the Pages deployment workflow and wait for a successful run.
-4. Open the Pages URL shown in repository settings. Test on a phone and desktop.
+1. Merge the approved changes to `main`.
+2. In GitHub, open **Settings → Pages** and choose **GitHub Actions** as the source.
+3. Open **Actions** and verify that the **Deploy Nkem** workflow completes successfully.
+4. Open the Pages URL shown in repository settings. Check the app on an Android phone and a desktop browser.
 
-There is no backend build or database migration for the current static prototype. Before a public production launch, implement server-side authentication, database persistence and ownership permissions, validated authoritative financial transactions, audit logging, backups, rate limits, marketplace moderation, seller verification, privacy/legal pages, and a proper deployment environment. A server-side AI provider requires credentials stored only in server environment variables. Investment/funding execution requires separate legal and regulatory review and an authorized provider.
+The current build is static; it does not run backend migrations. Keep the app honest about which services are still local-only.
 
 ## Smoke-test checklist
-- Complete onboarding; add income and expense records; verify balance, transaction list and weekly spending update.
-- Create a savings goal and add a contribution.
-- Switch colour palettes and refresh.
-- Search/filter marketplace examples; save a listing; create a private seller draft.
-- Register interest in a business example; save a business suggestion.
-- Export a JSON backup before clearing local browser data.
+- Walk through the new welcome and three introduction screens.
+- Open the account-options panel and confirm it explains that sign-in is not connected; continue without an account.
+- Complete profile, goals, income, balance, savings, weekly needs and budget setup.
+- Add income and an expense and check the dashboard, transaction list and weekly spend.
+- Create a savings goal and add a goal contribution; ensure totals update as expected.
+- Change all eight palettes and refresh.
+- Search and save Marketplace examples, open detail views and create a private draft.
+- Register interest in a business example and read the risk disclosure.
+- Export a JSON backup before clearing browser data.
