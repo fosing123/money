@@ -10,7 +10,6 @@ const SHELL = [
   "./assets/student-hero.svg",
   "./assets/student-hero-3d.webp",
   "./assets/student-onboarding-photo.webp",
-  "./assets/student-onboarding-photo.png",
   "./assets/onboarding-welcome.svg",
   "./assets/onboarding-control.svg",
   "./assets/onboarding-goals.svg",
