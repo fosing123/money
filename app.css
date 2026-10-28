@@ -340,3 +340,93 @@ body[data-palette="midnight"] .goal-idea-copy small,body[data-palette="midnight"
 .tiana-intro-next:focus-visible,.tiana-intro-back:focus-visible{outline:3px solid #6547f5;outline-offset:3px}
 @media(max-height:760px){.tiana-intro-content{padding-top:clamp(245px,42vh,330px);padding-bottom:max(16px,calc(env(safe-area-inset-bottom,0px) + 10px))}.tiana-benefits{margin-top:18px}.tiana-benefit{min-height:122px;padding-top:10px}.tiana-benefit-icon{width:52px;height:52px}.tiana-intro-next{width:62px;height:62px}}
 @media(min-width:700px){.tiana-intro{max-width:520px;margin:0 auto}.tiana-intro-content{padding-top:360px}.tiana-intro-photo{inset-bottom:43%}}
+
+
+/* Five-screen Nkem onboarding carousel, inspired by the supplied reference. */
+.tiana-welcome{background:#fff2ce url("./assets/onboarding-welcome.webp") center 43%/cover no-repeat!important}
+.tiana-welcome-art{display:none!important}
+.tiana-brand-block .tiana-wordmark{text-transform:none;letter-spacing:-.075em}
+.tiana-intro{background:linear-gradient(180deg,#edeaff 0%,#f7f5ff 58%,#fff 100%)}
+.tiana-intro-photo{inset:0 0 39% 0;background:#e9e5ff}
+.tiana-intro-photo img{object-position:center 48%;object-fit:cover}
+.tiana-intro-fade{inset:25% 0 0;background:linear-gradient(180deg,transparent 0%,rgba(245,243,255,.10) 20%,rgba(246,244,255,.88) 43%,#f6f4ff 64%,#f8f7ff 100%)}
+.tiana-intro-content{padding-top:clamp(330px,48vh,420px)}
+.tiana-intro-content h1{text-align:center;font-size:clamp(29px,7.7vw,36px)}
+.tiana-intro-copy{text-align:center;font-size:13px;margin-top:10px}
+.tiana-benefits{gap:8px;margin-top:clamp(18px,3vh,24px)}
+.tiana-benefit{min-height:105px;padding:12px 5px 9px;border-radius:17px;gap:7px}
+.tiana-benefit-icon{width:43px;height:43px}
+.tiana-benefit-icon svg{width:24px;height:24px}
+.tiana-benefit b{font-size:11px}
+.tiana-intro-dots{padding-left:0;gap:8px}
+.tiana-intro-dots span{width:8px;height:8px}
+.tiana-intro-dots span.active{width:22px}
+.tiana-intro-next{width:52px;height:52px;background:#15263b;color:#fff;box-shadow:0 6px 18px #15263b20}
+.tiana-intro-next svg{width:25px;height:25px}
+.tiana-back,.tiana-intro-back{display:none!important}
+.nkem-carousel-page{position:relative;isolation:isolate;display:flex;flex-direction:column;width:100%;height:100svh;min-height:650px;max-width:520px;margin:0 auto;overflow:hidden;padding:calc(env(safe-area-inset-top,0px) + 16px) 22px max(16px,calc(env(safe-area-inset-bottom,0px) + 15px));border-radius:0;color:#111b36;background:#f8f9ff}
+.nkem-goals-page{background:linear-gradient(155deg,#d7fff0 0%,#dffaf1 56%,#f8fffd 100%)}
+.nkem-ai-page{background:linear-gradient(155deg,#fff0a9 0%,#fff8d9 50%,#fffdf1 100%)}
+.nkem-account-page{background:linear-gradient(180deg,#fbfcff 0%,#f3f8ff 100%);padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
+.nkem-screen-status{height:20px;display:flex;align-items:center;justify-content:space-between;padding:0 4px;color:#111827;font:700 11px/1 'DM Sans',sans-serif;flex:0 0 auto}
+.nkem-back{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);left:16px;z-index:5;width:32px;height:32px;display:grid;place-items:center;border:0;border-radius:50%;background:#fff8;color:#17233d;font:400 28px/1 'DM Sans',sans-serif}
+.nkem-page-heading{position:relative;z-index:2;text-align:center;margin:29px auto 0;max-width:440px;flex:0 0 auto}
+.nkem-page-emoji{height:24px;margin-bottom:2px;font-size:19px;line-height:24px}
+.nkem-page-heading h1{margin:0;color:#101a35;font:800 clamp(27px,7.3vw,35px)/1.08 'Manrope',sans-serif;letter-spacing:-.055em}
+.nkem-page-heading p{max-width:360px;margin:10px auto 0;color:#5b6680;font:500 12.5px/1.45 'DM Sans',sans-serif}
+.nkem-art{position:relative;width:100%;height:31vh;min-height:175px;max-height:270px;flex:0 1 auto;margin:9px auto 3px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.nkem-art img{width:100%;height:100%;object-fit:contain;object-position:center center}
+.nkem-goals-page .nkem-art{height:29vh;min-height:170px;max-height:238px;margin-top:0}
+.nkem-goal-stack{position:relative;z-index:2;display:flex;flex-direction:column;gap:7px;margin-top:-2px}
+.nkem-goal-card{min-height:55px;display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid #ffffffd9;border-radius:15px;background:#ffffffdd;box-shadow:0 5px 14px #3e6b5a0d}
+.nkem-goal-icon{display:grid;place-items:center;width:39px;height:39px;border-radius:10px;font-size:22px;flex-shrink:0}
+.nkem-goal-icon.laptop{background:#e6e9ff}.nkem-goal-icon.school{background:#fff0c7}.nkem-goal-icon.travel{background:#e0efff}
+.nkem-goal-copy{min-width:0;flex:1}.nkem-goal-copy b{display:block;color:#17223a;font:800 11px/1.2 'Manrope',sans-serif}
+.nkem-goal-copy small{display:block;margin-top:4px;color:#7c8799;font:500 9px/1.1 'DM Sans',sans-serif}
+.nkem-goal-card>strong{font:800 10px/1 'DM Sans',sans-serif;color:#4b6175}
+.nkem-progress{height:6px;margin-top:5px;overflow:hidden;border-radius:99px;background:#e7edf0}
+.nkem-progress i{display:block;height:100%;border-radius:99px;background:#2dc58c}
+.nkem-goal-card:nth-child(2) .nkem-progress i{background:#458cf5}.nkem-goal-card:nth-child(3) .nkem-progress i{background:#ff727d}
+.nkem-ai-page .nkem-art{height:39vh;min-height:225px;max-height:330px;margin:8px auto 0;position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 55px);width:100%;z-index:-1}
+.nkem-ai-page .nkem-art img{object-fit:contain;object-position:center bottom}
+.nkem-chat-preview{position:relative;z-index:2;display:flex;flex-direction:column;gap:10px;margin:20px 0 0;max-width:90%}
+.nkem-chat-bubble{padding:11px 14px;border-radius:18px;background:#fffdf0f2;color:#1a2440;box-shadow:0 5px 18px #795e2020;font:600 11px/1.3 'DM Sans',sans-serif;max-width:82%}
+.nkem-chat-bubble.left{align-self:flex-start;border-bottom-left-radius:6px}
+.nkem-chat-bubble.right{align-self:flex-end;background:#ffffffee;border-bottom-right-radius:6px}
+.nkem-page-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:12px;position:relative;z-index:3;flex:0 0 auto}
+.nkem-page-dots{display:flex;align-items:center;justify-content:center;gap:8px;padding-left:14px}
+.nkem-page-dots span{display:block;width:8px;height:8px;background:#b9d8cf;border-radius:50%}
+.nkem-page-dots span.active{width:23px;border-radius:99px;background:#183a43}
+.nkem-ai-page .nkem-page-dots span{background:#e6d6a4}.nkem-ai-page .nkem-page-dots span.active{background:#30364e}
+.nkem-next{display:grid;place-items:center;width:50px;height:50px;border:0;border-radius:50%;background:#173a43;color:#fff;font:400 29px/1 'DM Sans',sans-serif;box-shadow:0 8px 18px #122c3220}
+.nkem-ai-page .nkem-next{background:#30364e}
+.nkem-auth-options{position:relative;z-index:3;display:flex;flex-direction:column;gap:9px;margin-top:24px;flex:0 0 auto}
+.nkem-auth-button{width:100%;min-height:47px;display:flex;align-items:center;justify-content:center;gap:15px;border:1px solid #dce4f0;border-radius:15px;background:#ffffffed;color:#111b36;box-shadow:0 4px 13px #293c5b07;font:700 12px/1 'DM Sans',sans-serif}
+.nkem-auth-button:active{transform:scale(.99)}
+.nkem-auth-icon{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;font:800 18px/1 'DM Sans',sans-serif;color:#111b36}
+.nkem-auth-icon.google{font-size:22px;background:conic-gradient(#4285f4 0 28%,#34a853 28% 48%,#fbbc05 48% 72%,#ea4335 72% 100%);background-clip:text;-webkit-background-clip:text;color:transparent}
+.nkem-auth-icon.phone{color:#1685d9}
+.nkem-or{display:flex;align-items:center;gap:10px;justify-content:center;color:#7e8798;font-size:10px;margin:2px 0}
+.nkem-or span{height:1px;flex:1;background:#d9dfeb}
+.nkem-account-page .nkem-page-heading{margin-top:25px}
+.nkem-account-page .nkem-page-heading h1{font-size:clamp(25px,6.5vw,32px)}
+.nkem-account-page .nkem-page-heading p{font-size:12px;margin-top:7px}
+.nkem-account-page .nkem-auth-options{order:3;margin-top:20px}
+.nkem-account-page .nkem-art{order:4;height:22vh;min-height:130px;max-height:190px;width:calc(100% + 44px);margin:5px -22px 0;flex:0 0 auto}
+.nkem-account-page .nkem-art img{object-fit:cover;object-position:center 74%}
+.nkem-account-page .nkem-page-footer{order:5;justify-content:center;padding-top:5px}
+.nkem-account-page .nkem-page-dots{display:none}
+.nkem-legal{margin:0 auto;max-width:330px;text-align:center;color:#72809a;font:500 9px/1.45 'DM Sans',sans-serif}
+.nkem-legal a{color:#596fa1;text-decoration:underline}
+@media(max-height:720px){
+ .nkem-page-heading{margin-top:21px}
+ .nkem-art{height:25vh;min-height:145px}
+ .nkem-goals-page .nkem-art{height:23vh;min-height:135px}
+ .nkem-goal-stack{gap:5px}
+ .nkem-goal-card{min-height:49px;padding:5px 9px}
+ .nkem-ai-page .nkem-art{height:34vh;bottom:45px}
+ .nkem-auth-options{margin-top:16px;gap:7px}
+ .nkem-auth-button{min-height:43px}
+ .nkem-account-page .nkem-art{height:17vh;min-height:105px}
+}
+@media(prefers-reduced-motion:reduce){.nkem-carousel-page,.nkem-next,.nkem-auth-button{animation:none;transition:none}}
