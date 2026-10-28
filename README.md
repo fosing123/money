@@ -1,6 +1,6 @@
-# Nkem — Smart Money. Brighter You.
+# TIANA — Smart Money. Brighter You.
 
-Nkem is a mobile-first student money planner prototype for Cameroon, using FCFA/XAF. It currently runs as a static Progressive Web App with browser-local persistence.
+TIANA is a mobile-first student money planner prototype for Cameroon, using FCFA/XAF. It currently runs as a static Progressive Web App with browser-local persistence.
 
 ## Included today
 - Personal onboarding, career/life-path preferences and configurable weekly budget.

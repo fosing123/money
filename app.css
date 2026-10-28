@@ -213,7 +213,7 @@ body[data-palette="midnight"] .goal-idea-copy small,body[data-palette="midnight"
  .settings-actions .button{width:100%;justify-content:center}
 }
 
-/* Nkem marketplace and opportunity discovery */
+/* TIANA marketplace and opportunity discovery */
 .market-hero,.opportunity-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,220px);align-items:center;gap:20px;padding:clamp(20px,4vw,36px);border-radius:28px;background:linear-gradient(125deg,#f0edff,#fff7e9 70%,#e3f8ef);border:1px solid rgba(101,88,237,.10);margin-bottom:24px;overflow:hidden}
 .market-hero h2,.opportunity-hero h2{font-size:clamp(24px,3.3vw,38px);line-height:1.1;letter-spacing:-.04em;margin:12px 0}
 .market-hero p,.opportunity-hero p{max-width:620px;color:var(--muted);line-height:1.65}
@@ -248,3 +248,185 @@ body[data-palette="midnight"] .goal-idea-copy small,body[data-palette="midnight"
 .detail-emoji{font-size:48px;margin:12px 0}
 @media(max-width:900px){.market-listing-grid,.opportunity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.market-hero,.opportunity-hero{grid-template-columns:minmax(0,1fr) 92px;gap:10px;padding:18px;border-radius:20px}.market-hero img,.opportunity-hero img{max-height:110px}.market-listing-grid,.opportunity-grid{grid-template-columns:minmax(0,1fr)}.market-listing-art{height:115px}.market-listing p,.opportunity-card p{min-height:0}.risk-education{padding:16px}}
+
+
+/* TIANA cinematic first-run welcome screen — built from the existing student photo asset. */
+.brand-symbol-tiana{font-weight:900;position:relative;background:linear-gradient(135deg,#7542f5,#ae4ff0)}
+.brand-symbol-tiana>span{position:absolute;right:4px;top:3px;color:#20cdbf;font-size:10px;line-height:1}
+.tiana-onboarding{position:relative!important;min-height:100svh!important;height:100svh!important;padding:0!important;overflow:hidden!important;background:#101710!important;color:#fff}
+.tiana-welcome{position:relative;isolation:isolate;width:100%;height:100svh;min-height:100svh;overflow:hidden;background:#101710}
+.tiana-welcome-art,.tiana-welcome-shade{position:absolute;inset:0;pointer-events:none}
+.tiana-welcome-art{z-index:-2;background:#162318}
+.tiana-welcome-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 45%;filter:saturate(1.05) contrast(1.02)}
+.tiana-welcome-shade{z-index:-1;background:linear-gradient(180deg,rgba(7,13,14,.62) 0%,rgba(7,13,14,.16) 20%,rgba(7,13,14,.02) 43%,rgba(7,13,14,.10) 59%,rgba(5,10,21,.60) 77%,rgba(5,10,21,.96) 100%),linear-gradient(90deg,rgba(8,13,19,.18),transparent 48%,rgba(8,13,19,.05))}
+.tiana-status{position:absolute;z-index:3;top:calc(env(safe-area-inset-top,0px) + 13px);left:7.5%;right:8.5%;display:flex;justify-content:space-between;align-items:center;gap:20px;color:#fff;font:700 14px/1 'DM Sans',sans-serif;letter-spacing:.15px;text-shadow:0 2px 12px #0007}
+.tiana-status-icons{display:flex;align-items:center;gap:4px;height:18px}
+.tiana-status-icons svg{display:block;width:19px;height:18px;flex:none}
+.tiana-status-icons svg:first-child{width:23px}
+.tiana-status-icons svg:last-child{width:30px}
+.tiana-back{position:absolute;z-index:4;top:calc(env(safe-area-inset-top,0px) + 63px);left:clamp(22px,6.5vw,36px);width:38px;height:38px;display:grid;place-items:center;padding:0;color:#fff;background:transparent;border:0;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tiana-back svg{width:30px;height:30px;filter:drop-shadow(0 2px 6px #0006)}
+.tiana-back:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.tiana-brand-block{position:absolute;z-index:2;top:calc(env(safe-area-inset-top,0px) + clamp(88px,11vh,118px));left:12px;right:12px;display:flex;flex-direction:column;align-items:center;text-align:center;color:#fff}
+.tiana-wordmark{position:relative;display:inline-block;font:800 clamp(51px,13vw,70px)/.9 'Manrope',sans-serif;letter-spacing:-.065em;padding:0 .07em .06em 0;text-shadow:0 4px 22px #0005}
+.tiana-wordmark:before{content:"";position:absolute;top:-.03em;right:.03em;width:.26em;height:.15em;border-radius:88% 22% 75% 26%;background:#f14b83;transform:rotate(33deg)}
+.tiana-wordmark:after{content:"";position:absolute;right:-.13em;bottom:.06em;width:.17em;height:.17em;border-radius:50%;background:#20cdbf}
+.tiana-brand-block>p{margin:13px 0 0;color:#fff;font:500 clamp(15px,4vw,21px)/1.25 'DM Sans',sans-serif;letter-spacing:-.025em;text-shadow:0 2px 18px #0008}
+.tiana-bottom-stack{position:absolute;z-index:3;left:clamp(23px,7vw,54px);right:clamp(23px,7vw,54px);bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 18px));display:flex;flex-direction:column;align-items:stretch;gap:clamp(22px,4.1vh,36px)}
+.tiana-promise{margin:0;text-align:center;color:#fff;font:700 clamp(14px,3.9vw,19px)/1.3 'DM Sans',sans-serif;letter-spacing:-.025em;text-shadow:0 2px 14px #000a}
+.tiana-cta{width:100%;max-width:510px;min-height:clamp(61px,8.6vh,78px);margin:0 auto;display:flex;justify-content:center;align-items:center;gap:15px;padding:13px 20px;border:1px solid #ffffff35;border-radius:999px;background:linear-gradient(110deg,#7040f5 0%,#8a43f6 48%,#b64df0 100%);color:#fff;font:800 clamp(17px,4.7vw,22px)/1 'Manrope',sans-serif;letter-spacing:-.03em;box-shadow:0 12px 32px #853bf45c,inset 0 1px 0 #ffffff38;cursor:pointer;transition:transform .18s ease,filter .18s ease,box-shadow .18s ease;-webkit-tap-highlight-color:transparent}
+.tiana-cta svg{width:26px;height:26px;flex:none}
+.tiana-cta:hover{filter:brightness(1.06);box-shadow:0 15px 38px #853bf474,inset 0 1px 0 #ffffff45}
+.tiana-cta:active{transform:scale(.985)}
+.tiana-cta:focus-visible{outline:3px solid #fff;outline-offset:4px}
+@media(min-width:700px){
+ .tiana-welcome-art img{object-position:center 44%}
+ .tiana-status{left:max(7.5%,calc((100% - 500px)/2));right:max(8.5%,calc((100% - 500px)/2));font-size:14px}
+ .tiana-brand-block{top:calc(env(safe-area-inset-top,0px) + 95px)}
+ .tiana-wordmark{font-size:72px}
+ .tiana-brand-block>p{font-size:20px}
+ .tiana-back{left:max(22px,calc((100% - 500px)/2))}
+ .tiana-bottom-stack{left:50%;right:auto;width:min(86%,510px);transform:translateX(-50%);bottom:max(30px,calc(env(safe-area-inset-bottom,0px) + 22px))}
+}
+@media(max-height:700px){
+ .tiana-brand-block{top:calc(env(safe-area-inset-top,0px) + 78px)}
+ .tiana-wordmark{font-size:clamp(43px,10vh,58px)}
+ .tiana-brand-block>p{margin-top:8px;font-size:14px}
+ .tiana-bottom-stack{gap:15px;bottom:max(15px,calc(env(safe-area-inset-bottom,0px) + 12px))}
+ .tiana-cta{min-height:56px}
+}
+@media(prefers-reduced-motion:reduce){.tiana-cta{transition:none}}
+
+/* Fix splash image stacking: keep the photo above the section backdrop, with overlays above the photo. */
+.tiana-welcome-art{z-index:0!important}
+.tiana-welcome-shade{z-index:1!important}
+.tiana-status,.tiana-bottom-stack{z-index:3!important}
+.tiana-back{z-index:4!important}
+.tiana-brand-block{z-index:2!important}
+
+/* TIANA splash hotfix: photo is painted directly on the screen, not a negative stacking layer. */
+.tiana-welcome{isolation:auto!important;background:#17251e url("./assets/student-onboarding-photo.webp") center 43%/cover no-repeat!important}
+.tiana-welcome-art{display:none!important}
+.tiana-welcome-shade{z-index:0!important;pointer-events:none}
+.tiana-brand-block,.tiana-status,.tiana-bottom-stack,.tiana-back{position:absolute;z-index:2!important}
+
+/* TIANA onboarding screen 2 — photo-led student finance introduction */
+.tiana-intro{position:relative;isolation:isolate;width:100%;height:100svh;min-height:640px;overflow:hidden;background:#fff8f5;color:#111b36;border-radius:0}
+.tiana-intro-photo{position:absolute;inset:0 0 43% 0;z-index:-2;overflow:hidden;background:#f3d7b2}
+.tiana-intro-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 37%}
+.tiana-intro-fade{position:absolute;inset:25% 0 0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,transparent 0%,rgba(255,255,255,.18) 23%,rgba(255,252,251,.88) 42%,#fff9f8 60%,#fff8f5 100%)}
+.tiana-intro-status{position:absolute;top:calc(env(safe-area-inset-top,0px) + 13px);left:6%;right:7%;display:flex;justify-content:space-between;align-items:center;color:#fff;font:700 14px/1 'DM Sans',sans-serif;text-shadow:0 2px 10px #0006}
+.tiana-intro-status .tiana-status-icons{display:flex;gap:4px}
+.tiana-intro-status .tiana-status-icons svg{width:18px;height:18px}
+.tiana-intro-back{position:absolute;top:calc(env(safe-area-inset-top,0px) + 54px);left:20px;width:38px;height:38px;display:grid;place-items:center;border:0;border-radius:50%;background:#17203a24;color:#fff}
+.tiana-intro-back svg{width:28px;height:28px}
+.tiana-intro-content{position:absolute;inset:0;display:flex;flex-direction:column;padding:clamp(300px,49vh,430px) clamp(24px,6vw,36px) max(25px,calc(env(safe-area-inset-bottom,0px) + 20px));}
+.tiana-intro-content h1{margin:0;color:#101a35;font:800 clamp(30px,8.3vw,39px)/1.12 'Manrope',sans-serif;letter-spacing:-.055em}
+.tiana-intro-copy{max-width:440px;margin:14px 0 0;color:#68718a;font:500 15px/1.5 'DM Sans',sans-serif;letter-spacing:-.015em}
+.tiana-benefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:clamp(22px,4vh,34px)}
+.tiana-benefit{min-height:148px;padding:14px 7px 12px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:13px;border:1px solid #ffffffd9;border-radius:22px;background:#fffdfdce;box-shadow:0 7px 22px #343d5c0a;text-align:center}
+.tiana-benefit-icon{width:64px;height:64px;display:grid;place-items:center;border-radius:50%}
+.tiana-benefit-icon svg{width:31px;height:31px}
+.tiana-benefit b{color:#101a35;font:800 clamp(12px,3.2vw,15px)/1.35 'Manrope',sans-serif;letter-spacing:-.035em}
+.tiana-benefit-green .tiana-benefit-icon{background:#ddf8e9;color:#16a66a}
+.tiana-benefit-pink .tiana-benefit-icon{background:#ffe3ec;color:#d94b73}
+.tiana-benefit-blue .tiana-benefit-icon{background:#dff1ff;color:#2784dc}
+.tiana-intro-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:22px}
+.tiana-intro-dots{display:flex;align-items:center;gap:12px;padding-left:25%}
+.tiana-intro-dots span{display:block;width:10px;height:10px;border-radius:99px;background:#e1e3ed}
+.tiana-intro-dots span.active{width:25px;background:#6045f5}
+.tiana-intro-next{width:76px;height:76px;display:grid;place-items:center;border:0;border-radius:50%;background:linear-gradient(145deg,#6646f6,#4032e8);color:#fff;box-shadow:0 10px 24px #4e39ed40}
+.tiana-intro-next svg{width:34px;height:34px}
+.tiana-intro-next:focus-visible,.tiana-intro-back:focus-visible{outline:3px solid #6547f5;outline-offset:3px}
+@media(max-height:760px){.tiana-intro-content{padding-top:clamp(245px,42vh,330px);padding-bottom:max(16px,calc(env(safe-area-inset-bottom,0px) + 10px))}.tiana-benefits{margin-top:18px}.tiana-benefit{min-height:122px;padding-top:10px}.tiana-benefit-icon{width:52px;height:52px}.tiana-intro-next{width:62px;height:62px}}
+@media(min-width:700px){.tiana-intro{max-width:520px;margin:0 auto}.tiana-intro-content{padding-top:360px}.tiana-intro-photo{inset-bottom:43%}}
+
+
+/* Five-screen TIANA onboarding carousel, inspired by the supplied reference. */
+.tiana-welcome{background-color:#fff2ce!important;background-image:url("./assets/onboarding-welcome.webp"),url("./assets/onboarding-welcome.svg")!important;background-position:center 43%,center 43%!important;background-size:cover,cover!important;background-repeat:no-repeat,no-repeat!important}
+.tiana-welcome-art{display:none!important}
+.tiana-brand-block .tiana-wordmark{text-transform:none;letter-spacing:-.075em}
+.tiana-intro{background:linear-gradient(180deg,#edeaff 0%,#f7f5ff 58%,#fff 100%)}
+.tiana-intro-photo{inset:0 0 39% 0;background:#e9e5ff}
+.tiana-intro-photo img{object-position:center 48%;object-fit:cover}
+.tiana-intro-fade{inset:25% 0 0;background:linear-gradient(180deg,transparent 0%,rgba(245,243,255,.10) 20%,rgba(246,244,255,.88) 43%,#f6f4ff 64%,#f8f7ff 100%)}
+.tiana-intro-content{padding-top:clamp(330px,48vh,420px)}
+.tiana-intro-content h1{text-align:center;font-size:clamp(29px,7.7vw,36px)}
+.tiana-intro-copy{text-align:center;font-size:13px;margin-top:10px}
+.tiana-benefits{gap:8px;margin-top:clamp(18px,3vh,24px)}
+.tiana-benefit{min-height:105px;padding:12px 5px 9px;border-radius:17px;gap:7px}
+.tiana-benefit-icon{width:43px;height:43px}
+.tiana-benefit-icon svg{width:24px;height:24px}
+.tiana-benefit b{font-size:11px}
+.tiana-intro-dots{padding-left:0;gap:8px}
+.tiana-intro-dots span{width:8px;height:8px}
+.tiana-intro-dots span.active{width:22px}
+.tiana-intro-next{width:52px;height:52px;background:#15263b;color:#fff;box-shadow:0 6px 18px #15263b20}
+.tiana-intro-next svg{width:25px;height:25px}
+.tiana-back,.tiana-intro-back{display:none!important}
+.nkem-carousel-page{position:relative;isolation:isolate;display:flex;flex-direction:column;width:100%;height:100svh;min-height:650px;max-width:520px;margin:0 auto;overflow:hidden;padding:calc(env(safe-area-inset-top,0px) + 16px) 22px max(16px,calc(env(safe-area-inset-bottom,0px) + 15px));border-radius:0;color:#111b36;background:#f8f9ff}
+.nkem-goals-page{background:linear-gradient(155deg,#d7fff0 0%,#dffaf1 56%,#f8fffd 100%)}
+.nkem-ai-page{background:linear-gradient(155deg,#fff0a9 0%,#fff8d9 50%,#fffdf1 100%)}
+.nkem-account-page{background:linear-gradient(180deg,#fbfcff 0%,#f3f8ff 100%);padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
+.nkem-screen-status{height:20px;display:flex;align-items:center;justify-content:space-between;padding:0 4px;color:#111827;font:700 11px/1 'DM Sans',sans-serif;flex:0 0 auto}
+.nkem-back{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);left:16px;z-index:5;width:32px;height:32px;display:grid;place-items:center;border:0;border-radius:50%;background:#fff8;color:#17233d;font:400 28px/1 'DM Sans',sans-serif}
+.nkem-page-heading{position:relative;z-index:2;text-align:center;margin:29px auto 0;max-width:440px;flex:0 0 auto}
+.nkem-page-emoji{height:24px;margin-bottom:2px;font-size:19px;line-height:24px}
+.nkem-page-heading h1{margin:0;color:#101a35;font:800 clamp(27px,7.3vw,35px)/1.08 'Manrope',sans-serif;letter-spacing:-.055em}
+.nkem-page-heading p{max-width:360px;margin:10px auto 0;color:#5b6680;font:500 12.5px/1.45 'DM Sans',sans-serif}
+.nkem-art{position:relative;width:100%;height:31vh;min-height:175px;max-height:270px;flex:0 1 auto;margin:9px auto 3px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.nkem-art img{width:100%;height:100%;object-fit:contain;object-position:center center}
+.nkem-goals-page .nkem-art{height:29vh;min-height:170px;max-height:238px;margin-top:0}
+.nkem-goal-stack{position:relative;z-index:2;display:flex;flex-direction:column;gap:7px;margin-top:-2px}
+.nkem-goal-card{min-height:55px;display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid #ffffffd9;border-radius:15px;background:#ffffffdd;box-shadow:0 5px 14px #3e6b5a0d}
+.nkem-goal-icon{display:grid;place-items:center;width:39px;height:39px;border-radius:10px;font-size:22px;flex-shrink:0}
+.nkem-goal-icon.laptop{background:#e6e9ff}.nkem-goal-icon.school{background:#fff0c7}.nkem-goal-icon.travel{background:#e0efff}
+.nkem-goal-copy{min-width:0;flex:1}.nkem-goal-copy b{display:block;color:#17223a;font:800 11px/1.2 'Manrope',sans-serif}
+.nkem-goal-copy small{display:block;margin-top:4px;color:#7c8799;font:500 9px/1.1 'DM Sans',sans-serif}
+.nkem-goal-card>strong{font:800 10px/1 'DM Sans',sans-serif;color:#4b6175}
+.nkem-progress{height:6px;margin-top:5px;overflow:hidden;border-radius:99px;background:#e7edf0}
+.nkem-progress i{display:block;height:100%;border-radius:99px;background:#2dc58c}
+.nkem-goal-card:nth-child(2) .nkem-progress i{background:#458cf5}.nkem-goal-card:nth-child(3) .nkem-progress i{background:#ff727d}
+.nkem-ai-page .nkem-art{height:39vh;min-height:225px;max-height:330px;margin:8px auto 0;position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 55px);width:100%;z-index:-1}
+.nkem-ai-page .nkem-art img{object-fit:contain;object-position:center bottom}
+.nkem-chat-preview{position:relative;z-index:2;display:flex;flex-direction:column;gap:10px;margin:20px 0 0;max-width:90%}
+.nkem-chat-bubble{padding:11px 14px;border-radius:18px;background:#fffdf0f2;color:#1a2440;box-shadow:0 5px 18px #795e2020;font:600 11px/1.3 'DM Sans',sans-serif;max-width:82%}
+.nkem-chat-bubble.left{align-self:flex-start;border-bottom-left-radius:6px}
+.nkem-chat-bubble.right{align-self:flex-end;background:#ffffffee;border-bottom-right-radius:6px}
+.nkem-page-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:12px;position:relative;z-index:3;flex:0 0 auto}
+.nkem-page-dots{display:flex;align-items:center;justify-content:center;gap:8px;padding-left:14px}
+.nkem-page-dots span{display:block;width:8px;height:8px;background:#b9d8cf;border-radius:50%}
+.nkem-page-dots span.active{width:23px;border-radius:99px;background:#183a43}
+.nkem-ai-page .nkem-page-dots span{background:#e6d6a4}.nkem-ai-page .nkem-page-dots span.active{background:#30364e}
+.nkem-next{display:grid;place-items:center;width:50px;height:50px;border:0;border-radius:50%;background:#173a43;color:#fff;font:400 29px/1 'DM Sans',sans-serif;box-shadow:0 8px 18px #122c3220}
+.nkem-ai-page .nkem-next{background:#30364e}
+.nkem-auth-options{position:relative;z-index:3;display:flex;flex-direction:column;gap:9px;margin-top:24px;flex:0 0 auto}
+.nkem-auth-button{width:100%;min-height:47px;display:flex;align-items:center;justify-content:center;gap:15px;border:1px solid #dce4f0;border-radius:15px;background:#ffffffed;color:#111b36;box-shadow:0 4px 13px #293c5b07;font:700 12px/1 'DM Sans',sans-serif}
+.nkem-auth-button:active{transform:scale(.99)}
+.nkem-auth-icon{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;font:800 18px/1 'DM Sans',sans-serif;color:#111b36}
+.nkem-auth-icon.google{font-size:22px;background:conic-gradient(#4285f4 0 28%,#34a853 28% 48%,#fbbc05 48% 72%,#ea4335 72% 100%);background-clip:text;-webkit-background-clip:text;color:transparent}
+.nkem-auth-icon.phone{color:#1685d9}
+.nkem-or{display:flex;align-items:center;gap:10px;justify-content:center;color:#7e8798;font-size:10px;margin:2px 0}
+.nkem-or span{height:1px;flex:1;background:#d9dfeb}
+.nkem-account-page .nkem-page-heading{margin-top:25px}
+.nkem-account-page .nkem-page-heading h1{font-size:clamp(25px,6.5vw,32px)}
+.nkem-account-page .nkem-page-heading p{font-size:12px;margin-top:7px}
+.nkem-account-page .nkem-auth-options{order:3;margin-top:20px}
+.nkem-account-page .nkem-art{order:4;height:22vh;min-height:130px;max-height:190px;width:calc(100% + 44px);margin:5px -22px 0;flex:0 0 auto}
+.nkem-account-page .nkem-art img{object-fit:cover;object-position:center 74%}
+.nkem-account-page .nkem-page-footer{order:5;justify-content:center;padding-top:5px}
+.nkem-account-page .nkem-page-dots{display:none}
+.nkem-legal{margin:0 auto;max-width:330px;text-align:center;color:#72809a;font:500 9px/1.45 'DM Sans',sans-serif}
+.nkem-legal a{color:#596fa1;text-decoration:underline}
+@media(max-height:720px){
+ .nkem-page-heading{margin-top:21px}
+ .nkem-art{height:25vh;min-height:145px}
+ .nkem-goals-page .nkem-art{height:23vh;min-height:135px}
+ .nkem-goal-stack{gap:5px}
+ .nkem-goal-card{min-height:49px;padding:5px 9px}
+ .nkem-ai-page .nkem-art{height:34vh;bottom:45px}
+ .nkem-auth-options{margin-top:16px;gap:7px}
+ .nkem-auth-button{min-height:43px}
+ .nkem-account-page .nkem-art{height:17vh;min-height:105px}
+}
+@media(prefers-reduced-motion:reduce){.nkem-carousel-page,.nkem-next,.nkem-auth-button{animation:none;transition:none}}
