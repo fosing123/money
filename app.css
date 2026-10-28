@@ -213,7 +213,7 @@ body[data-palette="midnight"] .goal-idea-copy small,body[data-palette="midnight"
  .settings-actions .button{width:100%;justify-content:center}
 }
 
-/* Nkem marketplace and opportunity discovery */
+/* TIANA marketplace and opportunity discovery */
 .market-hero,.opportunity-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,220px);align-items:center;gap:20px;padding:clamp(20px,4vw,36px);border-radius:28px;background:linear-gradient(125deg,#f0edff,#fff7e9 70%,#e3f8ef);border:1px solid rgba(101,88,237,.10);margin-bottom:24px;overflow:hidden}
 .market-hero h2,.opportunity-hero h2{font-size:clamp(24px,3.3vw,38px);line-height:1.1;letter-spacing:-.04em;margin:12px 0}
 .market-hero p,.opportunity-hero p{max-width:620px;color:var(--muted);line-height:1.65}
@@ -342,8 +342,8 @@ body[data-palette="midnight"] .goal-idea-copy small,body[data-palette="midnight"
 @media(min-width:700px){.tiana-intro{max-width:520px;margin:0 auto}.tiana-intro-content{padding-top:360px}.tiana-intro-photo{inset-bottom:43%}}
 
 
-/* Five-screen Nkem onboarding carousel, inspired by the supplied reference. */
-.tiana-welcome{background-color:#fff2ce!important;background-image:url("./assets/onboarding-welcome.webp"),url("./assets/onboarding-welcome.svg")!important;background-position:center 43%,center 43%!important;background-size:cover,cover!important;background-repeat:no-repeat,no-repeat!important}
+/* Five-screen TIANA onboarding carousel, inspired by the supplied reference. */
+.tiana-welcome{background-color:#fff2ce!important;background-image:url("./assets/onboarding-welcome.svg")!important;background-position:center 43%,center 43%!important;background-size:cover,cover!important;background-repeat:no-repeat,no-repeat!important}
 .tiana-welcome-art{display:none!important}
 .tiana-brand-block .tiana-wordmark{text-transform:none;letter-spacing:-.075em}
 .tiana-intro{background:linear-gradient(180deg,#edeaff 0%,#f7f5ff 58%,#fff 100%)}
