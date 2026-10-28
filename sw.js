@@ -1,12 +1,12 @@
-const CACHE_PREFIX = "student-money-shell-";
-const CACHE = "nkem-shell-v13";
+const CACHE_PREFIX = "nkem-shell-";
+const CACHE = "nkem-shell-v14";
 const SHELL = [
   "./",
   "./index.html",
   "./app.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./money-mark.svg",
+  "./money-mark.svg",\n  "./terms.html",\n  "./privacy.html",
   "./assets/student-hero.svg",
   "./assets/student-hero-3d.webp",
   "./assets/student-onboarding-photo.webp",
@@ -27,7 +27,7 @@ self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(
-        keys.filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE).map(key => caches.delete(key))
+        keys.filter(key => (key.startsWith(CACHE_PREFIX) || key.startsWith("student-money-shell-")) && key !== CACHE).map(key => caches.delete(key))
       ))
       .then(() => self.clients.claim())
   );
