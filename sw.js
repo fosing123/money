@@ -1,5 +1,5 @@
-const CACHE_PREFIX = "student-money-shell-";
-const CACHE = "nkem-shell-v13";
+const CACHE_PREFIX = "tiana-shell-";
+const CACHE = "tiana-shell-v14";
 const SHELL = [
   "./",
   "./index.html",
@@ -27,7 +27,7 @@ self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(
-        keys.filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE).map(key => caches.delete(key))
+        keys.filter(key => key !== CACHE && (key.startsWith(CACHE_PREFIX) || key.startsWith("student-money-shell-") || key.startsWith("nkem-shell-"))).map(key => caches.delete(key))
       ))
       .then(() => self.clients.claim())
   );

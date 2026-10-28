@@ -248,3 +248,51 @@ body[data-palette="midnight"] .goal-idea-copy small,body[data-palette="midnight"
 .detail-emoji{font-size:48px;margin:12px 0}
 @media(max-width:900px){.market-listing-grid,.opportunity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.market-hero,.opportunity-hero{grid-template-columns:minmax(0,1fr) 92px;gap:10px;padding:18px;border-radius:20px}.market-hero img,.opportunity-hero img{max-height:110px}.market-listing-grid,.opportunity-grid{grid-template-columns:minmax(0,1fr)}.market-listing-art{height:115px}.market-listing p,.opportunity-card p{min-height:0}.risk-education{padding:16px}}
+
+
+/* TIANA cinematic first-run welcome screen — built from the existing student photo asset. */
+.brand-symbol-tiana{font-weight:900;position:relative;background:linear-gradient(135deg,#7542f5,#ae4ff0)}
+.brand-symbol-tiana>span{position:absolute;right:4px;top:3px;color:#20cdbf;font-size:10px;line-height:1}
+.tiana-onboarding{position:relative!important;min-height:100svh!important;height:100svh!important;padding:0!important;overflow:hidden!important;background:#101710!important;color:#fff}
+.tiana-welcome{position:relative;isolation:isolate;width:100%;height:100svh;min-height:100svh;overflow:hidden;background:#101710}
+.tiana-welcome-art,.tiana-welcome-shade{position:absolute;inset:0;pointer-events:none}
+.tiana-welcome-art{z-index:-2;background:#162318}
+.tiana-welcome-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 45%;filter:saturate(1.05) contrast(1.02)}
+.tiana-welcome-shade{z-index:-1;background:linear-gradient(180deg,rgba(7,13,14,.62) 0%,rgba(7,13,14,.16) 20%,rgba(7,13,14,.02) 43%,rgba(7,13,14,.10) 59%,rgba(5,10,21,.60) 77%,rgba(5,10,21,.96) 100%),linear-gradient(90deg,rgba(8,13,19,.18),transparent 48%,rgba(8,13,19,.05))}
+.tiana-status{position:absolute;z-index:3;top:calc(env(safe-area-inset-top,0px) + 13px);left:7.5%;right:8.5%;display:flex;justify-content:space-between;align-items:center;gap:20px;color:#fff;font:700 14px/1 'DM Sans',sans-serif;letter-spacing:.15px;text-shadow:0 2px 12px #0007}
+.tiana-status-icons{display:flex;align-items:center;gap:4px;height:18px}
+.tiana-status-icons svg{display:block;width:19px;height:18px;flex:none}
+.tiana-status-icons svg:first-child{width:23px}
+.tiana-status-icons svg:last-child{width:30px}
+.tiana-back{position:absolute;z-index:4;top:calc(env(safe-area-inset-top,0px) + 63px);left:clamp(22px,6.5vw,36px);width:38px;height:38px;display:grid;place-items:center;padding:0;color:#fff;background:transparent;border:0;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tiana-back svg{width:30px;height:30px;filter:drop-shadow(0 2px 6px #0006)}
+.tiana-back:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.tiana-brand-block{position:absolute;z-index:2;top:calc(env(safe-area-inset-top,0px) + clamp(88px,11vh,118px));left:12px;right:12px;display:flex;flex-direction:column;align-items:center;text-align:center;color:#fff}
+.tiana-wordmark{position:relative;display:inline-block;font:800 clamp(51px,13vw,70px)/.9 'Manrope',sans-serif;letter-spacing:-.065em;padding:0 .07em .06em 0;text-shadow:0 4px 22px #0005}
+.tiana-wordmark:before{content:"";position:absolute;top:-.03em;right:.03em;width:.26em;height:.15em;border-radius:88% 22% 75% 26%;background:#f14b83;transform:rotate(33deg)}
+.tiana-wordmark:after{content:"";position:absolute;right:-.13em;bottom:.06em;width:.17em;height:.17em;border-radius:50%;background:#20cdbf}
+.tiana-brand-block>p{margin:13px 0 0;color:#fff;font:500 clamp(15px,4vw,21px)/1.25 'DM Sans',sans-serif;letter-spacing:-.025em;text-shadow:0 2px 18px #0008}
+.tiana-bottom-stack{position:absolute;z-index:3;left:clamp(23px,7vw,54px);right:clamp(23px,7vw,54px);bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 18px));display:flex;flex-direction:column;align-items:stretch;gap:clamp(22px,4.1vh,36px)}
+.tiana-promise{margin:0;text-align:center;color:#fff;font:700 clamp(14px,3.9vw,19px)/1.3 'DM Sans',sans-serif;letter-spacing:-.025em;text-shadow:0 2px 14px #000a}
+.tiana-cta{width:100%;max-width:510px;min-height:clamp(61px,8.6vh,78px);margin:0 auto;display:flex;justify-content:center;align-items:center;gap:15px;padding:13px 20px;border:1px solid #ffffff35;border-radius:999px;background:linear-gradient(110deg,#7040f5 0%,#8a43f6 48%,#b64df0 100%);color:#fff;font:800 clamp(17px,4.7vw,22px)/1 'Manrope',sans-serif;letter-spacing:-.03em;box-shadow:0 12px 32px #853bf45c,inset 0 1px 0 #ffffff38;cursor:pointer;transition:transform .18s ease,filter .18s ease,box-shadow .18s ease;-webkit-tap-highlight-color:transparent}
+.tiana-cta svg{width:26px;height:26px;flex:none}
+.tiana-cta:hover{filter:brightness(1.06);box-shadow:0 15px 38px #853bf474,inset 0 1px 0 #ffffff45}
+.tiana-cta:active{transform:scale(.985)}
+.tiana-cta:focus-visible{outline:3px solid #fff;outline-offset:4px}
+@media(min-width:700px){
+ .tiana-welcome-art img{object-position:center 44%}
+ .tiana-status{left:max(7.5%,calc((100% - 500px)/2));right:max(8.5%,calc((100% - 500px)/2));font-size:14px}
+ .tiana-brand-block{top:calc(env(safe-area-inset-top,0px) + 95px)}
+ .tiana-wordmark{font-size:72px}
+ .tiana-brand-block>p{font-size:20px}
+ .tiana-back{left:max(22px,calc((100% - 500px)/2))}
+ .tiana-bottom-stack{left:50%;right:auto;width:min(86%,510px);transform:translateX(-50%);bottom:max(30px,calc(env(safe-area-inset-bottom,0px) + 22px))}
+}
+@media(max-height:700px){
+ .tiana-brand-block{top:calc(env(safe-area-inset-top,0px) + 78px)}
+ .tiana-wordmark{font-size:clamp(43px,10vh,58px)}
+ .tiana-brand-block>p{margin-top:8px;font-size:14px}
+ .tiana-bottom-stack{gap:15px;bottom:max(15px,calc(env(safe-area-inset-bottom,0px) + 12px))}
+ .tiana-cta{min-height:56px}
+}
+@media(prefers-reduced-motion:reduce){.tiana-cta{transition:none}}
