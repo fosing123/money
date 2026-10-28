@@ -303,3 +303,9 @@ body[data-palette="midnight"] .goal-idea-copy small,body[data-palette="midnight"
 .tiana-status,.tiana-bottom-stack{z-index:3!important}
 .tiana-back{z-index:4!important}
 .tiana-brand-block{z-index:2!important}
+
+/* TIANA splash hotfix: photo is painted directly on the screen, not a negative stacking layer. */
+.tiana-welcome{isolation:auto!important;background:#17251e url("./assets/student-onboarding-photo.webp") center 43%/cover no-repeat!important}
+.tiana-welcome-art{display:none!important}
+.tiana-welcome-shade{z-index:0!important;pointer-events:none}
+.tiana-brand-block,.tiana-status,.tiana-bottom-stack,.tiana-back{position:absolute;z-index:2!important}

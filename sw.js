@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "tiana-shell-";
-const CACHE = "tiana-shell-v15";
+const CACHE = "tiana-shell-v16";
 const SHELL = [
   "./",
   "./index.html",
