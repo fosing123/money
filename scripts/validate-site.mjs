@@ -50,4 +50,16 @@ assert.match(app, /student-money-backup/, "Backup format must be identifiable");
 assert.match(app, /data-action="export-backup"/, "Settings must expose the backup action");
 assert.match(app, /data-action="import-backup"/, "Settings must expose the restore action");
 
+
+for (const paletteName of ["Nkem Violet", "Mint Growth", "Ocean Blue", "Sunset Peach", "Golden Hour", "Midnight Pro", "Rose Dream", "Forest Wealth"]) {
+  assert.ok(app.includes(`name:'${paletteName}'`), `Missing Nkem palette: ${paletteName}`);
+}
+assert.match(app, /if\\(onboardingStep===0 && introStep>0\\)/, "The illustrated intro flow must be present");
+for (const screenTitle of ["Take control of your money", "Achieve your goals", "Get smart advice with AI", "Create your account"]) {
+  assert.ok(app.includes(screenTitle), `Nkem onboarding screen is missing: ${screenTitle}`);
+}
+assert.ok(!app.includes('class="soon">COMING SOON'), "Marketplace and opportunities should not be branded as coming soon");
+assert.ok(existsSync(resolve(root, "terms.html")), "Terms of Service page must be present");
+assert.ok(existsSync(resolve(root, "privacy.html")), "Privacy Policy page must be present");
+
 console.log(`Static smoke checks passed: ${shellRefs.size} service-worker shell paths, manifest, page links and backup controls.`);
