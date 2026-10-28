@@ -135,7 +135,7 @@ function activityPage(){
  var periodRecords=(state.transactions||[]).filter(function(t){var stamp=Number(t.createdAt)||new Date(String(t.date||'')+'T00:00:00').getTime();return Number.isFinite(stamp)&&stamp>=start.getTime()&&stamp<=now.getTime();});
  var expenses=periodRecords.filter(function(t){return t.type==='expense';}),total=expenses.reduce(function(sum,t){return sum+Math.max(0,Number(t.amount)||0);},0),byCategory={};
  expenses.forEach(function(t){var key=t.category||'Other';byCategory[key]=(byCategory[key]||0)+Math.max(0,Number(t.amount)||0);});
- var categoryColors={Food:'#ff825f',Transport:'#38b6ee','Airtime & data':'#8b68f5',School:'#f2bd45',Housing:'#38bf91',Other:'#e977b1,Entertainment:'#8e72de'};
+ var categoryColors={Food:'#ff825f',Transport:'#38b6ee','Airtime & data':'#8b68f5',School:'#f2bd45',Housing:'#38bf91',Other:'#e977b1',Entertainment:'#8e72de'};
  var fallbackColors=['#ff825f','#38b6ee','#8b68f5','#f2bd45','#38bf91','#e977b1'];
  var cats=Object.keys(byCategory).sort(function(a,b){return byCategory[b]-byCategory[a];}),cursor=0,stops=[];
  cats.forEach(function(c,i){var pct=total?byCategory[c]/total*100:0,colour=categoryColors[c]||fallbackColors[i%fallbackColors.length];stops.push(colour+' '+cursor+'% '+(cursor+pct)+'%');cursor+=pct;});
