@@ -426,3 +426,34 @@ input,select,textarea{color:var(--ink)}
  .mobile-nav{display:flex}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Expense analytics screen */
+.activity-periods{display:flex;gap:7px;margin:0 0 14px;padding:5px;border-radius:15px;background:#eeeff9;width:max-content;max-width:100%}
+.activity-periods .filter{border:0;background:transparent;min-height:34px;padding:8px 14px;white-space:nowrap}
+.activity-periods .filter.active{background:#6c4ff6;color:#fff;box-shadow:0 5px 13px rgba(108,79,246,.22)}
+.activity-analytics{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(230px,.65fr);gap:14px;margin-bottom:16px}
+.activity-donut-panel{min-width:0}
+.activity-donut-panel .donut-layout{align-items:center;gap:22px}
+.activity-donut-panel .donut-chart{width:176px;height:176px;flex-shrink:0}
+.activity-donut-panel .donut-hole{inset:25px}
+.activity-donut-panel .donut-hole b{font-size:23px}
+.activity-donut-panel .spend-legend{min-width:0;flex:1}
+.activity-donut-panel .spend-legend-row{display:grid;grid-template-columns:9px minmax(0,1fr) 32px auto;gap:7px;align-items:center}
+.activity-donut-panel .spend-legend-row b{font-size:9px}
+.activity-donut-panel .spend-legend-row strong{font:800 10px Manrope,sans-serif;white-space:nowrap}
+.activity-spending-note{display:flex;align-items:flex-start;gap:13px;background:linear-gradient(150deg,#f0edff,#fff 75%);padding:21px}
+.activity-spending-note h3{font:900 25px Manrope,sans-serif;letter-spacing:-1px;margin:12px 0 7px}
+.activity-spending-note p{font-size:11px;line-height:1.7;color:#707c94;margin:0 0 14px}
+.activity-transactions{margin-top:16px}
+.activity-transactions .toolbar{margin-top:13px}
+@media(max-width:900px){.activity-analytics{grid-template-columns:minmax(0,1fr)}.activity-spending-note{padding:17px}}
+@media(max-width:640px){
+ .activity-periods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:4px}
+ .activity-periods .filter{padding:9px 4px;font-size:10px}
+ .activity-donut-panel .donut-layout{flex-direction:column;align-items:stretch;gap:17px}
+ .activity-donut-panel .donut-chart{width:174px;height:174px;align-self:center}
+ .activity-donut-panel .spend-legend-row{grid-template-columns:9px minmax(0,1fr) 30px auto}
+ .activity-spending-note h3{font-size:22px}
+ .activity-transactions .toolbar{flex-wrap:wrap}
+ .activity-transactions .toolbar .search{width:100%}
+}
