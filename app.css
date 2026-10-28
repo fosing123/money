@@ -296,3 +296,10 @@ body[data-palette="midnight"] .goal-idea-copy small,body[data-palette="midnight"
  .tiana-cta{min-height:56px}
 }
 @media(prefers-reduced-motion:reduce){.tiana-cta{transition:none}}
+
+/* Fix splash image stacking: keep the photo above the section backdrop, with overlays above the photo. */
+.tiana-welcome-art{z-index:0!important}
+.tiana-welcome-shade{z-index:1!important}
+.tiana-status,.tiana-bottom-stack{z-index:3!important}
+.tiana-back{z-index:4!important}
+.tiana-brand-block{z-index:2!important}
