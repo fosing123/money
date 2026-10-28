@@ -11,7 +11,7 @@ const manifest = JSON.parse(read("manifest.webmanifest"));
 
 assert.match(html, /<!doctype html>/i, "index.html must declare HTML5");
 assert.match(html, /<html lang="en">/i, "The document must declare its language");
-assert.match(html, /<title>TIANA/i, "The page needs a useful document title");
+assert.match(html, /<title>Nkem/i, "The page needs a useful document title");
 assert.match(html, /name="description"/i, "The page needs a meta description");
 assert.match(html, /rel="manifest"/i, "The installable manifest must be linked");
 assert.match(html, /app\.css/, "The app stylesheet must be linked");
@@ -23,7 +23,7 @@ for (const [, ref] of html.matchAll(/\b(?:src|href)="([^"]+)"/g)) {
   assert.ok(existsSync(resolve(root, relative)), `index.html references a missing local file: ${ref}`);
 }
 
-assert.equal(manifest.name, "TIANA", "Manifest name should match the app");
+assert.equal(manifest.name, "Nkem", "Manifest name should match the app");
 assert.equal(manifest.display, "standalone", "The app should be installable in standalone mode");
 assert.ok(Array.isArray(manifest.icons) && manifest.icons.length > 0, "Manifest must provide an icon");
 for (const icon of manifest.icons) {

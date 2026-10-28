@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "tiana-shell-";
-const CACHE = "tiana-shell-v17";
+const CACHE = "tiana-shell-v18";
 const SHELL = [
   "./",
   "./index.html",
@@ -11,6 +11,11 @@ const SHELL = [
   "./assets/student-hero-3d.webp",
   "./assets/student-onboarding-photo.webp",
   "./assets/student-onboarding-photo.png",
+  "./assets/onboarding-welcome.svg",
+  "./assets/onboarding-control.svg",
+  "./assets/onboarding-goals.svg",
+  "./assets/onboarding-ai.svg",
+  "./assets/onboarding-account.svg",
   "./assets/money-coach.svg",
   "./assets/marketplace.svg",
   "./assets/invest.svg"
