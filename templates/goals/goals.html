@@ -1,31 +1,9 @@
 {% extends 'base.html' %}
-{% block title %}Goals{% endblock %}
+{% block title %}Savings goals · TIANA{% endblock %}
 {% block content %}
-<section class="section-header">
-    <div>
-        <p class="eyebrow">Savings</p>
-        <h1>Goals</h1>
-    </div>
-    <a class="button" href="{% url 'goal_create' %}">New goal</a>
-</section>
-
-<section class="card table-card">
-    {% if goals %}
-        <table>
-            <thead><tr><th>Name</th><th>Target</th><th>Saved</th><th>Progress</th></tr></thead>
-            <tbody>
-                {% for goal in goals %}
-                    <tr>
-                        <td>{{ goal.name }}</td>
-                        <td>{{ goal.target_amount }} {{ goal.currency }}</td>
-                        <td>{{ goal.current_amount }} {{ goal.currency }}</td>
-                        <td>{{ goal.progress_percentage }}%</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="empty-state">No goals yet. Start a savings goal for school fees, rent, or travel.</p>
-    {% endif %}
-</section>
+<div class="page-heading"><div><p class="eyebrow">YOUR FUTURE, ONE STEP AT A TIME</p><h1>Dream it. Plan it. Get there.</h1><p class="section-copy">A goal is a promise to yourself, not a deadline to feel bad about.</p></div><a class="button" href="{% url 'goal_create' %}">＋ Add a goal</a></div>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:16px">
+{% for goal in goals %}<article class="card"><div class="card-head"><span class="goal-thumb">{% if goal.image %}<img src="{{ goal.image.url }}" alt="">{% else %}◎{% endif %}</span><span class="pill {% if goal.status == 'completed' %}success{% endif %}">{{ goal.get_status_display }}</span></div><h2>{{ goal.name }}</h2><p class="muted-text">{{ goal.description|default:'Every little deposit is a step closer.' }}</p><div class="goal-top"><strong>{{ goal.current_amount|floatformat:0 }} FCFA</strong><span class="muted-text">of {{ goal.target_amount|floatformat:0 }}</span></div><div class="progress-track green"><span style="width:{% if goal.progress_percentage > 100 %}100{% else %}{{ goal.progress_percentage }}{% endif %}%"></span></div><div class="goal-foot"><span>{{ goal.progress_percentage }}% there</span><strong>{{ goal.remaining_amount|floatformat:0 }} FCFA to go</strong></div>{% if goal.target_date %}<p class="muted-text" style="margin-top:13px;margin-bottom:0">Target date: {{ goal.target_date|date:"M j, Y" }}</p>{% endif %}</article>
+{% empty %}<div class="card empty-state"><div class="empty-emoji">🎯</div><h3>What are you looking forward to?</h3><p>School fees, a laptop, a new business, or a little breathing room. Name a goal and take the first step.</p><a class="button button-quiet" href="{% url 'goal_create' %}">Create your first goal</a></div>{% endfor %}
+</div>
 {% endblock %}

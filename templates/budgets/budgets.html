@@ -1,31 +1,9 @@
 {% extends 'base.html' %}
-{% block title %}Budgets{% endblock %}
+{% block title %}Budgets · TIANA{% endblock %}
 {% block content %}
-<section class="section-header">
-    <div>
-        <p class="eyebrow">Planning</p>
-        <h1>Budgets</h1>
-    </div>
-    <a class="button" href="{% url 'budget_create' %}">New budget</a>
-</section>
-
-<section class="card table-card">
-    {% if budgets %}
-        <table>
-            <thead><tr><th>Name</th><th>Amount</th><th>Spent</th><th>Remaining</th></tr></thead>
-            <tbody>
-                {% for item in budgets %}
-                    <tr>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.amount }} {{ item.currency }}</td>
-                        <td>{{ item.spent_amount }} {{ item.currency }}</td>
-                        <td>{{ item.remaining_amount }} {{ item.currency }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="empty-state">No budgets yet. Add one to start tracking your spending limits.</p>
-    {% endif %}
-</section>
+<div class="page-heading"><div><p class="eyebrow">A PLAN, NOT A PUNISHMENT</p><h1>Make room for what matters.</h1><p class="section-copy">Budgets are flexible guide rails. Start with the categories that matter most to you.</p></div><a class="button" href="{% url 'budget_create' %}">＋ Create budget</a></div>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px">
+{% for item in budgets %}<article class="card"><div class="card-head"><div><span class="pill">{{ item.get_period_display }}</span><h2 style="margin-top:12px">{{ item.name }}</h2><small>{% if item.category %}{{ item.category }}{% else %}All categories{% endif %}</small></div><span class="goal-thumb">▤</span></div><div class="goal-top"><strong>{{ item.spent_amount|floatformat:0 }} FCFA used</strong><span class="pill {% if item.percent_used >= 100 %}danger{% elif item.percent_used >= 80 %}warning{% else %}success{% endif %}">{{ item.percent_used|floatformat:0 }}%</span></div><div class="progress-track {% if item.percent_used >= 80 %}orange{% else %}green{% endif %}"><span style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div><div class="goal-foot"><span>Planned {{ item.amount|floatformat:0 }} FCFA</span><strong>{{ item.remaining_amount|floatformat:0 }} left</strong></div></article>
+{% empty %}<div class="card empty-state"><div class="empty-emoji">🪴</div><h3>Start small. Stay flexible.</h3><p>Set a spending limit for food, transport, internet or any category that helps you feel in control.</p><a class="button button-quiet" href="{% url 'budget_create' %}">Create your first budget</a></div>{% endfor %}
+</div>
 {% endblock %}

@@ -1,92 +1,44 @@
-{% extends 'base.html' %}
-{% block title %}Dashboard{% endblock %}
+{% extends 'base.html' %}{% load static %}
+{% block title %}Your overview · TIANA{% endblock %}
 {% block content %}
-<section class="dashboard-hero card">
-    <div>
-        <p class="eyebrow">Overview</p>
-        <h1>Hello, {{ user.first_name|default:user.username }}.</h1>
-    </div>
-    <div class="hero-balance">
-        <span>Total balance</span>
-        <strong>{{ total_balance|floatformat:2 }} XAF</strong>
-    </div>
+<div class="page-heading"><div><p class="eyebrow">YOUR MONEY, YOUR PACE</p><h1>Hey {{ user.first_name|default:user.username }} <span class="sparkle">✦</span></h1><p class="section-copy">Let's make today's money decisions a little easier.</p></div><div class="heading-actions"><a class="button button-secondary" href="{% url 'account_create' %}">＋ Account</a><a class="button" href="{% url 'transaction_create' %}">＋ Add a transaction</a></div></div>
+<section class="dashboard-hero">
+  <div class="welcome-panel">
+    {% if brand_assets.dashboard_hero %}<div class="welcome-art"><img src="{{ brand_assets.dashboard_hero.image.url }}" alt=""></div>{% else %}<div class="welcome-art"><img src="{% static 'assets/student-hero-3d.webp' %}" alt=""></div>{% endif %}
+    <p class="eyebrow" style="color:#d9d0ff">YOUR MONEY SNAPSHOT</p><h1>Progress, not perfection.</h1><p>You don't need to get everything right today. Just keep learning what works for you.</p>
+    <div class="welcome-balance"><div><div class="balance-label">Available balance</div><div id="balanceValue" class="balance-value" data-amount="{{ total_balance|floatformat:0 }} FCFA" data-hidden="false">{{ total_balance|floatformat:0 }} FCFA</div></div><button class="icon-button" style="background:#ffffff22;color:white;border-color:#ffffff44" data-toggle-balance="#balanceValue" aria-label="Hide balance">◉</button></div>
+  </div>
+  <div class="balance-quick">
+    <div class="mini-stat positive"><span class="stat-icon">↗</span><span>Income this month</span><strong>{{ income_total|floatformat:0 }} FCFA</strong></div>
+    <div class="mini-stat negative"><span class="stat-icon">↘</span><span>Expenses this month</span><strong>{{ expense_total|floatformat:0 }} FCFA</strong></div>
+    <div class="mini-stat"><span class="stat-icon">◎</span><span>Saved across goals</span><strong>{{ goal_savings_total|floatformat:0 }} FCFA</strong></div>
+    <div class="mini-stat"><span class="stat-icon">◷</span><span>Budget used</span><strong>{{ budget_usage_percent|floatformat:0 }}%</strong></div>
+  </div>
 </section>
-
-<section class="stats-grid">
-    <div class="card stat-card positive">
-        <p>Income</p>
-        <h3>{{ income_total|floatformat:2 }} XAF</h3>
-    </div>
-    <div class="card stat-card negative">
-        <p>Expenses</p>
-        <h3>{{ expense_total|floatformat:2 }} XAF</h3>
-    </div>
-    <div class="card stat-card neutral">
-        <p>Net cash flow</p>
-        <h3>{{ net_cash_flow|floatformat:2 }} XAF</h3>
-    </div>
-    <div class="card stat-card neutral">
-        <p>Accounts</p>
-        <h3>{{ accounts.count }}</h3>
-    </div>
+<section class="grid stat-grid">
+  <div class="card stat-tile"><span class="tile-icon">＋</span><div><p>Quick action</p><a href="{% url 'transaction_create' %}"><strong>Add money in/out ↗</strong></a></div></div>
+  <div class="card stat-tile"><span class="tile-icon">▤</span><div><p>Plan ahead</p><a href="{% url 'budget_create' %}"><strong>Make a budget ↗</strong></a></div></div>
+  <div class="card stat-tile"><span class="tile-icon">◎</span><div><p>Dream a little</p><a href="{% url 'goal_create' %}"><strong>Start a savings goal ↗</strong></a></div></div>
+  <div class="card stat-tile"><span class="tile-icon">✦</span><div><p>Talk it through</p><a href="{% url 'ai_chat' %}"><strong>Ask your money friend ↗</strong></a></div></div>
 </section>
-
-<section class="dashboard-grid">
-    <div class="card panel">
-        <h2>Recent transactions</h2>
-        {% if recent_transactions %}
-            <ul class="list">
-                {% for tx in recent_transactions %}
-                    <li>
-                        <div>
-                            <strong>{{ tx.description|default:tx.category }}</strong>
-                            <small>{{ tx.transaction_date }} · {{ tx.kind }}</small>
-                        </div>
-                        <span>{{ tx.amount }} {{ tx.currency }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="empty-state">No transactions yet. Add your first record to see insights.</p>
-        {% endif %}
+<a class="card opportunity-promo" href="{% url 'opportunities' %}" style="display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:19px;color:var(--text);background:linear-gradient(105deg,#f0eaff,#e8fbf4);border-color:#e3dafb"><span><span class="eyebrow" style="display:block">FOR YOUR NEXT CHAPTER</span><strong style="font-family:Manrope,sans-serif;font-size:1.1rem">Explore student-friendly opportunities</strong><span style="display:block;color:#706989;font-size:.85rem;margin-top:4px">Useful services, local offers and ideas for your next step.</span></span><span class="button button-quiet">Explore ↗</span></a>
+<section class="grid dashboard-grid">
+  <div class="stack">
+    <div class="card"><div class="card-head"><div><p class="eyebrow">YOUR ACTIVITY</p><h2>Recent transactions</h2></div><a href="{% url 'transactions' %}">View all →</a></div>
+      {% if recent_transactions %}<ul class="transaction-list">{% for tx in recent_transactions %}<li class="transaction-row"><span class="transaction-icon">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}↗{% else %}↘{% endif %}</span><div class="transaction-main"><strong>{{ tx.description|default:tx.category }}</strong><small>{{ tx.transaction_date|date:"D, M j" }} · {{ tx.category }}</small></div><span class="amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}income{% else %}expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }} FCFA</span></li>{% endfor %}</ul>{% else %}<div class="empty-state"><div class="empty-emoji">🧾</div><h3>Your story starts with one entry.</h3><p>Add a real income or expense and TIANA will start helping you spot patterns.</p><a class="button button-quiet" href="{% url 'transaction_create' %}">Add first transaction</a></div>{% endif %}
     </div>
-
-    <div class="card panel">
-        <h2>Active budgets</h2>
-        {% if budgets %}
-            <ul class="list">
-                {% for budget in budgets %}
-                    <li>
-                        <div>
-                            <strong>{{ budget.name }}</strong>
-                            <small>{{ budget.spent_amount|floatformat:2 }}/{{ budget.amount|floatformat:2 }}</small>
-                        </div>
-                        <span>{{ budget.percent_used|floatformat:0 }}%</span>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="empty-state">Create a monthly budget to track your spending.</p>
-        {% endif %}
+    <div class="card"><div class="card-head"><div><p class="eyebrow">SAVE FOR YOUR FUTURE</p><h2>Goals in progress</h2></div><a href="{% url 'goals' %}">All goals →</a></div>
+      {% if goals %}{% for goal in goals %}<div class="goal-item"><div class="goal-top"><div class="goal-info"><span class="goal-thumb">{% if goal.image %}<img src="{{ goal.image.url }}" alt="">{% else %}◎{% endif %}</span><div><strong>{{ goal.name }}</strong><small>{{ goal.current_amount|floatformat:0 }} / {{ goal.target_amount|floatformat:0 }} FCFA</small></div></div><span class="pill">{{ goal.progress_percentage }}%</span></div><div class="progress-track green"><span style="width:{{ goal.progress_percentage }}%"></span></div><div class="goal-foot"><span>{{ goal.remaining_amount|floatformat:0 }} FCFA to go</span>{% if goal.target_date %}<span>Target {{ goal.target_date|date:"M Y" }}</span>{% endif %}</div></div>{% endfor %}{% else %}<div class="empty-state"><div class="empty-emoji">🎯</div><p>What would make the next few months feel good? Give that dream a name.</p><a class="button button-quiet" href="{% url 'goal_create' %}">Create a goal</a></div>{% endif %}
     </div>
-
-    <div class="card panel">
-        <h2>Goal progress</h2>
-        {% if goals %}
-            <ul class="list">
-                {% for goal in goals %}
-                    <li>
-                        <div>
-                            <strong>{{ goal.name }}</strong>
-                            <small>{{ goal.progress_percentage }}% complete</small>
-                        </div>
-                        <span>{{ goal.current_amount }} / {{ goal.target_amount }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="empty-state">No goals yet. Set a target and start saving.</p>
-        {% endif %}
+  </div>
+  <div class="stack">
+    <div class="card coach-card"><div class="coach-head"><span class="coach-avatar">{% if brand_assets.coach_avatar %}<img src="{{ brand_assets.coach_avatar.image.url }}" alt="">{% else %}✦{% endif %}</span><div><strong>Your money friend</strong><small>Here to help, never to judge 💜</small></div></div><div class="coach-bubble">{{ coach_tip }}</div><div class="coach-actions"><a href="{% url 'ai_chat' %}">Let's talk it through ↗</a><a href="{% url 'budgets' %}">Review my budget</a></div></div>
+    <div class="card"><div class="card-head"><div><p class="eyebrow">A LITTLE AWARENESS</p><h2>Spending this month</h2></div><span class="pill">{{ expense_total|floatformat:0 }} FCFA</span></div>
+      {% if expense_categories %}<div class="chart-wrap"><div class="donut-chart" style="background:conic-gradient(#7757f6 0 {{ category_one_percent }}%,#45caa0 {{ category_one_percent }}% {{ category_two_end }}%,#ffbe70 {{ category_two_end }}% {{ category_three_end }}%,#5eb4ee {{ category_three_end }}% 100%)"><div class="donut-center"><strong>{{ expense_total|floatformat:0 }}</strong><small>FCFA spent</small></div></div><div class="legend">{% for category in expense_categories %}<div class="legend-row"><span class="legend-name"><span class="legend-dot"></span>{{ category.category }}</span><strong>{{ category.amount|floatformat:0 }}</strong></div>{% endfor %}</div></div>{% else %}<div class="empty-state"><div class="empty-emoji">🌱</div><p>Your spending view will grow as you log expenses.</p></div>{% endif %}
     </div>
+    <div class="card"><div class="card-head"><div><p class="eyebrow">STAY IN CONTROL</p><h2>Budget check-in</h2></div><a href="{% url 'budgets' %}">See budgets →</a></div>
+      {% if budgets %}{% for budget in budgets %}<div class="budget-item"><div class="goal-top"><div><strong>{{ budget.name }}</strong><small style="display:block">{{ budget.spent_amount|floatformat:0 }} / {{ budget.amount|floatformat:0 }} FCFA</small></div><span class="pill {% if budget.percent_used >= 100 %}danger{% elif budget.percent_used >= 80 %}warning{% endif %}">{{ budget.percent_used|floatformat:0 }}%</span></div><div class="progress-track {% if budget.percent_used >= 80 %}orange{% else %}green{% endif %}"><span style="width:{% if budget.percent_used > 100 %}100{% else %}{{ budget.percent_used }}{% endif %}%"></span></div></div>{% endfor %}{% else %}<div class="empty-state"><div class="empty-emoji">🪴</div><p>A budget is a guide, not a punishment. Start with one category.</p><a class="button button-quiet" href="{% url 'budget_create' %}">Set a budget</a></div>{% endif %}
+    </div>
+  </div>
 </section>
 {% endblock %}

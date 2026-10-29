@@ -1,0 +1,29 @@
+/* TIANA accessibility, per-user palettes, and final responsive refinements. */
+body[data-theme="mint"]{--brand-primary:#12876b;--brand-dark:#07513f;--brand-soft:#ddf8ed;--bg:#f3fbf7}
+body[data-theme="ocean"]{--brand-primary:#2879d4;--brand-dark:#174c8c;--brand-soft:#e1f0ff;--bg:#f4f9ff}
+body[data-theme="sunset"]{--brand-primary:#d56f48;--brand-dark:#8e3e2a;--brand-soft:#ffede4;--bg:#fff8f3}
+body[data-theme="midnight"]{--bg:#17152a;--surface:#24213b;--surface-soft:#2b2746;--text:#f8f5ff;--muted:#b6afce;--line:#413b5e;--brand-primary:#a996ff;--brand-dark:#47348f;--brand-soft:#30284f;--shadow:0 18px 48px #05040d55;--shadow-sm:0 8px 25px #05040d36;color:var(--text)}
+body[data-theme="midnight"] .app-topbar,body[data-theme="midnight"] .mobile-bottom-nav{background:rgba(27,24,47,.94);border-color:var(--line)}
+body[data-theme="midnight"] .card,body[data-theme="midnight"] .mini-stat,body[data-theme="midnight"] .auth-layout,body[data-theme="midnight"] .auth-form-panel,body[data-theme="midnight"] .table-card,body[data-theme="midnight"] .form-card,body[data-theme="midnight"] .transaction-row,body[data-theme="midnight"] .onboarding-frame,body[data-theme="midnight"] .onboarding-copy{background:var(--surface);border-color:var(--line);color:var(--text)}
+body[data-theme="midnight"] .mini-stat,body[data-theme="midnight"] input,body[data-theme="midnight"] select,body[data-theme="midnight"] textarea,body[data-theme="midnight"] .chat-composer,body[data-theme="midnight"] .coach-bubble,body[data-theme="midnight"] .quick-prompts button{background:#2b2746;color:var(--text);border-color:var(--line)}
+body[data-theme="midnight"] .button-secondary,body[data-theme="midnight"] .button-quiet{background:#30284f;color:#dcd3ff;border-color:#4b4171}
+body[data-theme="midnight"] .onboarding-image{background:linear-gradient(145deg,#322756,#24213b)}
+body[data-theme="midnight"] tbody td,body[data-theme="midnight"] thead th{border-color:var(--line)}
+body[data-theme="midnight"] .mobile-bottom-nav a[aria-current=page]{color:#c1b4ff}
+body[data-theme="midnight"] .transaction-row{background:transparent}
+input[type="checkbox"],input[type="radio"]{width:18px;min-width:18px;min-height:18px;padding:0;accent-color:var(--brand-primary)}
+.priority-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.priority-options ul{list-style:none;margin:0;padding:0;display:contents}
+.priority-options li{min-width:0}
+.priority-options label{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:15px;background:var(--surface-soft);padding:12px 13px;font-size:.82rem;font-weight:700}
+.priority-options label:hover{border-color:var(--brand-primary)}
+.priority-options input{width:18px;min-height:18px;flex:0 0 18px}
+.heading-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.opportunity-promo{transition:transform .16s,box-shadow .16s}
+.opportunity-promo:hover{transform:translateY(-2px);box-shadow:var(--shadow);color:var(--text)}
+[data-setup-submit][hidden],[data-setup-next][hidden]{display:none!important}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+[hidden]{display:none!important}
+form .helptext,.helptext{display:block;color:var(--muted);font-size:.8rem;margin-top:6px}
+form ul.errorlist{margin-top:6px}
+@media(max-width:760px){.priority-options{grid-template-columns:1fr}.onboarding-controls .muted-text{font-size:.75rem}.auth-visual img{object-position:bottom right}.heading-actions{width:100%}.heading-actions .button{flex:1}body[data-theme="midnight"] .onboarding-image img{opacity:.9}}
