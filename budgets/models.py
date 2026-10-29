@@ -52,17 +52,19 @@ class Budget(models.Model):
         )
         if self.category:
             qs = qs.filter(category__iexact=self.category.strip())
-        return sum((item.amount for item in qs), Decimal("0.00"))
+        return sum((Decimal(str(item.amount or 0)) for item in qs), Decimal("0.00"))
 
     @property
     def remaining_amount(self):
-        return max(self.amount - self.spent_amount, Decimal("0.00"))
+        budget_amount = Decimal(str(self.amount or 0))
+        return max(budget_amount - self.spent_amount, Decimal("0.00"))
 
     @property
     def percent_used(self):
-        if self.amount <= 0:
+        budget_amount = Decimal(str(self.amount or 0))
+        if budget_amount <= 0:
             return 0
-        return float(self.spent_amount / self.amount * 100)
+        return float(self.spent_amount / budget_amount * 100)
 
     def __str__(self):
         return f"{self.name} ({self.amount} {self.currency})"
