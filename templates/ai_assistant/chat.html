@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}AI Assistant{% endblock %}
+{% block content %}
+<section class="card wide-card">
+    <h1>AI money assistant</h1>
+    {% if not configured %}
+        <p class="info-banner">AI is not configured yet. Add an API key to enable live guidance.</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="prompt" rows="4" placeholder="Ask about spending, budgets, and goals..."></textarea>
+        <button class="button" type="submit">Ask</button>
+    </form>
+
+    {% if response %}
+        <div class="ai-response">
+            <strong>Assistant:</strong>
+            <p>{{ response }}</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}New budget{% endblock %}
+{% block content %}
+<section class="card wide-card">
+    <h1>Create a budget</h1>
+    <form method="post">
+        {% csrf_token %}
+        <p><label>Name</label><input type="text" name="name"></p>
+        <p><label>Amount</label><input type="number" step="0.01" name="amount"></p>
+        <p><label>Currency</label><input type="text" name="currency" value="XAF"></p>
+        <p><label>Category</label><input type="text" name="category" value=""></p>
+        <p><label>Period</label>
+            <select name="period">
+                <option value="monthly">Monthly</option>
+                <option value="weekly">Weekly</option>
+                <option value="yearly">Yearly</option>
+            </select>
+        </p>
+        <button class="button" type="submit">Create budget</button>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Onboarding{% endblock %}
+{% block content %}
+<section class="onboarding-shell">
+    <div class="onboarding-carousel" id="onboardingCarousel">
+        <article class="slide active">
+            <div class="slide-icon">💡</div>
+            <h1>Welcome to Nkem.</h1>
+            <p>Build a healthier money habit with a simpler way to track spending, goals, and progress.</p>
+        </article>
+        <article class="slide">
+            <div class="slide-icon">📊</div>
+            <h2>Take control of your money.</h2>
+            <p>See account balances, recent transactions, and spending trends in one place.</p>
+        </article>
+        <article class="slide">
+            <div class="slide-icon">🎯</div>
+            <h2>Achieve your goals.</h2>
+            <p>Save for school, rent, travel, and life moments with clear targets and progress.</p>
+        </article>
+        <article class="slide">
+            <div class="slide-icon">🤖</div>
+            <h2>Get smart advice with AI.</h2>
+            <p>Review personal insights and budget recommendations designed for your own data.</p>
+        </article>
+        <article class="slide">
+            <div class="slide-icon">🔐</div>
+            <h2>Create your account.</h2>
+            <p>Join Nkem in minutes and start building a more confident financial future.</p>
+        </article>
+    </div>
+
+    <div class="onboarding-controls">
+        <button class="button button-secondary" id="prevSlide" type="button">Previous</button>
+        <button class="button" id="nextSlide" type="button">Next</button>
+    </div>
+
+    <div class="cta-row">
+        <a class="button" href="{% url 'register' %}">Create account</a>
+        <a class="button button-secondary" href="{% url 'login' %}">Log in</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Goals{% endblock %}
+{% block content %}
+<section class="section-header">
+    <div>
+        <p class="eyebrow">Savings</p>
+        <h1>Goals</h1>
+    </div>
+    <a class="button" href="{% url 'goal_create' %}">New goal</a>
+</section>
+
+<section class="card table-card">
+    {% if goals %}
+        <table>
+            <thead><tr><th>Name</th><th>Target</th><th>Saved</th><th>Progress</th></tr></thead>
+            <tbody>
+                {% for goal in goals %}
+                    <tr>
+                        <td>{{ goal.name }}</td>
+                        <td>{{ goal.target_amount }} {{ goal.currency }}</td>
+                        <td>{{ goal.current_amount }} {{ goal.currency }}</td>
+                        <td>{{ goal.progress_percentage }}%</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty-state">No goals yet. Start a savings goal for school fees, rent, or travel.</p>
+    {% endif %}
+</section>
+{% endblock %}

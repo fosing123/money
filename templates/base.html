@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Nkem{% endblock %}</title>
+    <link rel="stylesheet" href="/static/nkem/app.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand-wrap">
+            <div class="brand-mark">N</div>
+            <div>
+                <div class="brand-name">Nkem</div>
+                <div class="brand-tag">Smart Money. Brighter You.</div>
+            </div>
+        </div>
+
+        <nav class="topnav">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'transactions' %}">Transactions</a>
+                <a href="{% url 'budgets' %}">Budgets</a>
+                <a href="{% url 'goals' %}">Goals</a>
+                <a href="{% url 'ai_chat' %}">AI</a>
+                <a href="{% url 'profile' %}">Profile</a>
+                <a href="{% url 'logout' %}" class="button button-secondary">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}" class="button">Create account</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="page-shell">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags|default:'info' }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="/static/nkem/app.js"></script>
+</body>
+</html>

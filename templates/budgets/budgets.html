@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Budgets{% endblock %}
+{% block content %}
+<section class="section-header">
+    <div>
+        <p class="eyebrow">Planning</p>
+        <h1>Budgets</h1>
+    </div>
+    <a class="button" href="{% url 'budget_create' %}">New budget</a>
+</section>
+
+<section class="card table-card">
+    {% if budgets %}
+        <table>
+            <thead><tr><th>Name</th><th>Amount</th><th>Spent</th><th>Remaining</th></tr></thead>
+            <tbody>
+                {% for item in budgets %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.amount }} {{ item.currency }}</td>
+                        <td>{{ item.spent_amount }} {{ item.currency }}</td>
+                        <td>{{ item.remaining_amount }} {{ item.currency }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty-state">No budgets yet. Add one to start tracking your spending limits.</p>
+    {% endif %}
+</section>
+{% endblock %}

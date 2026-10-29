@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="dashboard-hero card">
+    <div>
+        <p class="eyebrow">Overview</p>
+        <h1>Hello, {{ user.first_name|default:user.username }}.</h1>
+    </div>
+    <div class="hero-balance">
+        <span>Total balance</span>
+        <strong>{{ total_balance|floatformat:2 }} XAF</strong>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <div class="card stat-card positive">
+        <p>Income</p>
+        <h3>{{ income_total|floatformat:2 }} XAF</h3>
+    </div>
+    <div class="card stat-card negative">
+        <p>Expenses</p>
+        <h3>{{ expense_total|floatformat:2 }} XAF</h3>
+    </div>
+    <div class="card stat-card neutral">
+        <p>Net cash flow</p>
+        <h3>{{ net_cash_flow|floatformat:2 }} XAF</h3>
+    </div>
+    <div class="card stat-card neutral">
+        <p>Accounts</p>
+        <h3>{{ accounts.count }}</h3>
+    </div>
+</section>
+
+<section class="dashboard-grid">
+    <div class="card panel">
+        <h2>Recent transactions</h2>
+        {% if recent_transactions %}
+            <ul class="list">
+                {% for tx in recent_transactions %}
+                    <li>
+                        <div>
+                            <strong>{{ tx.description|default:tx.category }}</strong>
+                            <small>{{ tx.transaction_date }} · {{ tx.kind }}</small>
+                        </div>
+                        <span>{{ tx.amount }} {{ tx.currency }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-state">No transactions yet. Add your first record to see insights.</p>
+        {% endif %}
+    </div>
+
+    <div class="card panel">
+        <h2>Active budgets</h2>
+        {% if budgets %}
+            <ul class="list">
+                {% for budget in budgets %}
+                    <li>
+                        <div>
+                            <strong>{{ budget.name }}</strong>
+                            <small>{{ budget.spent_amount|floatformat:2 }}/{{ budget.amount|floatformat:2 }}</small>
+                        </div>
+                        <span>{{ budget.percent_used|floatformat:0 }}%</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-state">Create a monthly budget to track your spending.</p>
+        {% endif %}
+    </div>
+
+    <div class="card panel">
+        <h2>Goal progress</h2>
+        {% if goals %}
+            <ul class="list">
+                {% for goal in goals %}
+                    <li>
+                        <div>
+                            <strong>{{ goal.name }}</strong>
+                            <small>{{ goal.progress_percentage }}% complete</small>
+                        </div>
+                        <span>{{ goal.current_amount }} / {{ goal.target_amount }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-state">No goals yet. Set a target and start saving.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
