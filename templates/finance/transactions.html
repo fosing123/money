@@ -1,45 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}Transactions{% endblock %}
+{% block title %}Transaction history · TIANA{% endblock %}
 {% block content %}
-<section class="section-header">
-    <div>
-        <p class="eyebrow">Finance</p>
-        <h1>Transactions</h1>
-    </div>
-    <a class="button" href="{% url 'transaction_create' %}">Add transaction</a>
+<div class="page-heading"><div><p class="eyebrow">YOUR MONEY STORY</p><h1>Transaction history</h1><p class="section-copy">Every entry helps you understand your habits. No judgement, just clarity.</p></div><a class="button" href="{% url 'transaction_create' %}">＋ Add transaction</a></div>
+<section class="grid stat-grid">
+  <div class="card stat-tile positive"><span class="tile-icon">↗</span><div><p>Money in (filtered)</p><strong>{{ income_total|floatformat:0 }} FCFA</strong></div></div>
+  <div class="card stat-tile negative"><span class="tile-icon">↘</span><div><p>Money out (filtered)</p><strong>{{ expense_total|floatformat:0 }} FCFA</strong></div></div>
 </section>
-
-<section class="card table-card">
-    {% if transactions %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Kind</th>
-                    <th>Category</th>
-                    <th>Amount</th>
-                    <th>Account</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for tx in transactions %}
-                    <tr>
-                        <td>{{ tx.transaction_date }}</td>
-                        <td>{{ tx.kind }}</td>
-                        <td>{{ tx.category }}</td>
-                        <td>{{ tx.amount }} {{ tx.currency }}</td>
-                        <td>{{ tx.account.name }}</td>
-                        <td>
-                            <a href="{% url 'transaction_update' tx.pk %}">Edit</a>
-                            <a href="{% url 'transaction_delete' tx.pk %}">Delete</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="empty-state">No transactions yet. Capture your first income or expense.</p>
-    {% endif %}
+<section class="card">
+  <div class="card-head"><div><h2>All activity</h2><small>Search and filter your own records.</small></div></div>
+  <form method="get" class="form-grid" style="margin-bottom:15px">
+    <p><label for="kind">Type</label><select id="kind" name="kind"><option value="">All activity</option>{% for value,label in kind_choices %}<option value="{{ value }}" {% if selected_kind == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></p>
+    <p><label for="account">Account</label><select id="account" name="account"><option value="">All accounts</option>{% for item in accounts %}<option value="{{ item.pk }}" {% if selected_account == item.pk|stringformat:"s" %}selected{% endif %}>{{ item.name }}</option>{% endfor %}</select></p>
+    <div class="form-actions" style="align-self:end;margin:0 0 17px"><button class="button button-quiet" type="submit">Apply filters</button><a class="button button-secondary" href="{% url 'transactions' %}">Reset</a></div>
+  </form>
+  {% if transactions %}<ul class="transaction-list">{% for tx in transactions %}<li class="transaction-row"><span class="transaction-icon">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}↗{% else %}↘{% endif %}</span><div class="transaction-main"><strong>{{ tx.description|default:tx.category }}</strong><small>{{ tx.transaction_date|date:"D, M j, Y" }} · {{ tx.category }} · {{ tx.account.name }}</small>{% if tx.merchant %}<small>{{ tx.merchant }}</small>{% endif %}</div><span class="amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}income{% else %}expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }} {{ tx.currency }}<small style="display:block;text-align:right;color:var(--muted)"><a href="{% url 'transaction_update' tx.pk %}">Edit</a> · <a href="{% url 'transaction_delete' tx.pk %}">Remove</a></small></span></li>{% endfor %}</ul>
+  {% else %}<div class="empty-state"><div class="empty-emoji">🧾</div><h3>Nothing here just yet</h3><p>No transactions match these filters. Try another filter or add your first record.</p><a class="button button-quiet" href="{% url 'transaction_create' %}">Add a transaction</a></div>{% endif %}
 </section>
 {% endblock %}

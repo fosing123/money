@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Your money insights · TIANA{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">PATTERNS, NOT PRESSURE</p><h1>Understand your money.</h1><p class="section-copy">A clearer picture can help you choose your next step, without judging yesterday's choices.</p></div></div>
+<section class="grid stat-grid">
+  <div class="card stat-tile positive"><span class="tile-icon">↗</span><div><p>Money in this month</p><strong>{{ income_total|floatformat:0 }} FCFA</strong></div></div>
+  <div class="card stat-tile negative"><span class="tile-icon">↘</span><div><p>Money out this month</p><strong>{{ expense_total|floatformat:0 }} FCFA</strong></div></div>
+  <div class="card stat-tile"><span class="tile-icon">≈</span><div><p>Net cash flow</p><strong>{{ net_flow|floatformat:0 }} FCFA</strong></div></div>
+  <div class="card stat-tile"><span class="tile-icon">◎</span><div><p>Savings goals</p><strong>{{ goal_count }}</strong></div></div>
+</section>
+<section class="grid dashboard-grid" style="margin-top:20px">
+  <div class="card"><div class="card-head"><div><p class="eyebrow">LAST SIX WEEKS</p><h2>Money in and out</h2></div></div>
+    {% for week in weeks %}<div class="budget-item"><div class="goal-top"><strong>{{ week.label }}</strong><small>Income {{ week.income|floatformat:0 }} · Expenses {{ week.expenses|floatformat:0 }} FCFA</small></div><div class="grid" style="gap:5px"><div class="progress-track green"><span style="width:{% widthratio week.income week.max 100 %}%"></span></div><div class="progress-track"><span style="width:{% widthratio week.expenses week.max 100 %}%"></span></div></div></div>{% empty %}<p class="empty-state">Your weekly trends will appear as you add transactions.</p>{% endfor %}
+    <div class="goal-foot"><span><span class="legend-dot" style="display:inline-block;background:#45caa0"></span> Income</span><span><span class="legend-dot" style="display:inline-block;background:#7757f6"></span> Expenses</span></div>
+  </div>
+  <div class="card"><div class="card-head"><div><p class="eyebrow">WHERE IT GOES</p><h2>Spending categories</h2></div><a href="{% url 'transactions' %}">History →</a></div>
+    {% for row in category_rows %}<div class="budget-item"><div class="goal-top"><strong>{{ row.category }}</strong><strong>{{ row.value|floatformat:0 }} FCFA</strong></div><div class="progress-track"><span style="width:{{ row.percent }}%"></span></div></div>{% empty %}<div class="empty-state"><div class="empty-emoji">🌱</div><p>Log your expenses to see your spending patterns here.</p></div>{% endfor %}
+  </div>
+</section>
+<div class="card" style="margin-top:18px"><div class="coach-head"><span class="coach-avatar">✦</span><div><strong>A gentle reminder</strong><small>Progress is about learning, not being perfect.</small></div></div><p>Use these patterns to decide what you want to keep, change, or plan for next month. If something unexpected happened, your plan can change too.</p><a class="button button-quiet" href="{% url 'ai_chat' %}">Talk through my spending ↗</a></div>
+{% endblock %}

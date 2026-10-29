@@ -1,0 +1,16 @@
+/* Optional member palettes; admin-managed brand colours remain the fallback. */
+body[data-user-theme="mint"]{--brand-primary:#168d75!important;--brand-dark:#0b594b!important;--brand-soft:#e3f8f1!important;--bg:#f3faf7!important;--text:#183c35!important}
+body[data-user-theme="ocean"]{--brand-primary:#327cd7!important;--brand-dark:#184f9e!important;--brand-soft:#e7f2ff!important;--bg:#f4f8fd!important;--text:#172e48!important}
+body[data-user-theme="sunset"]{--brand-primary:#ce6d45!important;--brand-dark:#873d31!important;--brand-soft:#fff0e8!important;--bg:#fff8f4!important;--text:#44251f!important}
+body[data-user-theme="midnight"]{--brand-primary:#a28aff!important;--brand-dark:#2a205b!important;--brand-soft:#2a2446!important;--bg:#151325!important;--text:#f3f0ff!important;--surface:#211d36!important;--surface-soft:#25203d!important;--line:#3b3454!important;--muted:#b9b1d5!important;--shadow:0 15px 42px #0004!important;--shadow-sm:0 8px 24px #0003!important}
+body[data-user-theme="midnight"] .app-topbar,body[data-user-theme="midnight"] .mobile-bottom-nav{background:rgba(27,24,45,.96);border-color:#3b3454}
+body[data-user-theme="midnight"] .desktop-nav a,body[data-user-theme="midnight"] .mobile-bottom-nav a{color:#c2badc}
+body[data-user-theme="midnight"] .card,body[data-user-theme="midnight"] .mini-stat,body[data-user-theme="midnight"] .button-secondary,body[data-user-theme="midnight"] .icon-button,body[data-user-theme="midnight"] .message,body[data-user-theme="midnight"] .chat-composer,body[data-user-theme="midnight"] .chat-composer textarea{background:var(--surface);color:var(--text);border-color:var(--line)}
+body[data-user-theme="midnight"] input,body[data-user-theme="midnight"] select,body[data-user-theme="midnight"] textarea,body[data-user-theme="midnight"] .filter-chip{background:#19162c;color:var(--text);border-color:var(--line)}
+body[data-user-theme="midnight"] .transaction-row,body[data-user-theme="midnight"] .goal-item,body[data-user-theme="midnight"] .budget-item,body[data-user-theme="midnight"] tbody td,body[data-user-theme="midnight"] thead th{border-color:var(--line)}
+body[data-user-theme="midnight"] .transaction-icon,body[data-user-theme="midnight"] .goal-thumb,body[data-user-theme="midnight"] .coach-bubble,body[data-user-theme="midnight"] .chat-message.assistant{background:#2a2446;color:var(--text);border-color:#3b3454}
+body[data-user-theme="midnight"] .donut-chart:after{background:var(--surface)}
+body[data-user-theme="midnight"] .chat-message.user{background:var(--brand-primary);color:#fff}
+.notification-button{position:relative}.notification-count{position:absolute;right:-4px;top:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:#ef5678;color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center}
+.priority-options ul{list-style:none;padding:0;margin:16px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.priority-options li{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}.priority-options input{width:18px;min-height:18px;margin:0;flex:0 0 auto}.priority-options label{font-size:.85rem;font-weight:700;margin:0}
+@media(max-width:760px){.mobile-bottom-nav{grid-template-columns:repeat(6,minmax(0,1fr))}.priority-options ul{grid-template-columns:1fr}}

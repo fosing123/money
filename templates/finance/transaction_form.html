@@ -1,12 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ title }} · TIANA{% endblock %}
 {% block content %}
-<section class="card wide-card">
-    <h1>{{ title }}</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="button" type="submit">Save</button>
-    </form>
-</section>
+<div class="page-heading"><div><p class="eyebrow">KEEP YOUR STORY CLEAR</p><h1>{{ title }}</h1><p class="section-copy">Add the details you know. You can always correct an entry later.</p></div></div>
+<section class="card form-card"><form method="post" novalidate>{% csrf_token %}{% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}<div class="form-grid">{% for field in form %}<p>{% if field.label %}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{% endif %}{{ field }}{% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}</p>{% endfor %}</div><div class="form-actions"><button class="button" type="submit">Save transaction ↗</button><a class="button button-secondary" href="{% url 'transactions' %}">Cancel</a></div></form><p class="form-help" style="margin-top:20px">Tip: record each transaction once, in the currency your account uses.</p></section>
 {% endblock %}
