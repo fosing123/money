@@ -1,7 +1,7 @@
 {% extends 'base.html' %}{% load static %}
 {% block title %}Your overview · TIANA{% endblock %}
 {% block content %}
-<div class="page-heading"><div><p class="eyebrow">YOUR MONEY, YOUR PACE</p><h1>Hey {{ user.first_name|default:user.username }} <span class="sparkle">✦</span></h1><p class="section-copy">Let's make today's money decisions a little easier.</p></div><a class="button" href="{% url 'transaction_create' %}">＋ Add a transaction</a></div>
+<div class="page-heading"><div><p class="eyebrow">YOUR MONEY, YOUR PACE</p><h1>Hey {{ user.first_name|default:user.username }} <span class="sparkle">✦</span></h1><p class="section-copy">Let's make today's money decisions a little easier.</p></div><div class="heading-actions"><a class="button button-secondary" href="{% url 'account_create' %}">＋ Account</a><a class="button" href="{% url 'transaction_create' %}">＋ Add a transaction</a></div></div>
 <section class="dashboard-hero">
   <div class="welcome-panel">
     {% if brand_assets.dashboard_hero %}<div class="welcome-art"><img src="{{ brand_assets.dashboard_hero.image.url }}" alt=""></div>{% else %}<div class="welcome-art"><img src="{% static 'assets/student-hero-3d.webp' %}" alt=""></div>{% endif %}
@@ -21,6 +21,7 @@
   <div class="card stat-tile"><span class="tile-icon">◎</span><div><p>Dream a little</p><a href="{% url 'goal_create' %}"><strong>Start a savings goal ↗</strong></a></div></div>
   <div class="card stat-tile"><span class="tile-icon">✦</span><div><p>Talk it through</p><a href="{% url 'ai_chat' %}"><strong>Ask your money friend ↗</strong></a></div></div>
 </section>
+<a class="card opportunity-promo" href="{% url 'opportunities' %}" style="display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:19px;color:var(--text);background:linear-gradient(105deg,#f0eaff,#e8fbf4);border-color:#e3dafb"><span><span class="eyebrow" style="display:block">FOR YOUR NEXT CHAPTER</span><strong style="font-family:Manrope,sans-serif;font-size:1.1rem">Explore student-friendly opportunities</strong><span style="display:block;color:#706989;font-size:.85rem;margin-top:4px">Useful services, local offers and ideas for your next step.</span></span><span class="button button-quiet">Explore ↗</span></a>
 <section class="grid dashboard-grid">
   <div class="stack">
     <div class="card"><div class="card-head"><div><p class="eyebrow">YOUR ACTIVITY</p><h2>Recent transactions</h2></div><a href="{% url 'transactions' %}">View all →</a></div>

@@ -33,8 +33,8 @@ class Budget(models.Model):
             start = today.replace(month=1, day=1)
         else:
             start = self.start_date
-        if self.start_date and self.start_date > start:
-            start = self.start_date
+        # A budget means "this week/month/year" even if it was created today.
+        # End date remains available for intentionally closing a budget window.
         end = min(self.end_date, today) if self.end_date else today
         return start, end
 
@@ -56,7 +56,7 @@ class Budget(models.Model):
 
     @property
     def remaining_amount(self):
-        return self.amount - self.spent_amount
+        return max(self.amount - self.spent_amount, Decimal("0.00"))
 
     @property
     def percent_used(self):

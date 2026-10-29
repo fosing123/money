@@ -82,6 +82,8 @@ class Transaction(models.Model):
                 raise ValidationError({"account": "Choose an account that belongs to your own profile."})
             if self.amount <= 0:
                 raise ValidationError({"amount": "Transaction amounts must be greater than zero."})
+            # An account balance is expressed in its own currency; transactions cannot silently mix currencies.
+            self.currency = account.currency
             super().save(*args, **kwargs)
             affected_ids = {self.account_id}
             if previous:

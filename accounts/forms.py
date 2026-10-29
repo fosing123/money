@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -32,8 +31,7 @@ class RegisterForm(forms.Form):
 
     def clean(self):
         cleaned = super().clean()
-        password = cleaned.get("password1")
-        confirm = cleaned.get("password2")
+        password, confirm = cleaned.get("password1"), cleaned.get("password2")
         if password and confirm and password != confirm:
             self.add_error("password2", "These passwords don't match yet.")
         if password and not self.errors.get("password1"):
@@ -86,6 +84,6 @@ class OnboardingSetupForm(forms.Form):
         cleaned = super().clean()
         income = cleaned.get("weekly_income") or 0
         savings = cleaned.get("weekly_savings_target") or 0
-        if income and savings > income:
+        if savings > income:
             self.add_error("weekly_savings_target", "Your savings target is higher than your weekly income. Try a smaller goal that still feels meaningful.")
         return cleaned

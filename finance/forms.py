@@ -21,7 +21,7 @@ class TransactionForm(forms.ModelForm):
 
     class Meta:
         model = Transaction
-        fields = ["account", "kind", "amount", "currency", "category", "description", "merchant", "transaction_date"]
+        fields = ["account", "kind", "amount", "category", "description", "merchant", "transaction_date"]
         widgets = {
             "transaction_date": forms.DateInput(attrs={"type": "date"}),
             "description": forms.TextInput(attrs={"placeholder": "e.g. Lunch with friends"}),
@@ -33,6 +33,5 @@ class TransactionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if user is not None:
             self.fields["account"].queryset = Account.objects.filter(owner=user, is_active=True)
-            self.fields["currency"].initial = getattr(user, "currency", "XAF")
         self.fields["amount"].help_text = "Use the amount of this one transaction—not your account balance."
         self.fields["account"].empty_label = "Choose your account"
