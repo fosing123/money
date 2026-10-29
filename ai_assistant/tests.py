@@ -19,7 +19,7 @@ class MoneyCoachFallbackTests(TestCase):
         response = self.client.get(reverse("ai_chat"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Preview mode")
-        self.assertContains(response, "won't pretend this is a live AI answer")
+        self.assertContains(response, "won't pretend a live AI response has been generated")
 
     def test_fallback_is_saved_to_the_member_chat_history(self):
         response = self.client.post(reverse("ai_chat"), {"prompt": "Help me plan food spending"})

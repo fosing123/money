@@ -1,5 +1,5 @@
+from datetime import date, timedelta
 from decimal import Decimal
-from datetime import timedelta
 
 from django.conf import settings
 from django.db import models
@@ -33,9 +33,15 @@ class Budget(models.Model):
             start = today.replace(month=1, day=1)
         else:
             start = self.start_date
-        if self.start_date and self.start_date > start:
-            start = self.start_date
-        end = min(self.end_date, today) if self.end_date else today
+        start_date = self.start_date
+        if isinstance(start_date, str):
+            start_date = date.fromisoformat(start_date)
+        if start_date and start_date > start:
+            start = start_date
+        end_date = self.end_date
+        if isinstance(end_date, str):
+            end_date = date.fromisoformat(end_date)
+        end = min(end_date, today) if end_date else today
         return start, end
 
     @property
@@ -56,13 +62,14 @@ class Budget(models.Model):
 
     @property
     def remaining_amount(self):
-        return self.amount - self.spent_amount
+        return Decimal(str(self.amount or 0)) - self.spent_amount
 
     @property
     def percent_used(self):
-        if self.amount <= 0:
+        amount = Decimal(str(self.amount or 0))
+        if amount <= 0:
             return 0
-        return float(self.spent_amount / self.amount * 100)
+        return float(self.spent_amount / amount * 100)
 
     def __str__(self):
         return f"{self.name} ({self.amount} {self.currency})"

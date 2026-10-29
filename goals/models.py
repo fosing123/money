@@ -25,13 +25,17 @@ class Goal(models.Model):
 
     @property
     def progress_percentage(self):
-        if self.target_amount <= 0:
+        target = Decimal(str(self.target_amount or 0))
+        current = Decimal(str(self.current_amount or 0))
+        if target <= 0:
             return 100 if self.status == "completed" else 0
-        return min(100, int((self.current_amount / self.target_amount) * 100))
+        return min(100, int((current / target) * 100))
 
     @property
     def remaining_amount(self):
-        return max(self.target_amount - self.current_amount, Decimal("0.00"))
+        target = Decimal(str(self.target_amount or 0))
+        current = Decimal(str(self.current_amount or 0))
+        return max(target - current, Decimal("0.00"))
 
     def __str__(self):
         return self.name
