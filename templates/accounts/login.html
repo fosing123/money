@@ -1,13 +1,15 @@
-{% extends 'base.html' %}
-{% block title %}Log in{% endblock %}
+{% extends 'base.html' %}{% load static %}
+{% block title %}Welcome back · TIANA{% endblock %}
 {% block content %}
-<section class="card auth-card">
-    <h1>Welcome back</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="button" type="submit">Log in</button>
-    </form>
-    <p class="muted-text">Need an account? <a href="{% url 'register' %}">Create one</a></p>
+<section class="auth-layout">
+  <div class="auth-visual">
+    <div><p class="eyebrow" style="color:#dcd4ff">GOOD TO SEE YOU AGAIN</p><h1>Let's pick up where you left off.</h1><p>Your goals are still there. Your progress still counts. Come on in.</p></div>
+    {% if brand_assets.onboarding_welcome %}<img src="{{ brand_assets.onboarding_welcome.image.url }}" alt="">{% else %}<img src="{% static 'assets/student-onboarding-photo.webp' %}" alt="Student using a phone">{% endif %}
+    <p style="position:relative;z-index:1;margin:0">Made for real life, and all the little steps in between.</p>
+  </div>
+  <div class="auth-form-panel"><p class="eyebrow">YOUR SPACE IS WAITING</p><h1>Welcome back</h1><p class="muted-text">Sign in to see your balance, plans and progress.</p>
+    <form method="post" novalidate>{% csrf_token %}{{ form.as_p }}<button class="button" style="width:100%;margin-top:8px" type="submit">Log in securely <span aria-hidden="true">→</span></button></form>
+    <p class="auth-footnote">New to TIANA? <a href="{% url 'register' %}">Create your account</a>.</p>
+  </div>
 </section>
 {% endblock %}

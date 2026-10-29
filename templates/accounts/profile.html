@@ -1,12 +1,9 @@
 {% extends 'base.html' %}
-{% block title %}Profile{% endblock %}
+{% block title %}Your profile · TIANA{% endblock %}
 {% block content %}
-<section class="card wide-card">
-    <h1>Your profile</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="button" type="submit">Save profile</button>
-    </form>
+<div class="page-heading"><div><p class="eyebrow">YOUR SPACE</p><h1>A little more about you.</h1><p class="section-copy">Keep your details current so TIANA can feel more like yours.</p></div></div>
+<section class="profile-grid">
+  <div class="card profile-summary"><div class="profile-avatar">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</div><h2>{{ user.get_full_name|default:user.username }}</h2><p class="muted-text">{{ user.email }}</p><div class="badge-row"><span class="pill">✦ TIANA member</span><span class="pill success">Your own pace</span></div><p class="muted-text">Every clear choice is progress. You don't have to be perfect.</p></div>
+  <div class="card"><div class="card-head"><h2>Personal details</h2></div><form method="post">{% csrf_token %}{{ form.as_p }}<div class="form-actions"><button class="button" type="submit">Save changes</button><a class="button button-secondary" href="{% url 'dashboard' %}">Back to overview</a></div></form></div>
 </section>
 {% endblock %}

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Add an account · TIANA{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">WHERE YOUR MONEY LIVES</p><h1>Add an account</h1><p class="section-copy">Use Cash, MTN MoMo, Orange Money or a bank account. This only tracks your records; it doesn't move money.</p></div></div>
+<section class="card form-card"><form method="post" novalidate>{% csrf_token %}{{ form.as_p }}<div class="form-actions"><button class="button" type="submit">Save account</button><a class="button button-secondary" href="{% url 'dashboard' %}">Cancel</a></div></form></section>
+{% endblock %}

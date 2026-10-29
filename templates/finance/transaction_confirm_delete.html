@@ -1,13 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Delete transaction{% endblock %}
+{% block title %}Remove transaction · TIANA{% endblock %}
 {% block content %}
-<section class="card auth-card">
-    <h1>Delete transaction</h1>
-    <p>Are you sure you want to remove {{ transaction.description|default:transaction.category }}?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button class="button button-secondary" type="submit">Confirm delete</button>
-        <a class="button" href="{% url 'transactions' %}">Cancel</a>
-    </form>
-</section>
+<section class="card form-card" style="text-align:center;padding:34px 24px"><div class="empty-emoji">🧾</div><p class="eyebrow">A QUICK CHECK</p><h1 style="font-size:2rem">Remove this transaction?</h1><p class="muted-text">You're about to remove <strong>{{ transaction.description|default:transaction.category }}</strong> for <strong>{{ transaction.amount|floatformat:0 }} {{ transaction.currency }}</strong>. Your account balance will be recalculated automatically.</p><form method="post">{% csrf_token %}<div class="form-actions" style="justify-content:center"><button class="button button-danger" type="submit">Yes, remove it</button><a class="button button-secondary" href="{% url 'transactions' %}">Keep transaction</a></div></form></section>
 {% endblock %}
