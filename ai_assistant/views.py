@@ -35,7 +35,7 @@ def ai_chat_view(request):
                 )
             if response:
                 ChatMessage.objects.create(user=request.user, prompt=submitted_prompt, response=response)
-                messages.success(request, "Your message is saved in your private Nkem chat history.")
+                messages.success(request, "Your message is saved in your private TIANA chat history.")
                 return redirect("ai_chat")
 
     history = list(ChatMessage.objects.filter(user=request.user)[:12])
