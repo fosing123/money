@@ -21,7 +21,7 @@ class AccountTests(TestCase):
     def test_public_home_opens_the_tiana_welcome_flow(self):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Smart Money. Brighter You.")
+        self.assertContains(response, "Your Money Friend Always")
         self.assertContains(response, "Get Started")
         self.assertContains(response, reverse("onboarding"))
 
