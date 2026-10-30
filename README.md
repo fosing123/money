@@ -1,6 +1,6 @@
-# Nkem — Your money friend
+# TIANA — Your money friend
 
-Nkem is a mobile-first personal money companion designed around students and young adults in Cameroon. This repository preserves the original static prototype as a product/design reference and adds a Django application with user-owned records, authentication, budgeting, goals, a server-side AI coach, student opportunities and admin-managed branding/media.
+TIANA is a mobile-first personal money companion designed around students and young adults in Cameroon. This repository preserves the original static prototype as a product/design reference and adds a Django application with user-owned records, authentication, budgeting, goals, a server-side AI coach, student opportunities and admin-managed branding/media.
 
 ## Current Django application
 
