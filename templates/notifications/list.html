@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Notifications · Nkem{% endblock %}
+{% block title %}Notifications · TIANA{% endblock %}
 {% block content %}
 <div class="page-heading"><div><p class="eyebrow">LITTLE THINGS WORTH KNOWING</p><h1>Your notifications.</h1><p class="section-copy">A friendly heads-up about your activity and money goals.</p></div><form method="post" action="{% url 'notifications_mark_all_read' %}">{% csrf_token %}<button class="button button-secondary" type="submit">Mark all as read</button></form></div>
 <section class="card">{% for item in notifications %}<div class="transaction-row"><span class="transaction-icon">{% if item.kind == 'warning' %}◉{% elif item.kind == 'success' %}✓{% else %}✦{% endif %}</span><div class="transaction-main"><strong>{{ item.title }} {% if not item.is_read %}<span class="pill">New</span>{% endif %}</strong><span>{{ item.message }}</span><small>{{ item.created_at|date:"M j, Y · H:i" }}</small></div>{% if not item.is_read %}<form method="post" action="{% url 'notification_mark_read' item.pk %}">{% csrf_token %}<button class="button button-quiet button-small" type="submit">Mark read</button></form>{% endif %}</div>{% empty %}<div class="empty-state"><div class="empty-emoji">🔔</div><h3>All quiet for now.</h3><p>When there is something useful to share, it will show up here.</p></div>{% endfor %}</section>
