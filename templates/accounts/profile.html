@@ -1,9 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}Your profile · TIANA{% endblock %}
+{% block title %}Profile · TIANA{% endblock %}
 {% block content %}
-<div class="page-heading"><div><p class="eyebrow">YOUR SPACE</p><h1>A little more about you.</h1><p class="section-copy">Keep your details current so TIANA can feel more like yours.</p></div></div>
-<section class="profile-grid">
-  <div class="card profile-summary"><div class="profile-avatar">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</div><h2>{{ user.get_full_name|default:user.username }}</h2><p class="muted-text">{{ user.email }}</p><div class="badge-row"><span class="pill">✦ TIANA member</span><span class="pill success">Your own pace</span></div><p class="muted-text">Every clear choice is progress. You don't have to be perfect.</p><a class="button button-quiet" href="{% url 'account_create' %}">＋ Add another account</a><p style="margin-top:14px"><a href="{% url 'notifications' %}">Your notifications →</a></p></div>
-  <div class="card"><div class="card-head"><h2>Personal details and theme</h2></div><form method="post">{% csrf_token %}{{ form.as_p }}<div class="form-actions"><button class="button" type="submit">Save changes</button><a class="button button-secondary" href="{% url 'dashboard' %}">Back to overview</a></div></form></div>
+<section class="workspace-heading" data-reveal><div><h1>Profile</h1><p>Manage your personal details and app preferences.</p></div></section>
+<section class="profile-grid professional-profile-grid">
+  <div class="card profile-summary professional-profile-summary" data-reveal>
+    <div class="profile-avatar">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</div>
+    <h2>{{ user.get_full_name|default:user.username }}</h2>
+    <p>{{ user.email }}</p>
+    <a class="button button-secondary" href="{% url 'account_create' %}">Add account</a>
+    <a class="profile-secondary-link" href="{% url 'notifications' %}">Notification settings</a>
+    <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="button button-secondary" type="submit">Log out</button></form>
+  </div>
+  <div class="card professional-profile-form" data-reveal>
+    <div class="professional-panel-heading"><div><h2>Personal settings</h2><p>Update your details, currency and appearance.</p></div></div>
+    <form method="post">{% csrf_token %}{{ form.as_p }}<div class="form-actions"><button class="button" type="submit">Save changes</button></div></form>
+  </div>
 </section>
 {% endblock %}
