@@ -1,10 +1,17 @@
 {
-  "name": "Nkem — Smart Money. Brighter You.",
-  "short_name": "Nkem",
-  "description": "A smarter money companion for students in Cameroon.",
+  "name": "TIANA — Your Money Friend Always",
+  "short_name": "TIANA",
+  "description": "Your personal money friend. Track your money, save for goals and get personalized guidance.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F7F5FC",
-  "theme_color": "#7651F5",
-  "icons": [{"src": "/static/money-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}]
+  "background_color": "#F8F6FF",
+  "theme_color": "#6F3FF5",
+  "icons": [
+    {
+      "src": "/static/money-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
