@@ -10,7 +10,7 @@ hex_colour = RegexValidator(regex=r"^#[0-9A-Fa-f]{6}$", message="Use a six-digit
 class AppAppearance(models.Model):
     """Single, admin-managed brand and palette configuration for TIANA."""
     app_name = models.CharField(max_length=50, default="TIANA")
-    tagline = models.CharField(max_length=120, default="Smart Money. Brighter You.")
+    tagline = models.CharField(max_length=120, default="Your Money Friend Always")
     primary_color = models.CharField(max_length=7, default="#7757F6", validators=[hex_colour])
     dark_color = models.CharField(max_length=7, default="#392187", validators=[hex_colour])
     soft_color = models.CharField(max_length=7, default="#EFEAFF", validators=[hex_colour])
