@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (back) back.disabled = index === 0;
     if (count) count.textContent = (index + 1) + " of " + slides.length;
     if (nextLabel) nextLabel.textContent = index === slides.length - 1 ? "Create my account" : "Next";
-    if (next) next.setAttribute("aria-label", index === slides.length - 1 ? "Create your Nkem account" : "Go to the next onboarding slide");
+    if (next) next.setAttribute("aria-label", index === slides.length - 1 ? "Create your TIANA account" : "Go to the next onboarding slide");
   };
 
   next?.addEventListener("click", () => {
