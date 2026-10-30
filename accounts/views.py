@@ -90,7 +90,10 @@ def onboarding_setup_view(request):
         user = request.user
         user.weekly_income = data["weekly_income"]
         user.weekly_savings_target = data["weekly_savings_target"]
-        user.payday_weekday = data["payday_weekday"]
+        payday_weekday = data.get("payday_weekday")
+        # Optional choice fields may be submitted blank. Persist SQL NULL, never "".
+        # Use an explicit check so Monday (0) remains a valid weekday.
+        user.payday_weekday = None if payday_weekday in (None, "") else int(payday_weekday)
         user.financial_priorities = data["financial_priorities"]
         user.onboarding_completed = True
         user.save(update_fields=["weekly_income", "weekly_savings_target", "payday_weekday", "financial_priorities", "onboarding_completed"])

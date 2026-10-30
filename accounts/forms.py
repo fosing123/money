@@ -79,7 +79,13 @@ class OnboardingSetupForm(forms.Form):
     opening_balance = forms.DecimalField(label="Money you have right now (FCFA)", min_value=0, max_digits=14, decimal_places=2, initial=5000, widget=forms.NumberInput(attrs={"min": "0", "step": "500", "inputmode": "decimal"}))
     weekly_savings_target = forms.DecimalField(label="Weekly savings goal (FCFA)", min_value=0, max_digits=14, decimal_places=2, initial=2000, widget=forms.NumberInput(attrs={"min": "0", "step": "500", "inputmode": "decimal"}))
     account_name = forms.ChoiceField(label="Where do you keep most of your money?", choices=[("Cash", "Cash"), ("MTN Mobile Money", "MTN Mobile Money"), ("Orange Money", "Orange Money"), ("Bank account", "Bank account")])
-    payday_weekday = forms.TypedChoiceField(label="When do you usually get paid?", choices=[("", "Choose a day (optional)")] + [(i, label) for i, label in User.WEEKDAYS], coerce=lambda value: int(value) if value != "" else None, required=False)
+    payday_weekday = forms.TypedChoiceField(
+        label="When do you usually get paid?",
+        choices=[("", "Choose a day (optional)")] + [(i, label) for i, label in User.WEEKDAYS],
+        coerce=lambda value: int(value) if value != "" else None,
+        empty_value=None,
+        required=False,
+    )
     financial_priorities = forms.MultipleChoiceField(label="What matters to you right now? Choose any that fit.", choices=PRIORITY_CHOICES, required=False, widget=forms.CheckboxSelectMultiple)
 
     def clean(self):
