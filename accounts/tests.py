@@ -57,23 +57,16 @@ class AccountTests(TestCase):
         user.refresh_from_db()
         self.assertEqual(user.payday_weekday, 0)
 
-    def test_user_can_save_a_custom_colour_palette(self):
+    def test_profile_uses_only_the_five_supported_themes(self):
         user = User.objects.create_user(username="palette", email="palette@example.com", password="StrongPass123!")
         self.client.force_login(user)
-        response = self.client.post(reverse("profile"), {
-            "first_name": "Ada", "last_name": "Lovelace", "email": "palette@example.com",
-            "currency": "XAF", "phone_number": "", "theme": "custom",
-            "palette_primary": "#7350E8", "palette_accent": "#12C7D4",
-            "palette_background": "#F6F3FC", "palette_surface": "#FFFFFF",
-            "palette_text": "#241A3D", "palette_muted": "#837B9B", "palette_border": "#E9E3F5",
-        })
-        self.assertRedirects(response, reverse("profile"))
-        user.refresh_from_db()
-        self.assertEqual(user.theme, "custom")
-        self.assertEqual(user.custom_palette["primary"], "#7350E8")
-        self.assertEqual(user.custom_palette["accent"], "#12C7D4")
-        profile = self.client.get(reverse("profile"))
-        self.assertContains(profile, "--brand-primary:#7350E8")
+        response = self.client.get(reverse("profile"))
+        self.assertEqual(response.status_code, 200)
+        for theme in ("violet", "mint", "ocean", "sunset", "midnight"):
+            with self.subTest(theme=theme):
+                self.assertContains(response, theme)
+        self.assertNotContains(response, "palette_primary")
+        self.assertNotContains(response, "palette_accent")
 
     def test_logout_redirects_to_login(self):
         user = User.objects.create_user(username="logoutuser", email="logout@example.com", password="StrongPass123!")
