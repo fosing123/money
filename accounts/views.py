@@ -24,7 +24,7 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data["email"].strip()
-            base_username = email.split("@")[0][:140] or "tiana"
+            base_username = email.split("@")[0][:140] or "nkem"
             username, counter = base_username, 1
             while User.objects.filter(username__iexact=username).exists():
                 username = f"{base_username[:140-len(str(counter))]}{counter}"
@@ -38,7 +38,7 @@ def register_view(request):
             )
             Account.objects.create(owner=user, name="Daily money", account_type="cash", currency=user.currency)
             login(request, user)
-            messages.success(request, "Welcome to TIANA. Let's set up a plan that fits your life.")
+            messages.success(request, "Welcome to Nkem. Let's set up a plan that fits your life.")
             return redirect("onboarding_setup")
     else:
         form = RegisterForm()

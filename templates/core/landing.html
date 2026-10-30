@@ -1,17 +1,60 @@
-{% extends 'base.html' %}{% load static %}
-{% block title %}TIANA · Personal finance{% endblock %}
-{% block content %}
-<section class="marketing-shell">
-  <div class="marketing-copy" data-reveal>
-    <span class="marketing-kicker">PERSONAL FINANCE, MADE CLEAR</span>
-    <h1>Make your money work with you.</h1>
-    <p>Track what comes in, understand what goes out, and plan for what matters. One clear view of your finances, in FCFA.</p>
-    <div class="marketing-actions"><a class="button" href="{% url 'register' %}">Create your account</a><a class="button button-secondary" href="{% url 'login' %}">Log in</a></div>
-    <div class="marketing-features"><span>Track transactions</span><span>Plan budgets</span><span>Build savings</span></div>
-  </div>
-  <div class="marketing-visual" data-reveal>
-    {% if brand_assets.onboarding_welcome %}<img src="{{ brand_assets.onboarding_welcome.image.url }}" alt="{{ brand_assets.onboarding_welcome.alt_text|default:'Student using a phone on campus' }}">{% else %}<img src="{% static 'assets/tiana-campus-hero.webp' %}" alt="Student using a phone on campus">{% endif %}
-    <div class="marketing-image-caption"><strong>TIANA</strong><span>Clearer decisions start here.</span></div>
-  </div>
-</section>
-{% endblock %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10130f">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Nkem helps students make clearer money decisions and build a brighter tomorrow.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Nkem — Smart Money. Brighter You.">
+  <meta property="og:description" content="A smarter money companion, made for students.">
+  <title>{% block title %}Nkem — Smart Money. Brighter You.{% endblock %}</title>
+  <link rel="preload" as="image" href="{% static 'assets/nkem-welcome-hero-4k.webp' %}" fetchpriority="high">
+  <link rel="stylesheet" href="{% static 'nkem/welcome.css' %}?v=20261030">
+</head>
+<body class="welcome-page">
+  <main class="welcome-screen" aria-label="Welcome to Nkem">
+    <img
+      class="welcome-photo"
+      src="{% if brand_assets.onboarding_welcome %}{{ brand_assets.onboarding_welcome.image.url }}{% else %}{% static 'assets/nkem-welcome-hero-4k.webp' %}{% endif %}"
+      alt=""
+      aria-hidden="true"
+      fetchpriority="high"
+    >
+    <div class="welcome-shade" aria-hidden="true"></div>
+
+    <div class="welcome-status" aria-label="Status bar">
+      <span class="welcome-time">9:41</span>
+      <span class="welcome-status-icons" aria-hidden="true">
+        <svg class="status-signal" viewBox="0 0 26 20"><path d="M2 16.5h3v2H2zM8 12h3v6.5H8zM14 7h3v11.5h-3zM20 2h3v16.5h-3z" fill="currentColor"/></svg>
+        <svg class="status-wifi" viewBox="0 0 24 20"><path d="M2 6.5C7.7 1.8 16.3 1.8 22 6.5L12 18 2 6.5Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10.5c3.4-2.7 8.6-2.7 12 0M9.3 13.7c1.6-1.2 3.8-1.2 5.4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="status-battery" viewBox="0 0 34 18"><rect x="1" y="1" width="28" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="4" width="21" height="10" rx="2" fill="currentColor"/><path d="M31 6v6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </span>
+    </div>
+
+    <button class="welcome-back" type="button" data-welcome-back data-fallback-url="{% url 'login' %}" aria-label="Go back">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M20.5 5.5 10 16l10.5 10.5" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <header class="welcome-brand">
+      <a class="welcome-wordmark" href="{% url 'home' %}" aria-label="Nkem home">
+        <span>Nkem</span>
+        <i class="wordmark-petal" aria-hidden="true"></i>
+        <i class="wordmark-dot" aria-hidden="true"></i>
+      </a>
+      <p class="welcome-tagline">Smart Money. Brighter You.</p>
+    </header>
+
+    <footer class="welcome-footer">
+      <p class="welcome-promise">For students. For a better tomorrow.</p>
+      <a class="welcome-cta" href="{% url 'register' %}">
+        <span>Get Started</span>
+        <svg viewBox="0 0 30 24" aria-hidden="true"><path d="M2 12h23M16 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </footer>
+  </main>
+  <script src="{% static 'nkem/welcome.js' %}?v=20261030" defer></script>
+</body>
+</html>

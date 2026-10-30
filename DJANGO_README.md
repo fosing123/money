@@ -1,4 +1,4 @@
-# TIANA Django application
+# Nkem Django application
 
 ## Local setup
 

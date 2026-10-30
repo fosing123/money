@@ -13,9 +13,9 @@ from insights.views import insights_view
 from marketplace.views import opportunity_detail_view, opportunity_list_view
 from notifications.views import mark_all_notifications_read_view, mark_notification_read_view, notification_list_view
 
-admin.site.site_header = "TIANA Control Center"
-admin.site.site_title = "TIANA Admin"
-admin.site.index_title = "Manage the TIANA experience"
+admin.site.site_header = "Nkem Control Center"
+admin.site.site_title = "Nkem Admin"
+admin.site.index_title = "Manage the Nkem experience"
 
 urlpatterns = [
     path("", home_view, name="home"),

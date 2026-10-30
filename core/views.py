@@ -72,4 +72,4 @@ def dashboard_view(request):
 
 
 def health_check_view(request):
-    return JsonResponse({"status": "ok", "service": "tiana"})
+    return JsonResponse({"status": "ok", "service": "nkem"})
