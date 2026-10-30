@@ -12,7 +12,7 @@
   <meta property="og:description" content="A smarter money companion, made for students.">
   <title>{% block title %}Nkem — Smart Money. Brighter You.{% endblock %}</title>
   <link rel="preload" as="image" href="{% static 'assets/nkem-welcome-hero-4k.avif' %}" fetchpriority="high">
-  <link rel="stylesheet" href="{% static 'nkem/welcome.css' %}?v=20261030">
+  <link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030"><link rel="stylesheet" href="{% static 'nkem/welcome.css' %}?v=20261030">
 </head>
 <body class="welcome-page">
   <main class="welcome-screen" aria-label="Welcome to Nkem">
@@ -39,17 +39,13 @@
     </button>
 
     <header class="welcome-brand">
-      <a class="welcome-wordmark" href="{% url 'home' %}" aria-label="Nkem home">
-        <span>Nkem</span>
-        <i class="wordmark-petal" aria-hidden="true"></i>
-        <i class="wordmark-dot" aria-hidden="true"></i>
-      </a>
+      <a class="welcome-wordmark" href="{% url 'home' %}" aria-label="Nkem home"><img src="{% static 'nkem/nkem-logo-white.svg' %}" alt="Nkem"></a>
       <p class="welcome-tagline">Smart Money. Brighter You.</p>
     </header>
 
     <footer class="welcome-footer">
       <p class="welcome-promise">For students. For a better tomorrow.</p>
-      <a class="welcome-cta" href="{% url 'register' %}">
+      <a class="welcome-cta" href="{% url 'onboarding' %}">
         <span>Get Started</span>
         <svg viewBox="0 0 30 24" aria-hidden="true"><path d="M2 12h23M16 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>

@@ -11,21 +11,23 @@ class AccountTests(TestCase):
     def test_user_registration_can_create_user(self):
         user = User.objects.create_user(username="ada", email="ada@example.com", password="StrongPass123!")
         self.assertEqual(user.email, "ada@example.com")
+        self.assertEqual(user.theme, "violet")
+        self.assertEqual(user.custom_palette, {})
 
     def test_duplicate_email_is_not_allowed(self):
         User.objects.create_user(username="ada", email="ada@example.com", password="StrongPass123!")
         with self.assertRaises(Exception):
             User.objects.create_user(username="ada2", email="ada@example.com", password="StrongPass123!")
 
-    def test_public_home_renders_onboarding(self):
+    def test_public_home_opens_the_nkem_welcome_flow(self):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Make your money work with you.")
-        self.assertContains(response, "Create your account")
-        self.assertContains(response, "Track transactions")
+        self.assertContains(response, "Smart Money. Brighter You.")
+        self.assertContains(response, "Get Started")
+        self.assertContains(response, reverse("onboarding"))
 
     def test_new_user_is_sent_to_first_run_setup(self):
-        user = User.objects.create_user(username="ada", email="ada@example.com", password="StrongPass123!")
+        user = User.objects.create_user(username="newuser", email="newuser@example.com", password="StrongPass123!")
         self.client.force_login(user)
         response = self.client.get(reverse("dashboard"))
         self.assertEqual(response.status_code, 302)
@@ -34,16 +36,10 @@ class AccountTests(TestCase):
     def test_setup_accepts_blank_optional_payday(self):
         user = User.objects.create_user(username="setupblank", email="setupblank@example.com", password="StrongPass123!")
         self.client.force_login(user)
-
         response = self.client.post(reverse("onboarding_setup"), {
-            "weekly_income": "10000",
-            "opening_balance": "5000",
-            "weekly_savings_target": "2000",
-            "account_name": "Cash",
-            "payday_weekday": "",
-            "financial_priorities": ["freedom"],
+            "weekly_income": "10000", "opening_balance": "5000", "weekly_savings_target": "2000",
+            "account_name": "Cash", "payday_weekday": "", "financial_priorities": ["freedom"],
         })
-
         self.assertRedirects(response, reverse("dashboard"))
         user.refresh_from_db()
         self.assertIsNone(user.payday_weekday)
@@ -54,16 +50,28 @@ class AccountTests(TestCase):
     def test_setup_preserves_monday_as_valid_payday_zero(self):
         user = User.objects.create_user(username="setupmonday", email="setupmonday@example.com", password="StrongPass123!")
         self.client.force_login(user)
-
         response = self.client.post(reverse("onboarding_setup"), {
-            "weekly_income": "10000",
-            "opening_balance": "5000",
-            "weekly_savings_target": "2000",
-            "account_name": "Cash",
-            "payday_weekday": "0",
-            "financial_priorities": ["freedom"],
+            "weekly_income": "10000", "opening_balance": "5000", "weekly_savings_target": "2000",
+            "account_name": "Cash", "payday_weekday": "0", "financial_priorities": ["freedom"],
         })
-
         self.assertRedirects(response, reverse("dashboard"))
         user.refresh_from_db()
         self.assertEqual(user.payday_weekday, 0)
+
+    def test_user_can_save_a_custom_colour_palette(self):
+        user = User.objects.create_user(username="palette", email="palette@example.com", password="StrongPass123!")
+        self.client.force_login(user)
+        response = self.client.post(reverse("profile"), {
+            "first_name": "Ada", "last_name": "Lovelace", "email": "palette@example.com",
+            "currency": "XAF", "phone_number": "", "theme": "custom",
+            "palette_primary": "#7350E8", "palette_accent": "#12C7D4",
+            "palette_background": "#F6F3FC", "palette_surface": "#FFFFFF",
+            "palette_text": "#241A3D", "palette_muted": "#837B9B", "palette_border": "#E9E3F5",
+        })
+        self.assertRedirects(response, reverse("profile"))
+        user.refresh_from_db()
+        self.assertEqual(user.theme, "custom")
+        self.assertEqual(user.custom_palette["primary"], "#7350E8")
+        self.assertEqual(user.custom_palette["accent"], "#12C7D4")
+        profile = self.client.get(reverse("profile"))
+        self.assertContains(profile, "--brand-primary:#7350E8")

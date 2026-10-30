@@ -23,7 +23,7 @@ Open http://127.0.0.1:8000/ and the admin at http://127.0.0.1:8000/admin/.
 - Transactions with owner-scoped account choices, validation, filtering, edit/delete, and ledger-derived balances.
 - Weekly/monthly/yearly category budgets, savings goals with optional images and target dates, category/weekly insights and notifications.
 - Staff-managed student opportunity listings with search and detail pages.
-- TIANA money coach calling Gemini from the server only; chats are saved per member, and provider errors are handled without exposing credentials.
+- Nkem money coach calling Gemini from the server only; chats are saved per member, and provider errors are handled without exposing credentials.
 - Django admin for app appearance, brand/onboarding/dashboard/coach images, users, accounts, transactions, goals, budgets, notifications, opportunities and AI conversations.
 
 ## Environment variables

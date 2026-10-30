@@ -1,2 +1,62 @@
-{% extends 'core/landing.html' %}
-{% block title %}Start your journey · Nkem{% endblock %}
+{% load static %}
+<!doctype html>
+<html lang="en" style="{% for key, value in theme_variables.items %}--{{ key }}:{{ value }};{% endfor %}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F7F5FC">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Discover the smarter way to manage money with Nkem.">
+  <title>Discover Nkem · Smart Money. Brighter You.</title>
+  <link rel="preload" as="image" href="{% static 'assets/onboarding-control.svg' %}" fetchpriority="high">
+  <link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030">
+  <link rel="stylesheet" href="{% static 'nkem/onboarding.css' %}?v=20261030">
+</head>
+<body class="onboarding-page" data-user-theme="{{ user.theme|default:'violet' }}">
+  <main class="onboarding-shell" aria-label="Discover Nkem">
+    <div class="onboarding-status" aria-label="Phone status bar">
+      <span>9:41</span>
+      <span class="onboarding-status-icons" aria-hidden="true">
+        <svg viewBox="0 0 28 18"><path d="M2 16h3V12H2zm6 0h3V9H8zm6 0h3V5h-3zm6 0h3V2h-3z" fill="currentColor"/></svg>
+        <svg viewBox="0 0 24 18"><path d="M2 5.5C7.7.8 16.3.8 22 5.5L12 17 2 5.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 9.5c2.9-2.2 7.1-2.2 10 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 34 18"><rect x="1" y="1" width="28" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="4" width="20" height="10" rx="2" fill="currentColor"/><path d="M31 6v6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </span>
+    </div>
+    <header class="onboarding-header">
+      <button class="onboarding-back" type="button" data-onboarding-back aria-label="Previous screen" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <a class="onboarding-logo" href="{% url 'home' %}" aria-label="Nkem home"><img src="{% static 'nkem/nkem-logo.svg' %}" alt="Nkem"></a>
+      <a class="onboarding-skip" href="{% url 'register' %}">Skip</a>
+    </header>
+    <section class="onboarding-stage" data-onboarding-stage aria-label="Nkem features" tabindex="0">
+      <article class="onboarding-slide is-active" data-onboarding-slide aria-hidden="false">
+        <div class="onboarding-art onboarding-art-control"><div class="art-glow" aria-hidden="true"></div><img src="{% static 'nkem/onboarding-control.avif' %}" alt="Three-dimensional phone with a finance dashboard and a wallet"></div>
+        <div class="onboarding-copy"><span class="onboarding-kicker">01 / MONEY CLARITY</span><h1>Take control of your money</h1><p>Track your income and expenses in one clear place. Understand your habits and make more confident decisions.</p></div>
+      </article>
+      <article class="onboarding-slide" data-onboarding-slide aria-hidden="true">
+        <div class="onboarding-art onboarding-art-goals"><div class="art-glow" aria-hidden="true"></div><img src="{% static 'assets/onboarding-goals.svg' %}" alt="Three-dimensional savings target with an arrow and gold coin stacks"></div>
+        <div class="onboarding-copy"><span class="onboarding-kicker">02 / BIGGER PLANS</span><h1>Reach your goals faster</h1><p>Set a savings goal, follow your progress and celebrate every milestone along the way.</p></div>
+      </article>
+      <article class="onboarding-slide" data-onboarding-slide aria-hidden="true">
+        <div class="onboarding-art onboarding-art-coach"><div class="art-glow" aria-hidden="true"></div><img src="{% static 'assets/onboarding-ai.svg' %}" alt="Friendly AI money coach in a lavender hoodie, surrounded by helpful financial chat cards"></div>
+        <div class="onboarding-copy"><span class="onboarding-kicker">03 / YOUR MONEY COACH</span><h1>Your AI money coach</h1><p>Get helpful insights, practical money guidance and answers whenever you need a little clarity.</p></div>
+      </article>
+    </section>
+    <footer class="onboarding-footer">
+      <div class="onboarding-progress">
+        <span class="onboarding-progress-label" data-onboarding-count>1 of 3</span>
+        <div class="onboarding-dots" role="group" aria-label="Choose onboarding slide">
+          <button type="button" data-onboarding-dot aria-label="Screen 1" aria-pressed="true" class="is-active"></button>
+          <button type="button" data-onboarding-dot aria-label="Screen 2" aria-pressed="false"></button>
+          <button type="button" data-onboarding-dot aria-label="Screen 3" aria-pressed="false"></button>
+        </div>
+        <span class="onboarding-progress-label">YOUR NEXT CHAPTER</span>
+      </div>
+      <button class="onboarding-next" type="button" data-onboarding-next><span data-onboarding-next-label>Next</span><svg viewBox="0 0 28 22" aria-hidden="true"><path d="M2 11h22M16 3l8 8-8 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <p class="onboarding-legal">Built for students. Designed for real life.</p>
+    </footer>
+  </main>
+  <script src="{% static 'nkem/onboarding.js' %}?v=20261030" defer></script>
+</body>
+</html>

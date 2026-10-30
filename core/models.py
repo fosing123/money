@@ -47,7 +47,7 @@ class BrandAsset(models.Model):
     ]
     key = models.CharField(max_length=40, choices=PLACEMENTS, unique=True)
     title = models.CharField(max_length=120)
-    image = models.ImageField(upload_to="tiana/brand-assets/%Y/%m/", validators=[validate_uploaded_image])
+    image = models.ImageField(upload_to="nkem/brand-assets/%Y/%m/", validators=[validate_uploaded_image])
     alt_text = models.CharField(max_length=180, blank=True)
     is_active = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)

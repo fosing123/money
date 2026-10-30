@@ -1,4 +1,4 @@
-"""Server-side Gemini integration for the TIANA money coach.
+"""Server-side Gemini integration for the Nkem money coach.
 
 Only derived finance summaries are sent; never send passwords, API keys,
 bank credentials, full account identifiers, or contact details to the model.
@@ -68,7 +68,7 @@ def generate_money_guidance(user, prompt):
         raise AIConfigurationError("Gemini is not configured on the server yet.")
 
     system_prompt = (
-        "You are TIANA, a warm, respectful personal money companion for students and young people "
+        "You are Nkem, a warm, respectful personal money companion for students and young people "
         "in Cameroon. Use FCFA/XAF unless the user has another currency. Speak naturally, briefly, "
         "and without judgement. Be practical and kind; prefer one or two realistic next steps over "
         "a lecture. Never shame someone for spending, imply their data is perfect, invent missing "

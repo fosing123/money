@@ -2,7 +2,9 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
+from django.core.validators import RegexValidator
+
+from core.theme import PRESETS
 
 User = get_user_model()
 
@@ -15,6 +17,7 @@ PRIORITY_CHOICES = [
     ("emergency", "Build an emergency fund"),
     ("freedom", "Feel more financially free"),
 ]
+HEX_COLOUR = RegexValidator(regex=r"^#[0-9A-Fa-f]{6}$", message="Use a valid six-digit hex colour.")
 
 
 class RegisterForm(forms.Form):
@@ -51,6 +54,35 @@ class RegisterForm(forms.Form):
 
 
 class ProfileForm(forms.ModelForm):
+    palette_primary = forms.CharField(
+        label="Primary brand colour", validators=[HEX_COLOUR],
+        widget=forms.TextInput(attrs={"type": "color", "class": "palette-color-input", "data-palette-field": "primary"}),
+    )
+    palette_accent = forms.CharField(
+        label="Accent colour", validators=[HEX_COLOUR],
+        widget=forms.TextInput(attrs={"type": "color", "class": "palette-color-input", "data-palette-field": "accent"}),
+    )
+    palette_background = forms.CharField(
+        label="Page background", validators=[HEX_COLOUR],
+        widget=forms.TextInput(attrs={"type": "color", "class": "palette-color-input", "data-palette-field": "background"}),
+    )
+    palette_surface = forms.CharField(
+        label="Cards and surfaces", validators=[HEX_COLOUR],
+        widget=forms.TextInput(attrs={"type": "color", "class": "palette-color-input", "data-palette-field": "surface"}),
+    )
+    palette_text = forms.CharField(
+        label="Main text", validators=[HEX_COLOUR],
+        widget=forms.TextInput(attrs={"type": "color", "class": "palette-color-input", "data-palette-field": "text"}),
+    )
+    palette_muted = forms.CharField(
+        label="Secondary text", validators=[HEX_COLOUR],
+        widget=forms.TextInput(attrs={"type": "color", "class": "palette-color-input", "data-palette-field": "muted"}),
+    )
+    palette_border = forms.CharField(
+        label="Borders and dividers", validators=[HEX_COLOUR],
+        widget=forms.TextInput(attrs={"type": "color", "class": "palette-color-input", "data-palette-field": "border"}),
+    )
+
     class Meta:
         model = User
         fields = ["first_name", "last_name", "email", "currency", "phone_number", "theme"]
@@ -59,7 +91,21 @@ class ProfileForm(forms.ModelForm):
             "last_name": forms.TextInput(attrs={"autocomplete": "family-name"}),
             "email": forms.EmailInput(attrs={"autocomplete": "email"}),
             "phone_number": forms.TelInput(attrs={"autocomplete": "tel"}),
+            "theme": forms.Select(attrs={"data-palette-select": ""}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        defaults = PRESETS.get(self.instance.theme, PRESETS["violet"]).copy()
+        saved = self.instance.custom_palette if isinstance(self.instance.custom_palette, dict) else {}
+        defaults.update({
+            key: value.upper()
+            for key, value in saved.items()
+            if key in defaults and isinstance(value, str) and HEX_COLOUR.regex.fullmatch(value)
+        })
+        for key, value in defaults.items():
+            self.fields[f"palette_{key}"].initial = value
+        self.fields["theme"].label = "Choose a palette"
 
     def clean_email(self):
         email = self.cleaned_data["email"].strip()
@@ -67,6 +113,17 @@ class ProfileForm(forms.ModelForm):
         if exists:
             raise forms.ValidationError("This email address is already in use.")
         return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.custom_palette = {
+            key: self.cleaned_data[f"palette_{key}"].upper()
+            for key in PRESETS["violet"]
+        }
+        if commit:
+            user.save()
+            self.save_m2m()
+        return user
 
 
 class LoginForm(forms.Form):
