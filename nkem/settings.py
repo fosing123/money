@@ -20,7 +20,8 @@ def env_list(name, default=""):
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "development-only-replace-before-deploy")
 DEBUG = env_bool("DEBUG", True)
-ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]")
+# Accept requests regardless of the incoming Host header (use only when this is intentional).
+ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", "")
 
 INSTALLED_APPS = [
