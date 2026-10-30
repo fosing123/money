@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}Your money setup · Nkem{% endblock %}
+{% block title %}Your money setup · TIANA{% endblock %}
 {% block content %}
-<div class="page-heading"><div><p class="eyebrow">LET'S MAKE THIS YOURS</p><h1>A plan that fits your real life.</h1><p class="section-copy">A few quick choices help Nkem start in the right place. You can change everything later.</p></div><span class="pill">Step <span data-setup-count>1</span> of 4</span></div>
+<div class="page-heading"><div><p class="eyebrow">LET'S MAKE THIS YOURS</p><h1>A plan that fits your real life.</h1><p class="section-copy">A few quick choices help TIANA start in the right place. You can change everything later.</p></div><span class="pill">Step <span data-setup-count>1</span> of 4</span></div>
 <section class="onboarding-frame" style="min-height:0">
 <form method="post" id="setupWizard" novalidate>{% csrf_token %}
   <section class="onboarding-slide active" data-setup-step><div class="onboarding-copy" style="min-height:310px"><div class="onboarding-topline">01 · YOUR PRIORITIES</div><h1 style="font-size:2.4rem">What matters to you right now?</h1><p>Pick any goals that feel like you. No pressure to do everything at once.</p>{% for field in form %}{% if field.name == 'financial_priorities' %}<div class="priority-options">{{ field }}</div>{% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}{% endif %}{% endfor %}</div></section>
