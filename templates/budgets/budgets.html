@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}Budgets · TIANA{% endblock %}
 {% block content %}
-<div class="page-heading"><div><p class="eyebrow">A PLAN, NOT A PUNISHMENT</p><h1>Make room for what matters.</h1><p class="section-copy">Budgets are flexible guide rails. Start with the categories that matter most to you.</p></div><a class="button" href="{% url 'budget_create' %}">＋ Create budget</a></div>
-<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px">
-{% for item in budgets %}<article class="card"><div class="card-head"><div><span class="pill">{{ item.get_period_display }}</span><h2 style="margin-top:12px">{{ item.name }}</h2><small>{% if item.category %}{{ item.category }}{% else %}All categories{% endif %}</small></div><span class="goal-thumb">▤</span></div><div class="goal-top"><strong>{{ item.spent_amount|floatformat:0 }} FCFA used</strong><span class="pill {% if item.percent_used >= 100 %}danger{% elif item.percent_used >= 80 %}warning{% else %}success{% endif %}">{{ item.percent_used|floatformat:0 }}%</span></div><div class="progress-track {% if item.percent_used >= 80 %}orange{% else %}green{% endif %}"><span style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div><div class="goal-foot"><span>Planned {{ item.amount|floatformat:0 }} FCFA</span><strong>{{ item.remaining_amount|floatformat:0 }} left</strong></div></article>
-{% empty %}<div class="card empty-state"><div class="empty-emoji">🪴</div><h3>Start small. Stay flexible.</h3><p>Set a spending limit for food, transport, internet or any category that helps you feel in control.</p><a class="button button-quiet" href="{% url 'budget_create' %}">Create your first budget</a></div>{% endfor %}
+<section class="page-heading page-heading-wide" data-reveal><div><p class="eyebrow">YOUR PLAN, YOUR PACE</p><h1>Make room for what matters.</h1><p class="section-copy">Budgets are flexible guide rails. Give your money direction without making life feel smaller.</p></div><a class="button" href="{% url 'budget_create' %}">＋ Create budget</a></section>
+<section class="budget-intro-strip" data-reveal><div class="budget-intro-icon">▤</div><div><strong>A good budget leaves room for real life.</strong><p>Start with what you know. Adjust when your week changes.</p></div><a href="{% url 'insights' %}">See spending insights ↗</a></section>
+<div class="budget-grid">
+{% for item in budgets %}
+<article class="card budget-card" data-reveal><div class="budget-card-head"><div><span class="pill">{{ item.get_period_display }}</span><h2>{{ item.name }}</h2><p>{% if item.category %}{{ item.category }}{% else %}All categories{% endif %}</p></div><span class="budget-card-icon">₣</span></div>
+<div class="budget-total-row"><span>You've used</span><strong>{{ item.spent_amount|floatformat:0 }} <small>FCFA</small></strong></div>
+<div class="progress-track budget-large-progress {% if item.percent_used >= 80 %}orange{% else %}green{% endif %}"><span data-progress style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div>
+<div class="budget-card-foot"><span>{{ item.percent_used|floatformat:0 }}% of {{ item.amount|floatformat:0 }} FCFA</span><strong>{{ item.remaining_amount|floatformat:0 }} left</strong></div></article>
+{% empty %}<div class="card empty-state budget-empty" data-reveal><div class="empty-emoji">▤</div><h3>Your first budget starts with one category.</h3><p>Food, transport, airtime or school needs. Pick something useful and build from there.</p><a class="button" href="{% url 'budget_create' %}">Create your first budget</a></div>{% endfor %}
 </div>
 {% endblock %}
