@@ -4,10 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   backButton.addEventListener("click", () => {
     const fallback = backButton.dataset.fallbackUrl || "/";
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      window.location.assign(fallback);
-    }
+    window.location.assign(fallback);
   });
 });
