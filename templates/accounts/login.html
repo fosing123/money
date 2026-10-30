@@ -8,7 +8,7 @@
     <p style="position:relative;z-index:1;margin:0">Made for real life, and all the little steps in between.</p>
   </div>
   <div class="auth-form-panel"><p class="eyebrow">YOUR SPACE IS WAITING</p><h1>Welcome back</h1><p class="muted-text">Sign in to see your balance, plans and progress.</p>
-    <form method="post" novalidate>{% csrf_token %}{{ form.as_p }}<button class="button" style="width:100%;margin-top:8px" type="submit">Log in securely <span aria-hidden="true">→</span></button></form>
+    <form method="post" novalidate><input type="hidden" name="next" value="{{ request.GET.next }}">{% csrf_token %}{{ form.as_p }}<button class="button" style="width:100%;margin-top:8px" type="submit">Log in securely <span aria-hidden="true">→</span></button></form>
     <p class="auth-footnote">New to Nkem? <a href="{% url 'register' %}">Create your account</a>.</p>
   </div>
 </section>
