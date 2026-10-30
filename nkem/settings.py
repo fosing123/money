@@ -1,4 +1,4 @@
-"""Django settings for Nkem. Keep private credentials in the server environment."""
+"""Django settings for TIANA. Keep private credentials in the server environment."""
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 import os
