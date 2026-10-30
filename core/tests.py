@@ -22,7 +22,7 @@ class WelcomePageTests(TestCase):
         self.assertContains(response, "Take control of your money")
         self.assertContains(response, "Reach your goals faster")
         self.assertContains(response, "Your AI money coach")
-        self.assertContains(response, "assets/onboarding-control.svg")
+        self.assertContains(response, "assets/nkem-onboarding-finance.webp")
         self.assertContains(response, "assets/onboarding-goals.svg")
         self.assertContains(response, "assets/onboarding-ai.svg")
         self.assertContains(response, reverse("register"))
