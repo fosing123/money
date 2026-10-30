@@ -1,5 +1,5 @@
 {% extends 'base.html' %}{% load static %}
-{% block title %}Create your Nkem account{% endblock %}
+{% block title %}Create your TIANA account{% endblock %}
 {% block content %}
 <section class="auth-layout">
   <div class="auth-visual">
@@ -7,7 +7,7 @@
     {% if brand_assets.onboarding_account %}<img src="{{ brand_assets.onboarding_account.image.url }}" alt="">{% else %}<img src="{% static 'assets/nkem-welcome-hero-4k.avif' %}" alt="Student on campus">{% endif %}
     <p style="position:relative;z-index:1;margin:0">✦ Small steps count. Your money journey starts here.</p>
   </div>
-  <div class="auth-form-panel"><p class="eyebrow">WELCOME TO Nkem</p><h1>Create your account</h1><p class="muted-text">Just the basics. You can personalise the rest later.</p>
+  <div class="auth-form-panel"><p class="eyebrow">WELCOME TO TIANA</p><h1>Create your account</h1><p class="muted-text">Just the basics. You can personalise the rest later.</p>
     <form method="post" novalidate>{% csrf_token %}{{ form.as_p }}<button class="button" style="width:100%;margin-top:8px" type="submit">Create my account <span aria-hidden="true">→</span></button></form>
     <p class="auth-footnote">Already with us? <a href="{% url 'login' %}">Log in here</a>.</p>
     <p class="auth-footnote">Your financial data is personal. Never share your password or API keys with anyone.</p>
