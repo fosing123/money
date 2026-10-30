@@ -23,7 +23,7 @@
       </span>
     </div>
     <header class="onboarding-header">
-      <button class="onboarding-back" type="button" data-onboarding-back aria-label="Previous screen" disabled>
+      <button class="onboarding-back" type="button" data-onboarding-back aria-label="Previous screen" hidden disabled>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <a class="onboarding-logo" href="{% url 'home' %}" aria-label="TIANA home"><img src="{% static 'nkem/nkem-logo.svg' %}" alt="TIANA"></a>
@@ -45,13 +45,11 @@
     </section>
     <footer class="onboarding-footer">
       <div class="onboarding-progress">
-        <span class="onboarding-progress-label" data-onboarding-count>1 of 3</span>
         <div class="onboarding-dots" role="group" aria-label="Choose onboarding slide">
           <button type="button" data-onboarding-dot aria-label="Screen 1" aria-pressed="true" class="is-active"></button>
           <button type="button" data-onboarding-dot aria-label="Screen 2" aria-pressed="false"></button>
           <button type="button" data-onboarding-dot aria-label="Screen 3" aria-pressed="false"></button>
         </div>
-        <span class="onboarding-progress-label">YOUR NEXT CHAPTER</span>
       </div>
       <button class="onboarding-next" type="button" data-onboarding-next><span data-onboarding-next-label>Next</span><svg viewBox="0 0 28 22" aria-hidden="true"><path d="M2 11h22M16 3l8 8-8 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <p class="onboarding-legal">Built for students. Designed for real life.</p>
