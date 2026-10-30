@@ -13,6 +13,7 @@ class WelcomePageTests(TestCase):
         self.assertContains(response, "Take control of your money today")
         self.assertContains(response, reverse("onboarding"))
         self.assertContains(response, "assets/nkem-welcome-hero-4k.avif")
+        self.assertContains(response, "assets/tiana-campus-hero.webp")
 
     def test_onboarding_is_a_three_slide_feature_flow(self):
         response = self.client.get(reverse("onboarding"))
