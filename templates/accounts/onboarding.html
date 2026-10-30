@@ -6,14 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#F7F5FC">
   <meta name="color-scheme" content="light">
-  <meta name="description" content="Discover the smarter way to manage money with Nkem.">
-  <title>Discover Nkem · Smart Money. Brighter You.</title>
-  <link rel="preload" as="image" href="{% static 'assets/nkem-onboarding-finance.webp' %}" fetchpriority="high">
+  <meta name="description" content="Meet your money friend, TIANA.">
+  <title>Discover TIANA · Your Money Friend Always</title>
+  <link rel="preload" as="image" href="{% static 'assets/tiana-onboarding-control.webp' %}" fetchpriority="high">
   <link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030">
   <link rel="stylesheet" href="{% static 'nkem/onboarding.css' %}?v=20261030">
 </head>
 <body class="onboarding-page" data-user-theme="{{ user.theme|default:'violet' }}">
-  <main class="onboarding-shell" aria-label="Discover Nkem">
+  <main class="onboarding-shell" aria-label="Discover TIANA">
     <div class="onboarding-status" aria-label="Phone status bar">
       <span>9:41</span>
       <span class="onboarding-status-icons" aria-hidden="true">
@@ -26,20 +26,20 @@
       <button class="onboarding-back" type="button" data-onboarding-back aria-label="Previous screen" disabled>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <a class="onboarding-logo" href="{% url 'home' %}" aria-label="Nkem home"><img src="{% static 'nkem/nkem-logo.svg' %}" alt="Nkem"></a>
+      <a class="onboarding-logo" href="{% url 'home' %}" aria-label="TIANA home"><img src="{% static 'nkem/nkem-logo.svg' %}" alt="TIANA"></a>
       <a class="onboarding-skip" href="{% url 'register' %}">Skip</a>
     </header>
-    <section class="onboarding-stage" data-onboarding-stage aria-label="Nkem features" tabindex="0">
+    <section class="onboarding-stage" data-onboarding-stage aria-label="TIANA features" tabindex="0">
       <article class="onboarding-slide is-active" data-onboarding-slide aria-hidden="false">
-        <div class="onboarding-art onboarding-art-control"><div class="art-glow" aria-hidden="true"></div><img src="{% static 'assets/nkem-onboarding-finance.webp' %}" alt="Three-dimensional finance artwork with a smartphone dashboard, wallet, savings and payment symbols"></div>
+        <div class="onboarding-art onboarding-art-control"><div class="art-glow" aria-hidden="true"></div><img src="{% static 'assets/tiana-onboarding-control.webp' %}" alt="Three-dimensional finance artwork with a smartphone dashboard, wallet, savings and payment symbols"></div>
         <div class="onboarding-copy"><span class="onboarding-kicker">01 / MONEY CLARITY</span><h1>Take control of your money</h1><p>Track your income and expenses in one clear place. Understand your habits and make more confident decisions.</p></div>
       </article>
       <article class="onboarding-slide" data-onboarding-slide aria-hidden="true">
-        <div class="onboarding-art onboarding-art-goals"><div class="art-glow" aria-hidden="true"></div><img src="{% static 'assets/onboarding-goals.svg' %}" alt="Three-dimensional savings target with an arrow and gold coin stacks"></div>
+        <div class="onboarding-art onboarding-art-goals"><div class="art-glow" aria-hidden="true"></div><img src="{% static 'assets/tiana-onboarding-goals.webp' %}" alt="Three-dimensional savings target with an arrow and gold coin stacks"></div>
         <div class="onboarding-copy"><span class="onboarding-kicker">02 / BIGGER PLANS</span><h1>Reach your goals faster</h1><p>Set a savings goal, follow your progress and celebrate every milestone along the way.</p></div>
       </article>
       <article class="onboarding-slide" data-onboarding-slide aria-hidden="true">
-        <div class="onboarding-art onboarding-art-coach"><div class="art-glow" aria-hidden="true"></div><img src="{% static 'assets/onboarding-ai.svg' %}" alt="Friendly AI money coach in a lavender hoodie, surrounded by helpful financial chat cards"></div>
+        <div class="onboarding-art onboarding-art-coach"><div class="art-glow" aria-hidden="true"></div><img src="{% static 'assets/tiana-onboarding-coach.webp' %}" alt="Friendly AI money coach in a lavender hoodie, surrounded by helpful financial chat cards"></div>
         <div class="onboarding-copy"><span class="onboarding-kicker">03 / YOUR MONEY COACH</span><h1>Your AI money coach</h1><p>Get helpful insights, practical money guidance and answers whenever you need a little clarity.</p></div>
       </article>
     </section>
