@@ -31,6 +31,7 @@
  <path d="M469 282q-10-28 6-34 16-7 23 18l-2 20" fill="url(#skin)"/><path d="M487 288q11-25 24-15 14 11 1 29l-16 14" fill="url(#skin)"/>
  <path d="M245 350q62 45 126 0" fill="none" stroke="#D6C4FF" stroke-width="8" stroke-linecap="round"/>
  <path d="M287 384l21 18 21-18" fill="none" stroke="#EDE6FF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="307" y="457" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="800" letter-spacing="2" fill="#FFFFFF" opacity=".92">TIANA</text>
 </g>
 <circle cx="110" cy="274" r="13" fill="#FFC85C"/><path d="M106 267h8M110 263v21" stroke="#D78B25" stroke-width="3" stroke-linecap="round"/>
 <circle cx="501" cy="72" r="12" fill="#A88CFA"/><path d="M495 72h12M501 66v12" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
