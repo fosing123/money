@@ -20,8 +20,9 @@ class AccountTests(TestCase):
     def test_public_home_renders_onboarding(self):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your money.")
-        self.assertContains(response, "Create my free account")
+        self.assertContains(response, "Make your money work with you.")
+        self.assertContains(response, "Create your account")
+        self.assertContains(response, "Track transactions")
 
     def test_new_user_is_sent_to_first_run_setup(self):
         user = User.objects.create_user(username="ada", email="ada@example.com", password="StrongPass123!")
