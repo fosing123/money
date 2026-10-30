@@ -3,7 +3,7 @@
 html,body{width:100%;min-width:320px;min-height:100%;margin:0}
 body.welcome-page{min-height:100svh;overflow:hidden;background:#24104c;color:#211047;display:grid;place-items:center}
 .welcome-screen{position:relative;isolation:isolate;width:100%;height:100svh;min-height:610px;overflow:hidden;background:#f8f6ff}
-.welcome-photo{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center 48%}
+.welcome-photo{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;overflow:hidden}.welcome-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 48%}
 .welcome-shade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.03) 0%,rgba(255,255,255,0) 38%,rgba(255,255,255,.10) 50%,rgba(255,255,255,.82) 67%,#fff 78%,#fff 100%)}
 .welcome-status{position:absolute;z-index:3;top:calc(env(safe-area-inset-top,0px) + 14px);left:7.8%;right:7.8%;display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:24px;color:#191626;user-select:none}
 .welcome-time{font-size:clamp(15px,3.4vw,22px);line-height:1;font-weight:750;letter-spacing:-.035em}
