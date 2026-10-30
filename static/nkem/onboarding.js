@@ -24,9 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
       dot.classList.toggle("is-active", active);
       dot.setAttribute("aria-pressed", active ? "true" : "false");
     });
-    if (back) back.disabled = index === 0;
+    if (back) { back.hidden = index === 0; back.disabled = index === 0; }
     if (count) count.textContent = (index + 1) + " of " + slides.length;
-    if (nextLabel) nextLabel.textContent = index === slides.length - 1 ? "Create my account" : "Next";
+    if (nextLabel) nextLabel.textContent = "Next";
     if (next) next.setAttribute("aria-label", index === slides.length - 1 ? "Create your TIANA account" : "Go to the next onboarding slide");
   };
 
