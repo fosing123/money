@@ -48,7 +48,11 @@ def transaction_list_view(request):
 
 @login_required
 def transaction_create_view(request):
-    form = TransactionForm(request.POST or None, user=request.user, initial={"currency": request.user.currency})
+    initial = {"currency": request.user.currency}
+    requested_kind = request.GET.get("kind", "").strip()
+    if requested_kind in dict(Transaction.KIND_CHOICES):
+        initial["kind"] = requested_kind
+    form = TransactionForm(request.POST or None, user=request.user, initial=initial)
     if request.method == "POST" and form.is_valid():
         item = form.save(commit=False)
         item.owner = request.user
