@@ -96,10 +96,10 @@ class AccountTests(TestCase):
     def test_onboarding_uses_existing_static_illustrations(self):
         from django.contrib.staticfiles import finders
         for asset in (
-            "assets/tiana-onboarding-finance.webp",
+            "assets/onboarding-control.svg",
             "assets/onboarding-goals.svg",
             "assets/onboarding-ai.svg",
-            "assets/tiana-welcome-hero-4k.avif",
+            "assets/nkem-welcome-hero-4k.avif",
         ):
             with self.subTest(asset=asset):
                 self.assertIsNotNone(finders.find(asset))
