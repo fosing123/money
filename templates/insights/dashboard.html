@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Insights · TIANA{% endblock %}
+{% block content %}
+<section class="workspace-heading" data-reveal><div><h1>Insights</h1><p>Understand your income and spending patterns.</p></div></section>
+<section class="transaction-summary-grid professional-summary-grid insights-summary" data-reveal>
+<div class="card transaction-summary income-summary"><span class="summary-icon">↗</span><div><small>Income this month</small><strong>{{ income_total|floatformat:0 }} <small>FCFA</small></strong></div></div>
+<div class="card transaction-summary expense-summary"><span class="summary-icon">↘</span><div><small>Expenses this month</small><strong>{{ expense_total|floatformat:0 }} <small>FCFA</small></strong></div></div>
+<div class="card transaction-summary"><span class="summary-icon">≈</span><div><small>Net cash flow</small><strong>{{ net_flow|floatformat:0 }} <small>FCFA</small></strong></div></div>
+</section>
+<section class="analytics-grid professional-analytics-grid">
+<div class="card panel-card professional-panel" data-reveal><div class="professional-panel-heading"><div><h2>Weekly cash flow</h2><p>Income and expenses over the last six weeks.</p></div></div>
+<div class="weekly-chart professional-weekly-chart">{% for week in weeks %}<div class="week-column"><div class="week-bars"><span class="week-bar income-bar" style="height:{% widthratio week.income week.max 100 %}%" title="Income {{ week.income|floatformat:0 }} FCFA"></span><span class="week-bar expense-bar" style="height:{% widthratio week.expenses week.max 100 %}%" title="Expenses {{ week.expenses|floatformat:0 }} FCFA"></span></div><span>{{ week.label }}</span></div>{% empty %}<p class="professional-empty">Weekly trends will appear when you record transactions.</p>{% endfor %}</div><div class="chart-legend"><span><i class="income-key"></i>Income</span><span><i class="expense-key"></i>Expenses</span></div></div>
+<div class="card panel-card professional-panel" data-reveal><div class="professional-panel-heading"><div><h2>Spending categories</h2><p>Your largest expense categories this month.</p></div></div>
+{% for row in category_rows %}<div class="professional-progress-item"><div class="professional-progress-heading"><strong>{{ row.category }}</strong><span>{{ row.value|floatformat:0 }} FCFA</span></div><div class="progress-track green"><span data-progress style="width:{{ row.percent }}%"></span></div></div>{% empty %}<div class="professional-empty"><p>Category totals will appear here when you add expenses.</p></div>{% endfor %}</div>
+</section>
+{% endblock %}

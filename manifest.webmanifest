@@ -1,11 +1,11 @@
 {
   "name": "Nkem",
-  "short_name": "Money",
+  "short_name": "Nkem",
   "description": "Smart Money. Brighter You. A money planner for students in Cameroon.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f7f7fc",
-  "theme_color": "#6558ed",
+  "background_color": "#101710",
+  "theme_color": "#7542f5",
   "icons": [
     {
       "src": "./money-mark.svg",

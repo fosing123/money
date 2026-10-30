@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Create a savings goal · TIANA{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">A DREAM WITH A PLAN</p><h1>What are you saving for?</h1><p class="section-copy">Your goal can be big or small. The point is to make it yours.</p></div></div>
+<section class="card form-card"><form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}{% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}{% for field in form %}<p><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}</p>{% endfor %}<div class="form-actions"><button class="button" type="submit">Save my goal</button><a class="button button-secondary" href="{% url 'goals' %}">Cancel</a></div></form></section>
+{% endblock %}

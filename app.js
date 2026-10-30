@@ -95,7 +95,7 @@ function extractAmount(text){
  var amount=Number(String(match[1]).replace(/\D/g,''));
  return Number.isFinite(amount)?Math.round(amount):0;
 }
-function brand(){return '<div class="brand"><div class="brand-symbol">✳</div><div>Nkem<small>SMART MONEY. BRIGHTER YOU.</small></div></div>';}
+function brand(){return '<div class="brand"><div class="brand-symbol brand-symbol-tiana">N<span aria-hidden="true">.</span></div><div>Nkem<small>SMART MONEY. BRIGHTER YOU.</small></div></div>';}
 function launchConfetti(){var colors=['#6558ed','#ff9c72','#5dce9c','#ffc95d','#e975ad'];for(var i=0;i<26;i++){var el=document.createElement('i');el.className='confetti';el.style.left=(Math.random()*100)+'vw';el.style.background=colors[i%colors.length];el.style.animationDelay=(Math.random()*.55)+'s';el.style.transform='rotate('+(Math.random()*120)+'deg)';document.body.appendChild(el);setTimeout(function(x){x.remove();},1800,el);}}
 function showToast(text){toastRoot.innerHTML='<div class="toast" role="status">'+esc(text)+'</div>';setTimeout(function(){toastRoot.innerHTML='';},2800);}
 function appNavItems(){return [['dashboard','⌂','Home'],['budgets','▤','Budgets'],['goals','◎','Goals'],['coach','✳','Money Coach'],['more','•••','More']];}
@@ -169,7 +169,7 @@ function marketplacePage(){
  ];
  var saved=state.marketSaved||[],q=(window.__marketQuery||'').toLowerCase(),cat=window.__marketCategory||'All';
  var shown=items.filter(function(x){return (cat==='All'||x.category===cat)&&(!q||(x.name+' '+x.category+' '+x.desc).toLowerCase().indexOf(q)>=0);});
- return pageHead('NKEM CAMPUS MARKETPLACE','Good finds. Real student hustle.','Explore useful student services and sample offers. Listings marked as examples are not verified live offers; confirm identity, price and availability independently.')+
+ return pageHead('Nkem CAMPUS MARKETPLACE','Good finds. Real student hustle.','Explore useful student services and sample offers. Listings marked as examples are not verified live offers; confirm identity, price and availability independently.')+
  '<section class="market-hero"><div><span class="eyebrow">BUY · SELL · BUILD</span><h2>Your next useful find is closer.</h2><p>Discover student-friendly services, save ideas and register interest. This preview does not process payments.</p><button class="button" data-action="seller-listing">＋ Draft a listing</button></div><img src="./assets/marketplace.svg" alt="Illustration of a shopping bag"></section>'+
  '<div class="market-controls"><label class="market-search">⌕ <input id="market-search" value="'+esc(window.__marketQuery||'')+'" placeholder="Search books, tutoring, repairs…" aria-label="Search marketplace"></label><div class="market-categories">'+categories.map(function(c){return '<button class="filter '+(cat===c?'active':'')+'" data-market-category="'+esc(c)+'">'+esc(c)+'</button>';}).join('')+'</div></div>'+
  '<div class="market-trust-note">ⓘ <span><b>Community preview</b> · Prices and providers below are illustrative examples, not verified offers. Arrange safe public meetups and never prepay a stranger.</span></div>'+
@@ -530,12 +530,39 @@ var weeklyNeeds={'Food':5000,'Transport':2400,'Airtime & data':3500,'School / pe
 var planValues={'Food':3500,'Transport':1500,'Airtime & data':1000,'School / personal':1000,'Emergency buffer':1000};
 
 function onboardingIncomeWeekly(){var amount=Math.max(0,Number(state.allowance)||0);return allowanceCadence==='monthly'?Math.round(amount/4.33):amount;}
+function moveIntroPage(direction){
+ var pages=[0,0.5,0.6,0.7,0.8],index=pages.indexOf(Number(onboardingStep));
+ if(index<0)return;var next=Math.max(0,Math.min(pages.length-1,index+direction));
+ if(next===index)return;onboardingStep=pages[next];renderOnboarding();
+}
+
 function renderOnboarding(){
+ if(onboardingStep===0.6||onboardingStep===0.7||onboardingStep===0.8){
+  var num=onboardingStep===0.6?3:onboardingStep===0.7?4:5;
+  var screenTitle=onboardingStep===0.6?'Achieve your goals':onboardingStep===0.7?'Get smart advice with AI':'Create your account';
+  var screenCopy=onboardingStep===0.6?'Save for school fees, a new laptop, travel, or anything that matters to you.':onboardingStep===0.7?'Chat with your money assistant. Ask questions, get tips, and make better decisions.':'Join thousands of students building a brighter future.';
+  var art=onboardingStep===0.6?'./assets/onboarding-goals.webp':onboardingStep===0.7?'./assets/onboarding-ai.webp':'./assets/onboarding-account.webp';
+  var inner='';
+  if(onboardingStep===0.6){
+   inner='<div class="nkem-goal-stack"><article class="nkem-goal-card"><span class="nkem-goal-icon laptop">💻</span><div class="nkem-goal-copy"><b>Laptop</b><div class="nkem-progress"><i style="width:65%"></i></div><small>180,000 / 250,000 FCFA</small></div><strong>65%</strong></article><article class="nkem-goal-card"><span class="nkem-goal-icon school">🎓</span><div class="nkem-goal-copy"><b>School Fees</b><div class="nkem-progress"><i style="width:40%"></i></div><small>120,000 / 300,000 FCFA</small></div><strong>40%</strong></article><article class="nkem-goal-card"><span class="nkem-goal-icon travel">✈️</span><div class="nkem-goal-copy"><b>Travel Trip</b><div class="nkem-progress"><i style="width:20%"></i></div><small>50,000 / 250,000 FCFA</small></div><strong>20%</strong></article></div>';
+  }else if(onboardingStep===0.7){
+   inner='<div class="nkem-chat-preview"><div class="nkem-chat-bubble left">Can I afford this? 💭</div><div class="nkem-chat-bubble right">How can I save more?</div><div class="nkem-chat-bubble left">Help me plan my budget</div></div>';
+  }else{
+   inner='<div class="nkem-auth-options"><button type="button" data-account-provider="google" class="nkem-auth-button"><span class="nkem-auth-icon google">G</span><b>Continue with Google</b></button><button type="button" data-account-provider="email" class="nkem-auth-button"><span class="nkem-auth-icon">✉</span><b>Continue with Email</b></button><button type="button" data-account-provider="phone" class="nkem-auth-button"><span class="nkem-auth-icon phone">☎</span><b>Continue with Phone</b></button><div class="nkem-or"><span></span>or<span></span></div></div>';
+  }
+  var pageClass=onboardingStep===0.6?'nkem-goals-page':onboardingStep===0.7?'nkem-ai-page':'nkem-account-page';
+  var screen='<main class="onboarding tiana-onboarding nkem-carousel-page '+pageClass+'"><div class="nkem-screen-status" aria-hidden="true"><span>9:41</span><span>▮▮▮　◖　▰</span></div><button type="button" class="nkem-back" data-action="ob-carousel-back" aria-label="Previous screen">‹</button><header class="nkem-page-heading"><div class="nkem-page-emoji">'+(num===3?'🌱':num===4?'💛':'')+'</div><h1>'+screenTitle+'</h1><p>'+screenCopy+'</p></header><div class="nkem-art"><img src="'+art+'" alt="'+(num===3?'Student celebrating savings goals':num===4?'Friendly AI money assistant robot':'A group of students on campus')+'" onerror="this.onerror=null;this.src=this.src.replace(/webp$/, `.svg`)" loading="eager"></div>'+inner+'<div class="nkem-page-footer"><div class="nkem-page-dots" aria-label="Onboarding page '+num+' of 5"><span></span><span></span><span class="'+(num===3?'active':'')+'"></span><span class="'+(num===4?'active':'')+'"></span><span class="'+(num===5?'active':'')+'"></span></div>'+(num<5?'<button type="button" class="nkem-next" data-action="ob-carousel-next" aria-label="Next onboarding page">›</button>':'<p class="nkem-legal">By continuing, you agree to our <a href="#terms" data-account-legal="terms">Terms of Service</a> and <a href="#privacy" data-account-legal="privacy">Privacy Policy</a>.</p>')+'</div></main>';
+  app.innerHTML=screen;bindOnboarding();return;
+ }
  var shellStart='<main class="onboarding"><header class="ob-top">'+brand()+'<button class="button ghost small" data-action="ob-skip">Skip setup</button></header>';
  var shellEnd='<footer class="ob-bottom"><span>YOUR MONEY. YOUR NEXT MOVE.</span><span>FCFA · PRIVATE BY DEFAULT</span></footer></main>';
+ if(onboardingStep===0.5){
+  var intro='<main class="onboarding tiana-onboarding"><section class="tiana-intro screen" aria-label="Take control of your money"><div class="tiana-intro-photo"><img src="./assets/onboarding-control.webp" onerror="this.onerror=null;this.src=this.src.replace(/webp$/, `.svg`)" alt="Student wearing headphones and using a phone on campus"></div><div class="tiana-intro-fade" aria-hidden="true"></div><div class="tiana-intro-status" aria-hidden="true"><span>9:41</span><span class="tiana-status-icons"><svg viewBox="0 0 40 20"><path d="M2 17h4V11H2zM10 17h4V7h-4zM18 17h4V3h-4zM26 17h4V0h-4z" fill="currentColor"/></svg><svg viewBox="0 0 24 20"><path d="M2 7.4C7.7 2.2 16.3 2.2 22 7.4L12 18z" fill="currentColor"/></svg><svg viewBox="0 0 32 18"><rect x="1" y="2" width="26" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="3.5" y="4.5" width="20" height="9" rx="1.5" fill="currentColor"/><path d="M29 6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div><button type="button" class="tiana-intro-back" data-action="ob-intro-back" aria-label="Back to welcome"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="tiana-intro-content"><h1>Take control<br>of your money</h1><p class="tiana-intro-copy">Track, plan, save and achieve your goals — all in one place.</p><div class="tiana-benefits"><article class="tiana-benefit tiana-benefit-green"><span class="tiana-benefit-icon"><svg viewBox="0 0 32 32"><path d="M5 26V18h5v8M14 26V11h5v15M23 26V5h5v21" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="m5 12 7-5 6 1 8-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span><b>Track<br>expenses</b></article><article class="tiana-benefit tiana-benefit-pink"><span class="tiana-benefit-icon"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="16" cy="16" r="5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18 14 27 5M22 5h5v5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Reach<br>your goals</b></article><article class="tiana-benefit tiana-benefit-blue"><span class="tiana-benefit-icon"><svg viewBox="0 0 32 32"><path d="M16 3 27 7v8c0 7-5 11-11 14C10 26 5 22 5 15V7z" fill="currentColor"/><path d="m11 16 3 3 7-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Build<br>better habits</b></article></div><div class="tiana-intro-footer"><div class="tiana-intro-dots" aria-label="Onboarding page 2 of 5"><span></span><span class="active"></span><span></span><span></span><span></span></div><button type="button" class="tiana-intro-next" data-action="ob-intro-next" aria-label="Next onboarding page"><svg viewBox="0 0 24 24"><path d="M4 12h15M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div></section></main>';
+  app.innerHTML=intro;bindOnboarding();return;
+ }
  if(onboardingStep===0){
-  var welcome='<section class="ob-welcome-screen screen"><div class="ob-welcome-copy"><div class="eyebrow">MADE FOR STUDENT LIFE · CAMEROON</div><h1>Your money.<br><span class="gradient">Your next move.</span></h1><p>Plan your FCFA, save for what matters, and know where you stand every week.</p><button class="button" data-action="ob-start">Build my money plan <span>→</span></button><div class="ob-welcome-points"><span>🇨🇲 Built for FCFA</span><span>🔒 Private by default</span><span>✨ No judgement</span></div></div><div class="ob-welcome-visual"><img src="./assets/student-onboarding-photo.webp" alt="University student using a phone on campus"><div class="welcome-float one"><span>💸</span><b>10,000 FCFA <small>weekly income</small></b></div><div class="welcome-float two"><span>🎯</span><b>2,000 FCFA <small>weekly savings goal</small></b></div></div></section>';
-  app.innerHTML=shellStart+welcome+shellEnd;bindOnboarding();return;
+  var welcome='<main class="onboarding tiana-onboarding"><section class="tiana-welcome screen" aria-label="Welcome to Nkem"><div class="tiana-welcome-art"><img src="./assets/onboarding-welcome.webp" alt="A smiling student in a blue hoodie using his phone on campus"></div><div class="tiana-welcome-shade" aria-hidden="true"></div><div class="tiana-status" aria-hidden="true"><span>9:41</span><span class="tiana-status-icons"><svg viewBox="0 0 40 20"><path d="M2 17h4V11H2zM10 17h4V7h-4zM18 17h4V3h-4zM26 17h4V0h-4z" fill="currentColor"/></svg><svg viewBox="0 0 24 20"><path d="M2 7.4C7.7 2.2 16.3 2.2 22 7.4L12 18z" fill="currentColor"/><path d="M6 11c3.4-3 8.6-3 12 0l-6 7z" fill="#101710"/></svg><svg viewBox="0 0 32 18"><rect x="1" y="2" width="26" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="3.5" y="4.5" width="20" height="9" rx="1.5" fill="currentColor"/><path d="M29 6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div><button type="button" class="tiana-back" data-action="ob-welcome-back" aria-label="Go back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="tiana-brand-block"><div class="tiana-wordmark">Nkem</div><p>Smart Money. Brighter You.</p></div><div class="tiana-bottom-stack"><p class="tiana-promise">For students. For a better tomorrow.</p><button class="tiana-cta" type="button" data-action="ob-start"><span>Get Started</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></section></main>';
+  app.innerHTML=welcome;bindOnboarding();return;
  }
  var totalSteps=7;
  var incomeAmount=Math.max(0,Number(state.allowance)||0);var income=onboardingIncomeWeekly();
@@ -606,10 +633,26 @@ function renderOnboarding(){
  bindOnboarding();
 }
 function bindOnboarding(){
+ var carouselRoot=document.querySelector('.tiana-onboarding');
+ if(carouselRoot&&carouselRoot.dataset.swipeBound!=='true'){
+  carouselRoot.dataset.swipeBound='true';var sx=0,sy=0;
+  carouselRoot.addEventListener('touchstart',function(e){if(!e.touches||!e.touches[0])return;sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  carouselRoot.addEventListener('touchend',function(e){if(!e.changedTouches||!e.changedTouches[0])return;var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>58&&Math.abs(dx)>Math.abs(dy)*1.25)moveIntroPage(dx<0?1:-1);},{passive:true});
+ }
+ var carouselBack=document.querySelector('[data-action="ob-carousel-back"]');if(carouselBack)carouselBack.onclick=function(){moveIntroPage(-1);};
+ var carouselNext=document.querySelector('[data-action="ob-carousel-next"]');if(carouselNext)carouselNext.onclick=function(){moveIntroPage(1);};
+ document.querySelectorAll('[data-account-provider]').forEach(function(b){b.onclick=function(){var provider=b.dataset.accountProvider;var message=provider==='google'?'Google sign-in needs the authentication service to be connected.':provider==='email'?'Email account creation will be connected to the Django authentication API.':'Phone sign-in and verification will be connected to the Django authentication API.';showToast(message);};});
+ document.querySelectorAll('[data-account-legal]').forEach(function(a){a.onclick=function(e){e.preventDefault();showToast(a.dataset.accountLegal==='terms'?'Terms of Service will be published with the account backend.':'Privacy Policy will be published with the account backend.');};});
+ var welcomeBack=document.querySelector('[data-action="ob-welcome-back"]');
+ if(welcomeBack)welcomeBack.onclick=function(){if(window.history.length>1)window.history.back();};
  var skip=document.querySelector('[data-action="ob-skip"]');
  if(skip)skip.onclick=function(){saveOnboardingFields();finishOnboarding(true);};
  var start=document.querySelector('[data-action="ob-start"]');
- if(start)start.onclick=function(){onboardingStep=1;renderOnboarding();};
+ if(start)start.onclick=function(){onboardingStep=0.5;renderOnboarding();};
+ var introBack=document.querySelector('[data-action="ob-intro-back"]');
+ if(introBack)introBack.onclick=function(){onboardingStep=0;renderOnboarding();};
+ var introNext=document.querySelector('[data-action="ob-intro-next"]');
+ if(introNext)introNext.onclick=function(){onboardingStep=0.6;renderOnboarding();};
  var card=document.getElementById('ob-card');if(!card)return;
  card.querySelectorAll('[data-persona]').forEach(function(b){b.onclick=function(){saveOnboardingFields();selectedPersona=b.dataset.persona;renderOnboarding();};});
  card.querySelectorAll('[data-goal]').forEach(function(b){b.onclick=function(){saveOnboardingFields();var id=b.dataset.goal;var i=selectedGoals.indexOf(id);if(i>=0)selectedGoals.splice(i,1);else if(selectedGoals.length<3)selectedGoals.push(id);else showToast('Choose up to 3 goals.');renderOnboarding();};});

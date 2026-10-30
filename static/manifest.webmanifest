@@ -1,0 +1,10 @@
+{
+  "name": "TIANA — Your Money Friend",
+  "short_name": "TIANA",
+  "description": "A friendly money planner for students and young people in Cameroon.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f6fc",
+  "theme_color": "#7757f6",
+  "icons": [{"src": "/static/money-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}]
+}

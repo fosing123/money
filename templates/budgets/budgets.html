@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Budgets · TIANA{% endblock %}
+{% block content %}
+<section class="workspace-heading" data-reveal><div><h1>Budgets</h1><p>Set spending limits and monitor what remains.</p></div><a class="button" href="{% url 'budget_create' %}">Create budget</a></section>
+<div class="budget-grid professional-budget-grid">
+{% for item in budgets %}
+<article class="card budget-card professional-budget-card" data-reveal>
+<div class="professional-panel-heading"><div><h2>{{ item.name }}</h2><p>{% if item.category %}{{ item.category }}{% else %}All categories{% endif %} · {{ item.get_period_display }}</p></div><span class="budget-card-icon">₣</span></div>
+<div class="budget-amount-large">{{ item.amount|floatformat:0 }} <span>FCFA</span></div>
+<div class="professional-progress-detail"><span>{{ item.spent_amount|floatformat:0 }} spent</span><strong>{{ item.remaining_amount|floatformat:0 }} remaining</strong></div>
+<div class="progress-track budget-large-progress {% if item.percent_used >= 80 %}orange{% else %}green{% endif %}"><span data-progress style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div>
+<div class="budget-card-foot"><span>{{ item.percent_used|floatformat:0 }}% used</span></div>
+</article>
+{% empty %}<div class="card professional-empty professional-empty-wide" data-reveal><h3>No budgets yet</h3><p>Create a budget for food, transport, school or any category you want to manage.</p><a class="button" href="{% url 'budget_create' %}">Create your first budget</a></div>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Transactions · TIANA{% endblock %}
+{% block content %}
+<section class="workspace-heading" data-reveal><div><h1>Transactions</h1><p>Review and manage your income and expenses.</p></div><a class="button" href="{% url 'transaction_create' %}">Add transaction</a></section>
+<section class="transaction-summary-grid professional-summary-grid" data-reveal><div class="card transaction-summary income-summary"><span class="summary-icon">↗</span><div><small>Money received</small><strong>{{ income_total|floatformat:0 }} <small>FCFA</small></strong></div></div><div class="card transaction-summary expense-summary"><span class="summary-icon">↘</span><div><small>Money spent</small><strong>{{ expense_total|floatformat:0 }} <small>FCFA</small></strong></div></div></section>
+<section class="card panel-card professional-panel transactions-panel" data-reveal>
+<div class="professional-panel-heading"><div><h2>All transactions</h2></div><span class="entry-count">{{ transactions|length }} records</span></div>
+<div class="transaction-toolbar"><label class="search-field"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search transactions" aria-label="Search transactions" data-transaction-search></label><form method="get" class="transaction-filters"><select id="kind" name="kind" aria-label="Filter by type"><option value="">All types</option>{% for value,label in kind_choices %}<option value="{{ value }}" {% if selected_kind == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><select id="account" name="account" aria-label="Filter by account"><option value="">All accounts</option>{% for item in accounts %}<option value="{{ item.pk }}" {% if selected_account == item.pk|stringformat:"s" %}selected{% endif %}>{{ item.name }}</option>{% endfor %}</select><button class="button button-secondary button-small" type="submit">Apply</button></form></div>
+{% if transactions %}
+<ul class="transaction-list activity-list searchable-transaction-list">{% for tx in transactions %}
+<li class="transaction-row activity-row" data-transaction-row data-search-text="{{ tx.description }} {{ tx.category }} {{ tx.merchant }} {{ tx.account.name }}">
+<span class="transaction-icon activity-icon {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}activity-icon-income{% else %}activity-icon-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}↗{% else %}↘{% endif %}</span>
+<div class="transaction-main"><strong>{{ tx.description|default:tx.category }}</strong><span>{{ tx.category }} · {{ tx.account.name }} · {{ tx.transaction_date|date:"j M Y" }}</span>{% if tx.merchant %}<span>{{ tx.merchant }}</span>{% endif %}</div>
+<div class="activity-amount-wrap"><strong class="amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}income{% else %}expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }} FCFA</strong><span class="activity-row-actions"><a href="{% url 'transaction_update' tx.pk %}">Edit</a><a href="{% url 'transaction_delete' tx.pk %}">Delete</a></span></div>
+</li>{% endfor %}</ul><p class="empty-search" data-empty-search hidden>No matching transactions.</p>
+{% else %}<div class="professional-empty"><h3>No transactions found</h3><p>Add your first transaction to start tracking activity.</p><a class="button button-secondary" href="{% url 'transaction_create' %}">Add transaction</a></div>{% endif %}
+</section>
+{% endblock %}

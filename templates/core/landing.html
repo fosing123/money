@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}TIANA · Personal finance{% endblock %}
+{% block content %}
+<section class="marketing-shell">
+  <div class="marketing-copy" data-reveal>
+    <span class="marketing-kicker">PERSONAL FINANCE, MADE CLEAR</span>
+    <h1>Make your money work with you.</h1>
+    <p>Track what comes in, understand what goes out, and plan for what matters. One clear view of your finances, in FCFA.</p>
+    <div class="marketing-actions"><a class="button" href="{% url 'register' %}">Create your account</a><a class="button button-secondary" href="{% url 'login' %}">Log in</a></div>
+    <div class="marketing-features"><span>Track transactions</span><span>Plan budgets</span><span>Build savings</span></div>
+  </div>
+  <div class="marketing-visual" data-reveal>
+    {% if brand_assets.onboarding_welcome %}<img src="{{ brand_assets.onboarding_welcome.image.url }}" alt="{{ brand_assets.onboarding_welcome.alt_text|default:'Student using a phone on campus' }}">{% else %}<img src="{% static 'assets/tiana-campus-hero.webp' %}" alt="Student using a phone on campus">{% endif %}
+    <div class="marketing-image-caption"><strong>TIANA</strong><span>Clearer decisions start here.</span></div>
+  </div>
+</section>
+{% endblock %}

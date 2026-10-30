@@ -1,0 +1,33 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7faf8">
+<meta name="description" content="TIANA personal finance. Track your money, manage budgets and plan savings.">
+<title>{% block title %}TIANA · Personal finance{% endblock %}</title>
+<link rel="manifest" href="{% static 'manifest.webmanifest' %}"><link rel="icon" href="{% static 'money-mark.svg' %}" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{% static 'nkem/app.css' %}?v=20261030-professional"><link rel="stylesheet" href="{% static 'nkem/theme.css' %}?v=20261030-professional">
+{% block extra_head %}{% endblock %}
+</head>
+<body data-user-theme="{{ user.theme|default:'mint' }}">
+<header class="app-topbar">
+<a class="brand-wrap" href="{% url 'home' %}" aria-label="TIANA home"><span class="brand-mark">{% if brand_assets.logo %}<img src="{{ brand_assets.logo.image.url }}" alt="">{% else %}<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5 28 10v12L16 28.5 4 22V10z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 17.5 14 21l8-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>{% endif %}</span><span class="brand-name">{{ appearance.app_name|default:'TIANA' }}</span></a>
+{% if user.is_authenticated %}
+<nav class="desktop-nav" aria-label="Main navigation"><a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>Overview</a><a href="{% url 'transactions' %}" {% if request.resolver_match.url_name == 'transactions' %}aria-current="page"{% endif %}>Transactions</a><a href="{% url 'budgets' %}" {% if request.resolver_match.url_name == 'budgets' %}aria-current="page"{% endif %}>Budgets</a><a href="{% url 'goals' %}" {% if request.resolver_match.url_name == 'goals' %}aria-current="page"{% endif %}>Goals</a><a href="{% url 'insights' %}" {% if request.resolver_match.url_name == 'insights' %}aria-current="page"{% endif %}>Insights</a><a href="{% url 'opportunities' %}" {% if request.resolver_match.url_name == 'opportunities' %}aria-current="page"{% endif %}>Discover</a></nav>
+<div class="header-actions"><a class="icon-button notification-button" href="{% url 'notifications' %}" aria-label="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{% if unread_notification_count %}<span class="notification-count">{{ unread_notification_count }}</span>{% endif %}</a><a class="profile-chip" href="{% url 'profile' %}" aria-label="Your profile"><span class="profile-chip-avatar">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</span><span class="profile-chip-name">{{ user.first_name|default:user.username }}</span></a>{% if user.is_staff %}<a class="icon-button desktop-only" href="{% url 'admin:index' %}" aria-label="Admin panel">⚙</a>{% endif %}<form class="desktop-only" action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="button button-secondary button-small" type="submit">Log out</button></form></div>
+{% else %}<nav class="header-actions" aria-label="Account navigation"><a class="button button-secondary header-login" href="{% url 'login' %}">Log in</a><a class="button" href="{% url 'register' %}">Get started</a></nav>{% endif %}
+</header>
+<main class="page-shell">{% if messages %}<div class="messages" role="status" aria-live="polite">{% for message in messages %}<div class="message message-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}</main>
+{% if user.is_authenticated %}
+<nav class="mobile-bottom-nav" aria-label="Primary mobile navigation">
+<a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}><span class="nav-icon">⌂</span><span>Home</span></a>
+<a href="{% url 'transactions' %}" {% if request.resolver_match.url_name == 'transactions' %}aria-current="page"{% endif %}><span class="nav-icon">↕</span><span>Activity</span></a>
+<a href="{% url 'budgets' %}" {% if request.resolver_match.url_name == 'budgets' %}aria-current="page"{% endif %}><span class="nav-icon">▤</span><span>Budget</span></a>
+<a href="{% url 'goals' %}" {% if request.resolver_match.url_name == 'goals' %}aria-current="page"{% endif %}><span class="nav-icon">◎</span><span>Goals</span></a>
+<a href="{% url 'profile' %}" {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}><span class="nav-icon">●</span><span>Profile</span></a>
+</nav>
+{% endif %}
+<script src="{% static 'nkem/app.js' %}" defer></script>{% block extra_js %}{% endblock %}
+</body></html>

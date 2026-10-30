@@ -1,41 +1,22 @@
-# Nkem — Smart Money. Brighter You.
+# TIANA — Your money friend
 
-Nkem is a mobile-first student money planner prototype for Cameroon, using FCFA/XAF. It currently runs as a static Progressive Web App with browser-local persistence.
+TIANA is a mobile-first personal money companion designed around students and young adults in Cameroon. This repository preserves the original static prototype as a product/design reference and adds a Django application with user-owned records, authentication, budgeting, goals, a server-side AI coach, student opportunities and admin-managed branding/media.
 
-## Included today
-- Personal onboarding, career/life-path preferences and configurable weekly budget.
-- Income and expense entries, transaction history, budget tracking and expense insights.
-- Savings goals with local contribution tracking.
-- Six dynamic colour palettes and a responsive layout.
-- A rule-based Money Coach with clear disclosure that it is not a connected AI service.
-- Campus marketplace discovery with search, categories, saved sample listings, listing details and locally saved private seller drafts.
-- Student-business discovery, educational risk information, locally saved interest and privately saved business suggestions.
-- Offline app-shell caching and JSON/CSV export.
+## Current Django application
 
-## Important prototype boundaries
-This repository currently contains a **static frontend, not a backend service**. Personal data is saved in the current browser/device and is not cloud-synced or protected by server-side accounts. Marketplace entries are illustrative examples, not verified live offers; seller drafts and interest are saved locally and do not contact anyone. No payment, transfer, investment, OAuth, SMS, push notification, server-side AI or regulated investment execution is connected. The balance is a manually maintained local record and must not be treated as a bank balance. Do not collect real customers' sensitive financial data or represent this prototype as a production financial service.
+The Django application lives at the repository root: manage.py, nkem/, and the domain apps. Follow DJANGO_README.md for local and production setup.
 
-## Run locally
-Requires Python 3 or another static HTTP server:
-```bash
-git clone https://github.com/fosing123/money.git
-cd money
-python -m http.server 8080
-```
-Open `http://127.0.0.1:8080`.
+- Member experience: five-screen introduction, registration/login, guided first-run setup, dashboard, transaction history, budgets, goals, insights, notifications, student opportunities, profile and AI chat.
+- Money records: account opening balances are tracked separately from transactions; balances recalculate when ledger entries are created, edited or deleted.
+- Visuals: responsive purple-first interface, alternative palettes, onboarding artwork, optional goal/opportunity image uploads and staff-managed brand image slots.
+- AI: Gemini is called from the Django server with a limited per-user financial summary and a safe fallback when the provider is not configured.
+- Admin: app appearance, brand/onboarding/dashboard/coach images, users, accounts, transactions, goals, budgets, notifications, opportunities and saved AI conversations.
 
-## Deploy on GitHub Pages
-1. Push changes to `main`.
-2. In GitHub, open **Settings → Pages** and select **GitHub Actions** as the source if the repository workflow expects it.
-3. Check the **Actions** tab for the Pages deployment workflow and wait for a successful run.
-4. Open the Pages URL shown in repository settings. Test on a phone and desktop.
+## Development and deployment
 
-There is no backend build or database migration for the current static prototype. Before a public production launch, implement server-side authentication, database persistence and ownership permissions, validated authoritative financial transactions, audit logging, backups, rate limits, marketplace moderation, seller verification, privacy/legal pages, and a proper deployment environment. A server-side AI provider requires credentials stored only in server environment variables. Investment/funding execution requires separate legal and regulatory review and an authorized provider.
+1. Install dependencies from requirements-django.txt.
+2. Copy .env.example to .env and keep real keys and passwords out of Git.
+3. Run python manage.py migrate, create a staff account with python manage.py createsuperuser, then run python manage.py runserver.
+4. Read the production checklist in DJANGO_README.md before exposing the site.
 
-## Smoke-test checklist
-- Complete onboarding; add income and expense records; verify balance, transaction list and weekly spending update.
-- Create a savings goal and add a contribution.
-- Switch colour palettes and refresh.
-- Search/filter marketplace examples; save a listing; create a private seller draft.
-- Register interest in a business example; save a business suggestion.
-- Export a JSON backup before clearing local browser data.
+The original index.html / app.js prototype is kept as a design reference. GitHub Pages alone cannot run Django; production must run Django through a production WSGI/ASGI server.
