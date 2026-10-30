@@ -11,14 +11,14 @@
   <meta property="og:title" content="Nkem — Smart Money. Brighter You.">
   <meta property="og:description" content="A smarter money companion, made for students.">
   <title>{% block title %}Nkem — Smart Money. Brighter You.{% endblock %}</title>
-  <link rel="preload" as="image" href="{% static 'assets/nkem-welcome-hero-4k.webp' %}" fetchpriority="high">
+  <link rel="preload" as="image" href="{% static 'assets/nkem-welcome-hero-4k.avif' %}" fetchpriority="high">
   <link rel="stylesheet" href="{% static 'nkem/welcome.css' %}?v=20261030">
 </head>
 <body class="welcome-page">
   <main class="welcome-screen" aria-label="Welcome to Nkem">
     <img
       class="welcome-photo"
-      src="{% if brand_assets.onboarding_welcome %}{{ brand_assets.onboarding_welcome.image.url }}{% else %}{% static 'assets/nkem-welcome-hero-4k.webp' %}{% endif %}"
+      src="{% if brand_assets.onboarding_welcome %}{{ brand_assets.onboarding_welcome.image.url }}{% else %}{% static 'assets/nkem-welcome-hero-4k.avif' %}{% endif %}"
       alt=""
       aria-hidden="true"
       fetchpriority="high"

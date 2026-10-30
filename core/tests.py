@@ -12,7 +12,7 @@ class WelcomePageTests(TestCase):
         self.assertContains(response, "Smart Money. Brighter You.")
         self.assertContains(response, "For students. For a better tomorrow.")
         self.assertContains(response, reverse("register"))
-        self.assertContains(response, "nkem-welcome-hero-4k.webp")
+        self.assertContains(response, "nkem-welcome-hero-4k.avif")
 
     def test_onboarding_entry_uses_the_same_welcome_screen(self):
         response = self.client.get(reverse("onboarding"))
