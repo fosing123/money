@@ -18,7 +18,7 @@ class AccountTests(TestCase):
         with self.assertRaises(Exception):
             User.objects.create_user(username="ada2", email="ada@example.com", password="StrongPass123!")
 
-    def test_public_home_opens_the_nkem_welcome_flow(self):
+    def test_public_home_opens_the_tiana_welcome_flow(self):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Smart Money. Brighter You.")
@@ -96,10 +96,10 @@ class AccountTests(TestCase):
     def test_onboarding_uses_existing_static_illustrations(self):
         from django.contrib.staticfiles import finders
         for asset in (
-            "assets/nkem-onboarding-finance.webp",
+            "assets/tiana-onboarding-finance.webp",
             "assets/onboarding-goals.svg",
             "assets/onboarding-ai.svg",
-            "assets/nkem-welcome-hero-4k.avif",
+            "assets/tiana-welcome-hero-4k.avif",
         ):
             with self.subTest(asset=asset):
                 self.assertIsNotNone(finders.find(asset))
