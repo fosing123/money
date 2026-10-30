@@ -4,12 +4,11 @@ from django.db import models
 
 class User(AbstractUser):
     THEME_CHOICES = [
-        ("violet", "Nkem violet"),
+        ("violet", "Violet dream"),
         ("mint", "Fresh mint"),
         ("ocean", "Calm ocean"),
         ("sunset", "Warm sunset"),
         ("midnight", "Midnight"),
-        ("custom", "My own palette"),
     ]
     WEEKDAYS = [
         (0, "Monday"), (1, "Tuesday"), (2, "Wednesday"), (3, "Thursday"),
@@ -22,7 +21,6 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True, default="")
     is_verified = models.BooleanField(default=False)
     theme = models.CharField(max_length=16, choices=THEME_CHOICES, default="violet")
-    custom_palette = models.JSONField(default=dict, blank=True)
     onboarding_completed = models.BooleanField(default=False)
     weekly_income = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     weekly_savings_target = models.DecimalField(max_digits=14, decimal_places=2, default=0)
