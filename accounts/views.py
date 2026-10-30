@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -46,7 +47,10 @@ def register_view(request):
 
 
 def login_view(request):
+    next_url = request.POST.get("next") or request.GET.get("next", "")
     if request.user.is_authenticated:
+        if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+            return redirect(next_url)
         return redirect("dashboard" if request.user.onboarding_completed else "onboarding_setup")
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -58,6 +62,8 @@ def login_view(request):
             authenticated = authenticate(request, username=candidate.username, password=form.cleaned_data["password"]) if candidate else None
             if authenticated:
                 login(request, authenticated)
+                if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+                    return redirect(next_url)
                 return redirect("dashboard" if authenticated.onboarding_completed else "onboarding_setup")
             messages.error(request, "That sign-in didn't work. Check your details and try again.")
     else:
@@ -68,7 +74,8 @@ def login_view(request):
 @require_POST
 def logout_view(request):
     logout(request)
-    return redirect("home")
+    messages.success(request, "You have been securely signed out.")
+    return redirect("login")
 
 
 @login_required
@@ -126,6 +133,6 @@ def profile_view(request):
     form = ProfileForm(request.POST or None, instance=request.user)
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Your profile and colour theme have been updated.")
+        messages.success(request, "Your profile has been updated.")
         return redirect("profile")
     return render(request, "accounts/profile.html", {"form": form})
