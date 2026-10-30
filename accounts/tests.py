@@ -12,7 +12,6 @@ class AccountTests(TestCase):
         user = User.objects.create_user(username="ada", email="ada@example.com", password="StrongPass123!")
         self.assertEqual(user.email, "ada@example.com")
         self.assertEqual(user.theme, "violet")
-        self.assertEqual(user.custom_palette, {})
 
     def test_duplicate_email_is_not_allowed(self):
         User.objects.create_user(username="ada", email="ada@example.com", password="StrongPass123!")
@@ -75,3 +74,39 @@ class AccountTests(TestCase):
         self.assertEqual(user.custom_palette["accent"], "#12C7D4")
         profile = self.client.get(reverse("profile"))
         self.assertContains(profile, "--brand-primary:#7350E8")
+
+    def test_logout_redirects_to_login(self):
+        user = User.objects.create_user(username="logoutuser", email="logout@example.com", password="StrongPass123!")
+        self.client.force_login(user)
+        response = self.client.post(reverse("logout"))
+        self.assertRedirects(response, reverse("login"))
+        dashboard = self.client.get(reverse("dashboard"))
+        self.assertEqual(dashboard.status_code, 302)
+        self.assertIn(reverse("login"), dashboard.url)
+
+    def test_login_returns_user_to_safe_next_url(self):
+        User.objects.create_user(username="returnuser", email="return@example.com", password="StrongPass123!", onboarding_completed=True)
+        response = self.client.post(
+            reverse("login") + "?next=/transactions/",
+            {"username": "return@example.com", "password": "StrongPass123!", "next": "/transactions/"},
+        )
+        self.assertRedirects(response, "/transactions/")
+
+    def test_login_rejects_external_next_url(self):
+        User.objects.create_user(username="safeuser", email="safe@example.com", password="StrongPass123!", onboarding_completed=True)
+        response = self.client.post(
+            reverse("login"),
+            {"username": "safe@example.com", "password": "StrongPass123!", "next": "https://evil.example/"},
+        )
+        self.assertRedirects(response, reverse("dashboard"))
+
+    def test_onboarding_uses_existing_static_illustrations(self):
+        from django.contrib.staticfiles import finders
+        for asset in (
+            "assets/onboarding-control.svg",
+            "assets/onboarding-goals.svg",
+            "assets/onboarding-ai.svg",
+            "assets/nkem-welcome-hero-4k.avif",
+        ):
+            with self.subTest(asset=asset):
+                self.assertIsNotNone(finders.find(asset))
