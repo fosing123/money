@@ -16,13 +16,15 @@
 </head>
 <body class="welcome-page">
   <main class="welcome-screen" aria-label="Welcome to TIANA">
-    <img
-      class="welcome-photo"
-      src="{% static 'assets/nkem-welcome-hero-4k.avif' %}"
-      alt="A student in a lavender hoodie smiling as she uses her phone on campus"
-      fetchpriority="high"
-      decoding="async"
-    >
+    <picture class="welcome-photo">
+      <source srcset="{% static 'assets/nkem-welcome-hero-4k.avif' %}" type="image/avif">
+      <img
+        src="{% static 'assets/tiana-campus-hero.webp' %}"
+        alt="A student using her phone on campus"
+        fetchpriority="high"
+        decoding="async"
+      >
+    </picture>
     <div class="welcome-shade" aria-hidden="true"></div>
     <div class="welcome-status" aria-label="Status bar">
       <span class="welcome-time">9:41</span>
