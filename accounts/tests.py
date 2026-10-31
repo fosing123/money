@@ -29,15 +29,15 @@ class AccountTests(TestCase):
 
     def test_registration_uses_the_new_welcome_step_and_saves_optional_phone(self):
         response = self.client.post(reverse("register"), {
-            "first_name": "Ada",
-            "last_name": "Ndi",
+            "full_name": "Ada Ndi",
             "email": "ada.new@example.com",
             "phone_number": "+237 670 000 000",
             "password1": "StrongPass123!",
-            "password2": "StrongPass123!",
         })
         self.assertRedirects(response, reverse("registration_welcome"))
         user = User.objects.get(email="ada.new@example.com")
+        self.assertEqual(user.first_name, "Ada")
+        self.assertEqual(user.last_name, "Ndi")
         self.assertEqual(user.phone_number, "+237 670 000 000")
         self.assertTrue(self.client.session.get("_auth_user_id"))
         self.assertTrue(Account.objects.filter(owner=user, name="Daily money").exists())
@@ -62,8 +62,10 @@ class AccountTests(TestCase):
             self.assertContains(response, "nkem/auth.css")
             self.assertContains(response, "tiana-auth-campus.webp")
             self.assertContains(response, "data-password-toggle")
-        self.assertContains(register, "Phone number")
+        self.assertContains(register, "Full name")
+        self.assertContains(register, "Create Account")
         self.assertContains(login, "Sign in to TIANA")
+        self.assertContains(login, "Sign In")
 
     def test_new_user_is_sent_to_first_run_setup(self):
         user = User.objects.create_user(username="newuser", email="newuser@example.com", password="StrongPass123!")
@@ -137,6 +139,8 @@ class AccountTests(TestCase):
         assets = (
             "assets/tiana-logo-transparent.png",
             "assets/tiana-welcome-student-campus-4k.jpg",
+            "assets/tiana-auth-campus.webp",
+            "assets/tiana-signup-welcome.webp",
             "assets/tiana-onboarding-money-clarity-4k.webp",
             "assets/tiana-onboarding-savings-goals-4k.webp",
             "assets/tiana-onboarding-ai-coach-4k.webp",
