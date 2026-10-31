@@ -4,7 +4,10 @@ document.addEventListener("DOMContentLoaded",()=>{
  const total=root.querySelector("[data-activity-total]"),incomeOut=root.querySelector("[data-activity-income]"),expenseOut=root.querySelector("[data-activity-expense]");
  const lineIn=root.querySelector('[data-chart-line="income"]'),lineOut=root.querySelector('[data-chart-line="expense"]'),areaIn=root.querySelector('[data-chart-area="income"]'),areaOut=root.querySelector('[data-chart-area="expense"]'),labels=root.querySelector("[data-chart-labels]"),note=root.querySelector("[data-chart-note]");
  const fmt=n=>Math.round(n).toLocaleString(undefined),incKinds=new Set(["income","refund","transfer_in"]),outKinds=new Set(["expense","transfer_out"]);
- const today=new Date();today.setHours(23,59,59,999);\n const dateLabels=[...root.querySelectorAll("[data-activity-date]")],localDate=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");\n const todayKey=localDate(new Date()),yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);const yesterdayKey=localDate(yesterday);\n dateLabels.forEach(el=>{const key=el.dataset.activityDate;if(key===todayKey)el.textContent="Today";else if(key===yesterdayKey)el.textContent="Yesterday"});
+ const today=new Date();today.setHours(23,59,59,999);
+ const dateLabels=[...root.querySelectorAll("[data-activity-date]")],localDate=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+ const todayKey=localDate(new Date()),yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);const yesterdayKey=localDate(yesterday);
+ dateLabels.forEach(el=>{const key=el.dataset.activityDate;if(key===todayKey)el.textContent="Today";else if(key===yesterdayKey)el.textContent="Yesterday"});
  const startOf=(d,p)=>{const x=new Date(d);x.setHours(0,0,0,0);if(p==="week"){x.setDate(x.getDate()-((x.getDay()+6)%7));return x}if(p==="month"){x.setDate(1);return x}if(p==="year"){x.setMonth(0,1);return x}return x};
  function render(period){
   const end=new Date(today),start=startOf(end,period);
