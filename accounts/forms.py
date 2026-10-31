@@ -18,17 +18,43 @@ PRIORITY_CHOICES = [
 
 
 class RegisterForm(forms.Form):
-    first_name = forms.CharField(max_length=50, label="First name", widget=forms.TextInput(attrs={"autocomplete": "given-name", "placeholder": "How should we call you?"}))
-    last_name = forms.CharField(max_length=50, label="Last name", widget=forms.TextInput(attrs={"autocomplete": "family-name", "placeholder": "Your family name"}))
-    email = forms.EmailField(label="Email address", widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com"}))
-    password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "At least 8 characters"}))
-    password2 = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Type it once more"}))
+    first_name = forms.CharField(
+        max_length=50,
+        label="First name",
+        widget=forms.TextInput(attrs={"autocomplete": "given-name", "placeholder": "First name"}),
+    )
+    last_name = forms.CharField(
+        max_length=50,
+        label="Last name",
+        widget=forms.TextInput(attrs={"autocomplete": "family-name", "placeholder": "Last name"}),
+    )
+    email = forms.EmailField(
+        label="Email address",
+        widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com"}),
+    )
+    phone_number = forms.CharField(
+        max_length=20,
+        required=False,
+        label="Phone number (optional)",
+        widget=forms.TelInput(attrs={"autocomplete": "tel", "inputmode": "tel", "placeholder": "+237 6XX XXX XXX"}),
+    )
+    password1 = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Create a strong password"}),
+    )
+    password2 = forms.CharField(
+        label="Confirm password",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Enter it again"}),
+    )
 
     def clean_email(self):
         email = self.cleaned_data["email"].strip()
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("An account with this email already exists.")
         return email
+
+    def clean_phone_number(self):
+        return (self.cleaned_data.get("phone_number") or "").strip()
 
     def clean(self):
         cleaned = super().clean()
@@ -70,8 +96,14 @@ class ProfileForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label="Email or username", widget=forms.TextInput(attrs={"autocomplete": "username", "placeholder": "Email or username"}))
-    password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "placeholder": "Your password"}))
+    username = forms.CharField(
+        label="Email or username",
+        widget=forms.TextInput(attrs={"autocomplete": "username", "placeholder": "Email address or username"}),
+    )
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "placeholder": "Your password"}),
+    )
 
 
 class OnboardingSetupForm(forms.Form):
