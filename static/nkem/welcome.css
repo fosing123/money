@@ -1,28 +1,301 @@
-*,*::before,*::after{box-sizing:border-box}
-:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color-scheme:light}
-html,body{width:100%;min-width:320px;min-height:100%;margin:0}
-body.welcome-page{min-height:100svh;overflow:hidden;background:#24104c;color:#211047;display:grid;place-items:center}
-.welcome-screen{position:relative;isolation:isolate;width:100%;height:100svh;min-height:610px;overflow:hidden;background:#f8f6ff}
-.welcome-photo{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;overflow:hidden}.welcome-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 48%}
-.welcome-shade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.03) 0%,rgba(255,255,255,0) 38%,rgba(255,255,255,.10) 50%,rgba(255,255,255,.82) 67%,#fff 78%,#fff 100%)}
-.welcome-status{position:absolute;z-index:3;top:calc(env(safe-area-inset-top,0px) + 14px);left:7.8%;right:7.8%;display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:24px;color:#191626;user-select:none}
-.welcome-time{font-size:clamp(15px,3.4vw,22px);line-height:1;font-weight:750;letter-spacing:-.035em}
-.welcome-status-icons{display:flex;align-items:center;gap:7px;height:20px}
-.status-signal{width:24px;height:19px}.status-wifi{width:23px;height:19px}.status-battery{width:32px;height:17px}
-.welcome-brand{position:absolute;z-index:3;top:calc(env(safe-area-inset-top,0px) + clamp(76px,9.5svh,116px));left:0;right:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 20px}
-.welcome-wordmark{display:block;width:min(69vw,310px);line-height:0;text-decoration:none}
-.welcome-wordmark img{display:block;width:100%;height:auto;filter:drop-shadow(0 3px 8px rgba(255,255,255,.34))}
-.welcome-tagline{margin:5px 0 0;color:#39216e;font-size:clamp(15px,3.7vw,21px);font-weight:650;letter-spacing:-.035em;line-height:1.25}
-.welcome-footer{position:absolute;z-index:3;left:7.6%;right:7.6%;bottom:calc(env(safe-area-inset-bottom,0px) + clamp(17px,2.5svh,30px));display:flex;flex-direction:column;align-items:stretch;text-align:left}
-.welcome-copy{margin:0 0 clamp(18px,3svh,26px)}
-.welcome-copy h1{max-width:430px;margin:0 0 12px;color:#28135e;font-size:clamp(27px,7vw,37px);font-weight:850;line-height:1.12;letter-spacing:-.055em}
-.welcome-copy p{max-width:440px;margin:0;color:#77718f;font-size:clamp(14px,3.7vw,17px);line-height:1.5;font-weight:450}
-.welcome-cta{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:clamp(58px,7.6svh,70px);padding:0 22px;border:1px solid rgba(255,255,255,.34);border-radius:17px;background:linear-gradient(105deg,#7040f7 0%,#8b43f1 58%,#a14bea 100%);box-shadow:0 13px 30px rgba(93,46,210,.25),inset 0 1px 0 rgba(255,255,255,.3);color:#fff;font-size:clamp(17px,4vw,21px);font-weight:800;letter-spacing:-.02em;text-decoration:none;transition:transform .18s ease,filter .18s ease}
-.welcome-cta svg{width:24px;height:20px;flex:0 0 auto;transition:transform .18s ease}
-.welcome-cta:hover{filter:brightness(1.06)}.welcome-cta:hover svg{transform:translateX(3px)}.welcome-cta:active{transform:scale(.985)}
-.welcome-signin{margin:11px 0 0;text-align:center;color:#827a9c;font-size:11px}
-.welcome-signin a{color:#6940d8;font-weight:800;text-decoration:none}
-.welcome-wordmark:focus-visible,.welcome-cta:focus-visible,.welcome-signin a:focus-visible{outline:3px solid #7651f5;outline-offset:4px}
-@media(min-width:700px){body.welcome-page{padding:22px;background:radial-gradient(ellipse at 50% 15%,rgba(130,86,255,.34),transparent 48%),#160b31}.welcome-screen{width:min(460px,calc(94svh * 9 / 16));height:min(94svh,960px);min-height:690px;border:1px solid rgba(255,255,255,.32);border-radius:34px;box-shadow:0 30px 100px rgba(0,0,0,.42)}.welcome-brand{top:clamp(75px,11svh,125px)}.welcome-wordmark{width:min(69%,300px)}.welcome-footer{left:8%;right:8%;bottom:24px}.welcome-copy h1{font-size:34px}.welcome-copy p{font-size:16px}.welcome-cta{min-height:64px;font-size:20px}}
-@media(max-height:700px){.welcome-screen{min-height:540px}.welcome-brand{top:calc(env(safe-area-inset-top,0px) + 68px)}.welcome-wordmark{width:min(61vw,250px)}.welcome-tagline{font-size:15px}.welcome-footer{bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}.welcome-copy{margin-bottom:12px}.welcome-copy h1{font-size:26px;margin-bottom:7px}.welcome-copy p{font-size:13px;line-height:1.4}.welcome-cta{min-height:52px}.welcome-signin{margin-top:6px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important}}
+/* TIANA welcome page — full-screen campus hero, no simulated phone chrome. */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  color-scheme: light;
+  font-family: "Poppins", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #F8F5FF;
+  color: #241047;
+}
+
+html,
+body {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body.welcome-page {
+  min-height: 100svh;
+  overflow-x: hidden;
+  background: #F8F5FF;
+  color: #241047;
+}
+
+.welcome-screen {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 100svh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #F8F5FF;
+}
+
+.welcome-photo {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.welcome-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 47%;
+}
+
+.welcome-shade {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(248, 245, 255, .08) 0%,
+      rgba(248, 245, 255, .02) 39%,
+      rgba(248, 245, 255, .14) 51%,
+      rgba(248, 245, 255, .55) 61%,
+      rgba(248, 245, 255, .92) 73%,
+      #F8F5FF 86%,
+      #F8F5FF 100%
+    );
+}
+
+.welcome-brand {
+  position: absolute;
+  z-index: 3;
+  top: calc(env(safe-area-inset-top, 0px) + clamp(20px, 4.8svh, 76px));
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 18px;
+}
+
+.welcome-wordmark {
+  display: block;
+  width: min(58vw, 510px);
+  line-height: 0;
+  text-decoration: none;
+}
+
+.welcome-wordmark img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 10px rgba(255, 255, 255, .38));
+}
+
+.welcome-content {
+  position: absolute;
+  z-index: 3;
+  left: 7.5%;
+  right: 7.5%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(18px, 2.8svh, 44px));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+}
+
+.welcome-copy {
+  margin: 0 0 clamp(20px, 3.2svh, 42px);
+}
+
+.welcome-copy h1 {
+  max-width: 790px;
+  margin: 0 0 clamp(12px, 1.7svh, 23px);
+  color: #241047;
+  font-size: clamp(30px, 7.7vw, 68px);
+  font-weight: 850;
+  line-height: 1.015;
+  letter-spacing: -.058em;
+}
+
+.welcome-copy h1 span {
+  display: block;
+}
+
+.welcome-copy p {
+  max-width: 780px;
+  margin: 0;
+  color: #77718B;
+  font-size: clamp(15px, 3.5vw, 30px);
+  font-weight: 450;
+  line-height: 1.43;
+  letter-spacing: -.025em;
+}
+
+.welcome-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 2vw, 20px);
+  width: 100%;
+  min-height: clamp(60px, 7svh, 108px);
+  padding: 0 24px;
+  border: 1px solid rgba(255, 255, 255, .48);
+  border-radius: clamp(22px, 3.5vw, 34px);
+  background: linear-gradient(105deg, #743CF2 0%, #8543F4 53%, #A855F7 100%);
+  box-shadow:
+    0 18px 42px rgba(108, 57, 226, .25),
+    0 5px 12px rgba(108, 57, 226, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .28);
+  color: #FFFFFF;
+  font-size: clamp(18px, 3.65vw, 31px);
+  font-weight: 700;
+  letter-spacing: -.025em;
+  text-decoration: none;
+  transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.welcome-cta svg {
+  display: block;
+  width: clamp(23px, 3.4vw, 34px);
+  height: auto;
+  flex: 0 0 auto;
+  transition: transform .18s ease;
+}
+
+.welcome-cta:hover {
+  filter: brightness(1.055);
+  box-shadow:
+    0 21px 48px rgba(108, 57, 226, .30),
+    0 5px 14px rgba(108, 57, 226, .15),
+    inset 0 1px 0 rgba(255, 255, 255, .32);
+}
+
+.welcome-cta:hover svg {
+  transform: translateX(4px);
+}
+
+.welcome-cta:active {
+  transform: scale(.987);
+}
+
+.welcome-wordmark:focus-visible,
+.welcome-cta:focus-visible {
+  outline: 3px solid #6D2BD9;
+  outline-offset: 5px;
+}
+
+.welcome-crystal {
+  position: absolute;
+  z-index: 2;
+  width: clamp(26px, 5vw, 54px);
+  aspect-ratio: .78;
+  opacity: .52;
+  pointer-events: none;
+  clip-path: polygon(50% 0, 100% 34%, 76% 100%, 23% 88%, 0 35%);
+  background: linear-gradient(145deg, rgba(255,255,255,.95), rgba(174,133,255,.78) 42%, rgba(107,205,245,.68));
+  filter: drop-shadow(0 8px 18px rgba(113, 73, 207, .20));
+}
+
+.welcome-crystal-one {
+  top: 17%;
+  left: 4%;
+  transform: rotate(-12deg);
+}
+
+.welcome-crystal-two {
+  top: 25%;
+  right: 4%;
+  width: clamp(20px, 3.8vw, 42px);
+  opacity: .38;
+  transform: rotate(14deg);
+}
+
+.welcome-sparkle {
+  position: absolute;
+  z-index: 2;
+  color: #FFC01E;
+  font-size: clamp(17px, 3.2vw, 30px);
+  line-height: 1;
+  text-shadow: 0 3px 12px rgba(255, 192, 30, .28);
+  pointer-events: none;
+}
+
+.welcome-sparkle-one {
+  top: 31%;
+  left: 7%;
+}
+
+.welcome-sparkle-two {
+  top: 42%;
+  right: 8%;
+  font-size: clamp(12px, 2.4vw, 22px);
+  opacity: .82;
+}
+
+@media (min-width: 700px) {
+  .welcome-wordmark {
+    width: min(56vw, 510px);
+  }
+
+  .welcome-content {
+    left: max(7.5%, calc((100% - 980px) / 2));
+    right: max(7.5%, calc((100% - 980px) / 2));
+  }
+}
+
+@media (max-height: 720px) and (orientation: portrait) {
+  .welcome-screen {
+    min-height: 720px;
+  }
+
+  .welcome-brand {
+    top: calc(env(safe-area-inset-top, 0px) + 20px);
+  }
+
+  .welcome-wordmark {
+    width: min(53vw, 250px);
+  }
+
+  .welcome-content {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  }
+
+  .welcome-copy {
+    margin-bottom: 16px;
+  }
+
+  .welcome-copy h1 {
+    font-size: clamp(28px, 6.4vw, 42px);
+    margin-bottom: 9px;
+  }
+
+  .welcome-copy p {
+    font-size: clamp(14px, 3.3vw, 18px);
+    line-height: 1.38;
+  }
+
+  .welcome-cta {
+    min-height: 56px;
+    font-size: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
