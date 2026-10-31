@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Budgets · TIANA{% endblock %}
-{% block extra_head %}<link rel="stylesheet" href="{% static 'nkem/activity-budget.css' %}?v=20261031-stats">{% endblock %}
 {% block content %}
 <section class="budget-page" data-budget-dashboard>
   <header class="budget-welcome"><div><p class="ui-eyebrow">A LITTLE PLAN GOES A LONG WAY</p><h1>Make room for what matters.</h1><p>Hi {{ user.first_name|default:user.username }}. Here's how your money is assigned.</p></div><a class="budget-avatar" href="{% url 'profile' %}" aria-label="Open profile">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</a></header>
