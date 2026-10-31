@@ -1,0 +1,65 @@
+/* TIANA home dashboard — theme-aware, mobile-first */
+.tiana-home{max-width:900px;margin:0 auto;padding:clamp(8px,2vw,22px) 0 30px;color:var(--text)}
+.home-greeting{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:2px 0 22px}
+.home-eyebrow{font-size:.68rem;letter-spacing:.16em;font-weight:800;color:var(--brand-primary)}
+.home-greeting h1{font-size:clamp(1.45rem,4.8vw,2rem);margin:5px 0 3px;letter-spacing:-.045em}
+.home-greeting h1 span{color:var(--brand-primary);font-size:.8em}
+.home-greeting p{margin:0;color:var(--muted);font-size:.88rem}
+.home-avatar{width:52px;height:52px;flex:0 0 52px;border-radius:50%;display:grid;place-items:center;overflow:hidden;background:var(--brand-soft);color:var(--brand-primary);font-weight:800;font-size:1.1rem;border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
+.home-avatar img{width:100%;height:100%;object-fit:cover}
+.home-balance-card{position:relative;overflow:hidden;padding:22px 22px 17px;border-radius:26px;color:#fff;background:linear-gradient(120deg,var(--brand-dark),var(--brand-primary) 72%,color-mix(in srgb,var(--brand-primary),white 20%));box-shadow:0 16px 35px color-mix(in srgb,var(--brand-primary),transparent 76%);isolation:isolate}
+.home-balance-orb{position:absolute;z-index:-1;width:230px;height:230px;right:-70px;top:-110px;border:1px solid #ffffff38;border-radius:50%;box-shadow:0 0 0 24px #ffffff0d,0 0 0 52px #ffffff08}
+.home-balance-top,.home-balance-foot{display:flex;justify-content:space-between;align-items:center;gap:14px}
+.home-card-label{font-size:.68rem;letter-spacing:.14em;font-weight:800;color:#ffffffb8}
+.home-balance-value{font-family:'Manrope',sans-serif;font-size:clamp(2rem,8vw,2.8rem);font-weight:800;letter-spacing:-.055em;line-height:1.3;margin:5px 0 3px}
+.home-balance-value small{font:600 .38em 'Inter',sans-serif;color:#ffffffc9;letter-spacing:0}
+.home-balance-toggle{width:39px;height:39px;border:1px solid #ffffff45;border-radius:14px;background:#ffffff1a;color:#fff;font-size:1.15rem}
+.home-balance-foot{font-size:.73rem;color:#ffffffc9;margin-top:4px}
+.home-trend-dot{display:inline-block;width:7px;height:7px;background:#7ee2b4;border-radius:50%;margin-right:6px}
+.home-balance-period{font-size:.63rem;letter-spacing:.13em;font-weight:800}
+.home-month-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid #ffffff30;margin-top:17px;padding-top:13px}
+.home-month-stats>div{display:grid;gap:2px}.home-month-stats>div+div{border-left:1px solid #ffffff30;padding-left:15px}
+.home-month-stats span{font-size:.7rem;color:#ffffffb8}.home-month-stats strong{font-size:.92rem;font-weight:800}.home-month-stats small{font-size:.62rem;color:#ffffffb8}
+.home-quick-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:19px 0 20px}
+.home-action{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--text);font-size:.72rem;font-weight:700;min-width:0}
+.home-action-icon{width:100%;aspect-ratio:1.12;max-height:74px;border-radius:19px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-sm);font-size:1.55rem;color:var(--brand-primary);transition:transform .18s,background .18s}
+.home-action:active .home-action-icon{transform:scale(.96);background:var(--brand-soft)}
+.home-coach-card{position:relative;overflow:hidden;display:flex;align-items:center;min-height:145px;padding:19px 20px;margin-bottom:25px;border-radius:23px;background:linear-gradient(110deg,var(--brand-soft),var(--surface));border:1px solid color-mix(in srgb,var(--brand-primary),transparent 86%)}
+.home-coach-copy{position:relative;z-index:1;max-width:78%}
+.home-coach-title{display:flex;align-items:center;gap:8px;color:var(--brand-dark);font-size:.9rem}
+.home-coach-spark{color:var(--brand-primary);font-size:1.15rem}.home-ai-pill{padding:3px 7px;border-radius:99px;background:var(--surface);color:var(--brand-primary);font-size:.55rem;letter-spacing:.08em;font-weight:800}
+.home-coach-card p{font-size:.8rem;line-height:1.55;color:var(--muted);margin:9px 0 8px}
+.home-coach-card a{font-size:.75rem;font-weight:800;color:var(--brand-primary)}
+.home-coach-art{position:absolute;right:13px;bottom:0;width:100px;height:105px;border-radius:60px 60px 0 0;background:color-mix(in srgb,var(--brand-primary),white 80%);display:grid;place-items:center;color:var(--brand-primary)}
+.home-coach-art i{font-style:normal;font-size:2.4rem;font-weight:800}.home-coach-art span{position:absolute;top:9px;left:17px;font-size:1.2rem}.home-coach-art b{position:absolute;right:13px;top:20px;color:#e8b84f}
+.home-section{background:var(--surface);border:1px solid var(--line);border-radius:23px;padding:19px;margin-bottom:15px;box-shadow:var(--shadow-sm)}
+.home-section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.home-section-heading h2{font-size:1.05rem;margin:0 0 3px}.home-section-heading p{font-size:.75rem;color:var(--muted);margin:0}
+.home-section-heading>a{font-size:.74rem;font-weight:800;white-space:nowrap}
+.home-transaction-list{display:grid}
+.home-transaction{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line);color:var(--text);min-width:0}
+.home-transaction:last-child{border-bottom:0;padding-bottom:0}
+.home-transaction-icon{width:41px;height:41px;flex:0 0 41px;display:grid;place-items:center;border-radius:14px;background:var(--brand-soft);color:var(--brand-primary);font-size:1.05rem}
+.home-transaction-icon.is-income{background:#e5f8ef;color:#18845f}.home-transaction-icon.is-expense{background:#fff0f2;color:#d45b70}
+.home-transaction-main{flex:1;min-width:0}.home-transaction-main strong{display:block;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.home-transaction-main small{display:block;font-size:.68rem;color:var(--muted);margin-top:2px}
+.home-transaction-amount{text-align:right;font-size:.78rem;font-weight:800;white-space:nowrap}.home-transaction-amount small{display:block;font-size:.59rem;color:var(--muted);font-weight:600}.home-transaction-amount.is-income{color:#18845f}.home-transaction-amount.is-expense{color:#d45b70}
+.home-empty-state{text-align:center;padding:25px 12px}.home-empty-state>span{display:grid;place-items:center;margin:0 auto 10px;width:46px;height:46px;border-radius:16px;background:var(--brand-soft);color:var(--brand-primary);font-size:1.3rem}.home-empty-state strong{font-size:.9rem}.home-empty-state p{max-width:330px;margin:6px auto 13px;color:var(--muted);font-size:.77rem}.home-empty-cta{font-size:.77rem;font-weight:800}
+.home-lower-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.home-mini-card{display:flex;align-items:center;gap:10px;min-width:0;padding:14px;border-radius:19px;background:var(--surface);border:1px solid var(--line);color:var(--text)}
+.home-mini-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:13px;background:var(--brand-soft);color:var(--brand-primary);font-size:1.2rem}
+.home-mini-card>span:nth-child(2){flex:1;min-width:0}.home-mini-card strong,.home-mini-card small{display:block}.home-mini-card strong{font-size:.76rem}.home-mini-card small{font-size:.63rem;color:var(--muted);margin-top:3px}.home-mini-card>b{color:var(--brand-primary)}
+.home-tour-launch{display:flex;justify-content:center;align-items:center;gap:8px;padding:19px 0 5px;color:var(--muted);font-size:.72rem}.home-tour-launch button{border:0;background:transparent;color:var(--brand-primary);font-weight:800;font-size:inherit}
+.tiana-tour[hidden]{display:none}.tiana-tour{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:22px}
+.tiana-tour-backdrop{position:absolute;inset:0;background:#100a27b8;backdrop-filter:blur(5px)}
+.tiana-tour-card{position:relative;width:min(100%,390px);padding:27px 23px 20px;border-radius:25px;background:var(--surface);color:var(--text);box-shadow:0 25px 90px #0004;animation:tour-pop .24s ease-out}
+.tiana-tour-progress{height:4px;border-radius:9px;background:var(--line);overflow:hidden;margin:0 42px 23px 0}.tiana-tour-progress span{display:block;width:20%;height:100%;border-radius:inherit;background:var(--brand-primary);transition:width .2s}
+.tiana-tour-close{position:absolute;right:17px;top:14px;width:33px;height:33px;border:0;border-radius:50%;background:var(--brand-soft);color:var(--brand-primary);font-size:1.35rem}
+.tiana-tour-kicker{font-size:.62rem;letter-spacing:.15em;font-weight:800;color:var(--brand-primary)}
+.tiana-tour-card h2{font-size:1.35rem;margin:8px 0}.tiana-tour-card p{font-size:.84rem;line-height:1.6;color:var(--muted);margin:0 0 22px}
+.tiana-tour-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.7rem;color:var(--muted)}
+.tiana-tour-footer>div{display:flex;align-items:center;gap:8px}.tiana-tour-skip,.tiana-tour-next{padding:10px 14px;border-radius:12px;font-size:.75rem;font-weight:800}
+.tiana-tour-skip{border:1px solid var(--line);background:var(--surface);color:var(--muted)}.tiana-tour-next{border:0;background:var(--brand-primary);color:#fff}
+@keyframes tour-pop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@media(min-width:850px){.tiana-home{max-width:980px}.home-balance-card{padding:27px 29px 20px}.home-quick-actions{gap:16px}.home-action-icon{max-height:86px}.home-coach-card{min-height:155px}.home-section{padding:23px}}
+@media(max-width:520px){.page-shell{padding:19px 16px 105px}.tiana-home{padding-top:0}.home-greeting{margin-bottom:16px}.home-greeting p{font-size:.78rem}.home-balance-card{padding:19px 17px 15px;border-radius:23px}.home-balance-value{font-size:2.15rem}.home-month-stats{margin-top:14px}.home-quick-actions{gap:7px;margin:16px 0 18px}.home-action{font-size:.65rem}.home-action-icon{border-radius:16px;max-height:68px;font-size:1.35rem}.home-coach-card{padding:16px;min-height:150px}.home-coach-copy{max-width:80%}.home-coach-title{font-size:.8rem;flex-wrap:wrap;gap:5px}.home-coach-card p{font-size:.73rem}.home-coach-art{right:0;width:77px;height:85px}.home-section{padding:15px;border-radius:20px}.home-transaction{gap:9px}.home-transaction-icon{width:37px;height:37px;flex-basis:37px}.home-transaction-main strong{font-size:.77rem}.home-transaction-amount{font-size:.72rem}.home-lower-grid{gap:8px}.home-mini-card{padding:11px;gap:8px}.home-mini-icon{width:32px;height:32px;flex-basis:32px}.home-mini-card strong{font-size:.69rem}.home-mini-card small{font-size:.59rem}.home-tour-launch{padding-bottom:8px}}
+@media(prefers-reduced-motion:reduce){.tiana-tour-card{animation:none}.home-action-icon{transition:none}}

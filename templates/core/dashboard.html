@@ -1,77 +1,33 @@
 {% extends 'base.html' %}
-{% block title %}Overview · TIANA{% endblock %}
+{% load static %}
+{% block title %}Home · TIANA{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'nkem/dashboard.css' %}?v=20261031-home">{% endblock %}
 {% block content %}
-<div class="dashboard-page professional-dashboard">
-  <section class="workspace-heading" data-reveal>
-    <div><h1>Overview</h1><p>Your finances at a glance.</p></div>
-    <div class="workspace-heading-actions"><span class="current-date">{% now "D, j M Y" %}</span><a class="button" href="{% url 'transaction_create' %}">Add transaction</a></div>
+<div class="tiana-home" data-dashboard-tour-root>
+  <section class="home-greeting" data-tour="greeting">
+    <div class="home-greeting-copy"><span class="home-eyebrow">YOUR MONEY, YOUR PACE</span><h1>Good to see you, {{ user.first_name|default:user.username }} <span aria-hidden="true">✦</span></h1><p>A little clarity today can make tomorrow easier.</p></div>
+    <a class="home-avatar" href="{% url 'profile' %}" aria-label="Open your profile">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</a>
   </section>
-
-  <section class="balance-hero professional-balance" data-reveal aria-label="Available balance">
-    <div class="balance-hero-glow"></div>
-    <div class="balance-overview-top">
-      <div><div class="balance-kicker">Available balance</div><div id="balanceValue" class="balance-hero-value" data-amount="{{ total_balance|floatformat:0 }} FCFA" data-hidden="false">{{ total_balance|floatformat:0 }} <span>FCFA</span></div><div class="balance-caption">Across your active accounts</div></div>
-      <button type="button" class="balance-eye" data-toggle-balance="#balanceValue" aria-label="Hide balance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" stroke-width="1.7"/></svg></button>
-    </div>
-    <div class="balance-overview-bottom">
-      <div class="balance-metric"><span class="metric-label">Income this month</span><strong>{{ income_total|floatformat:0 }} <small>FCFA</small></strong></div>
-      <div class="balance-divider"></div>
-      <div class="balance-metric"><span class="metric-label">Expenses this month</span><strong>{{ expense_total|floatformat:0 }} <small>FCFA</small></strong></div>
-    </div>
-    <div class="balance-quick-actions"><a href="{% url 'transaction_create' %}?kind=income">＋ Add income</a><a href="{% url 'transaction_create' %}?kind=expense">− Add expense</a></div>
+  <section class="home-balance-card" data-tour="balance" aria-label="Your total balance">
+    <div class="home-balance-orb" aria-hidden="true"></div>
+    <div class="home-balance-top"><div><span class="home-card-label">TOTAL BALANCE</span><div class="home-balance-value" id="balanceValue" data-amount="{{ total_balance|floatformat:0 }} FCFA" data-hidden="false">{{ total_balance|floatformat:0 }} <small>FCFA</small></div></div><button type="button" class="home-balance-toggle" data-toggle-balance="#balanceValue" aria-label="Hide balance"><span aria-hidden="true">◉</span></button></div>
+    <div class="home-balance-foot"><span><i class="home-trend-dot"></i> Across {{ accounts|length }} active account{{ accounts|length|pluralize }}</span><span class="home-balance-period">THIS MONTH</span></div>
+    <div class="home-month-stats"><div><span>Money in</span><strong>+{{ income_total|floatformat:0 }} <small>FCFA</small></strong></div><div><span>Money out</span><strong>−{{ expense_total|floatformat:0 }} <small>FCFA</small></strong></div></div>
   </section>
-
-  <div class="dashboard-content-grid professional-dashboard-grid">
-    <main class="dashboard-main-col">
-      <section class="card panel-card professional-panel" data-reveal>
-        <div class="professional-panel-heading"><div><h2>Recent transactions</h2><p>The latest activity on your accounts.</p></div><a class="text-link" href="{% url 'transactions' %}">View all</a></div>
-        {% if recent_transactions %}
-        <ul class="transaction-list activity-list professional-activity-list">
-          {% for tx in recent_transactions %}
-          <li class="transaction-row activity-row">
-            <span class="transaction-icon activity-icon {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}activity-icon-income{% else %}activity-icon-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}↗{% else %}↘{% endif %}</span>
-            <div class="transaction-main"><strong>{{ tx.description|default:tx.category }}</strong><span>{{ tx.category }} · {{ tx.transaction_date|date:"j M Y" }}</span></div>
-            <div class="activity-amount-wrap"><span class="amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}income{% else %}expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }}</span><span>FCFA</span></div>
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <div class="professional-empty"><h3>No transactions yet</h3><p>Your activity will appear here after your first entry.</p><a class="button button-secondary" href="{% url 'transaction_create' %}">Add your first transaction</a></div>
-        {% endif %}
-      </section>
-
-      <section class="card panel-card professional-panel" data-reveal>
-        <div class="professional-panel-heading"><div><h2>Spending by category</h2><p>Your expenses for this month.</p></div><a class="text-link" href="{% url 'insights' %}">View insights</a></div>
-        {% if expense_categories %}
-        <div class="spending-layout professional-spending-layout">
-          <div class="donut-chart spending-donut" style="background:conic-gradient(#087a5b 0 {{ category_one_percent }}%,#57aa89 {{ category_one_percent }}% {{ category_two_end }}%,#83a6ca {{ category_two_end }}% {{ category_three_end }}%,#d4b27a {{ category_three_end }}% 100%)"><div class="donut-center"><strong>{{ expense_total|floatformat:0 }}</strong><span>FCFA</span></div></div>
-          <div class="legend spending-legend">{% for category in expense_categories %}<div class="legend-row"><span class="legend-name"><span class="legend-dot"></span>{{ category.category }}</span><strong>{{ category.amount|floatformat:0 }} FCFA</strong></div>{% endfor %}</div>
-        </div>
-        {% else %}<div class="professional-empty"><p>Category totals will appear once you record expenses.</p></div>{% endif %}
-      </section>
-    </main>
-
-    <aside class="dashboard-side-col">
-      <section class="card panel-card professional-panel" data-reveal>
-        <div class="professional-panel-heading"><div><h2>Budgets</h2><p>Track planned spending.</p></div><a class="text-link" href="{% url 'budgets' %}">View all</a></div>
-        {% if budgets %}
-          {% for budget in budgets %}
-          <div class="professional-progress-item"><div class="professional-progress-heading"><strong>{{ budget.name }}</strong><span>{{ budget.percent_used|floatformat:0 }}%</span></div><div class="professional-progress-detail"><span>{{ budget.spent_amount|floatformat:0 }} of {{ budget.amount|floatformat:0 }} FCFA</span><span>{{ budget.remaining_amount|floatformat:0 }} left</span></div><div class="progress-track {% if budget.percent_used >= 80 %}orange{% else %}green{% endif %}"><span data-progress style="width:{% if budget.percent_used > 100 %}100{% else %}{{ budget.percent_used }}{% endif %}%"></span></div></div>
-          {% endfor %}
-        {% else %}<div class="professional-empty"><p>You haven't created a budget yet.</p><a class="text-link" href="{% url 'budget_create' %}">Create a budget</a></div>{% endif %}
-      </section>
-
-      <section class="card panel-card professional-panel" data-reveal>
-        <div class="professional-panel-heading"><div><h2>Savings goals</h2><p>Progress towards your targets.</p></div><a class="text-link" href="{% url 'goals' %}">View all</a></div>
-        {% if goals %}
-          {% for goal in goals %}
-          <div class="professional-goal-item"><div class="professional-progress-heading"><strong>{{ goal.name }}</strong><span>{{ goal.progress_percentage }}%</span></div><div class="professional-progress-detail"><span>{{ goal.current_amount|floatformat:0 }} of {{ goal.target_amount|floatformat:0 }} FCFA</span><span>{{ goal.remaining_amount|floatformat:0 }} left</span></div><div class="progress-track green"><span data-progress style="width:{{ goal.progress_percentage }}%"></span></div></div>
-          {% endfor %}
-        {% else %}<div class="professional-empty"><p>You haven't created a savings goal yet.</p><a class="text-link" href="{% url 'goal_create' %}">Create a goal</a></div>{% endif %}
-      </section>
-
-      <a class="professional-discover" href="{% url 'opportunities' %}"><span><strong>Discover opportunities</strong><span>Explore resources and opportunities.</span></span><b>↗</b></a>
-    </aside>
-  </div>
+  <section class="home-quick-actions" data-tour="actions" aria-label="Quick actions">
+    <a class="home-action" href="{% url 'transaction_create' %}?kind=income"><span class="home-action-icon">＋</span><span>Add money</span></a>
+    <a class="home-action" href="{% url 'transaction_create' %}?kind=expense"><span class="home-action-icon">↗</span><span>Add expense</span></a>
+    <a class="home-action" href="{% url 'goals' %}"><span class="home-action-icon">◎</span><span>Goals</span></a>
+    <a class="home-action" href="{% url 'budgets' %}"><span class="home-action-icon">•••</span><span>More</span></a>
+  </section>
+  <section class="home-coach-card" data-tour="coach"><div class="home-coach-copy"><div class="home-coach-title"><span class="home-coach-spark">✦</span><strong>A little insight from TIANA</strong><span class="home-ai-pill">AI TIP</span></div><p>{{ coach_tip }}</p><a href="{% url 'ai_chat' %}">Talk it through <span aria-hidden="true">→</span></a></div><div class="home-coach-art" aria-hidden="true"><span>✧</span><b>✦</b><i>☺</i></div></section>
+  <section class="home-section" data-tour="activity"><div class="home-section-heading"><div><h2>Recent activity</h2><p>Your latest money moves.</p></div><a href="{% url 'transactions' %}">See all <span aria-hidden="true">→</span></a></div>
+    {% if recent_transactions %}<div class="home-transaction-list">{% for tx in recent_transactions %}<a class="home-transaction" href="{% url 'transactions' %}"><span class="home-transaction-icon {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}is-income{% else %}is-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}↙{% else %}↗{% endif %}</span><span class="home-transaction-main"><strong>{{ tx.description|default:tx.category }}</strong><small>{{ tx.category }} · {{ tx.transaction_date|date:"D, j M" }}</small></span><span class="home-transaction-amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}is-income{% else %}is-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }}<small>FCFA</small></span></a>{% endfor %}</div>
+    {% else %}<div class="home-empty-state"><span>✦</span><strong>Your story starts with one entry.</strong><p>Add your first income or expense and TIANA will help you make sense of it.</p><a href="{% url 'transaction_create' %}" class="home-empty-cta">Add your first entry →</a></div>{% endif %}
+  </section>
+  <section class="home-lower-grid"><a class="home-mini-card" href="{% url 'goals' %}"><span class="home-mini-icon">◎</span><span><strong>Your savings goals</strong><small>{{ goals|length }} active goal{{ goals|length|pluralize }} · {{ goal_savings_total|floatformat:0 }} FCFA saved</small></span><b>→</b></a><a class="home-mini-card" href="{% url 'budgets' %}"><span class="home-mini-icon">▤</span><span><strong>Budget check-in</strong><small>{{ budget_usage_percent|floatformat:0 }}% of planned budget used</small></span><b>→</b></a></section>
+  <div class="home-tour-launch"><span>New around here?</span><button type="button" data-tour-restart>Take the app tour</button></div>
 </div>
+<div class="tiana-tour" data-dashboard-tour hidden aria-hidden="true"><div class="tiana-tour-backdrop" data-tour-close></div><section class="tiana-tour-card" role="dialog" aria-modal="true" aria-labelledby="tour-title"><div class="tiana-tour-progress"><span data-tour-progress></span></div><button type="button" class="tiana-tour-close" data-tour-close aria-label="Close tour">×</button><span class="tiana-tour-kicker">A QUICK TOUR WITH TIANA</span><h2 id="tour-title" data-tour-title>Welcome to your money home</h2><p data-tour-description>Everything you need to understand your money, in one calm place.</p><div class="tiana-tour-footer"><span data-tour-count>1 of 5</span><div><button type="button" class="tiana-tour-skip" data-tour-close>Skip</button><button type="button" class="tiana-tour-next" data-tour-next>Next →</button></div></div></section></div>
 {% endblock %}
+{% block extra_js %}<script src="{% static 'nkem/dashboard-tour.js' %}?v=20261031-tour" defer></script>{% endblock %}
