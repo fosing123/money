@@ -4,13 +4,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'nkem/auth.css' %}?v=20261031-auth-refresh">
+<link rel="stylesheet" href="{% static 'nkem/auth.css' %}?v=20261031-auth-flow-2">
 {% endblock %}
 {% block content %}
 <div class="tiana-auth-view">
   <section class="tiana-auth-shell tiana-auth-shell--register" aria-label="Create your TIANA account">
-    <aside class="tiana-auth-visual">
-      <img class="tiana-auth-photo" src="{% static 'assets/tiana-auth-campus.webp' %}" alt="A student enjoying a bright day on campus while using her phone" onerror="this.onerror=null;this.src='{% static 'assets/tiana-welcome-student-campus-4k.jpg' %}'">
+    <aside class="tiana-auth-visual tiana-auth-visual--register">
+      <img class="tiana-auth-photo" src="{% static 'assets/tiana-auth-campus.webp' %}" alt="A student enjoying a bright day on campus while using her phone">
       <div class="tiana-auth-visual-shade"></div>
       <a class="tiana-auth-brand" href="{% url 'home' %}" aria-label="TIANA — Your Money Friend Always">
         <img src="{% static 'assets/tiana-logo-transparent.png' %}" alt="TIANA — Your Money Friend Always">
@@ -28,9 +28,11 @@
         <a class="tiana-auth-mobile-brand" href="{% url 'home' %}" aria-label="TIANA home">
           <img src="{% static 'assets/tiana-logo-transparent.png' %}" alt="TIANA — Your Money Friend Always">
         </a>
-        <p class="tiana-auth-eyebrow">YOUR MONEY STORY STARTS HERE</p>
-        <h1>Create your account</h1>
-        <p class="tiana-auth-intro">A brighter relationship with money begins with a few simple details.</p>
+        <header class="tiana-auth-heading">
+          <p class="tiana-auth-eyebrow">YOUR MONEY STORY STARTS HERE</p>
+          <h1>Create your account</h1>
+          <p class="tiana-auth-intro">Join students building a brighter financial future. It only takes a moment.</p>
+        </header>
 
         {% if form.non_field_errors %}
           <div class="tiana-auth-error-summary" role="alert">{{ form.non_field_errors }}</div>
@@ -38,48 +40,54 @@
 
         <form method="post" class="tiana-auth-form" novalidate>
           {% csrf_token %}
-          <div class="tiana-field-grid">
-            <div class="tiana-field{% if form.first_name.errors %} has-error{% endif %}">
-              <label for="{{ form.first_name.id_for_label }}">First name</label>
-              {{ form.first_name }}
-              {% for error in form.first_name.errors %}<span class="tiana-field-error">{{ error }}</span>{% endfor %}
+          <div class="tiana-field-grid tiana-field-grid--register">
+            <div class="tiana-field{% if form.full_name.errors %} has-error{% endif %}">
+              <label for="{{ form.full_name.id_for_label }}">Full name</label>
+              <div class="tiana-input-wrap">
+                <span class="tiana-input-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c.8-3.4 3.1-5.2 7-5.2s6.2 1.8 7 5.2"/></svg>
+                </span>
+                {{ form.full_name }}
+              </div>
+              {% for error in form.full_name.errors %}<span class="tiana-field-error">{{ error }}</span>{% endfor %}
             </div>
-            <div class="tiana-field{% if form.last_name.errors %} has-error{% endif %}">
-              <label for="{{ form.last_name.id_for_label }}">Last name</label>
-              {{ form.last_name }}
-              {% for error in form.last_name.errors %}<span class="tiana-field-error">{{ error }}</span>{% endfor %}
-            </div>
-            <div class="tiana-field tiana-field--wide{% if form.email.errors %} has-error{% endif %}">
+            <div class="tiana-field{% if form.email.errors %} has-error{% endif %}">
               <label for="{{ form.email.id_for_label }}">Email address</label>
-              {{ form.email }}
+              <div class="tiana-input-wrap">
+                <span class="tiana-input-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4.5 7 7.5 6 7.5-6"/></svg>
+                </span>
+                {{ form.email }}
+              </div>
               {% for error in form.email.errors %}<span class="tiana-field-error">{{ error }}</span>{% endfor %}
             </div>
-            <div class="tiana-field tiana-field--wide{% if form.phone_number.errors %} has-error{% endif %}">
+            <div class="tiana-field{% if form.phone_number.errors %} has-error{% endif %}">
               <label for="{{ form.phone_number.id_for_label }}">Phone number <span class="tiana-optional">OPTIONAL</span></label>
-              {{ form.phone_number }}
+              <div class="tiana-input-wrap">
+                <span class="tiana-input-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><rect x="7" y="2.8" width="10" height="18.4" rx="2"/><path d="M10 5.5h4M11 18.5h2"/></svg>
+                </span>
+                {{ form.phone_number }}
+              </div>
               {% for error in form.phone_number.errors %}<span class="tiana-field-error">{{ error }}</span>{% endfor %}
             </div>
             <div class="tiana-field{% if form.password1.errors %} has-error{% endif %}">
               <label for="{{ form.password1.id_for_label }}">Password</label>
-              <div class="tiana-password-wrap">
+              <div class="tiana-input-wrap tiana-password-wrap">
+                <span class="tiana-input-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14.2v2.5"/></svg>
+                </span>
                 {{ form.password1 }}
                 <button class="tiana-password-toggle" type="button" data-password-toggle aria-label="Show password" aria-pressed="false">Show</button>
               </div>
               {% for error in form.password1.errors %}<span class="tiana-field-error">{{ error }}</span>{% endfor %}
-            </div>
-            <div class="tiana-field{% if form.password2.errors %} has-error{% endif %}">
-              <label for="{{ form.password2.id_for_label }}">Confirm password</label>
-              <div class="tiana-password-wrap">
-                {{ form.password2 }}
-                <button class="tiana-password-toggle" type="button" data-password-toggle aria-label="Show password" aria-pressed="false">Show</button>
-              </div>
-              {% for error in form.password2.errors %}<span class="tiana-field-error">{{ error }}</span>{% endfor %}
+              <span class="tiana-field-hint">Use at least 8 characters and avoid common passwords.</span>
             </div>
           </div>
 
-          <p class="tiana-auth-privacy"><span aria-hidden="true">✦</span> Your details stay private. We never ask you to share your password.</p>
+          <p class="tiana-auth-privacy"><span aria-hidden="true">✦</span> Your details stay yours. Never share your password with anyone.</p>
           <button class="tiana-auth-submit" type="submit">
-            <span>Create my account</span>
+            <span>Create Account</span>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </form>
@@ -91,4 +99,4 @@
   </section>
 </div>
 {% endblock %}
-{% block extra_js %}<script src="{% static 'nkem/auth.js' %}?v=20261031-auth-refresh" defer></script>{% endblock %}
+{% block extra_js %}<script src="{% static 'nkem/auth.js' %}?v=20261031-auth-flow-2" defer></script>{% endblock %}
