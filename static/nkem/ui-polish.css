@@ -1,6 +1,7 @@
 /* TIANA responsive interface polish */
 :root{--chart-income:#b19af5;--chart-expense:#7650ee;--budget-segment-a:var(--brand-primary);--budget-segment-b:#b19af5;--budget-segment-c:#f0a8cf;--budget-segment-d:#e3c76b;--budget-segment-e:#73c5b1}
-body[data-user-theme="violet"]{--chart-income:#b19af5;--chart-expense:#7650ee}\nbody[data-user-theme="mint"]{--chart-income:#c0eb67;--chart-expense:#35b993;--budget-segment-a:#168768;--budget-segment-b:#8fd8b7;--budget-segment-c:#c4e6a5;--budget-segment-d:#e6c96c;--budget-segment-e:#5ab9c0}
+body[data-user-theme="violet"]{--chart-income:#b19af5;--chart-expense:#7650ee}
+body[data-user-theme="mint"]{--chart-income:#c0eb67;--chart-expense:#35b993;--budget-segment-a:#168768;--budget-segment-b:#8fd8b7;--budget-segment-c:#c4e6a5;--budget-segment-d:#e6c96c;--budget-segment-e:#5ab9c0}
 body[data-user-theme="ocean"]{--chart-income:#73d9ed;--chart-expense:#4b9de0;--budget-segment-a:#286caa;--budget-segment-b:#75b8e8;--budget-segment-c:#9bdbdf;--budget-segment-d:#a4a2ed;--budget-segment-e:#e0c77a}
 body[data-user-theme="sunset"]{--chart-income:#ffd17a;--chart-expense:#f28b70;--budget-segment-a:#c16a46;--budget-segment-b:#e7a47e;--budget-segment-c:#e8c27c;--budget-segment-d:#d88ca2;--budget-segment-e:#9dbb9b}
 body[data-user-theme="midnight"]{--chart-income:#b9a5ff;--chart-expense:#7657d7;--budget-segment-a:#a78bfa;--budget-segment-b:#7257b9;--budget-segment-c:#d29acb;--budget-segment-d:#d6b86f;--budget-segment-e:#54b9a8}
