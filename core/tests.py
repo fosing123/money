@@ -3,17 +3,20 @@ from django.urls import reverse
 
 
 class WelcomePageTests(TestCase):
-    def test_home_renders_the_nkem_splash_screen(self):
+    def test_home_renders_the_tiana_welcome_screen(self):
         response = self.client.get(reverse("home"))
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "core/landing.html")
-        self.assertContains(response, "TIANA")
-        self.assertContains(response, "Your Money Friend Always")
-        self.assertContains(response, "Take control of your money today")
+        self.assertContains(response, "TIANA — Your Money Friend Always")
+        self.assertContains(response, "Take control")
+        self.assertContains(response, "of your money")
+        self.assertContains(response, "Track expenses, save for your goals")
         self.assertContains(response, reverse("onboarding"))
-        self.assertContains(response, "assets/nkem-welcome-hero-4k.avif")
-        self.assertContains(response, "assets/tiana-campus-hero.webp")
+        self.assertContains(response, "assets/tiana-logo-transparent.png")
+        self.assertContains(response, "assets/tiana-welcome-student-campus-4k.webp")
+        self.assertNotContains(response, "welcome-status")
+        self.assertNotContains(response, "welcome-time")
 
     def test_onboarding_is_a_three_slide_feature_flow(self):
         response = self.client.get(reverse("onboarding"))
