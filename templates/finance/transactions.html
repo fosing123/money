@@ -1,18 +1,48 @@
 {% extends 'base.html' %}
-{% block title %}Transactions · TIANA{% endblock %}
+{% load static %}
+{% block title %}Activity · TIANA{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'nkem/activity-budget.css' %}?v=20261031-stats">{% endblock %}
 {% block content %}
-<section class="workspace-heading" data-reveal><div><h1>Transactions</h1><p>Review and manage your income and expenses.</p></div><a class="button" href="{% url 'transaction_create' %}">Add transaction</a></section>
-<section class="transaction-summary-grid professional-summary-grid" data-reveal><div class="card transaction-summary income-summary"><span class="summary-icon">↗</span><div><small>Money received</small><strong>{{ income_total|floatformat:0 }} <small>FCFA</small></strong></div></div><div class="card transaction-summary expense-summary"><span class="summary-icon">↘</span><div><small>Money spent</small><strong>{{ expense_total|floatformat:0 }} <small>FCFA</small></strong></div></div></section>
-<section class="card panel-card professional-panel transactions-panel" data-reveal>
-<div class="professional-panel-heading"><div><h2>All transactions</h2></div><span class="entry-count">{{ transactions|length }} records</span></div>
-<div class="transaction-toolbar"><label class="search-field"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search transactions" aria-label="Search transactions" data-transaction-search></label><form method="get" class="transaction-filters"><select id="kind" name="kind" aria-label="Filter by type"><option value="">All types</option>{% for value,label in kind_choices %}<option value="{{ value }}" {% if selected_kind == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><select id="account" name="account" aria-label="Filter by account"><option value="">All accounts</option>{% for item in accounts %}<option value="{{ item.pk }}" {% if selected_account == item.pk|stringformat:"s" %}selected{% endif %}>{{ item.name }}</option>{% endfor %}</select><button class="button button-secondary button-small" type="submit">Apply</button></form></div>
-{% if transactions %}
-<ul class="transaction-list activity-list searchable-transaction-list">{% for tx in transactions %}
-<li class="transaction-row activity-row" data-transaction-row data-search-text="{{ tx.description }} {{ tx.category }} {{ tx.merchant }} {{ tx.account.name }}">
-<span class="transaction-icon activity-icon {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}activity-icon-income{% else %}activity-icon-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}↗{% else %}↘{% endif %}</span>
-<div class="transaction-main"><strong>{{ tx.description|default:tx.category }}</strong><span>{{ tx.category }} · {{ tx.account.name }} · {{ tx.transaction_date|date:"j M Y" }}</span>{% if tx.merchant %}<span>{{ tx.merchant }}</span>{% endif %}</div>
-<div class="activity-amount-wrap"><strong class="amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}income{% else %}expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }} FCFA</strong><span class="activity-row-actions"><a href="{% url 'transaction_update' tx.pk %}">Edit</a><a href="{% url 'transaction_delete' tx.pk %}">Delete</a></span></div>
-</li>{% endfor %}</ul><p class="empty-search" data-empty-search hidden>No matching transactions.</p>
-{% else %}<div class="professional-empty"><h3>No transactions found</h3><p>Add your first transaction to start tracking activity.</p><a class="button button-secondary" href="{% url 'transaction_create' %}">Add transaction</a></div>{% endif %}
+<section class="activity-page" data-activity-dashboard>
+  <header class="activity-hero">
+    <div class="activity-topline"><div><p class="ui-eyebrow activity-eyebrow">YOUR MONEY, IN MOTION</p><h1>Statistics</h1><p>Understand the rhythm of your money.</p></div><div class="activity-header-actions"><a href="{% url 'transactions' %}" class="activity-round-action" aria-label="Search activity">⌕</a><a href="{% url 'notifications' %}" class="activity-round-action" aria-label="Notifications">♧{% if unread_notification_count %}<i></i>{% endif %}</a></div></div>
+    <div class="activity-period-switch" role="group" aria-label="Statistics period"><button type="button" data-activity-period="day">Day</button><button type="button" data-activity-period="week" class="is-active" aria-pressed="true">Week</button><button type="button" data-activity-period="month">Month</button><button type="button" data-activity-period="year">Year</button></div>
+    <div class="activity-total-block"><span>Total spendings</span><strong data-activity-total>{{ expense_total|floatformat:0 }} <small>FCFA</small></strong><div class="activity-total-meta"><span class="activity-income-meta">↗ <b data-activity-income>{{ income_total|floatformat:0 }}</b> in</span><span class="activity-expense-meta">↘ <b data-activity-expense>{{ expense_total|floatformat:0 }}</b> out</span></div></div>
+    <div class="activity-chart-wrap">
+      <div class="activity-chart-legend"><span><i class="chart-dot chart-dot-income"></i> Money in</span><span><i class="chart-dot chart-dot-expense"></i> Money out</span></div>
+      <svg class="activity-chart" viewBox="0 0 720 250" role="img" aria-label="Income and expense trend chart">
+        <defs><linearGradient id="activity-fill-income" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--chart-income)" stop-opacity=".22"/><stop offset="1" stop-color="var(--chart-income)" stop-opacity="0"/></linearGradient><linearGradient id="activity-fill-expense" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--chart-expense)" stop-opacity=".18"/><stop offset="1" stop-color="var(--chart-expense)" stop-opacity="0"/></linearGradient></defs>
+        <g class="activity-chart-grid"><path d="M10 45H710M10 105H710M10 165H710M10 225H710"/></g>
+        <path data-chart-area="income" class="activity-chart-area income-area"></path><path data-chart-area="expense" class="activity-chart-area expense-area"></path>
+        <path data-chart-line="income" class="activity-chart-line income-line"></path><path data-chart-line="expense" class="activity-chart-line expense-line"></path>
+        <line data-chart-guide x1="0" y1="22" x2="0" y2="225" class="activity-chart-guide" opacity="0"></line><circle data-chart-point="income" r="6" class="activity-chart-point income-point" opacity="0"></circle><circle data-chart-point="expense" r="6" class="activity-chart-point expense-point" opacity="0"></circle>
+      </svg>
+      <div class="activity-chart-labels" data-chart-labels><span>—</span><span>—</span><span>—</span><span>—</span><span>—</span></div>
+      <p class="activity-chart-note" data-chart-note>Based on your recorded transactions.</p>
+    </div>
+  </header>
+  <section class="activity-history-card">
+    <div class="activity-sheet-handle" aria-hidden="true"></div>
+    <div class="activity-history-heading"><div><h2>Transaction history</h2><p>Your latest money moves, all in one place.</p></div><a href="{% url 'transactions' %}">View all <span>›</span></a></div>
+    <label class="activity-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search your activity" aria-label="Search transactions" data-transaction-search></label>
+    {% if transactions %}
+      {% regroup transactions by transaction_date as transaction_days %}
+      <div class="activity-history-list">
+      {% for day in transaction_days %}
+        <div class="activity-date-label" data-activity-date="{{ day.grouper|date:'Y-m-d' }}">{{ day.grouper|date:"l, j F" }}</div>
+        {% for tx in day.list %}
+          <a class="activity-history-row" href="{% url 'transaction_update' tx.pk %}" data-transaction-row data-search-text="{{ tx.description }} {{ tx.category }} {{ tx.merchant }} {{ tx.account.name }}" data-chart-row data-kind="{{ tx.kind }}" data-amount="{{ tx.amount }}" data-date="{{ tx.transaction_date|date:'Y-m-d' }}" data-created="{{ tx.created_at|date:'c' }}">
+            <span class="activity-history-icon {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}is-income{% else %}is-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}↙{% else %}↗{% endif %}</span>
+            <span class="activity-history-main"><strong>{{ tx.description|default:tx.category }}</strong><small>{{ tx.category }} · {{ tx.account.name }} · {{ tx.created_at|date:"g:i A" }}</small></span>
+            <span class="activity-history-amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}is-income{% else %}is-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }}<small>FCFA</small></span>
+          </a>
+        {% endfor %}
+      {% endfor %}
+      </div><p class="empty-search" data-empty-search hidden>No matching transactions.</p>
+    {% else %}
+      <div class="activity-empty"><span>✦</span><h3>Your activity begins here</h3><p>Add income or an expense and TIANA will turn it into a clear money story.</p><a class="button" href="{% url 'transaction_create' %}">Add your first transaction →</a></div>
+    {% endif %}
+  </section>
 </section>
 {% endblock %}
+{% block extra_js %}<script src="{% static 'nkem/activity-chart.js' %}?v=20261031-chart" defer></script>{% endblock %}
