@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.staticfiles import finders
 from django.test import TestCase
 from django.urls import reverse
 
@@ -93,13 +94,20 @@ class AccountTests(TestCase):
         )
         self.assertRedirects(response, reverse("dashboard"))
 
-    def test_onboarding_uses_existing_static_illustrations(self):
-        from django.contrib.staticfiles import finders
+    def test_onboarding_uses_4k_photography_and_no_fake_status_bar(self):
+        response = self.client.get(reverse("onboarding"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/onboarding.html")
+        self.assertContains(response, "assets/tiana-logo-transparent.png")
         for asset in (
-            "assets/onboarding-control.svg",
-            "assets/onboarding-goals.svg",
-            "assets/onboarding-ai.svg",
-            "assets/nkem-welcome-hero-4k.avif",
+            "assets/tiana-onboarding-money-clarity-4k.webp",
+            "assets/tiana-onboarding-savings-goals-4k.webp",
+            "assets/tiana-onboarding-ai-coach-4k.webp",
         ):
             with self.subTest(asset=asset):
+                self.assertContains(response, asset)
                 self.assertIsNotNone(finders.find(asset))
+        self.assertNotContains(response, "onboarding-status")
+        self.assertNotContains(response, "onboarding-status-icons")
+        self.assertNotContains(response, "9:41")
