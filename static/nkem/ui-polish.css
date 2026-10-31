@@ -4,7 +4,7 @@ body[data-user-theme="mint"]{--chart-income:#c0eb67;--chart-expense:#35b993;--bu
 body[data-user-theme="ocean"]{--chart-income:#73d9ed;--chart-expense:#4b9de0;--budget-segment-a:#286caa;--budget-segment-b:#75b8e8;--budget-segment-c:#9bdbdf;--budget-segment-d:#a4a2ed;--budget-segment-e:#e0c77a}
 body[data-user-theme="sunset"]{--chart-income:#ffd17a;--chart-expense:#f28b70;--budget-segment-a:#c16a46;--budget-segment-b:#e7a47e;--budget-segment-c:#e8c27c;--budget-segment-d:#d88ca2;--budget-segment-e:#9dbb9b}
 body[data-user-theme="midnight"]{--chart-income:#b6f16c;--chart-expense:#52c7af;--budget-segment-a:#a78bfa;--budget-segment-b:#7257b9;--budget-segment-c:#d29acb;--budget-segment-d:#d6b86f;--budget-segment-e:#54b9a8}
-.tiana-header-wordmark{display:block;width:clamp(112px,15vw,158px);height:48px;object-fit:contain;object-position:left center}
+.tiana-header-wordmark{display:block;width:clamp(132px,16vw,164px);height:56px;object-fit:contain;object-position:left center}
 .ui-eyebrow{margin:0 0 8px;color:var(--brand-primary);font-size:.66rem;font-weight:850;letter-spacing:.16em;text-transform:uppercase}
 .profile-page,.entry-page,.activity-page,.budget-page{max-width:940px;margin:0 auto;padding:clamp(8px,2vw,20px) 0 34px}
 .profile-page-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:4px 0 22px;padding:clamp(20px,4vw,32px);border:1px solid var(--line);border-radius:26px;background:linear-gradient(125deg,var(--brand-soft),var(--surface))}
