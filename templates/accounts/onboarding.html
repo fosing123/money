@@ -13,13 +13,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="{% static 'assets/tiana-onboarding-money-clarity-4k.webp' %}" fetchpriority="high">
   <link rel="preload" as="image" href="{% static 'assets/tiana-logo-transparent.png' %}">
-  <link rel="stylesheet" href="{% static 'nkem/onboarding.css' %}?v=20261031-photo-onboarding">
+  <link rel="stylesheet" href="{% static 'nkem/onboarding.css' %}?v=20261031-onboarding-premium-v2">
 </head>
 <body class="onboarding-page" data-user-theme="{{ user.theme|default:'violet' }}">
   <main class="onboarding-shell" aria-label="Discover TIANA">
+    {# Native Android/browser status bars are provided by the device. Never simulate them here. #}
     <header class="onboarding-header">
       <button class="onboarding-back" type="button" data-onboarding-back aria-label="Previous screen" hidden disabled>
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
 
       <a class="onboarding-logo" href="{% url 'home' %}" aria-label="TIANA — Your Money Friend Always">
@@ -38,10 +41,9 @@
     <section class="onboarding-stage" data-onboarding-stage aria-label="TIANA features" tabindex="0">
       <article class="onboarding-slide is-active" data-onboarding-slide aria-hidden="false">
         <div class="onboarding-art onboarding-art-control">
-          <div class="art-glow" aria-hidden="true"></div>
           <img
             src="{% static 'assets/tiana-onboarding-money-clarity-4k.webp' %}"
-            alt="A university student reviewing her money on her phone at a campus study table"
+            alt="A student reviewing her finances on her phone in a bright campus study space"
             fetchpriority="high"
             decoding="async"
           >
@@ -55,10 +57,9 @@
 
       <article class="onboarding-slide" data-onboarding-slide aria-hidden="true">
         <div class="onboarding-art onboarding-art-goals">
-          <div class="art-glow" aria-hidden="true"></div>
           <img
             src="{% static 'assets/tiana-onboarding-savings-goals-4k.webp' %}"
-            alt="A student planning her savings in a notebook beside a coin jar and laptop"
+            alt="A student planning her savings in a notebook beside a coin jar and goal target"
             loading="lazy"
             decoding="async"
           >
@@ -72,10 +73,9 @@
 
       <article class="onboarding-slide" data-onboarding-slide aria-hidden="true">
         <div class="onboarding-art onboarding-art-coach">
-          <div class="art-glow" aria-hidden="true"></div>
           <img
             src="{% static 'assets/tiana-onboarding-ai-coach-4k.webp' %}"
-            alt="A student wearing lavender headphones while getting help on her phone"
+            alt="A student in lavender headphones using her phone with friendly AI chat symbols nearby"
             loading="lazy"
             decoding="async"
           >
@@ -107,6 +107,6 @@
       <p class="onboarding-legal">Built for students. Designed for real life.</p>
     </footer>
   </main>
-  <script src="{% static 'nkem/onboarding.js' %}?v=20261031-photo-onboarding" defer></script>
+  <script src="{% static 'nkem/onboarding.js' %}?v=20261031-onboarding-premium-v2" defer></script>
 </body>
 </html>
