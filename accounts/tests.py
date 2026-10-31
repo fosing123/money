@@ -26,6 +26,45 @@ class AccountTests(TestCase):
         self.assertContains(response, "Get Started")
         self.assertContains(response, reverse("onboarding"))
 
+
+    def test_registration_uses_the_new_welcome_step_and_saves_optional_phone(self):
+        response = self.client.post(reverse("register"), {
+            "first_name": "Ada",
+            "last_name": "Ndi",
+            "email": "ada.new@example.com",
+            "phone_number": "+237 670 000 000",
+            "password1": "StrongPass123!",
+            "password2": "StrongPass123!",
+        })
+        self.assertRedirects(response, reverse("registration_welcome"))
+        user = User.objects.get(email="ada.new@example.com")
+        self.assertEqual(user.phone_number, "+237 670 000 000")
+        self.assertTrue(self.client.session.get("_auth_user_id"))
+        self.assertTrue(Account.objects.filter(owner=user, name="Daily money").exists())
+
+        welcome = self.client.get(reverse("registration_welcome"))
+        self.assertEqual(welcome.status_code, 200)
+        self.assertTemplateUsed(welcome, "accounts/registration_welcome.html")
+        self.assertContains(welcome, "Welcome to")
+        self.assertContains(welcome, "Let's build my money plan")
+        self.assertContains(welcome, reverse("onboarding_setup"))
+
+    def test_registration_welcome_requires_authentication(self):
+        response = self.client.get(reverse("registration_welcome"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("login"), response.url)
+
+    def test_registration_and_login_pages_use_the_new_tiana_auth_experience(self):
+        register = self.client.get(reverse("register"))
+        login = self.client.get(reverse("login"))
+        for response in (register, login):
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "nkem/auth.css")
+            self.assertContains(response, "tiana-auth-campus.webp")
+            self.assertContains(response, "data-password-toggle")
+        self.assertContains(register, "Phone number")
+        self.assertContains(login, "Sign in to TIANA")
+
     def test_new_user_is_sent_to_first_run_setup(self):
         user = User.objects.create_user(username="newuser", email="newuser@example.com", password="StrongPass123!")
         self.client.force_login(user)
