@@ -1,6 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 550" role="img" aria-label="Friendly robot money assistant">
-<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#fff0a8"/><stop offset="1" stop-color="#fff9dc"/></linearGradient><linearGradient id="robot" x2="0" y2="1"><stop stop-color="#fdfdff"/><stop offset="1" stop-color="#cad7f5"/></linearGradient><linearGradient id="purple" x2="0" y2="1"><stop stop-color="#ad8aff"/><stop offset="1" stop-color="#6849d8"/></linearGradient></defs><rect width="400" height="550" rx="28" fill="url(#bg)"/><g fill="#fff" stroke="#f6dc84" stroke-width="2"><circle cx="57" cy="100" r="17"/><circle cx="349" cy="162" r="22"/><circle cx="306" cy="78" r="10"/></g><g fill="#ffc447"><path d="M45 185l8 17 19 3-14 13 4 18-17-9-16 9 3-18-14-13 19-3z"/><path d="M337 281l6 12 13 2-10 9 3 13-12-6-12 6 2-13-9-9 13-2z"/></g>
-<g transform="translate(65 115)"><path d="M85 278L18 344Q2 360 14 374Q25 387 40 375L113 324" fill="url(#robot)" stroke="#bdc8e8" stroke-width="5"/><path d="M234 282L300 232Q317 223 327 238Q337 254 319 265L250 321" fill="url(#robot)" stroke="#bdc8e8" stroke-width="5"/><rect x="59" y="178" width="205" height="186" rx="67" fill="url(#robot)" stroke="#bac8e8" stroke-width="5"/><rect x="38" y="204" width="247" height="137" rx="45" fill="#303c76"/><g fill="#65eaff"><ellipse cx="111" cy="270" rx="17" ry="23"/><ellipse cx="211" cy="270" rx="17" ry="23"/></g><path d="M137 309q24 20 49 0" stroke="#66ecff" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M163 176v-32" stroke="#b9c8e8" stroke-width="8" stroke-linecap="round"/><circle cx="163" cy="130" r="16" fill="#22c78d"/><path d="M155 130l6 6 12-15" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="52" cy="263" r="21" fill="url(#purple)"/><circle cx="273" cy="263" r="21" fill="url(#purple)"/><path d="M302 229q25-34 14-59" stroke="#d1d8f1" stroke-width="12" fill="none" stroke-linecap="round"/><circle cx="318" cy="157" r="18" fill="#e3e8f7" stroke="#b5c2e4" stroke-width="3"/></g>
-<g transform="translate(16 308)"><rect width="136" height="66" rx="18" fill="#fff" stroke="#f4e9b8" stroke-width="3"/><text x="68" y="27" font-family="Arial" font-size="12" fill="#26345b" text-anchor="middle" font-weight="700">Can I save more?</text><text x="68" y="45" font-family="Arial" font-size="10" fill="#71809e" text-anchor="middle">Ask your assistant</text></g>
-<g transform="translate(225 380)"><rect width="157" height="62" rx="18" fill="#fff" stroke="#f4e9b8" stroke-width="3"/><text x="78" y="25" font-family="Arial" font-size="12" fill="#26345b" text-anchor="middle" font-weight="700">Let's plan a budget</text><text x="78" y="43" font-family="Arial" font-size="10" fill="#71809e" text-anchor="middle">One step at a time</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 520" role="img" aria-label="Friendly Black woman student AI money coach in a lavender hoodie">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F5F0FF"/><stop offset="1" stop-color="#EAF5FF"/></linearGradient>
+ <linearGradient id="hoodie" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#B99AFF"/><stop offset="1" stop-color="#7549DF"/></linearGradient>
+ <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#C98562"/><stop offset="1" stop-color="#985436"/></linearGradient>
+ <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#362131"/><stop offset="1" stop-color="#171322"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="17" stdDeviation="17" flood-color="#50357F" flood-opacity=".17"/></filter>
+</defs>
+<ellipse cx="300" cy="270" rx="238" ry="208" fill="url(#bg)"/>
+<g filter="url(#shadow)">
+ <rect x="35" y="76" width="128" height="78" rx="24" fill="#FFFFFF"/><path d="M71 154l-5 22 28-22" fill="#FFFFFF"/><circle cx="72" cy="115" r="6" fill="#A88CFA"/><circle cx="99" cy="115" r="6" fill="#A88CFA"/><circle cx="126" cy="115" r="6" fill="#A88CFA"/>
+ <rect x="434" y="118" width="126" height="74" rx="22" fill="#FFFFFF"/><path d="M487 192l6 19 20-19" fill="#FFFFFF"/><path d="M458 147h76M458 164h49" stroke="#C8B9F5" stroke-width="8" stroke-linecap="round"/>
+ <rect x="449" y="229" width="72" height="69" rx="20" fill="#7651F5"/><path d="M469 258h31M484 243v30" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+</g>
+<g filter="url(#shadow)">
+ <path d="M125 506Q126 366 207 339Q294 315 391 352Q474 387 477 520H125Z" fill="url(#hoodie)"/>
+ <path d="M203 343q-19-44 5-69 37-48 102-39 72 9 95 80l-24 76-153 14z" fill="#49306F" opacity=".48"/>
+ <path d="M207 309q-25-76 14-143 33-55 105-53 80 0 109 76 28 73-19 148l-34 31-140-6z" fill="url(#hair)"/>
+ <ellipse cx="308" cy="230" rx="91" ry="112" fill="url(#skin)"/>
+ <path d="M217 216q-8-109 94-123 96-4 124 83-45-34-68-71-22 42-83 48-31 4-67 63z" fill="#251A2A"/>
+ <g fill="#2B1B2A">
+  <circle cx="232" cy="141" r="36"/><circle cx="268" cy="112" r="38"/><circle cx="307" cy="103" r="40"/><circle cx="349" cy="117" r="39"/><circle cx="390" cy="147" r="37"/><circle cx="414" cy="189" r="34"/>
+  <circle cx="223" cy="193" r="32"/><circle cx="227" cy="247" r="27"/><circle cx="396" cy="239" r="28"/>
+ </g>
+ <path d="M265 229q12-10 25 0M331 229q13-10 26 0" stroke="#281A24" stroke-width="6" fill="none" stroke-linecap="round"/>
+ <ellipse cx="279" cy="244" rx="5" ry="7" fill="#221723"/><ellipse cx="345" cy="244" rx="5" ry="7" fill="#221723"/>
+ <path d="M303 254l-7 17 14 4" stroke="#7A4134" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+ <path d="M282 292q27 26 57 0" stroke="#682C2D" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M291 294q18 12 38 0" fill="#FFFFFF"/>
+ <path d="M215 328q-42 35-26 84 10 28 39 40l39-61z" fill="#A978FF"/><path d="M397 327q52 31 50 83-1 36-34 52l-42-74z" fill="#8358E7"/>
+ <path d="M409 348q36-17 47-54 9-25 26-13 18 12 4 40-22 44-66 66" fill="url(#skin)"/>
+ <path d="M469 282q-10-28 6-34 16-7 23 18l-2 20" fill="url(#skin)"/><path d="M487 288q11-25 24-15 14 11 1 29l-16 14" fill="url(#skin)"/>
+ <path d="M245 350q62 45 126 0" fill="none" stroke="#D6C4FF" stroke-width="8" stroke-linecap="round"/>
+ <path d="M287 384l21 18 21-18" fill="none" stroke="#EDE6FF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="307" y="457" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="800" letter-spacing="2" fill="#FFFFFF" opacity=".92">TIANA</text>
+</g>
+<circle cx="110" cy="274" r="13" fill="#FFC85C"/><path d="M106 267h8M110 263v21" stroke="#D78B25" stroke-width="3" stroke-linecap="round"/>
+<circle cx="501" cy="72" r="12" fill="#A88CFA"/><path d="M495 72h12M501 66v12" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+</svg>

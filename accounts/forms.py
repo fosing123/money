@@ -18,11 +18,32 @@ PRIORITY_CHOICES = [
 
 
 class RegisterForm(forms.Form):
-    first_name = forms.CharField(max_length=50, label="First name", widget=forms.TextInput(attrs={"autocomplete": "given-name", "placeholder": "How should we call you?"}))
-    last_name = forms.CharField(max_length=50, label="Last name", widget=forms.TextInput(attrs={"autocomplete": "family-name", "placeholder": "Your family name"}))
-    email = forms.EmailField(label="Email address", widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com"}))
-    password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "At least 8 characters"}))
-    password2 = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Type it once more"}))
+    full_name = forms.CharField(
+        max_length=101,
+        label="Full name",
+        widget=forms.TextInput(attrs={"autocomplete": "name", "placeholder": "Your full name"}),
+    )
+    email = forms.EmailField(
+        label="Email address",
+        widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com"}),
+    )
+    phone_number = forms.CharField(
+        max_length=20,
+        required=False,
+        label="Phone number",
+        widget=forms.TelInput(attrs={"autocomplete": "tel", "inputmode": "tel", "placeholder": "+237 6XX XXX XXX"}),
+    )
+    password1 = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Create a strong password"}),
+    )
+
+    def clean_full_name(self):
+        full_name = " ".join(self.cleaned_data["full_name"].split())
+        first_name, _, last_name = full_name.partition(" ")
+        if not first_name or len(first_name) > 50 or len(last_name) > 50:
+            raise forms.ValidationError("Please enter a first name and a surname of up to 50 characters each.")
+        return full_name
 
     def clean_email(self):
         email = self.cleaned_data["email"].strip()
@@ -30,25 +51,26 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError("An account with this email already exists.")
         return email
 
+    def clean_phone_number(self):
+        return (self.cleaned_data.get("phone_number") or "").strip()
+
     def clean(self):
         cleaned = super().clean()
         password = cleaned.get("password1")
-        confirm = cleaned.get("password2")
-        if password and confirm and password != confirm:
-            self.add_error("password2", "These passwords don't match yet.")
+        full_name = cleaned.get("full_name") or ""
+        first_name, _, last_name = full_name.partition(" ")
         if password and not self.errors.get("password1"):
             candidate = User(
                 username=(cleaned.get("email") or "new-user").split("@")[0],
                 email=cleaned.get("email") or "",
-                first_name=cleaned.get("first_name") or "",
-                last_name=cleaned.get("last_name") or "",
+                first_name=first_name,
+                last_name=last_name,
             )
             try:
                 validate_password(password, user=candidate)
             except ValidationError as exc:
                 self.add_error("password1", exc)
         return cleaned
-
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -70,8 +92,14 @@ class ProfileForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label="Email or username", widget=forms.TextInput(attrs={"autocomplete": "username", "placeholder": "Email or username"}))
-    password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "placeholder": "Your password"}))
+    username = forms.CharField(
+        label="Email or username",
+        widget=forms.TextInput(attrs={"autocomplete": "username", "placeholder": "Email address or username"}),
+    )
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "placeholder": "Your password"}),
+    )
 
 
 class OnboardingSetupForm(forms.Form):

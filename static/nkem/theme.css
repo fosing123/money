@@ -1,4 +1,4 @@
-/* TIANA theme palettes — restrained, accessible and consistent across every screen */
+/* Nkem theme palettes — restrained, accessible and consistent across every screen */
 body[data-user-theme="violet"]{--brand-primary:#087b5c!important;--brand-dark:#07553f!important;--brand-soft:#e9f4ee!important;--bg:#f5f8f6!important;--text:#17241f!important;--surface:#fff!important;--line:#e4ebe7!important;--muted:#68776f!important}
 body[data-user-theme="mint"]{--brand-primary:#087b5c!important;--brand-dark:#07553f!important;--brand-soft:#e9f4ee!important;--bg:#f5f8f6!important;--text:#17241f!important;--surface:#fff!important;--line:#e4ebe7!important;--muted:#68776f!important}
 body[data-user-theme="ocean"]{--brand-primary:#286c91!important;--brand-dark:#164d6b!important;--brand-soft:#e9f2f7!important;--bg:#f4f8fa!important;--text:#1d303a!important;--surface:#fff!important;--line:#e0eaf0!important;--muted:#6b7e87!important}

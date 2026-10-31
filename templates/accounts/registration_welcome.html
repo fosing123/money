@@ -1,0 +1,34 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Welcome to TIANA{% endblock %}
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'nkem/auth.css' %}?v=20261031-auth-flow-2">
+{% endblock %}
+{% block content %}
+<div class="tiana-welcome-journey">
+  <section class="tiana-welcome-card" aria-labelledby="tiana-welcome-title">
+    <div class="tiana-welcome-art">
+      <img src="{% static 'assets/tiana-signup-welcome.webp' %}" alt="A smiling student waving hello on campus">
+      <div class="tiana-welcome-art-glow"></div>
+      <a class="tiana-welcome-logo" href="{% url 'home' %}" aria-label="TIANA — Your Money Friend Always">
+        <img src="{% static 'assets/tiana-logo-transparent.png' %}" alt="TIANA — Your Money Friend Always">
+      </a>
+      <span class="tiana-welcome-sparkle tiana-welcome-sparkle--one" aria-hidden="true">✦</span>
+      <span class="tiana-welcome-sparkle tiana-welcome-sparkle--two" aria-hidden="true">✧</span>
+    </div>
+    <div class="tiana-welcome-copy">
+      <span class="tiana-welcome-kicker"><i></i> YOUR NEXT CHAPTER STARTS HERE</span>
+      <h1 id="tiana-welcome-title">Welcome to <span>TIANA</span>, {{ request.user.first_name|default:"friend" }}! <span class="tiana-wave" aria-hidden="true">👋</span></h1>
+      <p class="tiana-welcome-lead">I'm so happy you're here!</p>
+      <p class="tiana-welcome-description">Let's build your financial future together, one small and meaningful step at a time.</p>
+      <a class="tiana-welcome-continue" href="{% url 'onboarding_setup' %}">
+        <span>Let's build my money plan</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <p class="tiana-welcome-reassurance"><span>✦</span> No pressure. You can adjust your plan as life changes.</p>
+    </div>
+  </section>
+</div>
+{% endblock %}

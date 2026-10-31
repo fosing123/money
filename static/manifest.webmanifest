@@ -1,10 +1,17 @@
 {
-  "name": "TIANA — Your Money Friend",
+  "name": "TIANA — Your Money Friend Always",
   "short_name": "TIANA",
-  "description": "A friendly money planner for students and young people in Cameroon.",
+  "description": "Your personal money friend. Track your money, save for goals and get personalized guidance.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f7f6fc",
-  "theme_color": "#7757f6",
-  "icons": [{"src": "/static/money-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}]
+  "background_color": "#F8F6FF",
+  "theme_color": "#6F3FF5",
+  "icons": [
+    {
+      "src": "/static/money-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }

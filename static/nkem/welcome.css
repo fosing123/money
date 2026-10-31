@@ -1,0 +1,301 @@
+/* TIANA welcome page — full-screen campus hero, no simulated phone chrome. */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  color-scheme: light;
+  font-family: "Poppins", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #F8F5FF;
+  color: #241047;
+}
+
+html,
+body {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body.welcome-page {
+  min-height: 100svh;
+  overflow-x: hidden;
+  background: #F8F5FF;
+  color: #241047;
+}
+
+.welcome-screen {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 100svh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #F8F5FF;
+}
+
+.welcome-photo {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.welcome-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 47%;
+}
+
+.welcome-shade {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(248, 245, 255, .08) 0%,
+      rgba(248, 245, 255, .02) 39%,
+      rgba(248, 245, 255, .14) 51%,
+      rgba(248, 245, 255, .55) 61%,
+      rgba(248, 245, 255, .92) 73%,
+      #F8F5FF 86%,
+      #F8F5FF 100%
+    );
+}
+
+.welcome-brand {
+  position: absolute;
+  z-index: 3;
+  top: calc(env(safe-area-inset-top, 0px) + clamp(20px, 4.8svh, 76px));
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 18px;
+}
+
+.welcome-wordmark {
+  display: block;
+  width: min(58vw, 510px);
+  line-height: 0;
+  text-decoration: none;
+}
+
+.welcome-wordmark img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 10px rgba(255, 255, 255, .38));
+}
+
+.welcome-content {
+  position: absolute;
+  z-index: 3;
+  left: 7.5%;
+  right: 7.5%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(18px, 2.8svh, 44px));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+}
+
+.welcome-copy {
+  margin: 0 0 clamp(20px, 3.2svh, 42px);
+}
+
+.welcome-copy h1 {
+  max-width: 790px;
+  margin: 0 0 clamp(12px, 1.7svh, 23px);
+  color: #241047;
+  font-size: clamp(30px, 7.7vw, 68px);
+  font-weight: 850;
+  line-height: 1.015;
+  letter-spacing: -.058em;
+}
+
+.welcome-copy h1 span {
+  display: block;
+}
+
+.welcome-copy p {
+  max-width: 780px;
+  margin: 0;
+  color: #77718B;
+  font-size: clamp(15px, 3.5vw, 30px);
+  font-weight: 450;
+  line-height: 1.43;
+  letter-spacing: -.025em;
+}
+
+.welcome-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 2vw, 20px);
+  width: 100%;
+  min-height: clamp(60px, 7svh, 108px);
+  padding: 0 24px;
+  border: 1px solid rgba(255, 255, 255, .48);
+  border-radius: clamp(22px, 3.5vw, 34px);
+  background: linear-gradient(105deg, #743CF2 0%, #8543F4 53%, #A855F7 100%);
+  box-shadow:
+    0 18px 42px rgba(108, 57, 226, .25),
+    0 5px 12px rgba(108, 57, 226, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .28);
+  color: #FFFFFF;
+  font-size: clamp(18px, 3.65vw, 31px);
+  font-weight: 700;
+  letter-spacing: -.025em;
+  text-decoration: none;
+  transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.welcome-cta svg {
+  display: block;
+  width: clamp(23px, 3.4vw, 34px);
+  height: auto;
+  flex: 0 0 auto;
+  transition: transform .18s ease;
+}
+
+.welcome-cta:hover {
+  filter: brightness(1.055);
+  box-shadow:
+    0 21px 48px rgba(108, 57, 226, .30),
+    0 5px 14px rgba(108, 57, 226, .15),
+    inset 0 1px 0 rgba(255, 255, 255, .32);
+}
+
+.welcome-cta:hover svg {
+  transform: translateX(4px);
+}
+
+.welcome-cta:active {
+  transform: scale(.987);
+}
+
+.welcome-wordmark:focus-visible,
+.welcome-cta:focus-visible {
+  outline: 3px solid #6D2BD9;
+  outline-offset: 5px;
+}
+
+.welcome-crystal {
+  position: absolute;
+  z-index: 2;
+  width: clamp(26px, 5vw, 54px);
+  aspect-ratio: .78;
+  opacity: .52;
+  pointer-events: none;
+  clip-path: polygon(50% 0, 100% 34%, 76% 100%, 23% 88%, 0 35%);
+  background: linear-gradient(145deg, rgba(255,255,255,.95), rgba(174,133,255,.78) 42%, rgba(107,205,245,.68));
+  filter: drop-shadow(0 8px 18px rgba(113, 73, 207, .20));
+}
+
+.welcome-crystal-one {
+  top: 17%;
+  left: 4%;
+  transform: rotate(-12deg);
+}
+
+.welcome-crystal-two {
+  top: 25%;
+  right: 4%;
+  width: clamp(20px, 3.8vw, 42px);
+  opacity: .38;
+  transform: rotate(14deg);
+}
+
+.welcome-sparkle {
+  position: absolute;
+  z-index: 2;
+  color: #FFC01E;
+  font-size: clamp(17px, 3.2vw, 30px);
+  line-height: 1;
+  text-shadow: 0 3px 12px rgba(255, 192, 30, .28);
+  pointer-events: none;
+}
+
+.welcome-sparkle-one {
+  top: 31%;
+  left: 7%;
+}
+
+.welcome-sparkle-two {
+  top: 42%;
+  right: 8%;
+  font-size: clamp(12px, 2.4vw, 22px);
+  opacity: .82;
+}
+
+@media (min-width: 700px) {
+  .welcome-wordmark {
+    width: min(56vw, 510px);
+  }
+
+  .welcome-content {
+    left: max(7.5%, calc((100% - 980px) / 2));
+    right: max(7.5%, calc((100% - 980px) / 2));
+  }
+}
+
+@media (max-height: 720px) and (orientation: portrait) {
+  .welcome-screen {
+    min-height: 720px;
+  }
+
+  .welcome-brand {
+    top: calc(env(safe-area-inset-top, 0px) + 20px);
+  }
+
+  .welcome-wordmark {
+    width: min(53vw, 250px);
+  }
+
+  .welcome-content {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  }
+
+  .welcome-copy {
+    margin-bottom: 16px;
+  }
+
+  .welcome-copy h1 {
+    font-size: clamp(28px, 6.4vw, 42px);
+    margin-bottom: 9px;
+  }
+
+  .welcome-copy p {
+    font-size: clamp(14px, 3.3vw, 18px);
+    line-height: 1.38;
+  }
+
+  .welcome-cta {
+    min-height: 56px;
+    font-size: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

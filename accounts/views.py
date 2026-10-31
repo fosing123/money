@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -29,24 +30,35 @@ def register_view(request):
             while User.objects.filter(username__iexact=username).exists():
                 username = f"{base_username[:140-len(str(counter))]}{counter}"
                 counter += 1
+            first_name, _, last_name = form.cleaned_data["full_name"].strip().partition(" ")
             user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=form.cleaned_data["password1"],
-                first_name=form.cleaned_data["first_name"].strip(),
-                last_name=form.cleaned_data["last_name"].strip(),
+                first_name=first_name.strip(),
+                last_name=last_name.strip(),
+                phone_number=form.cleaned_data.get("phone_number", "").strip(),
             )
             Account.objects.create(owner=user, name="Daily money", account_type="cash", currency=user.currency)
             login(request, user)
-            messages.success(request, "Welcome to TIANA. Let's set up a plan that fits your life.")
-            return redirect("onboarding_setup")
+            return redirect("registration_welcome")
     else:
         form = RegisterForm()
     return render(request, "accounts/register.html", {"form": form})
 
 
+@login_required
+def registration_welcome_view(request):
+    if request.user.onboarding_completed:
+        return redirect("dashboard")
+    return render(request, "accounts/registration_welcome.html")
+
+
 def login_view(request):
+    next_url = request.POST.get("next") or request.GET.get("next", "")
     if request.user.is_authenticated:
+        if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+            return redirect(next_url)
         return redirect("dashboard" if request.user.onboarding_completed else "onboarding_setup")
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -58,17 +70,20 @@ def login_view(request):
             authenticated = authenticate(request, username=candidate.username, password=form.cleaned_data["password"]) if candidate else None
             if authenticated:
                 login(request, authenticated)
+                if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+                    return redirect(next_url)
                 return redirect("dashboard" if authenticated.onboarding_completed else "onboarding_setup")
-            messages.error(request, "That sign-in didn't work. Check your details and try again.")
+            form.add_error(None, "That sign-in didn't work. Check your details and try again.")
     else:
         form = LoginForm()
-    return render(request, "accounts/login.html", {"form": form})
+    return render(request, "accounts/login.html", {"form": form, "next_url": next_url})
 
 
 @require_POST
 def logout_view(request):
     logout(request)
-    return redirect("home")
+    messages.success(request, "You have been securely signed out.")
+    return redirect("login")
 
 
 @login_required
@@ -126,6 +141,6 @@ def profile_view(request):
     form = ProfileForm(request.POST or None, instance=request.user)
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Your profile and colour theme have been updated.")
+        messages.success(request, "Your profile has been updated.")
         return redirect("profile")
     return render(request, "accounts/profile.html", {"form": form})

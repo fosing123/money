@@ -1,0 +1,320 @@
+/* TIANA account access and post-registration welcome — mobile-first */
+:root {
+  --tiana-ink: #241047;
+  --tiana-purple: #6D2BD9;
+  --tiana-violet: #743CF2;
+  --tiana-lilac: #A855F7;
+  --tiana-muted: #77718B;
+  --tiana-line: #E9E2F5;
+  --tiana-pale: #F8F5FF;
+  --tiana-gold: #FFC01E;
+}
+body:has(.tiana-auth-view),
+body:has(.tiana-welcome-journey) {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+  color: var(--tiana-ink);
+  background:
+    radial-gradient(ellipse at 4% 6%, rgba(202,180,255,.42), transparent 34%),
+    radial-gradient(ellipse at 96% 92%, rgba(183,148,255,.30), transparent 31%),
+    #F8F5FF;
+  font-family: "Poppins", Inter, system-ui, sans-serif;
+}
+body:has(.tiana-auth-view) .app-topbar,
+body:has(.tiana-welcome-journey) .app-topbar,
+body:has(.tiana-auth-view) .mobile-bottom-nav,
+body:has(.tiana-welcome-journey) .mobile-bottom-nav { display: none !important; }
+body:has(.tiana-auth-view) .page-shell,
+body:has(.tiana-welcome-journey) .page-shell {
+  width: 100%;
+  max-width: none;
+  min-height: 100svh;
+  margin: 0;
+  padding: 0;
+}
+body:has(.tiana-auth-view) .messages,
+body:has(.tiana-welcome-journey) .messages {
+  width: min(1180px, calc(100% - 32px));
+  margin: 12px auto 0;
+}
+
+/* SIGN UP / SIGN IN */
+.tiana-auth-view {
+  min-height: 100svh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: clamp(14px, 2.5vw, 34px);
+}
+.tiana-auth-shell {
+  width: min(1120px, 100%);
+  min-height: min(760px, calc(100dvh - 48px));
+  display: grid;
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 32px;
+  background: rgba(255,255,255,.97);
+  box-shadow: 0 28px 90px rgba(64,36,117,.14), 0 3px 12px rgba(70,47,115,.05);
+}
+.tiana-auth-shell--login { grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); }
+.tiana-auth-visual {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: clamp(25px, 3.2vw, 44px);
+  color: #fff;
+  background: linear-gradient(145deg, #2A0B60 0%, #6D2BD9 58%, #A855F7 100%);
+}
+.tiana-auth-photo {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 53% 32%;
+}
+.tiana-auth-visual-shade {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(31,12,69,.18) 0%, rgba(31,12,69,.02) 28%, rgba(31,12,69,.10) 48%, rgba(31,12,69,.88) 100%),
+    linear-gradient(120deg, rgba(71,34,145,.10), transparent 60%);
+}
+.tiana-auth-brand { display: inline-flex; width: min(210px, 64%); align-items: flex-start; }
+.tiana-auth-brand img, .tiana-auth-mobile-brand img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.tiana-auth-story { max-width: 440px; position: relative; z-index: 1; }
+.tiana-auth-story-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #F4EFFF;
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .15em;
+}
+.tiana-auth-story-kicker i {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #FFC01E; box-shadow: 0 0 0 5px rgba(255,192,30,.18);
+}
+.tiana-auth-story h2 {
+  max-width: 430px;
+  margin: 16px 0 12px;
+  color: #fff;
+  font-size: clamp(2rem, 3.2vw, 3.15rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -.055em;
+}
+.tiana-auth-story p { max-width: 385px; margin: 0; color: rgba(255,255,255,.90); font-size: .91rem; line-height: 1.7; }
+.tiana-auth-proof {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 23px;
+  border: 1px solid rgba(255,255,255,.27); border-radius: 999px;
+  padding: 10px 15px; background: rgba(255,255,255,.12);
+  color: #fff; font-size: .74rem; font-weight: 600; backdrop-filter: blur(12px);
+}
+.tiana-proof-mark { color: #FFC01E; font-size: 1rem; }
+
+.tiana-auth-form-panel {
+  min-width: 0;
+  padding: clamp(30px, 4vw, 58px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #fff 0%, #fff 72%, #FBF8FF 100%);
+}
+.tiana-auth-form-inner { width: min(490px, 100%); margin: auto; }
+.tiana-auth-mobile-brand { display: none; }
+.tiana-auth-heading { margin-bottom: 24px; text-align: left; }
+.tiana-auth-eyebrow {
+  margin: 0 0 10px;
+  color: #7544D9;
+  font-size: .67rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+.tiana-auth-form-inner h1 {
+  margin: 0;
+  color: #241047;
+  font-size: clamp(2rem, 3.2vw, 2.65rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -.055em;
+}
+.tiana-auth-intro { max-width: 420px; margin: 11px 0 0; color: #77718B; font-size: .88rem; line-height: 1.65; }
+.tiana-auth-form { display: grid; gap: 16px; margin: 0; }
+.tiana-field-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.tiana-field { min-width: 0; display: grid; gap: 7px; }
+.tiana-field label { color: #39265D; font-size: .73rem; font-weight: 700; }
+.tiana-optional { margin-left: 5px; color: #9A91AA; font-size: .57rem; font-weight: 800; letter-spacing: .09em; }
+.tiana-input-wrap { display: flex; align-items: center; position: relative; min-width: 0; }
+.tiana-input-icon {
+  position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+  display: grid; place-items: center; width: 19px; height: 19px;
+  color: #7658B8; pointer-events: none;
+}
+.tiana-input-icon svg {
+  display: block; width: 19px; height: 19px;
+  fill: none; stroke: currentColor; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.tiana-field input {
+  display: block;
+  width: 100%; min-width: 0; min-height: 55px;
+  box-sizing: border-box;
+  border: 1px solid #E9E2F5; border-radius: 14px;
+  background: #F8F6FC; color: #28134F;
+  padding: 0 15px 0 47px; outline: none;
+  font: 500 .84rem "Poppins", sans-serif;
+  transition: border-color .18s, box-shadow .18s, background .18s;
+}
+.tiana-field input::placeholder { color: #AAA3B8; opacity: 1; }
+.tiana-field input:focus { border-color: #9B78E9; background: #fff; box-shadow: 0 0 0 4px rgba(116,60,242,.11); }
+.tiana-field.has-error input { border-color: #D85C75; background: #FFF9FA; }
+.tiana-field-error { display: block; color: #BE3857; font-size: .69rem; line-height: 1.45; }
+.tiana-field-hint { color: #91889F; font-size: .64rem; line-height: 1.45; }
+.tiana-password-wrap input { padding-right: 68px; }
+.tiana-password-toggle {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  min-height: 34px; border: 0; border-radius: 9px; padding: 0 9px;
+  background: transparent; color: #7145CE;
+  font: 700 .69rem "Poppins", sans-serif; cursor: pointer;
+}
+.tiana-password-toggle:focus-visible { outline: 2px solid #7544D9; outline-offset: 2px; }
+.tiana-auth-privacy { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: #8A8299; font-size: .67rem; line-height: 1.5; }
+.tiana-auth-privacy span { color: #D79B16; }
+.tiana-auth-submit, .tiana-welcome-continue {
+  width: 100%; min-height: 58px;
+  display: flex; align-items: center; justify-content: center; gap: 13px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,.38); border-radius: 15px;
+  padding: 12px 18px; color: #fff; text-decoration: none;
+  background: linear-gradient(105deg, #743CF2 0%, #8543F4 52%, #A855F7 100%);
+  box-shadow: 0 13px 28px rgba(108,57,226,.22), inset 0 1px 0 rgba(255,255,255,.24);
+  font: 700 .91rem "Poppins", sans-serif; cursor: pointer;
+  transition: transform .18s, filter .18s, box-shadow .18s;
+}
+.tiana-auth-submit svg, .tiana-welcome-continue svg { width: 21px; height: 21px; flex: 0 0 auto; }
+.tiana-auth-submit:hover, .tiana-welcome-continue:hover { filter: brightness(1.05); transform: translateY(-2px); box-shadow: 0 17px 34px rgba(108,57,226,.27); }
+.tiana-auth-submit:active, .tiana-welcome-continue:active { transform: scale(.99); }
+.tiana-auth-switch { margin: 20px 0 0; text-align: center; color: #817990; font-size: .77rem; }
+.tiana-auth-switch a { color: #6D2BD9; font-weight: 800; text-decoration: none; margin-left: 4px; }
+.tiana-auth-switch a:hover { text-decoration: underline; }
+.tiana-auth-footnote { margin: 16px 0 0; text-align: center; color: #A39CAE; font-size: .65rem; }
+.tiana-auth-error-summary { margin: 0 0 16px; padding: 11px 13px; border: 1px solid #F2C9D2; border-radius: 12px; background: #FFF5F7; color: #A52F4C; font-size: .77rem; }
+.tiana-auth-error-summary ul { margin: 0; padding-left: 18px; }
+.tiana-auth-form--login { gap: 19px; }
+.tiana-auth-form-inner--login .tiana-auth-heading { margin-bottom: 29px; }
+.tiana-auth-form-inner--login .tiana-field input { min-height: 59px; }
+
+/* POST-REGISTRATION WELCOME */
+.tiana-welcome-journey {
+  min-height: 100svh; min-height: 100dvh;
+  display: grid; place-items: center;
+  padding: clamp(14px, 3vw, 38px);
+}
+.tiana-welcome-card {
+  width: min(790px, 100%);
+  min-height: min(830px, calc(100dvh - 60px));
+  position: relative; overflow: hidden;
+  display: grid; grid-template-rows: minmax(370px, 1.1fr) auto;
+  border: 1px solid rgba(255,255,255,.92); border-radius: 34px;
+  background: #fff; box-shadow: 0 28px 90px rgba(64,36,117,.14);
+}
+.tiana-welcome-art { position: relative; min-height: 350px; overflow: hidden; background: #EDE5FF; }
+.tiana-welcome-art > img {
+  display: block; width: 100%; height: 100%; position: absolute; inset: 0;
+  object-fit: cover; object-position: center 20%;
+}
+.tiana-welcome-art-glow {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.25), transparent 35%, rgba(248,245,255,.06) 61%, #fff 100%);
+  pointer-events: none;
+}
+.tiana-welcome-logo { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); width: min(190px, 46%); }
+.tiana-welcome-logo img { display: block; width: 100%; height: auto; }
+.tiana-welcome-sparkle { position: absolute; color: #FFC01E; text-shadow: 0 4px 18px rgba(255,192,30,.45); pointer-events: none; }
+.tiana-welcome-sparkle--one { right: 12%; top: 29%; font-size: 30px; }
+.tiana-welcome-sparkle--two { left: 10%; top: 45%; font-size: 22px; }
+.tiana-welcome-copy { position: relative; padding: 4px clamp(24px, 6vw, 55px) clamp(28px, 5vw, 48px); text-align: center; }
+.tiana-welcome-kicker { display: inline-flex; align-items: center; gap: 9px; color: #7852CA; font-size: .62rem; font-weight: 800; letter-spacing: .13em; }
+.tiana-welcome-kicker i { width: 7px; height: 7px; border-radius: 50%; background: #DDA72A; box-shadow: 0 0 0 5px rgba(255,192,30,.15); }
+.tiana-welcome-copy h1 { margin: 15px auto 9px; max-width: 630px; color: #241047; font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.12; letter-spacing: -.06em; font-weight: 800; }
+.tiana-welcome-copy h1 > span:first-child { color: #6D2BD9; }
+.tiana-wave { display: inline-block; transform-origin: 70% 70%; animation: tiana-wave 1.8s ease-in-out infinite; }
+@keyframes tiana-wave { 0%,60%,100%{transform:rotate(0)} 10%,30%{transform:rotate(16deg)} 20%,40%{transform:rotate(-8deg)} }
+.tiana-welcome-lead { margin: 0; color: #5D4B7B; font-size: 1rem; font-weight: 700; }
+.tiana-welcome-description { max-width: 490px; margin: 8px auto 23px; color: #827A93; font-size: .88rem; line-height: 1.65; }
+.tiana-welcome-continue { max-width: 510px; min-height: 59px; margin: 0 auto; border-radius: 16px; }
+
+.tiana-welcome-reassurance { margin: 16px 0 0; color: #A198AE; font-size: .68rem; }
+.tiana-welcome-reassurance span { color: #D9A01B; }
+
+/* PHONE: match the clean, single-screen reference — no mini photo banner. */
+@media (max-width: 760px) {
+  .tiana-auth-view { display: grid; min-height: 100svh; min-height: 100dvh; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); }
+  .tiana-auth-shell, .tiana-auth-shell--login {
+    width: min(100%, 510px); min-height: 0;
+    display: block; overflow: visible;
+    border: 1px solid rgba(255,255,255,.94); border-radius: 26px;
+    box-shadow: 0 18px 56px rgba(64,36,117,.11);
+  }
+  .tiana-auth-visual { display: none; }
+  .tiana-auth-form-panel { display: block; padding: 26px 22px 24px; border-radius: 26px; }
+  .tiana-auth-form-inner { width: 100%; max-width: 100%; }
+  .tiana-auth-mobile-brand { display: block; width: min(174px, 54%); margin: 0 auto 18px; }
+  .tiana-auth-heading { margin-bottom: 20px; text-align: center; }
+  .tiana-auth-eyebrow { font-size: .59rem; margin-bottom: 8px; }
+  .tiana-auth-form-inner h1 { font-size: clamp(1.65rem, 7vw, 2.05rem); }
+  .tiana-auth-intro { margin: 8px auto 0; font-size: .78rem; line-height: 1.55; }
+  .tiana-field-grid { gap: 12px; }
+  .tiana-field { gap: 6px; }
+  .tiana-field label { font-size: .69rem; }
+  .tiana-field input { min-height: 51px; border-radius: 12px; font-size: .79rem; }
+  .tiana-auth-form { gap: 13px; }
+  .tiana-auth-privacy { font-size: .63rem; }
+  .tiana-auth-submit { min-height: 54px; border-radius: 13px; }
+  .tiana-auth-switch { margin-top: 17px; font-size: .72rem; }
+  .tiana-auth-footnote { margin-top: 12px; font-size: .61rem; }
+  .tiana-auth-form-inner--login .tiana-auth-heading { margin-bottom: 24px; }
+  .tiana-auth-form-inner--login .tiana-field input { min-height: 55px; }
+  .tiana-welcome-journey { display: block; min-height: 100svh; padding: 0; }
+  .tiana-welcome-card { width: 100%; min-height: 100svh; min-height: 100dvh; grid-template-rows: minmax(40svh, 1fr) auto; border: 0; border-radius: 0; box-shadow: none; }
+  .tiana-welcome-art { min-height: 40svh; }
+  .tiana-welcome-logo { top: max(18px, env(safe-area-inset-top)); width: 164px; }
+  .tiana-welcome-copy { padding: 0 23px calc(23px + env(safe-area-inset-bottom)); }
+  .tiana-welcome-copy h1 { font-size: clamp(1.8rem, 7.5vw, 2.35rem); margin-top: 10px; }
+  .tiana-welcome-description { margin-bottom: 17px; font-size: .81rem; }
+  .tiana-welcome-continue { min-height: 55px; font-size: .80rem; }
+}
+@media (max-width: 380px) {
+  .tiana-auth-view { padding-left: 10px; padding-right: 10px; }
+  .tiana-auth-form-panel { padding: 22px 17px 20px; }
+  .tiana-auth-field-grid { grid-template-columns: 1fr; }
+  .tiana-auth-mobile-brand { width: 158px; }
+  .tiana-welcome-copy { padding-left: 19px; padding-right: 19px; }
+}
+@media (max-height: 720px) and (min-width: 761px) {
+  .tiana-auth-shell { min-height: 700px; }
+  .tiana-auth-form-panel { padding-top: 25px; padding-bottom: 25px; }
+  .tiana-auth-heading { margin-bottom: 16px; }
+  .tiana-field-grid { gap: 10px; }
+  .tiana-field input { min-height: 47px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tiana-wave { animation: none; }
+  .tiana-auth-submit, .tiana-welcome-continue { transition: none; }
+}

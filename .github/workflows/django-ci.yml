@@ -2,9 +2,13 @@ name: Django CI
 
 on:
   push:
-    branches: ["feat/tiana-full-app-redesign-20261029"]
+    branches:
+      - "feat/tiana-django-rebuild-enhanced-mvp-20261029"
+      - "feat/nkem-reference-welcome-screen-20261030"
   pull_request:
-    branches: ["main"]
+    branches:
+      - "main"
+      - "feat/tiana-django-rebuild-enhanced-mvp-20261029"
 
 jobs:
   test:

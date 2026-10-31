@@ -1,12 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="TIANA">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#7542f5"/>
-      <stop offset="1" stop-color="#b64df0"/>
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="19" fill="url(#g)"/>
-  <path d="M15 17h34v7H36v26h-8V24H15z" fill="#fff"/>
-  <path d="M44 10c5-2 9 2 11 8-5 1-10-2-11-8z" fill="#f14b83" transform="rotate(28 49 14)"/>
-  <circle cx="49" cy="46" r="4" fill="#20cdbf"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Nkem"><rect width="64" height="64" rx="19" fill="#7651F5"/><path d="M16 46V18h7l17 17V18h8v28h-7L24 29v17z" fill="#fff"/><path d="M43 9c7 1 11 6 12 13-7-1-13-5-14-10-.3-2 .4-3 2-3Z" fill="#FF527D"/><circle cx="52.5" cy="48.5" r="4.3" fill="#16CBD5"/></svg>
