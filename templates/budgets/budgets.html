@@ -11,7 +11,7 @@
     <a class="budget-create-tile" href="{% url 'budget_create' %}"><span>＋</span><strong>New budget</strong><small>Set a spending plan</small></a>
   </div>
   <section class="budget-allocation-card">
-    <div class="budget-section-heading"><div><p class="ui-eyebrow">YOUR MONTHLY SNAPSHOT</p><h2>Budgeting</h2><p>Planned amounts by category.</p></div><a href="{% url 'insights' %}">View analytics <span>↗</span></a></div>
+    <div class="budget-section-heading"><div><p class="ui-eyebrow">YOUR BUDGET SNAPSHOT</p><h2>Budgeting</h2><p>Planned amounts across your categories.</p></div><a href="{% url 'insights' %}">View analytics <span>↗</span></a></div>
     <div class="budget-allocation-layout">
       <div class="budget-donut" data-budget-donut role="img" aria-label="Budget allocation by category"><div class="budget-donut-hole"><small>Total planned</small><strong data-budget-total>0</strong><span>{{ user.currency }}</span><i data-budget-spent>0 spent</i></div></div>
       <div class="budget-allocation-legend" data-budget-legend><p class="budget-legend-placeholder">Your category breakdown will appear here.</p></div>
@@ -22,7 +22,7 @@
     <div class="budget-plan-list">
     {% for item in budgets %}
       <article class="budget-plan-card" data-budget-item data-budget-name="{{ item.category|default:item.name|escape }}" data-budget-amount="{{ item.amount }}" data-budget-spent="{{ item.spent_amount }}">
-        <div class="budget-plan-top"><span class="budget-plan-icon budget-color-{{ forloop.counter0|divisibleby:5|yesno:'0,1' }}">₣</span><div class="budget-plan-copy"><strong>{{ item.name }}</strong><small>{% if item.category %}{{ item.category }}{% else %}All categories{% endif %} · {{ item.get_period_display }}</small></div><span class="budget-plan-status {% if item.percent_used >= 100 %}is-over{% elif item.percent_used >= 80 %}is-near{% endif %}">{{ item.percent_used|floatformat:0 }}% used</span></div>
+        <div class="budget-plan-top"><span class="budget-plan-icon">₣</span><div class="budget-plan-copy"><strong>{{ item.name }}</strong><small>{% if item.category %}{{ item.category }}{% else %}All categories{% endif %} · {{ item.get_period_display }}</small></div><span class="budget-plan-status {% if item.percent_used >= 100 %}is-over{% elif item.percent_used >= 80 %}is-near{% endif %}">{{ item.percent_used|floatformat:0 }}% used</span></div>
         <div class="budget-plan-values"><strong>{{ item.spent_amount|floatformat:0 }} <small>spent</small></strong><span>{{ item.remaining_amount|floatformat:0 }} {{ user.currency }} remaining</span></div>
         <div class="budget-plan-track"><span style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div>
         <div class="budget-plan-foot"><span>{{ item.amount|floatformat:0 }} {{ user.currency }} planned</span><span>{{ item.get_period_display }}</span></div>
