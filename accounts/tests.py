@@ -94,20 +94,33 @@ class AccountTests(TestCase):
         )
         self.assertRedirects(response, reverse("dashboard"))
 
+    def test_tiana_welcome_and_onboarding_static_assets_exist(self):
+        assets = (
+            "assets/tiana-logo-transparent.png",
+            "assets/tiana-welcome-student-campus-4k.jpg",
+            "assets/tiana-onboarding-money-clarity-4k.webp",
+            "assets/tiana-onboarding-savings-goals-4k.webp",
+            "assets/tiana-onboarding-ai-coach-4k.webp",
+        )
+        for asset in assets:
+            with self.subTest(asset=asset):
+                self.assertIsNotNone(finders.find(asset), msg=f"Missing static asset: {asset}")
+
     def test_onboarding_uses_4k_photography_and_no_fake_status_bar(self):
         response = self.client.get(reverse("onboarding"))
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/onboarding.html")
-        self.assertContains(response, "assets/tiana-logo-transparent.png")
         for asset in (
+            "assets/tiana-logo-transparent.png",
             "assets/tiana-onboarding-money-clarity-4k.webp",
             "assets/tiana-onboarding-savings-goals-4k.webp",
             "assets/tiana-onboarding-ai-coach-4k.webp",
         ):
             with self.subTest(asset=asset):
                 self.assertContains(response, asset)
-                self.assertIsNotNone(finders.find(asset))
+        self.assertContains(response, "Skip")
+        self.assertContains(response, "Next")
         self.assertNotContains(response, "onboarding-status")
         self.assertNotContains(response, "onboarding-status-icons")
         self.assertNotContains(response, "9:41")
