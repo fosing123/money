@@ -19,7 +19,7 @@ class WelcomePageTests(TestCase):
         self.assertNotContains(response, "welcome-status")
         self.assertNotContains(response, "welcome-time")
 
-    def test_onboarding_is_a_three_slide_feature_flow(self):
+    def test_onboarding_is_a_three_slide_photo_flow_without_fake_status_bar(self):
         response = self.client.get(reverse("onboarding"))
 
         self.assertEqual(response.status_code, 200)
@@ -27,7 +27,11 @@ class WelcomePageTests(TestCase):
         self.assertContains(response, "Take control of your money")
         self.assertContains(response, "Reach your goals faster")
         self.assertContains(response, "Your AI money coach")
-        self.assertContains(response, "assets/onboarding-control.svg")
-        self.assertContains(response, "assets/onboarding-goals.svg")
-        self.assertContains(response, "assets/onboarding-ai.svg")
+        self.assertContains(response, "assets/tiana-logo-transparent.png")
+        self.assertContains(response, "assets/tiana-onboarding-money-clarity-4k.webp")
+        self.assertContains(response, "assets/tiana-onboarding-savings-goals-4k.webp")
+        self.assertContains(response, "assets/tiana-onboarding-ai-coach-4k.webp")
         self.assertContains(response, reverse("register"))
+        self.assertNotContains(response, "onboarding-status")
+        self.assertNotContains(response, "onboarding-status-icons")
+        self.assertNotContains(response, "9:41")
