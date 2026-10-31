@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   const idx=buckets.reduce((best,v,i)=>v.expense>buckets[best].expense?i:best,0),guide=root.querySelector("[data-chart-guide]"),pIn=root.querySelector('[data-chart-point="income"]'),pOut=root.querySelector('[data-chart-point="expense"]');
   guide.setAttribute("x1",xAt(idx));guide.setAttribute("x2",xAt(idx));guide.setAttribute("opacity",filtered.length?"1":"0");
   [[pIn,buckets[idx].income],[pOut,buckets[idx].expense]].forEach(pair=>{pair[0].setAttribute("cx",xAt(idx));pair[0].setAttribute("cy",yAt(pair[1]));pair[0].setAttribute("opacity",filtered.length?"1":"0")});
+  const tooltip=root.querySelector("[data-chart-tooltip]"),tooltipText=root.querySelector("[data-chart-tooltip-text]");if(tooltip&&tooltipText){const dateLabel=period==="day"?"Today":buckets[idx].label||"Selected period";tooltip.setAttribute("transform","translate("+Math.max(92,Math.min(628,xAt(idx)))+" "+Math.max(56,yAt(buckets[idx].expense)-7)+")");tooltipText.textContent=fmt(buckets[idx].expense)+" FCFA · "+dateLabel;tooltip.setAttribute("opacity",filtered.length?"1":"0")}
   note.textContent=filtered.length?filtered.length+" recorded transaction"+(filtered.length===1?"":"s")+" · "+({day:"today",week:"this week",month:"this month",year:"this year"}[period]):"No transactions recorded in this period yet.";
   tabs.forEach(t=>{const active=t.dataset.activityPeriod===period;t.classList.toggle("is-active",active);t.setAttribute("aria-pressed",active?"true":"false")});
  }
