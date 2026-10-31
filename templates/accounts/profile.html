@@ -1,19 +1,25 @@
 {% extends 'base.html' %}
 {% block title %}Profile · TIANA{% endblock %}
 {% block content %}
-<section class="workspace-heading" data-reveal><div><h1>Profile</h1><p>Manage your personal details and app preferences.</p></div></section>
-<section class="profile-grid professional-profile-grid">
-  <div class="card profile-summary professional-profile-summary" data-reveal>
-    <div class="profile-avatar">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</div>
-    <h2>{{ user.get_full_name|default:user.username }}</h2>
-    <p>{{ user.email }}</p>
-    <a class="button button-secondary" href="{% url 'account_create' %}">Add account</a>
-    <a class="profile-secondary-link" href="{% url 'notifications' %}">Notification settings</a>
-    <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="button button-secondary" type="submit">Log out</button></form>
-  </div>
-  <div class="card professional-profile-form" data-reveal>
-    <div class="professional-panel-heading"><div><h2>Personal settings</h2><p>Update your details, currency and appearance.</p></div></div>
-    <form method="post">{% csrf_token %}{{ form.as_p }}<div class="form-actions"><button class="button" type="submit">Save changes</button></div></form>
+<section class="profile-page">
+  <header class="profile-page-heading"><div><p class="ui-eyebrow">YOUR SPACE</p><h1>Profile & preferences</h1><p>Make TIANA feel like yours. Keep your details and money settings up to date.</p></div><span class="profile-heading-orb" aria-hidden="true">✦</span></header>
+  <div class="profile-layout">
+    <aside class="profile-identity-card">
+      <div class="profile-identity-glow" aria-hidden="true"></div>
+      <div class="profile-large-avatar">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="Profile photo">{% else %}<span>{{ user.first_name|first|default:user.username|first|upper }}</span>{% endif %}</div>
+      <h2>{{ user.get_full_name|default:user.username }}</h2><p class="profile-email">{{ user.email }}</p>
+      <span class="profile-member-pill"><i></i> TIANA member</span>
+      <div class="profile-identity-links"><a href="{% url 'account_create' %}"><span>＋</span><span><strong>Add an account</strong><small>Connect cash, bank or mobile money</small></span><b>→</b></a><a href="{% url 'notifications' %}"><span>♧</span><span><strong>Notifications</strong><small>Manage your alerts</small></span><b>→</b></a></div>
+      <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="profile-logout" type="submit">Sign out of TIANA <span>↗</span></button></form>
+    </aside>
+    <section class="profile-settings-card">
+      <div class="profile-settings-heading"><span class="settings-icon">⚙</span><div><h2>Personal settings</h2><p>Small details that make your experience better.</p></div></div>
+      <form method="post" class="tiana-form profile-form" novalidate>{% csrf_token %}
+        {% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}<div class="tiana-field tiana-field-{{ field.name }}">{% if field.label %}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{% endif %}{{ field }}{% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}</div>{% endfor %}
+        <div class="profile-save-row"><p>Your preferences are private and can be changed anytime.</p><button class="button profile-save-button" type="submit">Save changes <span>→</span></button></div>
+      </form>
+    </section>
   </div>
 </section>
 {% endblock %}
