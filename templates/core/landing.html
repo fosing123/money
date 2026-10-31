@@ -14,14 +14,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="{% static 'assets/tiana-welcome-student-campus-4k.webp' %}" fetchpriority="high">
+  <link rel="preload" as="image" href="{% static 'assets/tiana-welcome-student-campus-4k.jpg' %}" fetchpriority="high">
   <link rel="preload" as="image" href="{% static 'assets/tiana-logo-transparent.png' %}">
   <link rel="stylesheet" href="{% static 'nkem/welcome.css' %}?v=20261031-tiana-welcome">
 </head>
 <body class="welcome-page">
   <main class="welcome-screen" aria-label="Welcome to TIANA">
     <picture class="welcome-photo" aria-hidden="true">
-      <source srcset="{% static 'assets/tiana-welcome-student-campus-4k.webp' %}" type="image/webp">
       <img
         src="{% static 'assets/tiana-welcome-student-campus-4k.jpg' %}"
         alt=""
