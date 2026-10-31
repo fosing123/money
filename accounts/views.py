@@ -36,14 +36,21 @@ def register_view(request):
                 password=form.cleaned_data["password1"],
                 first_name=form.cleaned_data["first_name"].strip(),
                 last_name=form.cleaned_data["last_name"].strip(),
+                phone_number=form.cleaned_data.get("phone_number", "").strip(),
             )
             Account.objects.create(owner=user, name="Daily money", account_type="cash", currency=user.currency)
             login(request, user)
-            messages.success(request, "Welcome to TIANA. Let's set up a plan that fits your life.")
-            return redirect("onboarding_setup")
+            return redirect("registration_welcome")
     else:
         form = RegisterForm()
     return render(request, "accounts/register.html", {"form": form})
+
+
+@login_required
+def registration_welcome_view(request):
+    if request.user.onboarding_completed:
+        return redirect("dashboard")
+    return render(request, "accounts/registration_welcome.html")
 
 
 def login_view(request):
@@ -65,7 +72,7 @@ def login_view(request):
                 if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
                     return redirect(next_url)
                 return redirect("dashboard" if authenticated.onboarding_completed else "onboarding_setup")
-            messages.error(request, "That sign-in didn't work. Check your details and try again.")
+            form.add_error(None, "That sign-in didn't work. Check your details and try again.")
     else:
         form = LoginForm()
     return render(request, "accounts/login.html", {"form": form})
