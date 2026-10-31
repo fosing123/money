@@ -8,10 +8,10 @@ document.addEventListener("DOMContentLoaded",()=>{
  const startOf=(d,p)=>{const x=new Date(d);x.setHours(0,0,0,0);if(p==="week"){x.setDate(x.getDate()-((x.getDay()+6)%7));return x}if(p==="month"){x.setDate(1);return x}if(p==="year"){x.setMonth(0,1);return x}return x};
  function render(period){
   const end=new Date(today),start=period==="day"?new Date(end.getTime()-86400000):startOf(end,period);
-  const filtered=rows.map(el=>({kind:el.dataset.kind,amount:Number(el.dataset.amount)||0,date:new Date(el.dataset.created||el.dataset.date)})).filter(x=>Number.isFinite(x.date.getTime())&&x.date>=start&&x.date<=end);
+  const filtered=rows.map(el=>({kind:el.dataset.kind,amount:Number(el.dataset.amount)||0,date:new Date((el.dataset.date||"")+"T12:00:00"),created:new Date(el.dataset.created||el.dataset.date)})).filter(x=>Number.isFinite(x.date.getTime())&&x.date>=start&&x.date<=end);
   const count=period==="day"?24:period==="week"?7:period==="month"?Math.max(1,end.getDate()):12;
   const buckets=Array.from({length:count},()=>({income:0,expense:0,label:""}));
-  filtered.forEach(x=>{let i=0;if(period==="day")i=x.date.getHours();else if(period==="week")i=Math.max(0,Math.min(6,Math.floor((new Date(x.date.getFullYear(),x.date.getMonth(),x.date.getDate())-start)/86400000)));else if(period==="month")i=x.date.getDate()-1;else i=x.date.getMonth();if(incKinds.has(x.kind))buckets[i].income+=x.amount;else if(outKinds.has(x.kind))buckets[i].expense+=x.amount});
+  filtered.forEach(x=>{let i=0;if(period==="day")i=Number.isFinite(x.created.getTime())?x.created.getHours():x.date.getHours();else if(period==="week")i=Math.max(0,Math.min(6,Math.floor((new Date(x.date.getFullYear(),x.date.getMonth(),x.date.getDate())-start)/86400000)));else if(period==="month")i=x.date.getDate()-1;else i=x.date.getMonth();if(incKinds.has(x.kind))buckets[i].income+=x.amount;else if(outKinds.has(x.kind))buckets[i].expense+=x.amount});
   buckets.forEach((b,i)=>{b.label=period==="day"?(i%6===0?(i===0?"12a":i+"h"):""):period==="week"?["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][i]:period==="month"?(i===0||i===count-1||(i+1)%5===0?String(i+1):""):["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][i]});
   const sumIn=filtered.filter(x=>incKinds.has(x.kind)).reduce((a,x)=>a+x.amount,0),sumOut=filtered.filter(x=>outKinds.has(x.kind)).reduce((a,x)=>a+x.amount,0);
   total.innerHTML=fmt(sumOut)+' <small>FCFA</small>';incomeOut.textContent=fmt(sumIn);expenseOut.textContent=fmt(sumOut);
