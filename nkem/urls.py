@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from accounts.views import login_view, logout_view, onboarding_setup_view, onboarding_view, profile_view, register_view
+from accounts.views import login_view, logout_view, onboarding_setup_view, onboarding_view, profile_view, register_view, registration_welcome_view
 from ai_assistant.views import ai_chat_view
 from budgets.views import budget_create_view, budget_list_view
 from core.views import dashboard_view, health_check_view, home_view
@@ -22,6 +22,7 @@ urlpatterns = [
     path("onboarding/", onboarding_view, name="onboarding"),
     path("setup/", onboarding_setup_view, name="onboarding_setup"),
     path("register/", register_view, name="register"),
+    path("welcome/", registration_welcome_view, name="registration_welcome"),
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
     path("profile/", profile_view, name="profile"),
