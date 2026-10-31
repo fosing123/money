@@ -39,7 +39,7 @@
         {% endif %}
         <form method="post" class="tiana-auth-form tiana-auth-form--login">
           {% csrf_token %}
-          <input type="hidden" name="next" value="{{ request.POST.next|default:request.GET.next }}">
+          <input type="hidden" name="next" value="{{ next_url }}">
           <div class="tiana-field">
             <label for="{{ form.username.id_for_label }}">Email address or username</label>
             <div class="tiana-input-wrap">
