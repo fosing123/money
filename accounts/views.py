@@ -30,12 +30,13 @@ def register_view(request):
             while User.objects.filter(username__iexact=username).exists():
                 username = f"{base_username[:140-len(str(counter))]}{counter}"
                 counter += 1
+            first_name, _, last_name = form.cleaned_data["full_name"].strip().partition(" ")
             user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=form.cleaned_data["password1"],
-                first_name=form.cleaned_data["first_name"].strip(),
-                last_name=form.cleaned_data["last_name"].strip(),
+                first_name=first_name.strip(),
+                last_name=last_name.strip(),
                 phone_number=form.cleaned_data.get("phone_number", "").strip(),
             )
             Account.objects.create(owner=user, name="Daily money", account_type="cash", currency=user.currency)
