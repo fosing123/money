@@ -33,9 +33,9 @@ Do not use the old D1 database for the Django ledger. Do not run migrations or i
 
 ### 2. R2 for uploaded media
 
-R2 is not enabled on this Cloudflare account yet. Enable R2 in the Cloudflare dashboard, create a bucket named `tiana-django-media`, then keep the `MEDIA` binding in `wrangler.jsonc`. The Django storage adapter writes media under the `tiana-media/` prefix.
+The Cloudflare R2 bucket `tiana-django-media` has already been created. Keep the `MEDIA` binding in `wrangler.jsonc`; the Django storage adapter writes media under the `tiana-media/` prefix.
 
-No S3 access keys are needed by the application when it uses the Worker R2 binding.
+No S3 access keys are needed by the application when it uses the Worker R2 binding. Before the first staging upload test, verify the deployed Worker has the `MEDIA` binding attached to this bucket.
 
 ### 3. Worker configuration and secrets
 
