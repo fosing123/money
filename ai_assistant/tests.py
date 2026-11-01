@@ -45,7 +45,7 @@ class AIRequestCostControlTests(TestCase):
         )
 
     @staticmethod
-    def fake_gemini_response():
+    def fake_gemini_response(*args, **kwargs):
         response = MagicMock()
         response.__enter__.return_value = response
         response.__exit__.return_value = False
