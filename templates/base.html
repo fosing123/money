@@ -8,10 +8,10 @@
 <title>{% block title %}TIANA · Personal finance{% endblock %}</title>
 <link rel="manifest" href="{% static 'manifest.webmanifest' %}"><link rel="icon" href="{% static 'money-mark.svg' %}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{% static 'nkem/app.css' %}?v=20261101-premium"><link rel="stylesheet" href="{% static 'nkem/theme.css' %}?v=20261101-palettes"><link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030"><link rel="stylesheet" href="{% static 'nkem/ui-polish.css' %}?v=20261101-premium">
+<link rel="stylesheet" href="{% static 'nkem/app.css' %}?v=20261101-premium-final"><link rel="stylesheet" href="{% static 'nkem/theme.css' %}?v=20261101-palettes-final"><link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030"><link rel="stylesheet" href="{% static 'nkem/ui-polish.css' %}?v=20261101-premium">
 {% block extra_head %}{% endblock %}
 </head>
-<body data-user-theme="{{ user.theme|default:'violet' }}">
+<body data-user-theme="{{ user.theme|default:'violet' }}" data-page="{{ request.resolver_match.url_name|default:'' }}">
 <header class="app-topbar">
 <a class="brand-wrap" href="{% url 'home' %}" aria-label="TIANA home"><img class="nkem-header-logo tiana-header-wordmark" src="{% static 'assets/tiana-logo-transparent.png' %}" alt="TIANA — Your Money Friend Always"></a>
 {% if user.is_authenticated %}
