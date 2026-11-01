@@ -2,26 +2,6 @@ name: Deploy TIANA Django Worker
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "accounts/**"
-      - "ai_assistant/**"
-      - "budgets/**"
-      - "core/**"
-      - "finance/**"
-      - "goals/**"
-      - "insights/**"
-      - "marketplace/**"
-      - "notifications/**"
-      - "nkem/**"
-      - "static/**"
-      - "templates/**"
-      - "worker.py"
-      - "wrangler.jsonc"
-      - "pyproject.toml"
-      - "uv.lock"
 
 concurrency:
   group: tiana-django-worker
