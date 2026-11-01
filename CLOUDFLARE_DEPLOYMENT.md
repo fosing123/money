@@ -3,8 +3,8 @@
 1. Create a Cloudflare account, add your existing domain and create a Pages project connected to this GitHub repository.
 2. Deploy branch feat/tiana-pwa-offline-premium-sync-20261101 for preview. Use no build command and set the output directory to web.
 3. Add the custom domain and follow Cloudflare DNS/HTTPS instructions. HTTPS is required for PWA installation, IndexedDB and browser encryption.
-4. Create D1 database tiana-ops and apply migrations/0001_telemetry.sql.
-5. Bind that database to the Pages project with the binding name exactly TIANA_DB.
+4. Create D1 database `tiana-ops`. Apply `migrations/0001_telemetry.sql` first and `migrations/0002_push.sql` second using Wrangler.
+5. The repository includes `wrangler.jsonc`, which is the source of truth for Pages Functions configuration. After creating D1, add its `database_id` under `d1_databases` in this file with binding exactly `TIANA_DB`, then commit and redeploy. Do not add a conflicting dashboard binding while this Wrangler configuration is active.
 6. Add secret ADMIN_TOKEN (generate a long random value). Add public variable GOOGLE_CLIENT_ID after configuring Google OAuth.
 7. Optionally add public ADSENSE_CLIENT_ID and ADSENSE_SLOT_ID only after AdSense approves the site.
 
@@ -55,3 +55,7 @@ The GitHub branch does not configure your Cloudflare domain, D1 binding, secrets
 9. Verify background delivery, that clicking the notification opens TIANA, and that disabling push removes the server-side token.
 
 The Pages Functions use FCM HTTP v1 and Web Crypto to create a short-lived OAuth assertion from `FIREBASE_SERVICE_ACCOUNT_JSON`. The Python Firebase Admin SDK snippet does not run inside Cloudflare Pages Functions. The service-account private key remains server-side.
+
+
+### Wrangler configuration note
+The repository's `wrangler.jsonc` declares `pages_build_output_dir: ./web` and is used for Pages Functions configuration. Cloudflare documents that when this file is present it becomes the source of truth for Pages project configuration. After D1 database creation, add the exact database ID to its `d1_databases` array with binding `TIANA_DB`, then commit and redeploy. Store credentials such as `ADMIN_TOKEN` and `FIREBASE_SERVICE_ACCOUNT_JSON` as encrypted Cloudflare secrets, not in the Wrangler file.
