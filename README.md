@@ -21,3 +21,11 @@ The service operates offline after the first install and app-shell cache, but an
 
 ## Honest limits
 Installation must be confirmed by the user; iOS/iPadOS users must use Safari Share -> Add to Home Screen. A device ban applies to an install ID, not a verified person. Browser storage can be cleared/evicted, so users should export and test backups.
+
+
+## Firebase web integration
+- The public Firebase web-app configuration is in `web/firebase-config.js`.
+- `web/firebase-bootstrap.js` initializes the Firebase app using the modular Web SDK pinned to version 13.0.0.
+- Firebase Analytics is loaded only after the user enables optional usage analytics in TIANA Settings. Turning that choice off disables Analytics collection.
+- Firebase Cloud Messaging (push delivery) is **not enabled yet**. Add the Web Push VAPID public key, integrate FCM into the existing root-scope `web/sw.js`, and configure a server-side sender before enabling push. Do not create a second root-scope service worker.
+- The Firebase web config is public client configuration, not a secret. Restrict its API key to the Firebase APIs TIANA uses and to the deployed website referrers. Never commit service-account private keys or other server credentials.
