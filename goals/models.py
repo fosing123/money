@@ -62,7 +62,7 @@ class GoalContribution(models.Model):
     )
     goal = models.ForeignKey(
         Goal,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="contributions",
     )
     transaction = models.OneToOneField(
