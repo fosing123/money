@@ -1,0 +1,5 @@
+# Configure these in Cloudflare Pages project settings.
+GOOGLE_CLIENT_ID=your-web-oauth-client-id.apps.googleusercontent.com
+ADSENSE_CLIENT_ID=
+ADSENSE_SLOT_ID=
+# ADMIN_TOKEN must be added as a Cloudflare secret, not committed here.
