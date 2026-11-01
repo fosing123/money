@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Delete savings goal · TIANA{% endblock %}
+{% block content %}
+<section class="entry-page delete-confirm-page">
+  <header class="entry-heading">
+    <a class="entry-back" href="{% url 'goals' %}" aria-label="Back to goals">←</a>
+    <div><p class="ui-eyebrow">SAVINGS GOALS</p><h1>Delete this goal?</h1></div>
+  </header>
+  <section class="entry-form-card delete-confirm-card">
+    <span class="delete-confirm-icon" aria-hidden="true">−</span>
+    <h2>{{ goal.name }}</h2>
+    <p>This permanently removes the goal and its progress history.</p>
+    {% if contribution_count %}
+      <div class="delete-goal-impact">
+        <strong>{{ contribution_count }} TIANA top-up{{ contribution_count|pluralize }}</strong>
+        <span>{{ contributed_total|floatformat:0 }} {{ goal.currency }} recorded from your account{{ contribution_count|pluralize }}</span>
+        <small>Those linked top-ups will be reversed and the source account balances recalculated. Any starting amount you entered when creating the goal was not moved from an account.</small>
+      </div>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-actions">
+        <a class="button button-secondary" href="{% url 'goals' %}">Keep goal</a>
+        <button class="button button-danger" type="submit">Delete goal</button>
+      </div>
+    </form>
+  </section>
+</section>
+{% endblock %}
