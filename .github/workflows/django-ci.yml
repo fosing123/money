@@ -8,6 +8,7 @@ on:
       - "feat/tiana-home-dashboard-tour-20261031"
       - "feat/tiana-ui-polish-profile-forms-20261031"
       - "feat/tiana-transaction-onboarding-refresh-20261101"
+      - "feat/tiana-pwa-offline-premium-sync-20261101"
   pull_request:
     branches:
       - "main"

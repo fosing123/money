@@ -1,4 +1,6 @@
 from decimal import Decimal
+import json
+import uuid
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -64,3 +66,63 @@ class FinanceTests(TestCase):
         ):
             with self.subTest(marker=marker):
                 self.assertContains(response, marker)
+
+
+    def test_offline_sync_is_idempotent_and_updates_the_account_once(self):
+        self.client.force_login(self.user)
+        entry_id = str(uuid.uuid4())
+        payload = {
+            "items": [{
+                "id": entry_id,
+                "kind": "expense",
+                "account_id": self.account.pk,
+                "amount": "1200.00",
+                "currency": "XAF",
+                "category": "Food",
+                "description": "Lunch",
+                "transaction_date": "2026-11-01",
+            }]
+        }
+
+        first = self.client.post(
+            reverse("offline_sync"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(first.status_code, 200)
+        self.assertEqual(first.json()["results"][0]["status"], "synced")
+        self.assertEqual(Transaction.objects.filter(offline_id=entry_id).count(), 1)
+
+        second = self.client.post(
+            reverse("offline_sync"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(second.status_code, 200)
+        self.assertTrue(second.json()["results"][0]["duplicate"])
+        self.assertEqual(Transaction.objects.filter(offline_id=entry_id).count(), 1)
+
+        self.account.refresh_from_db()
+        self.assertEqual(self.account.balance, Decimal("3800.00"))
+
+    def test_offline_sync_rejects_transfer_entries(self):
+        self.client.force_login(self.user)
+        payload = {
+            "items": [{
+                "id": str(uuid.uuid4()),
+                "kind": "transfer_out",
+                "account_id": self.account.pk,
+                "amount": "500.00",
+                "currency": "XAF",
+                "transaction_date": "2026-11-01",
+            }]
+        }
+        response = self.client.post(
+            reverse("offline_sync"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["results"][0]["status"], "rejected")
+        self.account.refresh_from_db()
+        self.assertEqual(self.account.balance, Decimal("5000.00"))
