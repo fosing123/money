@@ -31,8 +31,9 @@ def dashboard_view(request):
     expense_total = month_transactions.filter(kind__in=["expense", "transfer_out"]).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
     recent_transactions = Transaction.objects.filter(owner=user).select_related("account")[:6]
     budgets = Budget.objects.filter(owner=user)[:4]
-    goals = Goal.objects.filter(owner=user, status="active")[:4]
-    goal_savings_total = Goal.objects.filter(owner=user).aggregate(total=Sum("current_amount"))["total"] or Decimal("0.00")
+    goals = Goal.objects.filter(owner=user, status="active").prefetch_related("contributions__transaction")[:4]
+    all_goals = Goal.objects.filter(owner=user).prefetch_related("contributions__transaction")
+    goal_savings_total = sum((goal.saved_amount for goal in all_goals), Decimal("0.00"))
     budget_amount = sum((item.amount for item in budgets), Decimal("0.00"))
     budget_spent = sum((item.spent_amount for item in budgets), Decimal("0.00"))
     budget_usage_percent = min(100, float(budget_spent / budget_amount * 100)) if budget_amount > 0 else 0
