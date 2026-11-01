@@ -1,9 +1,12 @@
 from decimal import Decimal
+import csv
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http import HttpResponse
+from django.utils import timezone
 
 from .forms import AccountForm, TransactionForm
 from .models import Account, Transaction
@@ -111,3 +114,50 @@ def transaction_delete_view(request, pk):
         "transaction": item,
         "goal_contribution": contribution,
     })
+
+
+@login_required
+def transaction_export_view(request):
+    """Download the signed-in user's transactions as a spreadsheet-safe CSV."""
+    transactions = Transaction.objects.filter(owner=request.user).select_related("account")
+    selected_kind = request.GET.get("kind", "").strip()
+    selected_account = request.GET.get("account", "").strip()
+
+    if selected_kind in dict(Transaction.KIND_CHOICES):
+        transactions = transactions.filter(kind=selected_kind)
+    if selected_account.isdigit():
+        transactions = transactions.filter(account_id=int(selected_account))
+
+    def safe_text(value):
+        text = str(value or "")
+        # Prevent spreadsheet formula execution in user-entered text fields.
+        if text[:1] in {"=", "+", "-", "@", "\t", "\r"}:
+            return "'" + text
+        return text
+
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = (
+        f'attachment; filename="tiana-transactions-{timezone.localdate():%Y%m%d}.csv"'
+    )
+    response["Cache-Control"] = "private, no-store, max-age=0"
+    response["Pragma"] = "no-cache"
+    response["X-Content-Type-Options"] = "nosniff"
+    response.write("\ufeff")
+
+    writer = csv.writer(response)
+    writer.writerow([
+        "Date", "Description", "Merchant", "Type", "Category",
+        "Account", "Amount", "Currency",
+    ])
+    for item in transactions.order_by("transaction_date", "created_at"):
+        writer.writerow([
+            item.transaction_date.isoformat(),
+            safe_text(item.description),
+            safe_text(item.merchant),
+            item.get_kind_display(),
+            safe_text(item.category),
+            safe_text(item.account.name),
+            format(item.amount, "f"),
+            safe_text(item.currency),
+        ])
+    return response
