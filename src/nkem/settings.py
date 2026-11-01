@@ -82,7 +82,7 @@ if DATABASE_URL.startswith(("postgres://", "postgresql://")):
     database_backend = os.environ.get(
         "DJANGO_DB_BACKEND", "django.db.backends.postgresql"
     )
-    if database_backend == "django_pg8000":
+    if database_backend == "nkem.db_backends.pg8000":
         # Hyperdrive terminates TLS at its edge; pg8000 must use a plain
         # Worker TCP socket to the Hyperdrive endpoint.
         database_options = {"ssl_context": False}
