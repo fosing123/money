@@ -36,9 +36,12 @@
             {% else %}
               <span class="goal-complete-note">Archived</span>
             {% endif %}
-            {% if goal.contributions.count %}
-              <span class="goal-contribution-count">{{ goal.contributions.count }} top-ups</span>
-            {% endif %}
+            <div class="goal-card-actions">
+              {% if goal.contributions.count %}
+                <span class="goal-contribution-count">{{ goal.contributions.count }} top-ups</span>
+              {% endif %}
+              <a class="goal-delete-action" href="{% url 'goal_delete' goal.pk %}">Delete goal</a>
+            </div>
           </div>
         </div>
       </article>
