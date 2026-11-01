@@ -9,6 +9,7 @@ from django.utils import timezone
 from budgets.models import Budget
 from finance.models import Account, Transaction
 from goals.models import Goal
+from notifications.services import evaluate_spending_alerts
 
 
 def home_view(request):
@@ -30,6 +31,7 @@ def dashboard_view(request):
     income_total = month_transactions.filter(kind__in=["income", "refund", "transfer_in"]).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
     expense_total = month_transactions.filter(kind__in=["expense", "transfer_out"]).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
     recent_transactions = Transaction.objects.filter(owner=user).select_related("account")[:6]
+    evaluate_spending_alerts(user)
     budgets = Budget.objects.filter(owner=user)[:4]
     goals = Goal.objects.filter(owner=user, status="active").prefetch_related("contributions__transaction")[:4]
     all_goals = Goal.objects.filter(owner=user).prefetch_related("contributions__transaction")
@@ -43,16 +45,10 @@ def dashboard_view(request):
     category_one_percent = percentages[0] if len(percentages) > 0 else 0
     category_two_end = category_one_percent + (percentages[1] if len(percentages) > 1 else 0)
     category_three_end = category_two_end + (percentages[2] if len(percentages) > 2 else 0)
-    if expense_total > income_total and expense_total:
-        coach_tip = "Your expenses are a little higher than your income this month. That can happen. Let's look at one flexible category and choose one change that feels manageable—no need to overhaul everything."
-    elif budgets and any(item.percent_used >= 85 for item in budgets):
-        coach_tip = "One of your budgets is getting close to its limit. That's a helpful heads-up, not a failure. Check what's still coming this week and decide what matters most."
-    elif user.weekly_savings_target and user.weekly_income and user.weekly_savings_target > user.weekly_income * Decimal("0.30"):
-        coach_tip = "Your savings target is ambitious compared with your usual weekly income. A smaller target you can keep up with is often kinder—and more useful—than a perfect number."
-    elif recent_transactions:
-        coach_tip = "You're building a clearer picture of your money. Take a quick look at your last few entries and notice one thing you want to repeat next week."
-    else:
-        coach_tip = "Start with one honest entry: money in, money out, or a goal you care about. You don't need a perfect spreadsheet to make a good next decision."
+    coach_tip = (
+        "Get guidance shaped around your savings goals, weekly plan and recent activity. "
+        "Ask TIANA for a practical next step or help deciding what to prioritise."
+    )
     return render(request, "core/dashboard.html", {
         "accounts": accounts,
         "total_balance": total_balance,
