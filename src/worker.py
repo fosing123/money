@@ -4,26 +4,28 @@ The Worker refuses to boot the finance app without PostgreSQL/Hyperdrive.
 Static assets are served from the Worker Assets binding and uploaded media
 from the dedicated R2 bucket binding.
 """
+import asyncio
 import os
 from urllib.parse import unquote, urlsplit
 
 from workers import Response, WorkerEntrypoint, wsgi
 
 _application = None
+# Python Workers can overlap requests while a synchronous DB driver is waiting
+# on TCP. Serialize Django WSGI requests so a shared isolate never concurrently
+# drives the same synchronous PostgreSQL connection.
+_django_request_lock = asyncio.Lock()
 
 
-def _copy_secret(source, target=None):
-    value = getattr(_active_env, source, None)
+def _copy_secret(env, source, target=None):
+    value = getattr(env, source, None)
     if value is not None and str(value):
         os.environ[target or source] = str(value)
 
 
-_active_env = None
-
-
 class Default(WorkerEntrypoint):
     async def fetch(self, request):
-        global _application, _active_env
+        global _application
 
         path = urlsplit(request.url).path
 
@@ -51,7 +53,6 @@ class Default(WorkerEntrypoint):
         if not connection_string:
             return Response("TIANA staging database is not configured.", status=503)
 
-        _active_env = self.env
         required = {
             "DJANGO_SECRET_KEY": "SECRET_KEY",
             "ALLOWED_HOSTS": "ALLOWED_HOSTS",
@@ -65,21 +66,22 @@ class Default(WorkerEntrypoint):
             "FIREBASE_WEB_APP_ID": "FIREBASE_WEB_APP_ID",
             "FIREBASE_WEB_VAPID_KEY": "FIREBASE_WEB_VAPID_KEY",
         }
-        for source, target in required.items():
-            _copy_secret(source, target)
+        async with _django_request_lock:
+            for source, target in required.items():
+                _copy_secret(self.env, source, target)
 
-        os.environ["DATABASE_URL"] = str(connection_string)
-        os.environ["DEBUG"] = "0"
-        os.environ["DB_CONN_MAX_AGE"] = "0"
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nkem.settings")
-        os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
+            os.environ["DATABASE_URL"] = str(connection_string)
+            os.environ["DEBUG"] = "0"
+            os.environ["DB_CONN_MAX_AGE"] = "0"
+            os.environ["DJANGO_DB_BACKEND"] = "django_pg8000"
+            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nkem.settings")
+            os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
 
-        if not os.environ.get("SECRET_KEY") or not os.environ.get("ALLOWED_HOSTS"):
-            return Response("TIANA staging security settings are incomplete.", status=503)
+            if not os.environ.get("SECRET_KEY") or not os.environ.get("ALLOWED_HOSTS"):
+                return Response("TIANA staging security settings are incomplete.", status=503)
 
-        _active_env = self.env
-        if _application is None:
-            from django.core.wsgi import get_wsgi_application
-            _application = get_wsgi_application()
+            if _application is None:
+                from django.core.wsgi import get_wsgi_application
+                _application = get_wsgi_application()
 
-        return await wsgi.fetch(_application, request, self.env)
+            return await wsgi.fetch(_application, request, self.env)
