@@ -4,6 +4,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 import os
 
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -18,11 +19,18 @@ def env_list(name, default=""):
     return [item.strip() for item in os.environ.get(name, default).split(",") if item.strip()]
 
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "development-only-replace-before-deploy")
 DEBUG = env_bool("DEBUG", True)
-# Accept requests regardless of the incoming Host header (use only when this is intentional).
-ALLOWED_HOSTS = ["*"]
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = "local-development-only-not-for-production"
+    else:
+        raise ImproperlyConfigured("SECRET_KEY must be configured for production.")
+
+ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1" if DEBUG else "")
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", "")
+if not DEBUG and not ALLOWED_HOSTS:
+    raise ImproperlyConfigured("ALLOWED_HOSTS must list the deployed TIANA hostnames.")
 
 INSTALLED_APPS = [
     "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",
@@ -67,10 +75,12 @@ if DATABASE_URL.startswith(("postgres://", "postgresql://")):
         "PASSWORD": unquote(parsed.password or ""),
         "HOST": parsed.hostname or "localhost",
         "PORT": str(parsed.port or 5432),
-        "CONN_MAX_AGE": int(os.environ.get("DB_CONN_MAX_AGE", "60")),
-        "OPTIONS": {"sslmode": params.get("sslmode", ["prefer"])[0]},
+        "CONN_MAX_AGE": int(os.environ.get("DB_CONN_MAX_AGE", "60" if DEBUG else "0")),
+        "OPTIONS": {"sslmode": params.get("sslmode", ["prefer" if DEBUG else "require"])[0]},
     }}
 else:
+    if not DEBUG:
+        raise ImproperlyConfigured("Production TIANA requires PostgreSQL through Cloudflare Hyperdrive.")
     sqlite_path = DATABASE_URL.removeprefix("sqlite:///") if DATABASE_URL.startswith("sqlite:///") else "db.sqlite3"
     DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / sqlite_path, "CONN_MAX_AGE": 60}}
 
@@ -88,13 +98,28 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static", ("assets", BASE_DIR / "assets")]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "public" / "static"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    "default": (
+        {
+            "BACKEND": "django_cf.storage.R2Storage",
+            "OPTIONS": {
+                "binding": "MEDIA",
+                "location": "tiana-media",
+                "allow_overwrite": False,
+            },
+        }
+        if not DEBUG
+        else {"BACKEND": "django.core.files.storage.FileSystemStorage"}
+    ),
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        if not DEBUG
+        else "django.contrib.staticfiles.storage.StaticFilesStorage"
+    },
 }
 
 LOGIN_URL = "/login/"
@@ -120,7 +145,7 @@ ADSENSE_SLOT_ID = os.environ.get("ADSENSE_SLOT_ID", "").strip()
 ADSENSE_ENABLED = ADSENSE_CLIENT_ID.startswith("ca-pub-") and ADSENSE_SLOT_ID.isdigit()
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
+SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", not DEBUG)
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_CONTENT_TYPE_NOSNIFF = True
