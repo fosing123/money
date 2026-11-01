@@ -29,6 +29,17 @@ jobs:
         run: python -m pip install --upgrade pip && pip install -r requirements-django.txt
       - name: Check Django configuration
         run: python manage.py check
+
+      - name: Verify Cloudflare PostgreSQL backend imports
+        env:
+          DEBUG: "0"
+          SECRET_KEY: "ci-test-secret-key-not-for-production"
+          ALLOWED_HOSTS: "localhost"
+          DATABASE_URL: "postgresql://tiana:unused@127.0.0.1:5432/neondb"
+          DJANGO_DB_BACKEND: "django_pg8000"
+        run: |
+          PYTHONPATH=src python manage.py check
+          python -c "from django_pg8000.base import DatabaseWrapper; assert DatabaseWrapper.vendor == 'postgresql_pg8000'; print('pg8000 Django backend imported successfully')"
       - name: Check migration consistency
         run: python manage.py makemigrations --check --dry-run
       - name: Check Django service-worker JavaScript
