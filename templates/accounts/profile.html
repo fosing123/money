@@ -56,7 +56,7 @@
       <h2>Edit Profile</h2>
       <button type="button" data-profile-edit-close aria-label="Close profile editor">×</button>
     </div>
-    <form method="post" class="profile-edit-form" novalidate>
+    <form method="post" enctype="multipart/form-data" class="profile-edit-form" novalidate>
       {% csrf_token %}
       {% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}
       {% for field in form %}
