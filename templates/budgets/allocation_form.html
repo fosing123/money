@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Weekly allocations · TIANA{% endblock %}
+{% block content %}
+<section class="entry-page budget-allocation-edit-page" data-reveal>
+  <header class="entry-heading">
+    <a class="entry-back" href="{% url 'budgets' %}" aria-label="Back to budget">←</a>
+    <div><p class="ui-eyebrow">YOUR WEEKLY PLAN</p><h1>Where should your money go?</h1><p>Set limits that make sense for your actual week.</p></div>
+    <span class="entry-heading-art" aria-hidden="true">₣</span>
+  </header>
+  <section class="entry-form-card budget-allocation-edit-card">
+    <div class="entry-card-heading"><span class="entry-card-icon">▤</span><div><h2>Weekly category limits</h2><p>These amounts appear in your Budget and power automatic spending alerts.</p></div></div>
+    <form method="post" class="tiana-form" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="budget-allocation-edit-list">
+        {% for label, field, key in form.allocation_fields %}
+          <label class="budget-allocation-edit-row" for="{{ field.id_for_label }}">
+            <span class="budget-allocation-edit-icon" aria-hidden="true">
+              {% if key == "food" %}⌂{% elif key == "transport" %}↗{% elif key == "internet" %}⌁{% elif key == "school" %}▤{% elif key == "personal" %}✦{% else %}◇{% endif %}
+            </span>
+            <span class="budget-allocation-edit-label">{{ label }}</span>
+            <span class="budget-allocation-edit-input">{{ field }}<small>FCFA</small></span>
+          </label>
+          {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        {% endfor %}
+      </div>
+      <div class="budget-allocation-edit-summary"><span>Total planned each week</span><strong><b data-budget-edit-total>0</b> FCFA</strong></div>
+      <p class="budget-allocation-edit-note">Your weekly limits should fit within your weekly income after your savings target. You can set any category to zero.</p>
+      <div class="entry-form-footer"><div class="form-actions"><a class="button button-secondary" href="{% url 'budgets' %}">Cancel</a><button class="button" type="submit">Save weekly plan <span>→</span></button></div></div>
+    </form>
+  </section>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const inputs = [...document.querySelectorAll(".budget-allocation-edit-input input")];
+  const total = document.querySelector("[data-budget-edit-total]");
+  const format = (value) => new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
+  const update = () => {
+    const value = inputs.reduce((sum, input) => sum + Math.max(0, Number(input.value || 0)), 0);
+    if (total) total.textContent = format(value);
+  };
+  inputs.forEach((input) => input.addEventListener("input", update));
+  update();
+});
+</script>
+{% endblock %}
