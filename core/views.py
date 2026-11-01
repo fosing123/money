@@ -249,3 +249,12 @@ def offline_sync_view(request):
     response["Cache-Control"] = "private, no-store, max-age=0"
     response["Vary"] = "Cookie"
     return response
+
+
+@login_required
+def premium_view(request):
+    return render(request, "core/premium.html", {
+        "premium_active": request.user.has_active_premium,
+        "free_ai_daily_limit": 3,
+        "premium_ai_daily_limit": 20,
+    })

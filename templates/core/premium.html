@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}TIANA Premium · Your money friend{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <p class="ui-eyebrow">MORE ROOM TO GROW</p>
+  <h1>Make more of your money journey.</h1>
+  <p>TIANA Premium is being prepared for students who want deeper guidance and more room to plan.</p>
+</section>
+<section class="premium-page-grid">
+  <article class="card premium-plan-card">
+    <span class="premium-plan-label">FREE</span>
+    <h2>Everyday money clarity</h2>
+    <p>Keep building healthy money habits with the essentials.</p>
+    <ul>
+      <li>Income and expense tracking</li>
+      <li>Budgets and savings goals</li>
+      <li>Activity and spending insights</li>
+      <li>{{ free_ai_daily_limit }} AI coach requests per day</li>
+    </ul>
+  </article>
+  <article class="card premium-plan-card premium-plan-featured">
+    <span class="premium-plan-label">TIANA PREMIUM</span>
+    <h2>A little more power.</h2>
+    <p>More personalised guidance for your next financial steps.</p>
+    <ul>
+      <li>Everything in the free plan</li>
+      <li>Up to {{ premium_ai_daily_limit }} AI coach requests per day</li>
+      <li>Priority access to future advanced planning tools</li>
+      <li>Early access to new Premium features</li>
+    </ul>
+    {% if premium_active %}
+      <div class="premium-status premium-status-active">Premium access is active on your account.</div>
+    {% else %}
+      <div class="premium-status">Premium checkout is not connected yet. No payment is taken on this page.</div>
+      <button class="button button-secondary" type="button" disabled>Paid upgrade coming soon</button>
+    {% endif %}
+  </article>
+</section>
+<p class="premium-disclaimer">Premium access is only activated after a verified payment or an authorised administrator action. A displayed plan is not a payment confirmation. TIANA does not hold or move money.</p>
+<style>
+.premium-page-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:900px;margin:20px auto}
+.premium-plan-card{padding:24px;border-radius:22px}.premium-plan-card h2{font-size:1.35rem;margin:10px 0}.premium-plan-card p{color:var(--muted);line-height:1.6}
+.premium-plan-card ul{padding-left:19px;line-height:2;color:var(--text);font-size:.9rem}.premium-plan-label{display:inline-flex;padding:7px 11px;border-radius:99px;background:#f0ebff;color:#6749d7;font-size:.7rem;font-weight:800;letter-spacing:.08em}
+.premium-plan-featured{border:1px solid #bcaaff;background:linear-gradient(145deg,#fff,#f8f5ff)}.premium-status{margin:15px 0;padding:12px;border-radius:12px;background:#f8f5ff;color:#6b6380;font-size:.82rem;line-height:1.5}.premium-status-active{background:#eaf8f0;color:#23764e}.premium-disclaimer{max-width:900px;margin:0 auto;color:var(--muted);font-size:.78rem;line-height:1.6}
+@media(max-width:700px){.premium-page-grid{grid-template-columns:1fr}.premium-plan-card{padding:19px}}
+</style>
+{% endblock %}
