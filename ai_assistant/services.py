@@ -4,16 +4,20 @@ Only derived finance summaries are sent; never send passwords, API keys,
 bank credentials, full account identifiers, or contact details to the model.
 """
 import json
+import hashlib
+from datetime import timedelta
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from django.conf import settings
+from django.db import transaction as db_transaction
 from django.db.models import Sum
 from django.utils import timezone
 
 from budgets.models import Budget
 from finance.models import Transaction
 from goals.models import Goal
+from .models import AIResponseCache, AIUsage
 
 
 class AIConfigurationError(Exception):
@@ -21,6 +25,10 @@ class AIConfigurationError(Exception):
 
 
 class AIServiceError(Exception):
+    pass
+
+
+class AIUsageLimitError(AIServiceError):
     pass
 
 
@@ -61,12 +69,52 @@ def _user_snapshot(user):
     }
 
 
+def _reserve_ai_request(user):
+    daily_limit = 20 if user.has_active_premium else 3
+    today = timezone.localdate()
+    with db_transaction.atomic():
+        usage, _ = AIUsage.objects.get_or_create(user=user, usage_date=today)
+        usage = AIUsage.objects.select_for_update().get(pk=usage.pk)
+        if usage.request_count >= daily_limit:
+            if user.has_active_premium:
+                message = "You've reached today's 20 AI coach requests. Your allowance resets tomorrow."
+            else:
+                message = "You've used today's 3 free AI coach requests. Upgrade to TIANA Premium for a higher daily allowance."
+            raise AIUsageLimitError(message)
+        usage.request_count += 1
+        usage.save(update_fields=["request_count", "updated_at"])
+    return usage.pk
+
+
+def _release_ai_request(usage_id):
+    with db_transaction.atomic():
+        usage = AIUsage.objects.select_for_update().filter(pk=usage_id).first()
+        if usage and usage.request_count > 0:
+            usage.request_count -= 1
+            usage.save(update_fields=["request_count", "updated_at"])
+
+
 def generate_money_guidance(user, prompt):
     api_key = getattr(settings, "GEMINI_API_KEY", "") or getattr(settings, "AI_API_KEY", "")
     provider = getattr(settings, "AI_PROVIDER", "gemini").lower()
     model = getattr(settings, "GEMINI_MODEL", "") or getattr(settings, "AI_MODEL", "gemini-3.8-flash")
+
+    snapshot = _user_snapshot(user)
+    snapshot_json = json.dumps(snapshot, ensure_ascii=False, sort_keys=True)
+    normalized_prompt = " ".join(str(prompt).split()).casefold()
+    fingerprint = hashlib.sha256((normalized_prompt + "\\n" + snapshot_json).encode("utf-8")).hexdigest()
+    cached = AIResponseCache.objects.filter(
+        user=user,
+        fingerprint=fingerprint,
+        created_at__gte=timezone.now() - timedelta(hours=24),
+    ).first()
+    if cached:
+        return cached.response
+
     if provider != "gemini" or not api_key:
         raise AIConfigurationError("Gemini is not configured on the server yet.")
+
+    usage_id = _reserve_ai_request(user)
 
     system_prompt = (
         "You are TIANA, a warm, respectful personal money companion for students and young people "
@@ -89,7 +137,7 @@ def generate_money_guidance(user, prompt):
         "contents": [{
             "role": "user",
             "parts": [{"text": "Here is a limited summary of my finance app data (numbers are FCFA where noted):\n"
-                              + json.dumps(_user_snapshot(user), ensure_ascii=False)
+                              + snapshot_json
                               + "\n\nMy question:\n" + prompt}],
         }],
         # Keep configuration portable across current Gemini Flash model generations.
@@ -106,12 +154,14 @@ def generate_money_guidance(user, prompt):
         with urlopen(request, timeout=18) as response:
             payload = json.loads(response.read().decode("utf-8"))
     except HTTPError as exc:
+        _release_ai_request(usage_id)
         if exc.code in (401, 403):
             raise AIServiceError("Gemini did not accept the configured server key. Check GEMINI_API_KEY.") from exc
         if exc.code == 429:
             raise AIServiceError("The AI coach is taking a short breather. Please try again in a moment.") from exc
         raise AIServiceError("The AI coach could not complete that request right now.") from exc
     except (URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+        _release_ai_request(usage_id)
         raise AIServiceError("I couldn't reach the AI coach just now. Please try again shortly.") from exc
 
     try:
