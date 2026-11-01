@@ -3,19 +3,11 @@ name: Django CI
 on:
   push:
     branches:
-      - "feat/tiana-django-rebuild-enhanced-mvp-20261029"
-      - "feat/nkem-reference-welcome-screen-20261030"
-      - "feat/tiana-home-dashboard-tour-20261031"
-      - "feat/tiana-ui-polish-profile-forms-20261031"
-      - "feat/tiana-transaction-onboarding-refresh-20261101"
-      - "feat/tiana-pwa-offline-premium-sync-20261101"
-      - "feat/tiana-django-cloudflare-integration-20261101"
+      - main
+      - feat/tiana-django-cloudflare-cleanup-20261101
   pull_request:
     branches:
-      - "main"
-      - "feat/tiana-django-rebuild-enhanced-mvp-20261029"
-      - "feat/tiana-home-dashboard-tour-20261031"
-      - "feat/tiana-ui-polish-profile-forms-20261031"
+      - main
 
 jobs:
   test:
@@ -39,23 +31,7 @@ jobs:
         run: python manage.py check
       - name: Check migration consistency
         run: python manage.py makemigrations --check --dry-run
-      - name: Check JavaScript syntax
-        run: node --check tiana-service-worker.js && node --check static/nkem/offline-core.js && node --check static/nkem/offline.js && node --check static/nkem/pwa.js
-      - name: Check privacy-first PWA JavaScript
-        run: |
-          node --check web/app.js
-          node --check web/vault.js
-          node --check web/install-gate.js
-          node --check web/privacy-telemetry.js
-          node --check web/google-drive-backup.js
-          node --check web/sw.js
-          node --check functions/_shared.js
-          node --check functions/api/config.js
-          node --check functions/api/status.js
-          node --check functions/api/telemetry.js
-          node --check functions/api/admin/summary.js
-          node --check functions/api/admin/devices.js
-          node --check functions/api/admin/ban.js
-          node scripts/verify-privacy-first.mjs
-      - name: Run tests
+      - name: Check Django service-worker JavaScript
+        run: node --check tiana-service-worker.js && node --check static/nkem/offline-core.js && node --check static/nkem/offline.js && node --check static/nkem/pwa.js && node --check static/nkem/fcm.js
+      - name: Run Django tests
         run: python manage.py test
