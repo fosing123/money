@@ -173,7 +173,7 @@ def profile_view(request):
         form.save()
         messages.success(request, "Your profile has been updated.")
         return redirect("profile")
-    return render(request, "accounts/profile.html", {"form": form})
+    return render(request, "accounts/profile.html", {"form": form, "firebase_web_vapid_key": __import__("os").environ.get("FIREBASE_WEB_VAPID_KEY", "")})
 
 
 
