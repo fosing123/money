@@ -2,5 +2,12 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tiana-private-local-first",
   "compatibility_date": "2026-11-01",
-  "pages_build_output_dir": "./web"
+  "pages_build_output_dir": "./web",
+  "d1_databases": [
+    {
+      "binding": "TIANA_DB",
+      "database_name": "tiana-ops",
+      "database_id": "331dce6a-3cab-404e-a479-f73164b6d7b2"
+    }
+  ]
 }
