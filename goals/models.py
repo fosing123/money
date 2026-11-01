@@ -3,7 +3,6 @@ from decimal import Decimal
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum
 
 from core.validators import validate_uploaded_image
 
@@ -26,8 +25,10 @@ class Goal(models.Model):
 
     @property
     def contributed_amount(self):
-        total = self.contributions.aggregate(total=Sum("transaction__amount"))["total"]
-        return total or Decimal("0.00")
+        return sum(
+            (item.transaction.amount for item in self.contributions.select_related("transaction").all()),
+            Decimal("0.00"),
+        )
 
     @property
     def saved_amount(self):
