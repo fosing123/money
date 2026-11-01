@@ -1,0 +1,64 @@
+name: Clean up obsolete TIANA development branches
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prune:
+    name: Keep only the app and current Pages production branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete superseded development branches
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const keep = new Set([
+              "main",
+              "feat/tiana-pwa-offline-premium-sync-20261101"
+            ]);
+
+            const remove = [
+              "feat/deploy-ready-backups-20261027",
+              "feat/nkem-onboarding-first-five-20261028",
+              "feat/nkem-reference-welcome-screen-20261030",
+              "feat/tiana-django-cloudflare-cleanup-20261101",
+              "feat/tiana-django-cloudflare-integration-20261101",
+              "feat/tiana-django-integration",
+              "feat/tiana-django-rebuild-enhanced-mvp-20261029",
+              "feat/tiana-full-app-redesign-20261029",
+              "feat/tiana-home-dashboard-tour-20261031",
+              "feat/tiana-transaction-onboarding-refresh-20261101",
+              "feat/tiana-ui-polish-profile-forms-20261031",
+              "feat/tiana-welcome-screen-20261028",
+              "fix/nkem-validator-branding-20261028"
+            ];
+
+            for (const branch of remove) {
+              if (keep.has(branch)) continue;
+              try {
+                const { data } = await github.rest.repos.getBranch({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  branch
+                });
+                if (data.protected) {
+                  core.warning(`Skipping protected branch: ${branch}`);
+                  continue;
+                }
+                await github.rest.git.deleteRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `heads/${branch}`
+                });
+                core.info(`Deleted ${branch}`);
+              } catch (error) {
+                if (error.status === 404) {
+                  core.info(`Already absent: ${branch}`);
+                  continue;
+                }
+                throw error;
+              }
+            }
