@@ -1,12 +1,35 @@
 # TIANA Cloudflare Pages deployment
 
-1. Create a Cloudflare account, add your existing domain and create a Pages project connected to this GitHub repository.
-2. Deploy branch feat/tiana-pwa-offline-premium-sync-20261101 for preview. Use no build command and set the output directory to web.
-3. Add the custom domain and follow Cloudflare DNS/HTTPS instructions. HTTPS is required for PWA installation, IndexedDB and browser encryption.
-4. Create D1 database `tiana-ops`. Apply `migrations/0001_telemetry.sql` first and `migrations/0002_push.sql` second using Wrangler.
-5. The repository includes `wrangler.jsonc`, which is the source of truth for Pages Functions configuration. After creating D1, add its `database_id` under `d1_databases` in this file with binding exactly `TIANA_DB`, then commit and redeploy. Do not add a conflicting dashboard binding while this Wrangler configuration is active.
-6. Add secret ADMIN_TOKEN (generate a long random value). Add public variable GOOGLE_CLIENT_ID after configuring Google OAuth.
-7. Optionally add public ADSENSE_CLIENT_ID and ADSENSE_SLOT_ID only after AdSense approves the site.
+## Current Cloudflare setup
+
+- Pages project: `tiana-money`, connected to `fosing123/money`.
+- Production branch: `feat/tiana-pwa-offline-premium-sync-20261101`.
+- Repository root: `/`; build command: none; output directory: `web`.
+- Pages Functions live in the repository-root `functions/` directory.
+- Git build path filters include `web/`, `functions/`, `migrations/`, `wrangler.jsonc`, and the deployment documentation.
+- The Pages production environment has the `TIANA_DB` binding attached to D1 database `tiana-ops`.
+- The production `ADMIN_TOKEN` encrypted secret is configured. Store its value securely outside the repository.
+- The first successful production deployment is still pending; do not treat the project as live until the Pages deployment reports success and the URL has been tested.
+
+## Deployment and domain
+
+1. Push changes to the production branch. Cloudflare Pages builds and deploys matching changes automatically.
+2. Add the custom domain after the first successful deployment and follow Cloudflare DNS/HTTPS instructions. HTTPS is required for PWA installation, IndexedDB and browser encryption.
+3. Do not delete or repurpose the existing standalone Workers as part of this Pages deployment.
+
+## D1 and runtime configuration
+
+The existing D1 database `tiana-ops` has both migrations applied. Its verified application tables are `devices`, `device_event_days`, `daily_usage`, `payment_events`, and `push_subscriptions`. The foreign keys from `device_event_days` and `push_subscriptions` to `devices` both use `ON DELETE CASCADE`.
+
+The repository's `wrangler.jsonc` declares `pages_build_output_dir: ./web` and the `TIANA_DB` binding with the same D1 database ID used in the Pages production configuration. Keep those declarations aligned when making future configuration changes.
+
+The encrypted production secret `ADMIN_TOKEN` protects the operations console at `/admin.html`. Add the freshly rotated Firebase service-account JSON as the encrypted Pages secret `FIREBASE_SERVICE_ACCOUNT_JSON` before attempting live push delivery. Never commit service-account JSON or paste its private key into chat. A local Wrangler setup can use:
+
+```powershell
+npx wrangler pages secret put FIREBASE_SERVICE_ACCOUNT_JSON --project-name=tiana-money
+```
+
+Add public variable `GOOGLE_CLIENT_ID` only after configuring Google OAuth. Optionally add public `ADSENSE_CLIENT_ID` and `ADSENSE_SLOT_ID` only after AdSense approves the site.
 
 Pages Functions in functions/ are discovered automatically. D1 must be bound under TIANA_DB.
 
