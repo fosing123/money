@@ -17,6 +17,10 @@ class GoalAdmin(admin.ModelAdmin):
             return False
         return super().has_delete_permission(request, obj)
 
+    def delete_queryset(self, request, queryset):
+        protected_ids = queryset.filter(contributions__isnull=False).values_list("pk", flat=True)
+        super().delete_queryset(request, queryset.exclude(pk__in=protected_ids))
+
     @admin.display(description="Goal image")
     def preview(self, obj):
         if not obj or not obj.image:
