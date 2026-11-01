@@ -88,6 +88,8 @@ class AccountTests(TestCase):
         self.assertTrue(user.onboarding_completed)
         account = Account.objects.get(owner=user)
         self.assertEqual(str(account.opening_balance), "5000.00")
+        from budgets.models import Budget
+        self.assertFalse(Budget.objects.filter(owner=user).exists())
 
     def test_setup_preserves_monday_as_valid_payday_zero(self):
         user = User.objects.create_user(username="setupmonday", email="setupmonday@example.com", password="StrongPass123!")
@@ -295,3 +297,22 @@ class AccountTests(TestCase):
         ):
             with self.subTest(marker=marker):
                 self.assertContains(response, marker)
+
+
+    def test_mobile_navigation_exposes_marketplace_and_investment_placeholder(self):
+        user = User.objects.create_user(
+            username="navuser",
+            email="navuser@example.com",
+            password="StrongPass123!",
+            onboarding_completed=True,
+        )
+        self.client.force_login(user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse("opportunities"))
+        self.assertContains(response, reverse("investments"))
+        self.assertContains(response, "Market")
+        self.assertContains(response, "Invest")
+        invest = self.client.get(reverse("investments"))
+        self.assertEqual(invest.status_code, 200)
+        self.assertContains(invest, "Investing is coming soon")
