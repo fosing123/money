@@ -28,3 +28,23 @@ class Notification(models.Model):
 
     def __str__(self):
         return self.title
+
+
+
+class PushDevice(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="push_devices")
+    token = models.CharField(max_length=4096, unique=True)
+    device_id = models.CharField(max_length=128, blank=True, default="")
+    platform = models.CharField(max_length=20, default="web")
+    user_agent = models.CharField(max_length=512, blank=True, default="")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    last_seen_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-last_seen_at", "-updated_at"]
+        indexes = [models.Index(fields=["user", "is_active"], name="push_user_active_idx")]
+
+    def __str__(self):
+        return f"{self.user_id} · {self.platform}"
