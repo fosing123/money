@@ -545,8 +545,8 @@ function moveIntroPage(direction){
 function renderOnboarding(){
  if(onboardingStep===0.6||onboardingStep===0.7||onboardingStep===0.8){
   var num=onboardingStep===0.6?3:onboardingStep===0.7?4:5;
-  var screenTitle=onboardingStep===0.6?'Achieve your goals':onboardingStep===0.7?'Get smart advice with AI':'Your private money space';
-  var screenCopy=onboardingStep===0.6?'Save for school fees, a new laptop, travel, or anything that matters to you.':onboardingStep===0.7?'Chat with your money assistant. Ask questions, get tips, and make better decisions.':'No account is required. Your money records stay on this device. You can make an encrypted Google Drive backup whenever you choose.';
+  var screenTitle=onboardingStep===0.6?'Achieve your goals':onboardingStep===0.7?'Get thoughtful money guidance':'Your private money space';
+  var screenCopy=onboardingStep===0.6?'Save for school fees, a new laptop, travel, or anything that matters to you.':onboardingStep===0.7?'Use simple, private on-device tips. Your money questions stay on this phone and are not sent to an AI service.':'No account is required. Your money records stay on this device. You can make an encrypted Google Drive backup whenever you choose.';
   var art=onboardingStep===0.6?'./assets/onboarding-goals.webp':onboardingStep===0.7?'./assets/onboarding-ai.webp':'./assets/onboarding-account.webp';
   var inner='';
   if(onboardingStep===0.6){
