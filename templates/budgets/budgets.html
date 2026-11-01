@@ -7,7 +7,7 @@
   <div class="budget-account-strip">
     <article class="budget-mini-summary"><span class="budget-mini-icon">◎</span><small>Active budgets</small><strong>{{ budgets|length }}</strong></article>
     <article class="budget-mini-summary budget-mini-highlight"><span class="budget-mini-icon">✦</span><small>Personal currency</small><strong>{{ user.currency }}</strong></article>
-    <a class="budget-create-tile" href="{% url 'budget_create' %}"><span>＋</span><strong>New budget</strong></a>
+    <a class="budget-create-tile" href="{% url 'budget_allocations' %}"><span>✎</span><strong>Edit weekly plan</strong></a>
   </div>
   <section class="budget-allocation-card">
     <div class="budget-section-heading"><div><h2>Budget snapshot</h2></div><a href="{% url 'insights' %}">View analytics <span>↗</span></a></div>
@@ -17,7 +17,7 @@
     </div>
     <div class="budget-allocation-foot"><span><i></i> Planned budget</span><strong data-budget-planned>0 {{ user.currency }}</strong><span><i></i> Actual spent</span><strong data-budget-actual>0 {{ user.currency }}</strong></div>
   </section>
-  <section class="budget-list-section"><div class="budget-section-heading"><div><h2>Your budget plans</h2></div><div class="budget-heading-actions"><a href="{% url 'budget_allocations' %}">Edit weekly allocations</a><a href="{% url 'budget_create' %}">＋ Add budget</a></div></div>
+  <section class="budget-list-section"><div class="budget-section-heading"><div><h2>Your budget plans</h2></div><div class="budget-heading-actions"><a href="{% url 'budget_allocations' %}">Edit weekly plan</a></div></div>
     <div class="budget-plan-list">
     {% for item in budgets %}
       <article class="budget-plan-card" data-budget-item data-budget-name="{{ item.category|default:item.name|escape }}" data-budget-amount="{{ item.amount }}" data-budget-spent="{{ item.spent_amount }}">
@@ -25,9 +25,10 @@
         <div class="budget-plan-values"><strong>{{ item.spent_amount|floatformat:0 }} <small>spent</small></strong><span>{{ item.remaining_amount|floatformat:0 }} {{ user.currency }} remaining</span></div>
         <div class="budget-plan-track"><span style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div>
         <div class="budget-plan-foot"><span>{{ item.amount|floatformat:0 }} {{ user.currency }} planned</span><span>{{ item.get_period_display }}</span></div>
+        <div class="budget-plan-actions"><a href="{% url 'budget_delete' item.pk %}" aria-label="Delete {{ item.name }} budget">Delete budget</a></div>
       </article>
     {% empty %}
-      <div class="budget-empty"><span>◉</span><h3>Your budget starts with a plan</h3><a class="button" href="{% url 'budget_create' %}">Create your first budget →</a></div>
+      <div class="budget-empty"><span>◉</span><h3>Your budget starts with a plan</h3><a class="button" href="{% url 'budget_allocations' %}">Set weekly allocations →</a></div>
     {% endfor %}
     </div>
   </section>
