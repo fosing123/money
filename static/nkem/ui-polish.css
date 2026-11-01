@@ -397,3 +397,156 @@ body[data-user-theme="midnight"] .message-error{background:#3b202b!important;col
  body[data-page="profile"]{background:linear-gradient(145deg,#faf7f4 0%,var(--bg) 50%,color-mix(in srgb,var(--brand-soft),var(--bg) 60%) 100%)}
  body[data-page="profile"] .profile-screen{padding-top:0}
 }
+
+
+/* ---------------------------------------------------------
+   TIANA transaction + first-run setup refresh
+   --------------------------------------------------------- */
+.transaction-refresh-page{max-width:850px;padding-top:4px}
+.transaction-refresh-heading{align-items:center;gap:13px;margin:0 0 18px;padding:clamp(16px,3vw,24px);border:1px solid var(--line);border-radius:24px;background:linear-gradient(120deg,var(--brand-soft),var(--surface) 76%)}
+.transaction-refresh-heading .entry-back{width:48px;height:48px;flex-basis:48px}
+.transaction-refresh-heading .entry-back svg,.transaction-heading-mark svg{width:21px;height:21px}
+.transaction-refresh-heading .ui-eyebrow{margin-bottom:5px}
+.transaction-refresh-heading h1{font-size:clamp(1.7rem,5vw,2.35rem)}
+.transaction-refresh-heading>div>p:last-child{margin:6px 0 0;color:var(--muted);font-size:.8rem}
+.transaction-heading-mark{display:grid;place-items:center;width:48px;height:48px;flex:0 0 48px;border-radius:17px;background:color-mix(in srgb,var(--brand-primary),transparent 91%);color:var(--brand-primary)}
+.transaction-refresh-card{max-width:760px;padding:clamp(17px,3.5vw,29px);border-radius:27px}
+.transaction-refresh-card-heading{gap:13px;margin-bottom:18px}
+.transaction-refresh-card-heading .entry-card-icon{width:48px;height:48px;flex-basis:48px}
+.transaction-refresh-card-heading .entry-card-icon svg{width:23px;height:23px}
+.transaction-refresh-card-heading p{margin-top:4px}
+.transaction-refresh-form{gap:20px}
+.transaction-kind-section,.transaction-details-section{display:grid;gap:12px}
+.transaction-section-label{display:flex;align-items:center;gap:11px}
+.transaction-section-label>span{display:grid;place-items:center;width:29px;height:29px;flex:0 0 29px;border-radius:10px;background:var(--brand-soft);color:var(--brand-primary);font-size:.68rem;font-weight:900}
+.transaction-section-label strong,.transaction-section-label small{display:block}
+.transaction-section-label strong{font-size:.84rem;color:var(--text)}
+.transaction-section-label small{margin-top:1px;font-size:.68rem;color:var(--muted)}
+.transaction-kind-picker-large{padding:6px;border-radius:19px}
+.transaction-kind-picker-large button{display:flex;align-items:center;justify-content:flex-start;gap:11px;min-height:63px;padding:8px 12px;text-align:left}
+.transaction-kind-picker-large button>span:last-child{display:grid;gap:2px}
+.transaction-kind-picker-large button strong{font-size:.83rem;color:inherit}
+.transaction-kind-picker-large button small{font-size:.66rem;font-weight:600;color:var(--muted)}
+.transaction-kind-picker-large button.active small{color:var(--brand-primary);opacity:.75}
+.transaction-kind-icon{display:grid;place-items:center;width:39px;height:39px;flex:0 0 39px;border-radius:13px;background:var(--brand-soft);color:var(--brand-primary)}
+.transaction-kind-icon svg{width:20px;height:20px}
+.expense-kind-icon{background:color-mix(in srgb,#d85870,white 91%);color:#c94f67}
+.income-kind-icon{background:color-mix(in srgb,#17966f,white 90%);color:#168565}
+.transaction-kind-picker-large button.active[data-kind-choice=expense]{color:#c94f67}
+.transaction-kind-picker-large button.active[data-kind-choice=income]{color:#168565}
+.transaction-amount-panel{display:grid;gap:12px;padding:17px;border:1px solid color-mix(in srgb,var(--brand-primary),var(--line) 78%);border-radius:21px;background:linear-gradient(135deg,var(--brand-soft),var(--surface-soft) 68%)}
+.transaction-amount-control{display:flex;align-items:center;gap:11px;min-height:69px;padding:9px 15px;border:1px solid var(--line);border-radius:16px;background:var(--surface);transition:border-color .18s,box-shadow .18s}
+.transaction-amount-control:focus-within{border-color:var(--brand-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand-primary),transparent 88%)}
+.transaction-currency-prefix{padding:7px 9px;border-radius:9px;background:var(--brand-soft);color:var(--brand-primary);font-size:.72rem;font-weight:900;white-space:nowrap}
+.transaction-amount-control input{width:100%;min-width:0;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;color:var(--text);font-family:'Manrope',sans-serif;font-size:clamp(1.45rem,5vw,1.9rem);font-weight:850;letter-spacing:-.055em}
+.transaction-quick-amounts,.transaction-category-suggestions,.setup-savings-quick-amounts{display:flex;flex-wrap:wrap;gap:7px}
+.transaction-quick-amounts button,.transaction-category-suggestions button,.setup-savings-quick-amounts button{min-height:32px;padding:6px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);font-size:.68rem;font-weight:800;transition:background .18s,border-color .18s,color .18s,transform .18s}
+.transaction-quick-amounts button:hover,.transaction-quick-amounts button.is-active,.transaction-category-suggestions button.is-active,.transaction-category-suggestions button:hover,.setup-savings-quick-amounts button:hover,.setup-savings-quick-amounts button.is-active{border-color:var(--brand-primary);background:var(--brand-soft);color:var(--brand-primary);transform:translateY(-1px)}
+.transaction-amount-note{margin:0;color:var(--muted);font-size:.67rem;line-height:1.45}
+.transaction-fields-grid{gap:16px 13px}
+.transaction-fields-grid .tiana-field-account,.transaction-fields-grid .tiana-field-category,.transaction-fields-grid .tiana-field-description{grid-column:1/-1}
+.transaction-fields-grid .tiana-field-category{gap:9px}
+.transaction-category-suggestions{margin-top:1px}
+.transaction-optional{margin-left:4px;color:var(--muted);font-size:.66rem;font-weight:650}
+.transaction-refresh-footer{margin-top:3px}
+.transaction-refresh-footer>p{font-size:.68rem;line-height:1.45}
+.transaction-refresh-footer .form-actions{justify-content:space-between}
+.transaction-save-button{min-width:175px}
+.transaction-save-button span{font-size:1.1rem;transition:transform .18s}
+.transaction-save-button:hover span{transform:translateX(3px)}
+
+/* Setup gets its own compact wizard instead of the full-screen intro layout. */
+.setup-page-heading{align-items:flex-end;margin-bottom:16px}
+.setup-page-heading h1{font-size:clamp(1.8rem,5vw,2.55rem);letter-spacing:-.055em}
+.setup-page-heading>div>p:last-child{margin:7px 0 0;color:var(--muted);font-size:.82rem}
+.setup-wizard-shell{max-width:900px;margin:0 auto 28px;padding:clamp(18px,4vw,34px);border:1px solid var(--line);border-radius:28px;background:var(--surface);box-shadow:var(--shadow-sm)}
+.setup-progress-header{margin-bottom:28px}
+.setup-progress-topline,.setup-progress-caption{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.setup-progress-topline>span{font-size:.65rem;font-weight:900;letter-spacing:.13em;color:var(--brand-primary)}
+.setup-progress-topline>strong{font-size:.7rem;letter-spacing:.05em;color:var(--muted)}
+.setup-progress-topline>strong b{color:var(--text);font-size:.84rem}
+.setup-progress-topline>strong small{font-size:.67rem;color:var(--muted)}
+.setup-progress-track{height:6px;margin:12px 0 9px;overflow:hidden;border-radius:99px;background:var(--bg)}
+.setup-progress-track span{display:block;width:25%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--brand-primary),var(--brand-accent));transition:width .3s cubic-bezier(.2,.8,.2,1)}
+.setup-progress-caption{font-size:.68rem;color:var(--muted)}
+.setup-step-panel{display:none;min-height:0;padding:0 0 8px}
+.setup-step-panel.active{display:block;animation:setup-step-in .25s ease both}
+.setup-step-kicker{display:flex;align-items:center;gap:10px;margin-bottom:15px;color:var(--brand-primary);font-size:.67rem;font-weight:900;letter-spacing:.12em}
+.setup-step-kicker i{font-style:normal;opacity:.65}
+.setup-step-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:14px;background:var(--brand-soft);color:var(--brand-primary)}
+.setup-step-icon svg{width:21px;height:21px}
+.setup-step-panel h2{max-width:650px;margin:0 0 8px;color:var(--text);font-size:clamp(1.65rem,5vw,2.45rem);letter-spacing:-.06em;line-height:1.1}
+.setup-step-intro{max-width:580px;margin:0 0 22px;color:var(--muted);font-size:.82rem;line-height:1.55}
+.setup-wizard-shell .field-error{display:block;margin-top:6px;color:#d64f63;font-size:.7rem;font-weight:750}
+.setup-field-error{margin-top:12px}
+.priority-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.priority-card{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr) 25px;align-items:center;gap:11px;min-height:82px;padding:12px;border:1px solid var(--line);border-radius:17px;background:var(--surface);cursor:pointer;transition:transform .18s,border-color .18s,background .18s,box-shadow .18s}
+.priority-card:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--brand-primary),var(--line) 48%);box-shadow:var(--shadow-sm)}
+.priority-card>input{position:absolute;width:1px;height:1px;opacity:0}
+.priority-card:focus-within{outline:3px solid color-mix(in srgb,var(--brand-primary),transparent 72%);outline-offset:2px}
+.priority-card.is-selected{border-color:var(--brand-primary);background:linear-gradient(120deg,var(--brand-soft),var(--surface));box-shadow:0 7px 20px color-mix(in srgb,var(--brand-primary),transparent 91%)}
+.priority-card-icon{display:grid;place-items:center;width:43px;height:43px;border-radius:14px;background:var(--brand-soft);color:var(--brand-primary)}
+.priority-card-icon svg{width:22px;height:22px}
+.priority-card-copy{display:grid;gap:3px;min-width:0}
+.priority-card-copy strong{color:var(--text);font-size:.78rem;line-height:1.25}
+.priority-card-copy small{color:var(--muted);font-size:.63rem;line-height:1.35}
+.priority-card-check{display:grid;place-items:center;width:23px;height:23px;border:1.5px solid var(--line);border-radius:8px;color:transparent;font-size:.75rem;font-weight:900;transition:background .18s,color .18s,border-color .18s}
+.priority-card.is-selected .priority-card-check{border-color:var(--brand-primary);background:var(--brand-primary);color:#fff}
+.setup-income-card{max-width:620px;padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--surface-soft)}
+.setup-income-card>label,.setup-field-block>label,.setup-native-select>label{display:block;margin:0 0 9px;color:var(--text);font-size:.76rem;font-weight:850}
+.setup-money-control{display:flex;align-items:center;gap:10px;min-height:59px;padding:9px 13px;border:1px solid var(--line);border-radius:15px;background:var(--surface);transition:border-color .18s,box-shadow .18s}
+.setup-money-control:focus-within{border-color:var(--brand-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand-primary),transparent 88%)}
+.setup-money-control>span{padding:7px 9px;border-radius:9px;background:var(--brand-soft);color:var(--brand-primary);font-size:.68rem;font-weight:900}
+.setup-money-control input{width:100%;min-width:0;min-height:40px;padding:4px;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;color:var(--text);font-family:'Manrope',sans-serif;font-size:1.45rem;font-weight:850;letter-spacing:-.05em}
+.setup-money-control>small{color:var(--muted);font-size:.67rem;white-space:nowrap}
+.setup-income-estimate,.setup-savings-insight{display:flex;align-items:center;gap:10px;margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}
+.setup-estimate-icon{display:grid;place-items:center;width:35px;height:35px;flex:0 0 35px;border-radius:12px;background:var(--brand-soft);color:var(--brand-primary);font-size:1.05rem;font-weight:900}
+.setup-income-estimate>span:last-child,.setup-savings-insight>span:last-child{display:grid;gap:2px}
+.setup-income-estimate small,.setup-savings-insight small{font-size:.64rem;color:var(--muted)}
+.setup-income-estimate strong,.setup-savings-insight strong{font-size:.87rem;color:var(--text)}
+.setup-income-estimate strong b,.setup-savings-insight strong b{color:var(--brand-primary)}
+.setup-field-block{max-width:620px;margin-top:18px}
+.setup-field-block select,.setup-native-select select{width:100%;min-height:52px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface-soft);color:var(--text);font:inherit;font-size:.84rem}
+.setup-field-hint{display:block;margin-top:7px;color:var(--muted);font-size:.66rem;line-height:1.45}
+.setup-account-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;max-width:690px;margin:5px 0 11px}
+.setup-account-options button{display:grid;justify-items:center;gap:8px;min-height:83px;padding:12px 7px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--muted);transition:transform .18s,border-color .18s,background .18s}
+.setup-account-options button>span{display:grid;place-items:center;width:35px;height:35px;border-radius:12px;background:var(--brand-soft);color:var(--brand-primary);font-size:1.1rem;font-weight:850}
+.setup-account-options button strong{font-size:.68rem;color:var(--text)}
+.setup-account-options button.is-active{border-color:var(--brand-primary);background:var(--brand-soft);box-shadow:var(--shadow-sm)}
+.setup-native-select{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.setup-opening-balance-card{margin-top:22px}
+.setup-savings-quick-amounts{margin-top:13px}
+.setup-savings-insight{margin-top:16px}
+.setup-non-field-error{margin-top:14px}
+.setup-controls{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:25px;padding-top:18px;border-top:1px solid var(--line)}
+.setup-controls-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.setup-controls-note{max-width:260px;color:var(--muted);font-size:.66rem;text-align:right}
+.setup-controls .button{min-height:47px;border-radius:14px;white-space:nowrap}
+.setup-controls .button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.setup-save-button{background:linear-gradient(135deg,#825eea,#6445d9)}
+@keyframes setup-step-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){
+ .transaction-refresh-page{padding-top:0}
+ .transaction-refresh-heading{gap:10px;padding:15px;border-radius:20px}
+ .transaction-heading-mark{width:41px;height:41px;flex-basis:41px}
+ .transaction-refresh-card{padding:16px;border-radius:22px}
+ .transaction-fields-grid{grid-template-columns:1fr;gap:14px}
+ .transaction-fields-grid .tiana-field-account,.transaction-fields-grid .tiana-field-category,.transaction-fields-grid .tiana-field-description{grid-column:1}
+ .transaction-refresh-footer .form-actions{display:grid;grid-template-columns:.75fr 1.25fr}
+ .transaction-save-button{min-width:0}
+ .setup-page-heading{margin-bottom:13px}
+ .setup-wizard-shell{padding:17px;border-radius:23px}
+ .setup-progress-header{margin-bottom:22px}
+ .setup-step-panel h2{font-size:1.7rem}
+ .priority-options{grid-template-columns:1fr;gap:8px}
+ .priority-card{min-height:72px;padding:10px}
+ .setup-controls{align-items:flex-start;gap:9px}
+ .setup-controls-right{flex:1;flex-wrap:wrap;gap:8px}
+ .setup-controls-note{display:none}
+ .setup-controls .button{padding:11px 13px;font-size:.78rem}
+ .setup-account-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+ .setup-step-panel.active{animation:none}
+ .priority-card,.transaction-quick-amounts button,.transaction-category-suggestions button{transition:none}
+}
