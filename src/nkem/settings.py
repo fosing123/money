@@ -79,15 +79,30 @@ DATABASE_URL = (
 if DATABASE_URL.startswith(("postgres://", "postgresql://")):
     parsed = urlparse(DATABASE_URL)
     params = parse_qs(parsed.query)
+    database_backend = os.environ.get(
+        "DJANGO_DB_BACKEND", "django.db.backends.postgresql"
+    )
+    if database_backend == "nkem.db_backends.pg8000":
+        # Hyperdrive terminates TLS at its edge; pg8000 must use a plain
+        # Worker TCP socket to the Hyperdrive endpoint.
+        database_options = {"ssl_context": False}
+    elif database_backend == "django.db.backends.postgresql":
+        database_options = {
+            "sslmode": params.get("sslmode", ["prefer" if DEBUG else "require"])[0]
+        }
+    else:
+        raise ImproperlyConfigured(
+            f"Unsupported PostgreSQL backend: {database_backend!r}"
+        )
     DATABASES = {"default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": database_backend,
         "NAME": unquote(parsed.path.lstrip("/")),
         "USER": unquote(parsed.username or ""),
         "PASSWORD": unquote(parsed.password or ""),
         "HOST": parsed.hostname or "localhost",
         "PORT": str(parsed.port or 5432),
         "CONN_MAX_AGE": int(os.environ.get("DB_CONN_MAX_AGE", "60" if DEBUG else "0")),
-        "OPTIONS": {"sslmode": params.get("sslmode", ["prefer" if DEBUG else "require"])[0]},
+        "OPTIONS": database_options,
     }}
 else:
     if not DEBUG:

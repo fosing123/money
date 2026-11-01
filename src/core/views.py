@@ -1,22 +1,27 @@
 from decimal import Decimal, InvalidOperation
 from datetime import date
 import json
+import logging
 import uuid
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError, transaction as db_transaction
+from django.db import IntegrityError, connection, transaction as db_transaction
 from django.db.models import Sum
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
+from accounts.models import User
 from budgets.models import Budget
 from finance.models import Account, Transaction
 from goals.models import Goal
 from notifications.services import evaluate_spending_alerts
+
+
+logger = logging.getLogger(__name__)
 
 
 def home_view(request):
@@ -75,8 +80,44 @@ def dashboard_view(request):
     })
 
 
+@require_GET
 def health_check_view(request):
-    return JsonResponse({"status": "ok", "service": "tiana"})
+    """Check both Django startup and a real PostgreSQL round trip."""
+    try:
+        with db_transaction.atomic():
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+                database_ok = cursor.fetchone() == (1,)
+            if not database_ok:
+                raise RuntimeError("Database health probe returned an unexpected result.")
+
+            # Verify the two JSONField columns TIANA actually uses. Roll back
+            # the probe row so this public health endpoint never leaves data.
+            probe_name = f"__health_{uuid.uuid4().hex}"
+            expected_priorities = ["cloudflare", "pg8000"]
+            expected_allocations = {"health_probe": 1}
+            probe_user = User.objects.create(
+                username=probe_name,
+                email=f"{probe_name}@invalid.test",
+                financial_priorities=expected_priorities,
+                weekly_budget_allocations=expected_allocations,
+            )
+            saved_user = User.objects.get(pk=probe_user.pk)
+            if (
+                saved_user.financial_priorities != expected_priorities
+                or saved_user.weekly_budget_allocations != expected_allocations
+            ):
+                raise RuntimeError("PostgreSQL JSONField round-trip failed.")
+            db_transaction.set_rollback(True)
+    except Exception:
+        logger.exception("TIANA database health check failed")
+        return JsonResponse(
+            {"status": "degraded", "service": "tiana", "database": "unavailable"},
+            status=503,
+        )
+    return JsonResponse(
+        {"status": "ok", "service": "tiana", "database": "ok", "json_fields": "ok"}
+    )
 
 
 @login_required
