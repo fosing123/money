@@ -38,5 +38,7 @@ jobs:
         run: python manage.py check
       - name: Check migration consistency
         run: python manage.py makemigrations --check --dry-run
+      - name: Check JavaScript syntax
+        run: node --check tiana-service-worker.js && node --check static/nkem/offline-core.js && node --check static/nkem/offline.js && node --check static/nkem/pwa.js
       - name: Run tests
         run: python manage.py test

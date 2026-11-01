@@ -258,3 +258,12 @@ def premium_view(request):
         "free_ai_daily_limit": 3,
         "premium_ai_daily_limit": 20,
     })
+
+
+@require_GET
+def money_school_view(request):
+    return render(request, "core/money_school.html", {
+        "adsense_enabled": settings.ADSENSE_ENABLED,
+        "adsense_client_id": settings.ADSENSE_CLIENT_ID,
+        "adsense_slot_id": settings.ADSENSE_SLOT_ID,
+    })

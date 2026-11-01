@@ -114,6 +114,11 @@ GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
 AI_API_KEY = GEMINI_API_KEY or os.environ.get("AI_API_KEY", "")
 AI_MODEL = GEMINI_MODEL
 
+# AdSense remains disabled until Google approves the site and provides IDs.
+ADSENSE_CLIENT_ID = os.environ.get("ADSENSE_CLIENT_ID", "").strip()
+ADSENSE_SLOT_ID = os.environ.get("ADSENSE_SLOT_ID", "").strip()
+ADSENSE_ENABLED = ADSENSE_CLIENT_ID.startswith("ca-pub-") and ADSENSE_SLOT_ID.isdigit()
+
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
 SESSION_COOKIE_SECURE = not DEBUG

@@ -89,3 +89,11 @@ class PWAOfflineAndPremiumTests(TestCase):
         self.assertContains(response, "3 AI coach requests per day")
         self.assertContains(response, "20 AI coach requests per day")
         self.assertContains(response, "Premium checkout is not connected yet")
+
+
+    def test_money_school_is_public_and_ads_remain_disabled_without_approved_ids(self):
+        response = self.client.get(reverse("money_school"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Student Money School")
+        self.assertContains(response, "budget")
+        self.assertNotContains(response, "pagead2.googlesyndication.com")

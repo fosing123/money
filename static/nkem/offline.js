@@ -7,6 +7,11 @@
   const list = $("#offline-recent");
   const pending = $("#offline-pending");
   const submit = $("#offline-submit");
+  const dateInput = $("#offline-date");
+  if (dateInput && !dateInput.value) {
+    const now = new Date();
+    dateInput.value = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  }
 
   function setStatus(message, online) {
     if (!status) return;
@@ -49,11 +54,24 @@
       const sign = item.kind === "income" ? "+" : "−";
       const title = item.description || item.category || (item.kind === "income" ? "Income" : "Expense");
       const syncLabel = item.local ? (item.status === "needs_review" ? "Needs review" : "Waiting to sync") : (item.account || "");
+      const reviewMessage = item.local && item.status === "needs_review"
+        ? '<small class="offline-review-message">' + window.TianaOffline.escapeHTML(item.message || "Review this entry online.") + '</small>'
+        : "";
+      const discardAction = item.local
+        ? '<button type="button" class="offline-discard" data-offline-discard="' + window.TianaOffline.escapeHTML(item.id) + '">Discard</button>'
+        : "";
       return '<div class="offline-row"><span><b>' + window.TianaOffline.escapeHTML(title) + '</b><small>' +
         window.TianaOffline.escapeHTML(item.transaction_date || "") + ' · ' + window.TianaOffline.escapeHTML(syncLabel) +
-        '</small></span><strong class="' + (item.kind === "income" ? "is-income" : "is-expense") + '">' +
-        sign + window.TianaOffline.formatMoney(item.amount, item.currency) + '</strong></div>';
+        '</small>' + reviewMessage + '</span><strong class="' + (item.kind === "income" ? "is-income" : "is-expense") + '">' +
+        sign + window.TianaOffline.formatMoney(item.amount, item.currency) + discardAction + '</strong></div>';
     }).join("") || '<p class="offline-muted">No activity saved on this device yet.</p>';
+    list.querySelectorAll("[data-offline-discard]").forEach(button => {
+      button.addEventListener("click", async () => {
+        if (!window.confirm("Discard this unsynced entry from this device?")) return;
+        await window.TianaOffline.removePending(button.dataset.offlineDiscard);
+        await render();
+      });
+    });
     pending.textContent = queue.length + " waiting";
     const hasAccounts = !!(snapshot && snapshot.accounts && snapshot.accounts.length);
     if (account) account.disabled = !hasAccounts;
