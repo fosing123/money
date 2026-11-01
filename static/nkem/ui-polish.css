@@ -607,3 +607,12 @@ body[data-user-theme="midnight"] .profile-edit-heading{background:#1b1828}
 .setup-allocation-summary strong{color:var(--text);font-size:.88rem}
 .setup-allocation-summary strong b{color:var(--brand-primary)}
 @media(max-width:760px){.setup-allocation-row{grid-template-columns:34px minmax(0,1fr) minmax(105px,138px);gap:8px;padding:7px 9px}.setup-allocation-label{font-size:.73rem}.setup-allocation-icon{width:32px;height:32px}}
+
+.notification-source-label{display:inline-block;margin-right:2px;color:var(--brand-primary);font-size:.58rem;font-weight:900;letter-spacing:.08em}
+body[data-user-theme="midnight"] .profile-edit-backdrop{background:rgba(0,0,0,.62)}
+body[data-user-theme="midnight"] .profile-edit-panel{background:#1b1828;border-color:#393249}
+@media(max-width:360px){
+ .setup-allocation-row{grid-template-columns:30px minmax(0,1fr) minmax(96px,118px);gap:6px;padding:7px}
+ .setup-allocation-input input{font-size:.72rem;padding:7px 5px}
+ .setup-allocation-input small{font-size:.54rem}
+}
