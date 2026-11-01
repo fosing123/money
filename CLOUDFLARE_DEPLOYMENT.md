@@ -9,6 +9,7 @@ The Python Worker entrypoint is `src/worker.py`. Django applications, project se
 ## Architecture
 
 - **Application runtime:** Cloudflare Python Workers with Django's WSGI adapter.
+- **CPU budget:** Workers Paid plan with a 30-second per-request CPU limit. Django's import and initialization workload can exceed Free-plan limits; the staging Worker requires the Paid plan for reliable execution. This is configured as `limits.cpu_ms: 30000` in `wrangler.jsonc`.
 - **Financial database:** PostgreSQL through Cloudflare Hyperdrive.
 - **Uploaded profile and goal images:** Cloudflare R2, using the `MEDIA` bucket binding and Cloudflare's `django-cf` R2 storage backend.
 - **Static files:** `collectstatic` writes to `public/static/`; the Worker Assets binding serves `/static/*`.
