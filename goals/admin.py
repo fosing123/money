@@ -12,6 +12,11 @@ class GoalAdmin(admin.ModelAdmin):
     autocomplete_fields = ("owner",)
     readonly_fields = ("preview", "created_at", "updated_at")
 
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.contributions.exists():
+            return False
+        return super().has_delete_permission(request, obj)
+
     @admin.display(description="Goal image")
     def preview(self, obj):
         if not obj or not obj.image:
@@ -25,3 +30,9 @@ class GoalContributionAdmin(admin.ModelAdmin):
     list_filter = ("created_at",)
     search_fields = ("goal__name", "owner__username", "owner__email", "note")
     readonly_fields = ("owner", "goal", "transaction", "note", "created_at")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
