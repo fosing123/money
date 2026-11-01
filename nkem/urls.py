@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, reverse_lazy
+from django.contrib.auth.views import PasswordChangeDoneView, PasswordChangeView
 
-from accounts.views import login_view, logout_view, onboarding_setup_view, onboarding_view, profile_view, register_view, registration_welcome_view
+from accounts.views import application_security_view, login_view, logout_view, manage_devices_view, onboarding_setup_view, onboarding_view, profile_view, register_view, registration_welcome_view
 from ai_assistant.views import ai_chat_view
 from budgets.views import budget_create_view, budget_list_view
 from core.views import dashboard_view, health_check_view, home_view
@@ -26,6 +27,10 @@ urlpatterns = [
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
     path("profile/", profile_view, name="profile"),
+    path("profile/security/", application_security_view, name="application_security"),
+    path("profile/devices/", manage_devices_view, name="manage_devices"),
+    path("profile/password/", PasswordChangeView.as_view(template_name="accounts/password_change_form.html", success_url=reverse_lazy("password_change_done")), name="password_change"),
+    path("profile/password/done/", PasswordChangeDoneView.as_view(template_name="accounts/password_change_done.html"), name="password_change_done"),
     path("dashboard/", dashboard_view, name="dashboard"),
     path("accounts/new/", account_create_view, name="account_create"),
     path("transactions/", transaction_list_view, name="transactions"),
