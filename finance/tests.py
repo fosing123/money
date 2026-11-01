@@ -1,4 +1,6 @@
 from decimal import Decimal
+import csv
+from io import StringIO
 import json
 import uuid
 
@@ -126,3 +128,62 @@ class FinanceTests(TestCase):
         self.assertEqual(response.json()["results"][0]["status"], "rejected")
         self.account.refresh_from_db()
         self.assertEqual(self.account.balance, Decimal("5000.00"))
+
+
+    def test_transaction_csv_export_is_authenticated_and_scoped_to_the_current_user(self):
+        other = User.objects.create_user(username="bob", email="bob@example.com", password="StrongPass123!")
+        other_account = Account.objects.create(owner=other, name="Private wallet")
+        Transaction.objects.create(
+            owner=self.user,
+            account=self.account,
+            kind="expense",
+            amount=Decimal("1250.50"),
+            currency="XAF",
+            description="Lunch",
+            category="Food",
+            transaction_date="2026-11-01",
+        )
+        Transaction.objects.create(
+            owner=other,
+            account=other_account,
+            kind="income",
+            amount=Decimal("99999.00"),
+            currency="XAF",
+            description="Private income",
+            transaction_date="2026-11-01",
+        )
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("transaction_export"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response["Content-Disposition"].startswith("attachment;"))
+        self.assertEqual(response["Cache-Control"], "private, no-store, max-age=0")
+        rows = list(csv.reader(StringIO(response.content.decode("utf-8-sig"))))
+        self.assertEqual(rows[0], [
+            "Date", "Description", "Merchant", "Type", "Category",
+            "Account", "Amount", "Currency",
+        ])
+        self.assertEqual(len(rows), 2)
+        self.assertIn("Lunch", rows[1])
+        self.assertNotIn("Private income", response.content.decode("utf-8-sig"))
+
+    def test_transaction_csv_export_never_allows_spreadsheet_formulas_in_text(self):
+        Transaction.objects.create(
+            owner=self.user,
+            account=self.account,
+            kind="expense",
+            amount=Decimal("100"),
+            currency="XAF",
+            description="=HYPERLINK(\"https://example.invalid\",\"click\")",
+            category="Food",
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("transaction_export"))
+        rows = list(csv.reader(StringIO(response.content.decode("utf-8-sig"))))
+        self.assertEqual(rows[1][1], "'=HYPERLINK(\"https://example.invalid\",\"click\")")
+
+    def test_transaction_csv_export_requires_login(self):
+        response = self.client.get(reverse("transaction_export"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response["Location"])
