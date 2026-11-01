@@ -65,7 +65,8 @@ These are reference implementations to evaluate and port; they are not automatic
 - Validate PostgreSQL support for every migration, constraint, transaction and row-lock operation used by finance/goals.
 
 ### P1 — parity features
-- CSV exports for transactions and statement summaries.
+- [x] CSV export for transactions on the Activity screen (owner-scoped, no-store, spreadsheet-formula-safe; tests added; CI result pending).
+- [ ] Add date-range and statement-summary options to CSV exports.
 - JSON account export and validated import from the PWA backup format, with a pre-import preview and duplicate detection.
 - Encrypted local backup and optional Google Drive app-data backup/restore; the server must never receive the passphrase or plaintext backup.
 - FCM opt-in, device management, per-user token storage, push delivery, unsubscribe and dead-token cleanup.
