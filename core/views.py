@@ -70,3 +70,8 @@ def dashboard_view(request):
 
 def health_check_view(request):
     return JsonResponse({"status": "ok", "service": "tiana"})
+
+
+@login_required
+def investments_coming_soon_view(request):
+    return render(request, "core/investments_coming_soon.html")
