@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 from core.validators import validate_uploaded_image
 
@@ -30,8 +31,14 @@ class User(AbstractUser):
     payday_weekday = models.PositiveSmallIntegerField(choices=WEEKDAYS, null=True, blank=True)
     financial_priorities = models.JSONField(default=list, blank=True)
     weekly_budget_allocations = models.JSONField(default=dict, blank=True)
+    is_premium = models.BooleanField(default=False, help_text="Grant Premium access after verified payment or an authorised support decision.")
+    premium_expires_at = models.DateTimeField(blank=True, null=True)
 
     REQUIRED_FIELDS = ["email"]
+
+    @property
+    def has_active_premium(self):
+        return self.is_premium and (self.premium_expires_at is None or self.premium_expires_at > timezone.now())
 
     def __str__(self):
         return self.get_full_name() or self.username
