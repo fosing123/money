@@ -9,6 +9,7 @@ on:
       - "feat/tiana-ui-polish-profile-forms-20261031"
       - "feat/tiana-transaction-onboarding-refresh-20261101"
       - "feat/tiana-pwa-offline-premium-sync-20261101"
+      - "feat/tiana-django-cloudflare-integration-20261101"
   pull_request:
     branches:
       - "main"
