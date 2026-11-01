@@ -11,6 +11,7 @@
     storageBucket: "tiana-9632c.firebasestorage.app",
     messagingSenderId: "573252278637",
     appId: "1:573252278637:web:b4c5a5600e0a87df5aa264",
-    measurementId: "G-3ZH0V0B67C"
+    measurementId: "G-3ZH0V0B67C",
+    vapidPublicKey: "BBribgqIk3PI0TDvioC34aAzlCOgpntHQRfSVCgMqqFaA2t27bM03GgQLJYlCWcBDsyi9BEcYavppOPJVk81Fgs"
   });
 })(typeof self !== "undefined" ? self : window);

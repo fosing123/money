@@ -1,1 +1,48 @@
-(function(){"use strict";let token="";const $=s=>document.querySelector(s);function status(s){$("#status").textContent=s;}async function call(path,options={}){const r=await fetch(path,{...options,headers:{...(options.headers||{}),Authorization:"Bearer "+token}}),p=await r.json().catch(()=>({error:"Invalid server response."}));if(!r.ok)throw new Error(p.error||"Request failed ("+r.status+").");return p;}function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}function stat(label,n){return '<div class="stat"><small>'+esc(label)+'</small><strong>'+Number(n||0).toLocaleString()+'</strong></div>';}async function refresh(){const [s,d]=await Promise.all([call("/api/admin/summary"),call("/api/admin/devices")]);$("#stats").innerHTML=stat("Known opt-in installs",s.devices.total_devices)+stat("Active in 24 hours",s.devices.active_24h)+stat("Active in 7 days",s.devices.active_7d)+stat("Banned installs",s.devices.banned_devices);$("#usage").innerHTML=(s.usage||[]).map(x=>'<tr><td>'+esc(x.event_date)+'</td><td>'+esc(x.event_name)+'</td><td>'+Number(x.event_count).toLocaleString()+'</td></tr>').join("")||'<tr><td colspan="3">No usage events yet.</td></tr>';$("#devices").innerHTML=(d.devices||[]).map(x=>'<tr><td><code>'+esc(x.device_id)+'</code></td><td>'+esc(x.first_seen)+'</td><td>'+esc(x.last_seen)+'</td><td>'+(x.banned?'Banned':'Active')+'</td><td><button class="'+(x.banned?'secondary':'danger')+'" data-id="'+esc(x.device_id)+'" data-ban="'+(x.banned?'false':'true')+'">'+(x.banned?'Unban':'Ban')+'</button></td></tr>').join("")||'<tr><td colspan="5">No opt-in installations yet.</td></tr>';$("#payments").textContent="Payment gateway not connected. "+Number(s.payments.count||0)+" payment events currently stored.";document.querySelectorAll("[data-ban]").forEach(b=>b.addEventListener("click",async()=>{const banned=b.dataset.ban==="true",reason=banned?(prompt("Optional ban reason:")||""):"";try{await call("/api/admin/ban",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({deviceId:b.dataset.id,banned,reason})});status(banned?"Installation banned.":"Installation unbanned.");await refresh();}catch(e){status(e.message);}}));}$("#connect").addEventListener("click",async()=>{token=$("#admin-token").value.trim();if(!token)return status("Enter the admin token.");try{await refresh();$("#dashboard").classList.remove("hidden");$("#admin-token").value="";status("Connected. Token remains in this tab's memory.");}catch(e){token="";status(e.message);}});})();
+(function(){
+"use strict";
+let token="";
+const $=s=>document.querySelector(s);
+function status(s){$("#status").textContent=s;}
+function pushStatus(s){$("#push-status").textContent=s;}
+async function call(path,options={}){
+ const r=await fetch(path,{...options,headers:{...(options.headers||{}),Authorization:"Bearer "+token}});
+ const p=await r.json().catch(()=>({error:"Invalid server response."}));
+ if(!r.ok)throw new Error(p.error||"Request failed ("+r.status+").");
+ return p;
+}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function stat(label,n){return '<div class="stat"><small>'+esc(label)+'</small><strong>'+Number(n||0).toLocaleString()+'</strong></div>';}
+async function refresh(){
+ const [s,d]=await Promise.all([call("/api/admin/summary"),call("/api/admin/devices")]);
+ $("#stats").innerHTML=stat("Known opt-in installs",s.devices.total_devices)+stat("Active in 24 hours",s.devices.active_24h)+stat("Active in 7 days",s.devices.active_7d)+stat("Banned installs",s.devices.banned_devices);
+ $("#usage").innerHTML=(s.usage||[]).map(x=>'<tr><td>'+esc(x.event_date)+'</td><td>'+esc(x.event_name)+'</td><td>'+Number(x.event_count).toLocaleString()+'</td></tr>').join("")||'<tr><td colspan="3">No usage events yet.</td></tr>';
+ $("#devices").innerHTML=(d.devices||[]).map(x=>'<tr><td><code>'+esc(x.device_id)+'</code></td><td>'+esc(x.first_seen)+'</td><td>'+esc(x.last_seen)+'</td><td>'+(x.banned?'Banned':'Active')+'</td><td><button class="'+(x.banned?'secondary':'danger')+'" data-id="'+esc(x.device_id)+'" data-ban="'+(x.banned?'false':'true')+'">'+(x.banned?'Unban':'Ban')+'</button> <button class="secondary" data-push-target="'+esc(x.device_id)+'">Use for push</button></td></tr>').join("")||'<tr><td colspan="5">No installations yet.</td></tr>';
+ $("#payments").textContent="Payment gateway not connected. "+Number(s.payments.count||0)+" payment events currently stored.";
+ document.querySelectorAll("[data-ban]").forEach(b=>b.addEventListener("click",async()=>{
+  const banned=b.dataset.ban==="true",reason=banned?(prompt("Optional ban reason:")||""):"";
+  try{await call("/api/admin/ban",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({deviceId:b.dataset.id,banned,reason})});status(banned?"Installation banned.":"Installation unbanned.");await refresh();}
+  catch(e){status(e.message);}
+ }));
+ document.querySelectorAll("[data-push-target]").forEach(b=>b.addEventListener("click",()=>{
+  $("#push-device-id").value=b.dataset.pushTarget;
+  pushStatus("Target installation selected. Send a test message to this installation.");
+  $("#push-title").focus();
+ }));
+}
+$("#send-push").addEventListener("click",async()=>{
+ const title=$("#push-title").value.trim(),body=$("#push-body").value.trim(),deviceId=$("#push-device-id").value.trim(),link=$("#push-link").value.trim();
+ if(!title||!body){pushStatus("Enter a title and message.");return;}
+ const button=$("#send-push");button.disabled=true;pushStatus("Sending notification…");
+ try{
+  const result=await call("/api/push/send",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title,body,deviceId,link})});
+  pushStatus("Finished. Targeted: "+result.targeted+" · Sent: "+result.sent+" · Failed: "+result.failed+" · Stale tokens removed: "+result.staleTokensRemoved+".");
+ }catch(e){pushStatus(e.message);}
+ finally{button.disabled=false;}
+});
+$("#connect").addEventListener("click",async()=>{
+ token=$("#admin-token").value.trim();
+ if(!token)return status("Enter the admin token.");
+ try{await refresh();$("#dashboard").classList.remove("hidden");$("#admin-token").value="";status("Connected. Token remains in this tab's memory.");}
+ catch(e){token="";status(e.message);}
+});
+})();

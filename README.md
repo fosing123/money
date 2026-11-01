@@ -29,3 +29,14 @@ Installation must be confirmed by the user; iOS/iPadOS users must use Safari Sha
 - Firebase Analytics is loaded only after the user enables optional usage analytics in TIANA Settings. Turning that choice off disables Analytics collection.
 - Firebase Cloud Messaging (push delivery) is **not enabled yet**. Add the Web Push VAPID public key, integrate FCM into the existing root-scope `web/sw.js`, and configure a server-side sender before enabling push. Do not create a second root-scope service worker.
 - The Firebase web config is public client configuration, not a secret. Restrict its API key to the Firebase APIs TIANA uses and to the deployed website referrers. Never commit service-account private keys or other server credentials.
+
+
+## Firebase Cloud Messaging (FCM) push
+- TIANA uses Firebase Cloud Messaging for optional browser push; it reuses the existing root-scope `web/sw.js`.
+- The VAPID public key is in `web/firebase-config.js`; it is public client configuration, not a secret.
+- `/api/push/register` stores only a random installation ID and FCM registration token after browser permission is granted.
+- `/api/push/send` is protected by `ADMIN_TOKEN` and sends a general message to subscribed devices (maximum 200 per broadcast) or one selected installation.
+- Cloudflare Pages secret `FIREBASE_SERVICE_ACCOUNT_JSON` must contain a **fresh, rotated** service-account JSON. Never commit the JSON file or paste private keys in chat.
+- Apply `migrations/0002_push.sql` to D1 before testing.
+- Enable the Firebase Cloud Messaging API and grant the service account the minimum FCM message-sending role.
+- Push requires HTTPS, browser permission and a supported browser. On iOS/iPadOS, web push requires an installed Home Screen web app on supported OS versions.

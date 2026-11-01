@@ -41,3 +41,17 @@ Open /admin.html on the deployed domain and enter the Cloudflare ADMIN_TOKEN. It
 - Inspect DevTools Network and confirm no finance data is sent.
 
 The GitHub branch does not configure your Cloudflare domain, D1 binding, secrets or Google OAuth client. Those setup steps must be completed in your accounts.
+
+
+## Firebase Cloud Messaging setup
+1. Confirm Firebase Cloud Messaging is enabled and the Web Push public key shown in `web/firebase-config.js` matches the project's current VAPID public key.
+2. Enable the Firebase Cloud Messaging API in the linked Google Cloud project.
+3. Revoke the service-account key shared in the setup conversation and generate a replacement key for the same service account. Grant the service account only the Firebase Cloud Messaging Service Editor role (`roles/cloudmessaging.editor`) if your project permits it.
+4. In Cloudflare Dashboard, open Workers & Pages > your Pages project > Settings > Variables and Secrets. Add `FIREBASE_SERVICE_ACCOUNT_JSON` as an **encrypted Secret**, and paste the complete replacement service-account JSON. Configure it for Preview and Production as needed. Never add it to GitHub, `wrangler.jsonc`, frontend code or a plain-text variable.
+5. Apply the push migration to the D1 database already bound as `TIANA_DB`: `npx wrangler d1 execute tiana-ops --remote --file=migrations/0002_push.sql`.
+6. Redeploy the Pages project so the Functions and secret are active.
+7. Open the installed TIANA PWA, go to Settings and enable notifications. Confirm an installation appears in the admin list.
+8. Open `/admin.html`, connect with `ADMIN_TOKEN`, choose the target installation with “Use for push”, and send a test notification.
+9. Verify background delivery, that clicking the notification opens TIANA, and that disabling push removes the server-side token.
+
+The Pages Functions use FCM HTTP v1 and Web Crypto to create a short-lived OAuth assertion from `FIREBASE_SERVICE_ACCOUNT_JSON`. The Python Firebase Admin SDK snippet does not run inside Cloudflare Pages Functions. The service-account private key remains server-side.
