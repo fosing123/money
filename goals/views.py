@@ -30,6 +30,8 @@ def goal_create_view(request):
     if request.method == "POST" and form.is_valid():
         goal = form.save(commit=False)
         goal.owner = request.user
+        if goal.target_amount > 0 and goal.current_amount >= goal.target_amount:
+            goal.status = "completed"
         goal.save()
         messages.success(request, f"{goal.name} is ready. Add to it whenever you like.")
         return redirect("goals")
