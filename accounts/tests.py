@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
+from django.contrib.sessions.models import Session
 from django.contrib.staticfiles import finders
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from finance.models import Account
@@ -167,3 +168,37 @@ class AccountTests(TestCase):
         self.assertNotContains(response, "onboarding-status")
         self.assertNotContains(response, "onboarding-status-icons")
         self.assertNotContains(response, "9:41")
+    def test_profile_uses_compact_reference_settings_layout(self):
+        user = User.objects.create_user(username="profileui", email="profileui@example.com", password="StrongPass123!")
+        self.client.force_login(user)
+        response = self.client.get(reverse("profile"))
+        self.assertEqual(response.status_code, 200)
+        for label in ("Profile", "Edit Profile", "Language", "Currencies", "Appearance", "Application Security", "Manage Devices", "Change Password"):
+            with self.subTest(label=label):
+                self.assertContains(response, label)
+
+    def test_profile_security_and_password_pages_load(self):
+        user = User.objects.create_user(username="securityui", email="securityui@example.com", password="StrongPass123!")
+        self.client.force_login(user)
+        for url_name in ("application_security", "manage_devices", "password_change"):
+            with self.subTest(url_name=url_name):
+                response = self.client.get(reverse(url_name))
+                self.assertEqual(response.status_code, 200)
+
+    def test_manage_devices_signs_out_other_sessions_only(self):
+        user = User.objects.create_user(username="deviceuser", email="deviceuser@example.com", password="StrongPass123!")
+        other_client = Client()
+        other_client.force_login(user)
+        other_session_key = other_client.session.session_key
+
+        self.client.force_login(user)
+        current_session_key = self.client.session.session_key
+        self.assertTrue(Session.objects.filter(session_key=other_session_key).exists())
+        self.assertTrue(Session.objects.filter(session_key=current_session_key).exists())
+
+        response = self.client.post(reverse("manage_devices"))
+        self.assertRedirects(response, reverse("manage_devices"))
+        self.assertFalse(Session.objects.filter(session_key=other_session_key).exists())
+        self.assertTrue(Session.objects.filter(session_key=current_session_key).exists())
+
+
