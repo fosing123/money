@@ -77,3 +77,30 @@ class BudgetTests(TestCase):
         evaluate_spending_alerts(user)
         self.assertEqual(Notification.objects.filter(user=user, source="system").count(), 2)
         self.assertTrue(Notification.objects.filter(user=user, dedupe_key__endswith=":100").exists())
+
+
+    def test_existing_user_can_update_weekly_category_allocations(self):
+        user = User.objects.create_user(
+            username="budgetplan",
+            email="budgetplan@example.com",
+            password="StrongPass123!",
+            weekly_income=Decimal("10000"),
+            weekly_savings_target=Decimal("2000"),
+        )
+        self.client.force_login(user)
+        response = self.client.post("/budgets/allocations/", {
+            "allocation_food": "3000",
+            "allocation_transport": "1500",
+            "allocation_internet": "1000",
+            "allocation_school": "1000",
+            "allocation_personal": "1000",
+            "allocation_emergency": "500",
+        })
+        self.assertRedirects(response, "/budgets/")
+        user.refresh_from_db()
+        self.assertEqual(user.weekly_budget_allocations["food"], "3000")
+        self.assertEqual(
+            Budget.objects.get(owner=user, category="Food", period="weekly").amount,
+            Decimal("3000"),
+        )
+        self.assertEqual(Budget.objects.filter(owner=user, category__gt="").count(), 6)
