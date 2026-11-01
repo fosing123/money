@@ -8,11 +8,13 @@ from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Neon CLI writes .env.local when the project has no .env file. Load that
-# first, then .env; existing process/Worker variables always take precedence.
-for dotenv_file in (BASE_DIR / ".env.local", BASE_DIR / ".env"):
-    if dotenv_file.is_file():
-        load_dotenv(dotenv_file)
+# Neon CLI writes .env.local when no .env exists; when .env exists it
+# writes there instead. Prefer .env when present, otherwise use .env.local.
+dotenv_file = BASE_DIR / ".env"
+if not dotenv_file.is_file():
+    dotenv_file = BASE_DIR / ".env.local"
+if dotenv_file.is_file():
+    load_dotenv(dotenv_file)
 
 
 def env_bool(name, default=False):
