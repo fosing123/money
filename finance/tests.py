@@ -49,3 +49,18 @@ class FinanceTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(reverse("transaction_update", args=[item.pk]))
         self.assertEqual(response.status_code, 404)
+
+    def test_transaction_form_uses_the_refreshed_amount_first_layout(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("transaction_create"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "finance/transaction_form.html")
+        for marker in (
+            "transaction-refresh-page",
+            "transaction-amount-panel",
+            "data-transaction-amount",
+            "data-transaction-category",
+            "Save transaction",
+        ):
+            with self.subTest(marker=marker):
+                self.assertContains(response, marker)
