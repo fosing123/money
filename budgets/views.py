@@ -61,3 +61,48 @@ def budget_allocations_view(request):
         messages.success(request, "Your weekly category limits have been updated.")
         return redirect("budgets")
     return render(request, "budgets/allocation_form.html", {"form": form})
+
+
+
+@login_required
+def budget_delete_view(request, pk):
+    from django.db import transaction as db_transaction
+    from django.shortcuts import get_object_or_404
+    from notifications.models import Notification
+
+    budget = get_object_or_404(Budget, pk=pk, owner=request.user)
+    if request.method == "POST":
+        with db_transaction.atomic():
+            budget = get_object_or_404(
+                Budget.objects.select_for_update(),
+                pk=pk,
+                owner=request.user,
+            )
+            user = request.user
+            category_keys = {
+                "food": "food",
+                "transport": "transport",
+                "internet & airtime": "internet",
+                "school": "school",
+                "personal": "personal",
+                "emergency": "emergency",
+            }
+            if budget.period == "weekly" and budget.category:
+                key = category_keys.get(budget.category.strip().casefold())
+                if key:
+                    allocations = dict(user.weekly_budget_allocations or {})
+                    allocations[key] = "0"
+                    user.weekly_budget_allocations = allocations
+                    user.save(update_fields=["weekly_budget_allocations"])
+
+            Notification.objects.filter(
+                user=user,
+                dedupe_key__startswith=f"budget:{budget.pk}:",
+            ).delete()
+            budget_name = budget.name
+            budget.delete()
+
+        messages.success(request, f"{budget_name} budget deleted.")
+        return redirect("budgets")
+
+    return render(request, "budgets/budget_confirm_delete.html", {"budget": budget})
