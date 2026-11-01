@@ -1,3 +1,24 @@
+// Firebase background delivery is enabled only when a public web config is supplied.
+importScripts("/firebase-config.js");
+if (self.TIANA_FIREBASE_CONFIG && self.TIANA_FIREBASE_CONFIG.apiKey) {
+  importScripts("https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js");
+  importScripts("https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js");
+  firebase.initializeApp(self.TIANA_FIREBASE_CONFIG);
+  const messaging = firebase.messaging();
+  messaging.onBackgroundMessage(payload => {
+    const notification = payload.notification || {};
+    const title = notification.title || "TIANA";
+    const options = {
+      body: notification.body || "You have a new update.",
+      icon: "/static/money-mark.svg",
+      badge: "/static/money-mark.svg",
+      data: payload.data || {},
+      tag: (payload.data && payload.data.tag) || "tiana-update"
+    };
+    self.registration.showNotification(title, options);
+  });
+}
+
 const CACHE_PREFIX = "tiana-pwa-";
 const SHELL_CACHE = "tiana-pwa-shell-v1";
 const OFFLINE_PAGE = "/static/nkem/offline.html";
