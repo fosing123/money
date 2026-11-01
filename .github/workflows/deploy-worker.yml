@@ -64,6 +64,17 @@ jobs:
           uv run python manage.py check
           uv run python manage.py makemigrations --check --dry-run
 
+      - name: Verify Cloudflare PostgreSQL backend imports
+        env:
+          DEBUG: "0"
+          SECRET_KEY: "ci-static-collection-key"
+          ALLOWED_HOSTS: "localhost"
+          DATABASE_URL: "postgresql://tiana:unused@127.0.0.1:5432/neondb"
+          DJANGO_DB_BACKEND: "django_pg8000"
+        run: |
+          PYTHONPATH=src uv run python manage.py check
+          PYTHONPATH=src uv run python -c "from django_pg8000.base import DatabaseWrapper; assert DatabaseWrapper.vendor == 'postgresql_pg8000'; print('pg8000 Django backend imported successfully')"
+
       - name: Run Django tests
         run: uv run python manage.py test
 
@@ -114,14 +125,18 @@ jobs:
         run: |
           set -euo pipefail
           url='https://tiana-django-staging.fosingkameni.workers.dev/'
+          health_url="${url}health/"
           for attempt in {1..8}; do
-            status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' "$url" || true)
-            if [[ "$status" =~ ^(200|301|302|303|307|308)$ ]]; then
-              echo "TIANA staging HTTP smoke test passed (HTTP $status)."
-              exit 0
+            status=$(curl --silent --show-error --max-time 10 --output /dev/null --write-out '%{http_code}' "$health_url" || true)
+            if [[ "$status" == "200" ]]; then
+              root_status=$(curl --silent --show-error --max-time 10 --output /dev/null --write-out '%{http_code}' "$url" || true)
+              if [[ "$root_status" =~ ^(200|301|302|303|307|308)$ ]]; then
+                echo "TIANA staging application and PostgreSQL health checks passed (health HTTP $status; root HTTP $root_status)."
+                exit 0
+              fi
             fi
-            echo "Staging is not healthy yet (HTTP ${status:-no-response}); retry $attempt/8."
+            echo "Staging database health check is not ready (HTTP ${status:-no-response}); retry $attempt/8."
             sleep 5
           done
-          echo "::error::TIANA staging did not return a successful HTTP response."
+          echo "::error::TIANA staging did not pass its PostgreSQL health check."
           exit 1
