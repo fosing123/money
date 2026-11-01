@@ -95,3 +95,5 @@ body[data-user-theme="midnight"]{--chart-income:#b9a5ff;--chart-expense:#7657d7;
 .profile-security-page>.profile-edit-panel{margin-top:0}
 .profile-device-actions{display:flex;justify-content:flex-end;margin-top:15px}
 .profile-security-page>.profile-security-link>strong{margin-left:auto;color:var(--brand-primary);font-size:.8rem}
+
+.profile-user-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
