@@ -75,7 +75,7 @@ class RegisterForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "email", "currency", "phone_number", "theme"]
+        fields = ["avatar", "first_name", "last_name", "email", "currency", "phone_number", "theme"]
         widgets = {
             "first_name": forms.TextInput(attrs={"autocomplete": "given-name"}),
             "last_name": forms.TextInput(attrs={"autocomplete": "family-name"}),
