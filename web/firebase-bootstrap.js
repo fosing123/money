@@ -5,6 +5,7 @@
   if (!config) return;
 
   const sdkBase = "https://www.gstatic.com/firebasejs/13.0.0";
+  let app = null;
   let analyticsSdk = null;
   let analyticsInstance = null;
   let messagingSdk = null;
@@ -41,13 +42,13 @@
     return analyticsInstance;
   }
 
-  async function enablePushNotifications() {
+  async function enablePushNotifications(permissionPromise) {
     if (!("Notification" in window)) throw new Error("This browser does not support web notifications.");
     if (!("serviceWorker" in navigator)) throw new Error("This browser does not support service workers.");
     if (!config.vapidPublicKey) throw new Error("The TIANA VAPID public key is not configured.");
 
     // Called from the explicit user click so the browser can display permission UI.
-    const permission = await Notification.requestPermission();
+    const permission = await (permissionPromise || Notification.requestPermission());
     if (permission !== "granted") {
       throw new Error(permission === "denied" ? "Notifications are blocked in browser settings." : "Notification permission was not granted.");
     }
@@ -103,7 +104,7 @@
 
   try {
     const appSdk = await import(sdkBase + "/firebase-app.js");
-    const app = appSdk.getApps().find((item) => item.name === "[DEFAULT]") || appSdk.initializeApp(config);
+    app = appSdk.getApps().find((item) => item.name === "[DEFAULT]") || appSdk.initializeApp(config);
     window.TianaFirebase = Object.freeze({
       app,
       projectId: config.projectId,

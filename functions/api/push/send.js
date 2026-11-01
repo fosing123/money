@@ -6,7 +6,7 @@ let cachedAccessToken = "";
 let cachedAccessTokenExpiresAt = 0;
 
 function base64Url(value) {
-  const bytes = new TextEncoder().encode(typeof value === "string" ? value : JSON.stringify(value));
+  const bytes = value instanceof Uint8Array ? value : new TextEncoder().encode(typeof value === "string" ? value : JSON.stringify(value));
   let binary = "";
   for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
