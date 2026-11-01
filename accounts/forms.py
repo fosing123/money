@@ -115,6 +115,23 @@ class OnboardingSetupForm(forms.Form):
         required=False,
     )
     financial_priorities = forms.MultipleChoiceField(label="What matters to you right now? Choose any that fit.", choices=PRIORITY_CHOICES, required=False, widget=forms.CheckboxSelectMultiple)
+    allocation_food = forms.DecimalField(label="Food", min_value=0, max_digits=14, decimal_places=2, required=False, initial=0, widget=forms.NumberInput(attrs={"min":"0","step":"100","inputmode":"decimal","placeholder":"0"}))
+    allocation_transport = forms.DecimalField(label="Transport", min_value=0, max_digits=14, decimal_places=2, required=False, initial=0, widget=forms.NumberInput(attrs={"min":"0","step":"100","inputmode":"decimal","placeholder":"0"}))
+    allocation_internet = forms.DecimalField(label="Internet & airtime", min_value=0, max_digits=14, decimal_places=2, required=False, initial=0, widget=forms.NumberInput(attrs={"min":"0","step":"100","inputmode":"decimal","placeholder":"0"}))
+    allocation_school = forms.DecimalField(label="School", min_value=0, max_digits=14, decimal_places=2, required=False, initial=0, widget=forms.NumberInput(attrs={"min":"0","step":"100","inputmode":"decimal","placeholder":"0"}))
+    allocation_personal = forms.DecimalField(label="Personal", min_value=0, max_digits=14, decimal_places=2, required=False, initial=0, widget=forms.NumberInput(attrs={"min":"0","step":"100","inputmode":"decimal","placeholder":"0"}))
+    allocation_emergency = forms.DecimalField(label="Emergency", min_value=0, max_digits=14, decimal_places=2, required=False, initial=0, widget=forms.NumberInput(attrs={"min":"0","step":"100","inputmode":"decimal","placeholder":"0"}))
+
+    @property
+    def allocation_fields(self):
+        return [
+            ("Food", self["allocation_food"], "food"),
+            ("Transport", self["allocation_transport"], "transport"),
+            ("Internet & airtime", self["allocation_internet"], "internet"),
+            ("School", self["allocation_school"], "school"),
+            ("Personal", self["allocation_personal"], "personal"),
+            ("Emergency", self["allocation_emergency"], "emergency"),
+        ]
 
     def clean(self):
         cleaned = super().clean()
@@ -122,4 +139,16 @@ class OnboardingSetupForm(forms.Form):
         savings = cleaned.get("weekly_savings_target") or 0
         if income and savings > income:
             self.add_error("weekly_savings_target", "Your savings target is higher than your weekly income. Try a smaller goal that still feels meaningful.")
+        allocations = sum(
+            (cleaned.get(name) or 0)
+            for name in (
+                "allocation_food", "allocation_transport", "allocation_internet",
+                "allocation_school", "allocation_personal", "allocation_emergency",
+            )
+        )
+        if income and allocations + savings > income:
+            self.add_error(
+                None,
+                "Your category allocations and savings goal are higher than your weekly income. Adjust the amounts so they fit your real week.",
+            )
         return cleaned
