@@ -1,0 +1,27 @@
+[project]
+name = "tiana-django"
+version = "0.1.0"
+description = "TIANA Django finance application on Cloudflare Python Workers"
+requires-python = ">=3.13"
+dependencies = [
+    "Django==6.1.2",
+    "djangorestframework==3.18.3",
+    "python-dotenv==1.2.4",
+    "whitenoise==6.12.0",
+    "Pillow>=11.3,<13.0",
+    "psycopg>=3.2,<4.0",
+    "tzdata>=2025.2",
+    "google-auth>=2.40,<3.0",
+    "requests>=2.32,<3.0",
+    "django-cf==0.2.17",
+]
+
+[dependency-groups]
+dev = [
+    "workers-py",
+    "workers-runtime-sdk",
+    "pytest-django",
+]
+
+[tool.uv]
+package = false
