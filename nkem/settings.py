@@ -7,7 +7,13 @@ from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
+
+# Neon CLI writes database credentials to .env.local. Load it first so
+# its direct PostgreSQL URL is not hidden by a generic local .env file.
+# Existing process environment variables retain highest priority.
+for dotenv_file in (BASE_DIR / ".env.local", BASE_DIR / ".env"):
+    if dotenv_file.is_file():
+        load_dotenv(dotenv_file, override=False)
 
 
 def env_bool(name, default=False):
@@ -64,7 +70,12 @@ TEMPLATES = [{
 WSGI_APPLICATION = "nkem.wsgi.application"
 ASGI_APPLICATION = "nkem.asgi.application"
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
+# Prefer Neon’s direct endpoint for local Django/psycopg connections. The
+# Worker replaces DATABASE_URL with Hyperdrive's connection string at runtime.
+DATABASE_URL = (
+    os.environ.get("DATABASE_URL_UNPOOLED")
+    or os.environ.get("DATABASE_URL", "")
+).strip()
 if DATABASE_URL.startswith(("postgres://", "postgresql://")):
     parsed = urlparse(DATABASE_URL)
     params = parse_qs(parsed.query)

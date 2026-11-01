@@ -32,6 +32,24 @@ python manage.py runserver
 
 Open http://127.0.0.1:8000/.
 
+## Use the existing Neon database locally
+
+The basic local setup above uses SQLite by default. To use the linked Neon PostgreSQL database instead, authenticate with the Neon CLI and refresh the local environment file:
+
+```powershell
+npx neon@latest deploy
+```
+
+The Neon CLI writes `.env.local`. Django loads `.env.local` before `.env`, while existing process environment variables keep priority. For local PostgreSQL connections, Django prefers `DATABASE_URL_UNPOOLED`.
+
+**Verify the connection before running migrations:**
+
+```powershell
+python manage.py shell -c "from django.conf import settings; d=settings.DATABASES['default']; print('ENGINE:', d['ENGINE']); print('DATABASE:', d['NAME']); print('HOST:', d['HOST'])"
+```
+
+Proceed with `python manage.py migrate` only when the engine is `django.db.backends.postgresql`, the database is `neondb`, and the host is your Neon direct endpoint (not a pooler). Never commit or share `.env.local`.
+
 ## Deploy to Cloudflare
 
 The Django app is deployed as a Cloudflare Python Worker using `worker.py`, `pyproject.toml` and `wrangler.jsonc`. Cloudflare Workers serves the app, Hyperdrive connects it to PostgreSQL, and R2 stores user-uploaded media.
