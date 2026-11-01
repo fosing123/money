@@ -15,7 +15,11 @@
       "bucket_name": "tiana-django-media"
     }
   ],
-  // Add after creating the PostgreSQL Hyperdrive configuration:
-  // "hyperdrive": [{"binding": "HYPERDRIVE", "id": "YOUR_HYPERDRIVE_CONFIG_ID"}],
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "74744f012eb646569c58b7659715ea80"
+    }
+  ],
   "observability": {"enabled": true}
 }
