@@ -149,7 +149,6 @@ def onboarding_setup_view(request):
             "personal": "Personal",
             "emergency": "Emergency",
         }
-        created_category_budgets = 0
         for key, category in category_names.items():
             amount = data.get(f"allocation_{key}") or 0
             if amount <= 0:
@@ -162,20 +161,6 @@ def onboarding_setup_view(request):
                     owner=user, name=category, category=category, amount=amount,
                     currency=user.currency, period="weekly", start_date=timezone.localdate(),
                 )
-                created_category_budgets += 1
-        if (
-            data["weekly_income"] > 0
-            and created_category_budgets == 0
-            and not Budget.objects.filter(owner=user).exists()
-        ):
-            Budget.objects.create(
-                owner=user,
-                name="Weekly essentials",
-                amount=max(data["weekly_income"] - data["weekly_savings_target"], 0),
-                currency=user.currency,
-                period="weekly",
-                start_date=timezone.localdate(),
-            )
         messages.success(request, "Your starting plan is saved. There is no perfect budget—just a useful place to begin.")
         return redirect("dashboard")
     return render(request, "accounts/setup.html", {"form": form})
