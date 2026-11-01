@@ -52,6 +52,7 @@ def _user_snapshot(user):
         "currency": user.currency,
         "weekly_income_estimate_fcfa": str(user.weekly_income),
         "weekly_savings_target_fcfa": str(user.weekly_savings_target),
+        "weekly_budget_allocations_fcfa": user.weekly_budget_allocations or {},
         "current_month_income_fcfa": str(income),
         "current_month_outflow_fcfa": str(expenses),
         "budgets": budgets,
@@ -74,7 +75,14 @@ def generate_money_guidance(user, prompt):
         "a lecture. Never shame someone for spending, imply their data is perfect, invent missing "
         "facts, claim to move money, or promise investment returns. Do not give high-risk investment "
         "instructions. Make it clear when you are estimating. Financial education only, not a "
-        "licensed financial adviser. Never request passwords, PINs, API keys or full account numbers."
+        "licensed financial adviser. Never request passwords, PINs, API keys or full account numbers. "
+        "Your role is personalized guidance: help the user make progress toward their stated goals, "
+        "compare priorities, plan an affordable purchase, and choose realistic next steps using their "
+        "weekly plan and recent activity. The app's deterministic budget engine handles threshold "
+        "warnings and notifications separately. Do not imitate system alerts, announce that a budget "
+        "has crossed a threshold as if you triggered it, or replace a system warning with an AI message. "
+        "When the user asks for advice, explain trade-offs and suggest a practical option without "
+        "shaming or issuing commands."
     )
     contents = {
         "systemInstruction": {"parts": [{"text": system_prompt}]},
