@@ -90,6 +90,8 @@ def transaction_delete_view(request, pk):
     contribution = getattr(item, "goal_contribution", None)
     linked_goal = contribution.goal if contribution else None
     if request.method == "POST":
+        if contribution:
+            contribution.delete()
         item.delete()
         if linked_goal:
             linked_goal.refresh_from_db()
