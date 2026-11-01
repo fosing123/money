@@ -5,8 +5,8 @@ export async function onRequestGet({ request, env }) {
   const db = env.TIANA_DB;
   const devices = await db.prepare(
     "SELECT COUNT(*) AS total_devices, SUM(CASE WHEN banned = 1 THEN 1 ELSE 0 END) AS banned_devices, " +
-    "SUM(CASE WHEN last_seen >= datetime('now', '-1 day') THEN 1 ELSE 0 END) AS active_24h, " +
-    "SUM(CASE WHEN last_seen >= datetime('now', '-7 day') THEN 1 ELSE 0 END) AS active_7d FROM devices"
+    "SUM(CASE WHEN julianday(last_seen) >= julianday('now', '-1 day') THEN 1 ELSE 0 END) AS active_24h, " +
+    "SUM(CASE WHEN julianday(last_seen) >= julianday('now', '-7 day') THEN 1 ELSE 0 END) AS active_7d FROM devices"
   ).first();
   const usage = await db.prepare(
     "SELECT event_date, event_name, event_count FROM daily_usage WHERE event_date >= date('now', '-29 day') ORDER BY event_date DESC, event_name"

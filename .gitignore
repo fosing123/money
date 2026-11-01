@@ -14,3 +14,9 @@ media/
 staticfiles/
 .pytest_cache/
 .coverage
+
+# Cloudflare local development secrets
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.wrangler/

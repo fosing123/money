@@ -29,3 +29,19 @@ export async function onRequestPost({ request, env }) {
   }
   return json({ accepted: true });
 }
+
+
+export async function onRequestDelete({ request, env }) {
+  if (!sameOrigin(request)) return json({ error: "Origin rejected." }, 403);
+  if (!d1Available(env)) return json({ error: "Usage deletion is temporarily unavailable." }, 503);
+  const id = new URL(request.url).searchParams.get("deviceId") || "";
+  if (!validDeviceId(id)) return json({ error: "Invalid installation ID." }, 400);
+  const db = env.TIANA_DB;
+  const events = await db.prepare("SELECT event_date, event_name FROM device_event_days WHERE device_id = ?1").bind(id).all();
+  for (const item of (events.results || [])) {
+    await db.prepare("UPDATE daily_usage SET event_count = CASE WHEN event_count > 0 THEN event_count - 1 ELSE 0 END WHERE event_date = ?1 AND event_name = ?2").bind(item.event_date, item.event_name).run();
+  }
+  await db.prepare("DELETE FROM daily_usage WHERE event_count <= 0").run();
+  await db.prepare("DELETE FROM devices WHERE device_id = ?1").bind(id).run();
+  return json({ deleted: true });
+}

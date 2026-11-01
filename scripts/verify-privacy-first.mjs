@@ -1,0 +1,18 @@
+import fs from "node:fs";
+import assert from "node:assert/strict";
+const read = path => fs.readFileSync(path, "utf8");
+const app = read("web/app.js"), worker = read("web/sw.js"), telemetry = read("functions/api/telemetry.js");
+const shared = read("functions/_shared.js"), vault = read("web/vault.js"), drive = read("web/google-drive-backup.js"), html = read("web/index.html");
+assert.match(html, /install-gate/);
+assert.match(html, /tiana-custom\.css/);
+assert.match(app, /localStorage\.setItem\(STORE/);
+assert.match(vault, /indexedDB\.open/);
+assert.match(drive, /AES-GCM/);
+assert.match(drive, /drive\.appdata/);
+assert.doesNotMatch(app, /fetch\s*\(/, "Local money app must not send finance data to server.");
+assert.match(worker, /pathname\.startsWith\("\/api\/"\)\)return/);
+assert.match(telemetry, /keys\.length !== 2/);
+assert.match(telemetry, /ALLOWED_EVENTS/);
+assert.doesNotMatch(telemetry, /balance|transaction|budget|goal|amount|profile/i);
+assert.match(shared, /validDeviceId/);
+console.log("Privacy-first checks passed.");

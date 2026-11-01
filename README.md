@@ -1,22 +1,23 @@
-# TIANA — Your money friend
+# TIANA — Your Money Friend Always
 
-TIANA is a mobile-first personal money companion designed around students and young adults in Cameroon. This repository preserves the original static prototype as a product/design reference and adds a Django application with user-owned records, authentication, budgeting, goals, a server-side AI coach, student opportunities and admin-managed branding/media.
+TIANA's privacy-first release is a local-first Progressive Web App for students. The production PWA is in the web/ directory and is designed for Cloudflare Pages.
 
-## Current Django application
+## Privacy-first architecture
+- Manual income, expenses, balances, budgets, savings goals and local money-coach data stay in the browser on the user's device.
+- The PWA service worker caches only the app shell and static assets. It does not cache API responses.
+- The optional D1 operations service stores a random installation ID, opt-in daily usage events and ban status. It has no API accepting personal finance records.
+- Google Drive backup is optional. It is encrypted on the phone before the browser uploads it directly to Google's app-data area.
+- Payments to TIANA and AdSense reporting are not integrated until provider APIs/webhooks are configured.
 
-The Django application lives at the repository root: manage.py, nkem/, and the domain apps. Follow DJANGO_README.md for local and production setup.
+## Deploy the privacy-first PWA
+Follow CLOUDFLARE_DEPLOYMENT.md. Select web as the Pages output directory. Use branch feat/tiana-pwa-offline-premium-sync-20261101 for preview testing.
 
-- Member experience: five-screen introduction, registration/login, guided first-run setup, dashboard, transaction history, budgets, goals, insights, notifications, student opportunities, profile and AI chat.
-- Money records: account opening balances are tracked separately from transactions; balances recalculate when ledger entries are created, edited or deleted.
-- Visuals: responsive purple-first interface, alternative palettes, onboarding artwork, optional goal/opportunity image uploads and staff-managed brand image slots.
-- AI: Gemini is called from the Django server with a limited per-user financial summary and a safe fallback when the provider is not configured.
-- Admin: app appearance, brand/onboarding/dashboard/coach images, users, accounts, transactions, goals, budgets, notifications, opportunities and saved AI conversations.
+The Django project at the repository root is retained as development/reference code. Do not deploy that Django finance application as the privacy-first production app: it stores finance records on a server, which conflicts with the chosen architecture.
 
-## Development and deployment
+## Local checks
+The GitHub workflow checks Django history code and the privacy-first PWA JavaScript/Function files. The core manual checks are: install, offline bookkeeping, local data retention, backup/restore, usage opt-in and device ban.
 
-1. Install dependencies from requirements-django.txt.
-2. Copy .env.example to .env and keep real keys and passwords out of Git.
-3. Run python manage.py migrate, create a staff account with python manage.py createsuperuser, then run python manage.py runserver.
-4. Read the production checklist in DJANGO_README.md before exposing the site.
+The service operates offline after the first install and app-shell cache, but an internet connection is required for first download, optional usage reporting, Google Drive backup, payments and advertisements.
 
-The original index.html / app.js prototype is kept as a design reference. GitHub Pages alone cannot run Django; production must run Django through a production WSGI/ASGI server.
+## Honest limits
+Installation must be confirmed by the user; iOS/iPadOS users must use Safari Share -> Add to Home Screen. A device ban applies to an install ID, not a verified person. Browser storage can be cleared/evicted, so users should export and test backups.
