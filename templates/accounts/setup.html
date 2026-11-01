@@ -166,7 +166,6 @@
           <span><small>Share of your weekly income</small><strong><b data-savings-share>20%</b> of your usual income</strong></span>
         </div>
       </div>
-      {% if form.non_field_errors %}<div class="message message-error setup-non-field-error">{{ form.non_field_errors }}</div>{% endif %}
     </section>
 
     <section class="setup-step-panel" data-setup-step aria-hidden="true">
@@ -223,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const note = form.querySelector("[data-setup-controls-note]");
   const labels = ["Choose your priorities", "Your weekly income", "Your main account", "Your savings goal", "Your weekly allocations"];
   const notes = ["Choose any priorities that feel right.", "A rough weekly estimate is perfectly fine.", "You can add other accounts whenever you need.", "Make it achievable. You can adjust it later.", "Give the things you spend on a simple weekly limit."];
-  const firstError = steps.findIndex((step) => step.querySelector(".field-error"));
+  const firstError = steps.findIndex((step) => step.querySelector(".field-error, .message-error"));
   let index = firstError >= 0 ? firstError : 0;
 
   const show = () => {
