@@ -3,7 +3,9 @@
   "name": "tiana-django-staging",
   "main": "src/worker.py",
   "compatibility_date": "2026-11-01",
-  "compatibility_flags": ["python_workers"],
+  "compatibility_flags": [
+    "python_workers"
+  ],
   "vars": {
     "ALLOWED_HOSTS": "tiana-django-staging.fosingkameni.workers.dev",
     "CSRF_TRUSTED_ORIGINS": "https://tiana-django-staging.fosingkameni.workers.dev",
@@ -26,5 +28,22 @@
       "id": "74744f012eb646569c58b7659715ea80"
     }
   ],
-  "observability": {"enabled": true}
+  "observability": {
+    "enabled": true
+  },
+  "python_modules": {
+    "exclude": [
+      "**/*.pyc",
+      "**/__pycache__/**",
+      "**/*.pyi",
+      "**/*.md",
+      "**/LICENSE*",
+      "**/licenses/**",
+      "**/tests/**",
+      "**/test/**",
+      "**/testing/**",
+      "**/docs/**",
+      "**/examples/**"
+    ]
+  }
 }
