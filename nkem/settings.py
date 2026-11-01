@@ -71,7 +71,12 @@ TEMPLATES = [{
 WSGI_APPLICATION = "nkem.wsgi.application"
 ASGI_APPLICATION = "nkem.asgi.application"
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
+# Prefer Neon’s direct endpoint for local Django/psycopg connections. The
+# Worker replaces DATABASE_URL with Hyperdrive's connection string at runtime.
+DATABASE_URL = (
+    os.environ.get("DATABASE_URL_UNPOOLED")
+    or os.environ.get("DATABASE_URL", "")
+).strip()
 if DATABASE_URL.startswith(("postgres://", "postgresql://")):
     parsed = urlparse(DATABASE_URL)
     params = parse_qs(parsed.query)
