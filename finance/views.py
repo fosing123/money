@@ -68,6 +68,9 @@ def transaction_create_view(request):
 @login_required
 def transaction_update_view(request, pk):
     item = get_object_or_404(Transaction, pk=pk, owner=request.user)
+    if getattr(item, "goal_contribution", None):
+        messages.info(request, "Manage this savings top-up from your Savings Goals. You can remove it here to reverse the transfer.")
+        return redirect("goals")
     form = TransactionForm(request.POST or None, instance=item, user=request.user)
     if request.method == "POST" and form.is_valid():
         updated = form.save(commit=False)
@@ -84,8 +87,17 @@ def transaction_update_view(request, pk):
 @login_required
 def transaction_delete_view(request, pk):
     item = get_object_or_404(Transaction, pk=pk, owner=request.user)
+    contribution = getattr(item, "goal_contribution", None)
+    linked_goal = contribution.goal if contribution else None
     if request.method == "POST":
         item.delete()
-        messages.success(request, "Transaction removed and account balance refreshed.")
+        if linked_goal:
+            linked_goal.refresh_from_db()
+            if linked_goal.status == "completed" and linked_goal.saved_amount < linked_goal.target_amount:
+                linked_goal.status = "active"
+                linked_goal.save(update_fields=["status", "updated_at"])
+            messages.success(request, f"The top-up was removed and {linked_goal.name} progress was reversed.")
+        else:
+            messages.success(request, "Transaction removed and account balance refreshed.")
         return redirect("transactions")
     return render(request, "finance/transaction_confirm_delete.html", {"transaction": item})
