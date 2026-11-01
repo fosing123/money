@@ -616,3 +616,26 @@ body[data-user-theme="midnight"] .profile-edit-panel{background:#1b1828;border-c
  .setup-allocation-input input{font-size:.72rem;padding:7px 5px}
  .setup-allocation-input small{font-size:.54rem}
 }
+
+.budget-heading-actions{display:flex;align-items:center;gap:13px;flex-wrap:wrap;justify-content:flex-end}
+.budget-heading-actions a{font-size:.7rem;font-weight:850;color:var(--brand-primary);white-space:nowrap}
+.budget-allocation-edit-page{max-width:760px}
+.budget-allocation-edit-card{max-width:700px}
+.budget-allocation-edit-list{display:grid;gap:8px}
+.budget-allocation-edit-row{display:grid;grid-template-columns:38px minmax(0,1fr) minmax(112px,165px);align-items:center;gap:10px;min-height:61px;padding:8px 11px;border:1px solid var(--line);border-radius:15px;background:var(--surface-soft)}
+.budget-allocation-edit-icon{display:grid;place-items:center;width:35px;height:35px;border-radius:11px;background:var(--brand-soft);color:var(--brand-primary);font-weight:850}
+.budget-allocation-edit-label{color:var(--text);font-size:.78rem;font-weight:800}
+.budget-allocation-edit-input{display:flex;align-items:center;gap:6px;min-width:0}
+.budget-allocation-edit-input input{width:100%;min-width:0;min-height:40px;padding:8px 9px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:.8rem;text-align:right}
+.budget-allocation-edit-input small{color:var(--muted);font-size:.6rem}
+.budget-allocation-edit-summary{display:flex;justify-content:space-between;align-items:center;margin-top:13px;padding:12px 14px;border-radius:14px;background:var(--brand-soft);color:var(--muted);font-size:.76rem}
+.budget-allocation-edit-summary strong{color:var(--text);font-size:.88rem}
+.budget-allocation-edit-summary b{color:var(--brand-primary)}
+.budget-allocation-edit-note{margin:0;color:var(--muted);font-size:.68rem;line-height:1.5}
+@media(max-width:760px){
+ .budget-heading-actions{gap:9px}
+ .budget-heading-actions a{font-size:.65rem}
+ .budget-allocation-edit-row{grid-template-columns:34px minmax(0,1fr) minmax(105px,138px);gap:8px;padding:7px 9px}
+ .budget-allocation-edit-label{font-size:.73rem}
+ .budget-allocation-edit-icon{width:32px;height:32px}
+}
