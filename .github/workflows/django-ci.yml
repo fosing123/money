@@ -39,7 +39,7 @@ jobs:
           DJANGO_DB_BACKEND: "django_pg8000"
         run: |
           PYTHONPATH=src python manage.py check
-          python -c "from django_pg8000.base import DatabaseWrapper; assert DatabaseWrapper.vendor == 'postgresql_pg8000'; print('pg8000 Django backend imported successfully')"
+          PYTHONPATH=src python -c "from django_pg8000.base import DatabaseWrapper; assert DatabaseWrapper.vendor == 'postgresql_pg8000'; print('pg8000 Django backend imported successfully')"
       - name: Check migration consistency
         run: python manage.py makemigrations --check --dry-run
       - name: Check Django service-worker JavaScript
