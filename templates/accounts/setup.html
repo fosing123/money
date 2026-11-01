@@ -92,7 +92,7 @@
         {% for error in form.weekly_income.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
         <div class="setup-income-estimate">
           <span class="setup-estimate-icon" aria-hidden="true">↗</span>
-          <span><small>Four-week estimate</small><strong><b data-weekly-income-estimate>40,000</b> FCFA</strong></span>
+          <span><small>Four-week estimate</small><strong><b data-weekly-income-estimate>—</b> FCFA</strong></span>
         </div>
       </div>
 
@@ -115,10 +115,10 @@
       <p class="setup-step-intro">Choose the place you use most. You can add more accounts later.</p>
 
       <div class="setup-account-options" role="group" aria-label="Choose your main account">
-        <button type="button" data-account-choice="Cash"><span>◌</span><strong>Cash</strong></button>
-        <button type="button" data-account-choice="MTN Mobile Money"><span>↗</span><strong>MTN MoMo</strong></button>
-        <button type="button" data-account-choice="Orange Money"><span>◎</span><strong>Orange Money</strong></button>
-        <button type="button" data-account-choice="Bank account"><span>▤</span><strong>Bank</strong></button>
+        <button type="button" data-account-choice="Cash"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H20v14H6.5A2.5 2.5 0 0 1 4 16.5zM4 8h16M15 13h2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>Cash</strong></button>
+        <button type="button" data-account-choice="MTN Mobile Money"><span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10 6h4m-3 12h2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><strong>MTN MoMo</strong></button>
+        <button type="button" data-account-choice="Orange Money"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.5 12h7m-3.5-3.5v7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><strong>Orange Money</strong></button>
+        <button type="button" data-account-choice="Bank account"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9 9-5 9 5M5 10v8m4-8v8m6-8v8m4-8v8M3 20h18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>Bank</strong></button>
       </div>
       <div class="setup-native-select">
         <label for="{{ form.account_name.id_for_label }}">Main account type</label>
