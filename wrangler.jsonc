@@ -44,7 +44,6 @@
       "**/testing/**",
       "**/docs/**",
       "**/examples/**",
-      "**/locale/**",
       "django/test/**",
       "django/contrib/gis/**",
       "django/contrib/admindocs/**",
