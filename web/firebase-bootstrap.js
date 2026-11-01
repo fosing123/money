@@ -1,5 +1,5 @@
 /* Firebase app, opt-in Analytics, and explicit FCM push subscription for TIANA. */
-(async function () {
+window.TianaFirebaseReady = (async function () {
   "use strict";
   const config = window.TIANA_FIREBASE_CONFIG;
   if (!config) return;
