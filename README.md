@@ -1,19 +1,19 @@
 # TIANA — Your Money Friend Always
 
-TIANA is a Django application for student money management, built for the XAF/FCFA context. The Django project at the repository root is the application and source of truth.
+TIANA is a Django application for student money management, built for the XAF/FCFA context. The Django source tree lives in `src/` so Python Workers package only application code, not repository-level build environments.
 
 ## Application
 
-- Django project: `nkem/`
-- User accounts, onboarding and profiles: `accounts/`
-- Accounts, income, expenses, transfers and transaction history: `finance/`
-- Budget planning: `budgets/`
-- Savings goals and contributions: `goals/`
-- Insights: `insights/`
-- Gemini money coach: `ai_assistant/`
-- Notifications and Firebase device registration: `notifications/`
-- Staff-managed student opportunities: `marketplace/`
-- Server-rendered pages: `templates/`
+- Django project: `src/nkem/`
+- User accounts, onboarding and profiles: `src/accounts/`
+- Accounts, income, expenses, transfers and transaction history: `src/finance/`
+- Budget planning: `src/budgets/`
+- Savings goals and contributions: `src/goals/`
+- Insights: `src/insights/`
+- Gemini money coach: `src/ai_assistant/`
+- Notifications and Firebase device registration: `src/notifications/`
+- Staff-managed student opportunities: `src/marketplace/`
+- Server-rendered pages: `src/templates/`
 - UI, PWA shell and offline queue: `static/`
 
 ## Run locally
@@ -52,7 +52,7 @@ Proceed with `python manage.py migrate` only when the engine is `django.db.backe
 
 ## Deploy to Cloudflare
 
-The Django app is deployed as a Cloudflare Python Worker using `worker.py`, `pyproject.toml` and `wrangler.jsonc`. Cloudflare Workers serves the app, Hyperdrive connects it to PostgreSQL, and R2 stores user-uploaded media.
+The Django app is deployed as a Cloudflare Python Worker using `src/worker.py`, `pyproject.toml` and `wrangler.jsonc`. Cloudflare Workers serves the app, Hyperdrive connects it to PostgreSQL, and R2 stores user-uploaded media.
 
 Read [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md) before configuring the production database or deploying. The Worker is deliberately named `tiana-django-staging` while the deployment is being verified.
 

@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parents[2]
 
 # Neon CLI writes database credentials to .env.local. Load it first so
 # its direct PostgreSQL URL is not hidden by a generic local .env file.
@@ -58,7 +58,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = "nkem.urls"
 TEMPLATES = [{
     "BACKEND": "django.template.backends.django.DjangoTemplates",
-    "DIRS": [BASE_DIR / "templates"],
+    "DIRS": [BASE_DIR / "src" / "templates"],
     "APP_DIRS": True,
     "OPTIONS": {"context_processors": [
         "django.template.context_processors.request",

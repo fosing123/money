@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tiana-django-staging",
-  "main": "worker.py",
+  "main": "src/worker.py",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["python_workers"],
   "vars": {

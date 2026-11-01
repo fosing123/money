@@ -1,6 +1,10 @@
 # TIANA Django on Cloudflare Workers
 
-This repository deploys the Django application in `nkem/` to a **separate staging Worker** named `tiana-django-staging`. It does not change the existing `tiana-money` Pages production site or the existing `money` Worker.
+This repository deploys the Django application in `src/nkem/` to a **separate staging Worker** named `tiana-django-staging`. It does not change the existing `tiana-money` Pages production site or the existing `money` Worker.
+
+## Source layout
+
+The Python Worker entrypoint is `src/worker.py`. Django applications, project settings, migrations, and server-rendered templates are under `src/`. Keep local virtual environments and build tooling at the repository root; PyWrangler intentionally packages the entrypoint directory and its contents.
 
 ## Architecture
 
