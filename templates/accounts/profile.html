@@ -8,7 +8,7 @@
   </header>
 
   <section class="profile-identity-panel" aria-label="Your profile">
-    <div class="profile-user-avatar" aria-hidden="true">{{ user.first_name|default:user.username|first|upper }}</div>
+    <div class="profile-user-avatar" aria-hidden="true">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|default:user.username|first|upper }}{% endif %}</div>
     <h2>{{ user.get_full_name|default:user.username }}</h2>
     <p>{{ user.email }}</p>
     <button class="profile-edit-trigger" type="button" data-profile-edit-toggle>
