@@ -1,6 +1,7 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import SESSION_KEY, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.sessions.models import Session
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
@@ -144,3 +145,31 @@ def profile_view(request):
         messages.success(request, "Your profile has been updated.")
         return redirect("profile")
     return render(request, "accounts/profile.html", {"form": form})
+
+
+
+@login_required
+def application_security_view(request):
+    return render(request, "accounts/security.html")
+
+
+@login_required
+def manage_devices_view(request):
+    active_sessions = []
+    for session in Session.objects.filter(expire_date__gt=timezone.now()).iterator():
+        data = session.get_decoded()
+        if str(data.get(SESSION_KEY, "")) == str(request.user.pk):
+            active_sessions.append(session)
+
+    current_key = request.session.session_key
+    other_sessions = [session for session in active_sessions if session.session_key != current_key]
+
+    if request.method == "POST":
+        for session in other_sessions:
+            session.delete()
+        messages.success(request, f"Signed out of {len(other_sessions)} other session(s).")
+        return redirect("manage_devices")
+
+    return render(request, "accounts/manage_devices.html", {
+        "other_session_count": len(other_sessions),
+    })
