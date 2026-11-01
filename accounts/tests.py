@@ -226,3 +226,53 @@ class AccountTests(TestCase):
                 self.assertContains(response, marker)
         self.assertNotContains(response, "min-height:310px")
         self.assertNotContains(response, "onboarding-frame")
+
+
+    def test_setup_saves_weekly_category_allocations_as_real_budgets(self):
+        user = User.objects.create_user(
+            username="allocationuser",
+            email="allocationuser@example.com",
+            password="StrongPass123!",
+        )
+        self.client.force_login(user)
+        response = self.client.post(reverse("onboarding_setup"), {
+            "weekly_income": "10000",
+            "opening_balance": "5000",
+            "weekly_savings_target": "2000",
+            "account_name": "Cash",
+            "payday_weekday": "1",
+            "financial_priorities": ["daily_expenses"],
+            "allocation_food": "3500",
+            "allocation_transport": "1500",
+            "allocation_internet": "1000",
+            "allocation_school": "1000",
+            "allocation_personal": "500",
+            "allocation_emergency": "500",
+        })
+        self.assertRedirects(response, reverse("dashboard"))
+        user.refresh_from_db()
+        self.assertEqual(user.weekly_budget_allocations["food"], "3500")
+        from budgets.models import Budget
+        food = Budget.objects.get(owner=user, category="Food", period="weekly")
+        self.assertEqual(food.amount, 3500)
+        self.assertEqual(Budget.objects.filter(owner=user, period="weekly", category__gt="").count(), 6)
+
+    def test_setup_rejects_allocations_that_exceed_weekly_income(self):
+        user = User.objects.create_user(
+            username="overallocated",
+            email="overallocated@example.com",
+            password="StrongPass123!",
+        )
+        self.client.force_login(user)
+        response = self.client.post(reverse("onboarding_setup"), {
+            "weekly_income": "10000",
+            "opening_balance": "0",
+            "weekly_savings_target": "2000",
+            "account_name": "Cash",
+            "financial_priorities": [],
+            "allocation_food": "9000",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "higher than your weekly income")
+        user.refresh_from_db()
+        self.assertFalse(user.onboarding_completed)
