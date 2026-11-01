@@ -1,0 +1,21 @@
+# Exclude local and PyWrangler build environments from the Worker module scan.
+.venv/
+.venv-workers/
+venv/
+node_modules/
+.git/
+.wrangler/
+__pycache__/
+*.pyc
+
+# Never upload local credentials or developer databases.
+.env
+.env.*
+!.env.example
+.dev.vars*
+db.sqlite3
+*.sqlite3
+
+# Local runtime output is not part of the Worker application.
+media/
+staticfiles/
