@@ -6,7 +6,7 @@ from django.contrib.auth.views import PasswordChangeDoneView, PasswordChangeView
 
 from accounts.views import application_security_view, login_view, logout_view, manage_devices_view, onboarding_setup_view, onboarding_view, profile_view, register_view, registration_welcome_view
 from ai_assistant.views import ai_chat_view
-from budgets.views import budget_create_view, budget_list_view
+from budgets.views import budget_allocations_view, budget_create_view, budget_list_view
 from core.views import dashboard_view, health_check_view, home_view
 from finance.views import account_create_view, transaction_create_view, transaction_delete_view, transaction_list_view, transaction_update_view
 from goals.views import goal_contribute_view, goal_create_view, goal_list_view
@@ -38,6 +38,7 @@ urlpatterns = [
     path("transactions/<int:pk>/edit/", transaction_update_view, name="transaction_update"),
     path("transactions/<int:pk>/delete/", transaction_delete_view, name="transaction_delete"),
     path("budgets/", budget_list_view, name="budgets"),
+    path("budgets/allocations/", budget_allocations_view, name="budget_allocations"),
     path("budgets/new/", budget_create_view, name="budget_create"),
     path("goals/", goal_list_view, name="goals"),
     path("goals/new/", goal_create_view, name="goal_create"),
