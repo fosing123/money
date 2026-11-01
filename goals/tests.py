@@ -134,3 +134,42 @@ class GoalTests(TestCase):
         self.assertEqual(self.goal.status, "active")
         self.assertEqual(self.account.balance, Decimal("5000.00"))
         self.assertEqual(GoalContribution.objects.count(), 0)
+
+
+    def test_deleting_goal_reverses_linked_topups_and_removes_goal(self):
+        contribution_response = self.client.post(
+            reverse("goal_contribute", kwargs={"pk": self.goal.pk}),
+            {"amount": "1000", "account": str(self.account.pk), "note": "Goal top-up"},
+        )
+        self.assertRedirects(contribution_response, reverse("goals"))
+        transfer = Transaction.objects.get(owner=self.user, kind="transfer_out")
+
+        confirm = self.client.get(reverse("goal_delete", kwargs={"pk": self.goal.pk}))
+        self.assertEqual(confirm.status_code, 200)
+        self.assertContains(confirm, "top-up")
+
+        response = self.client.post(reverse("goal_delete", kwargs={"pk": self.goal.pk}))
+        self.assertRedirects(response, reverse("goals"))
+        self.assertFalse(Goal.objects.filter(pk=self.goal.pk).exists())
+        self.assertFalse(GoalContribution.objects.exists())
+        self.assertFalse(Transaction.objects.filter(pk=transfer.pk).exists())
+
+        self.account.refresh_from_db()
+        self.assertEqual(self.account.balance, Decimal("5000.00"))
+
+    def test_user_cannot_delete_another_users_goal(self):
+        other = User.objects.create_user(
+            username="goaldeleteother",
+            email="goaldeleteother@example.com",
+            password="StrongPass123!",
+        )
+        other_goal = Goal.objects.create(
+            owner=other,
+            name="Private goal",
+            target_amount=Decimal("12000"),
+            currency="XAF",
+        )
+        self.assertEqual(
+            self.client.get(reverse("goal_delete", kwargs={"pk": other_goal.pk})).status_code,
+            404,
+        )
