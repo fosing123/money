@@ -29,6 +29,7 @@ class User(AbstractUser):
     weekly_savings_target = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     payday_weekday = models.PositiveSmallIntegerField(choices=WEEKDAYS, null=True, blank=True)
     financial_priorities = models.JSONField(default=list, blank=True)
+    weekly_budget_allocations = models.JSONField(default=dict, blank=True)
 
     REQUIRED_FIELDS = ["email"]
 
