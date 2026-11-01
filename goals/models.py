@@ -26,7 +26,7 @@ class Goal(models.Model):
     @property
     def contributed_amount(self):
         return sum(
-            (item.transaction.amount for item in self.contributions.select_related("transaction").all()),
+            (item.transaction.amount for item in self.contributions.all()),
             Decimal("0.00"),
         )
 
@@ -67,7 +67,7 @@ class GoalContribution(models.Model):
     )
     transaction = models.OneToOneField(
         "finance.Transaction",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="goal_contribution",
     )
     note = models.CharField(max_length=160, blank=True, default="")
