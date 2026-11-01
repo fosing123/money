@@ -35,3 +35,45 @@ class BudgetTests(TestCase):
         )
         self.assertEqual(budget.spent_amount, Decimal("6000"))
         self.assertEqual(budget.remaining_amount, Decimal("4000"))
+
+
+    def test_system_spending_alerts_are_automatic_and_deduplicated(self):
+        from notifications.models import Notification
+        from notifications.services import evaluate_spending_alerts
+
+        user = User.objects.create_user(
+            username="alertuser",
+            email="alertuser@example.com",
+            password="StrongPass123!",
+        )
+        account = Account.objects.create(owner=user, name="Cash", currency="XAF", balance=0)
+        today = timezone.localdate()
+        budget = Budget.objects.create(
+            owner=user,
+            name="Food",
+            category="Food",
+            amount=Decimal("10000"),
+            currency="XAF",
+            period="weekly",
+            start_date=today - timezone.timedelta(days=today.weekday()),
+        )
+        Transaction.objects.create(
+            owner=user, account=account, kind="expense", amount="8500",
+            currency="XAF", category="Food", transaction_date=today,
+        )
+        first = evaluate_spending_alerts(user)
+        self.assertEqual(len(first), 1)
+        self.assertEqual(first[0].source, "system")
+        self.assertEqual(first[0].kind, "warning")
+        self.assertIn("85%", first[0].message)
+
+        evaluate_spending_alerts(user)
+        self.assertEqual(Notification.objects.filter(user=user, source="system").count(), 1)
+
+        Transaction.objects.create(
+            owner=user, account=account, kind="expense", amount="2000",
+            currency="XAF", category="Food", transaction_date=today,
+        )
+        evaluate_spending_alerts(user)
+        self.assertEqual(Notification.objects.filter(user=user, source="system").count(), 2)
+        self.assertTrue(Notification.objects.filter(user=user, dedupe_key__endswith=":100").exists())
