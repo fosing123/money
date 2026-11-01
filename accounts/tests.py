@@ -291,7 +291,7 @@ class AccountTests(TestCase):
             "profile-edit-backdrop",
             "profile-sheet-handle",
             'role="dialog"',
-            "data-open-profile-edit=\\"theme\\"",
+            'data-open-profile-edit="theme"',
         ):
             with self.subTest(marker=marker):
                 self.assertContains(response, marker)
