@@ -276,3 +276,22 @@ class AccountTests(TestCase):
         self.assertContains(response, "higher than your weekly income")
         user.refresh_from_db()
         self.assertFalse(user.onboarding_completed)
+
+
+    def test_profile_editor_is_a_mobile_bottom_sheet(self):
+        user = User.objects.create_user(
+            username="profile_sheet",
+            email="profile_sheet@example.com",
+            password="StrongPass123!",
+        )
+        self.client.force_login(user)
+        response = self.client.get(reverse("profile"))
+        self.assertEqual(response.status_code, 200)
+        for marker in (
+            "profile-edit-backdrop",
+            "profile-sheet-handle",
+            'role="dialog"',
+            "data-open-profile-edit=\\"theme\\"",
+        ):
+            with self.subTest(marker=marker):
+                self.assertContains(response, marker)
