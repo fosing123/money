@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Goals · TIANA{% endblock %}
 {% block content %}
-<section class="workspace-heading" data-reveal><div><h1>Savings goals</h1><p>Track progress towards the things you're saving for.</p></div><a class="button" href="{% url 'goal_create' %}">Create goal</a></section>
+<section class="workspace-heading" data-reveal><div><h1>Savings goals</h1></div><a class="button" href="{% url 'goal_create' %}">Create goal</a></section>
 <div class="goal-grid professional-goal-grid">
 {% for goal in goals %}
 <article class="card professional-goal-card" data-reveal>
@@ -11,6 +11,6 @@
 <div class="progress-track green goal-large-progress"><span data-progress style="width:{{ goal.progress_percentage }}%"></span></div>
 <div class="professional-goal-footer"><strong>{{ goal.progress_percentage }}% complete</strong>{% if goal.target_date %}<span>Target · {{ goal.target_date|date:"j M Y" }}</span>{% endif %}</div>
 </article>
-{% empty %}<div class="card professional-empty professional-empty-wide" data-reveal><h3>No savings goals yet</h3><p>Create a goal and track progress towards your target.</p><a class="button" href="{% url 'goal_create' %}">Create your first goal</a></div>{% endfor %}
+{% empty %}<div class="card professional-empty professional-empty-wide" data-reveal><h3>No savings goals yet</h3><a class="button" href="{% url 'goal_create' %}">Create your first goal</a></div>{% endfor %}
 </div>
 {% endblock %}
