@@ -1,12 +1,13 @@
 from decimal import Decimal, InvalidOperation
 from datetime import date
 import json
+import logging
 import uuid
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError, transaction as db_transaction
+from django.db import IntegrityError, connection, transaction, transaction as db_transaction
 from django.db.models import Sum
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -17,6 +18,9 @@ from budgets.models import Budget
 from finance.models import Account, Transaction
 from goals.models import Goal
 from notifications.services import evaluate_spending_alerts
+
+
+logger = logging.getLogger(__name__)
 
 
 def home_view(request):
@@ -75,8 +79,25 @@ def dashboard_view(request):
     })
 
 
+@require_GET
 def health_check_view(request):
-    return JsonResponse({"status": "ok", "service": "tiana"})
+    """Check both Django startup and a real PostgreSQL round trip."""
+    try:
+        with transaction.atomic():
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+                database_ok = cursor.fetchone() == (1,)
+        if not database_ok:
+            raise RuntimeError("Database health probe returned an unexpected result.")
+    except Exception:
+        logger.exception("TIANA database health check failed")
+        return JsonResponse(
+            {"status": "degraded", "service": "tiana", "database": "unavailable"},
+            status=503,
+        )
+    return JsonResponse(
+        {"status": "ok", "service": "tiana", "database": "ok"}
+    )
 
 
 @login_required
