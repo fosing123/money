@@ -70,10 +70,10 @@ jobs:
           SECRET_KEY: "ci-static-collection-key"
           ALLOWED_HOSTS: "localhost"
           DATABASE_URL: "postgresql://tiana:unused@127.0.0.1:5432/neondb"
-          DJANGO_DB_BACKEND: "django_pg8000"
+          DJANGO_DB_BACKEND: "nkem.db_backends.pg8000"
         run: |
           PYTHONPATH=src uv run python manage.py check
-          PYTHONPATH=src uv run python -c "from django_pg8000.base import DatabaseWrapper; assert DatabaseWrapper.vendor == 'postgresql_pg8000'; print('pg8000 Django backend imported successfully')"
+          DJANGO_SETTINGS_MODULE=nkem.settings PYTHONPATH=src uv run python -c "from django.db import connections; db = connections['default']; assert db.vendor == 'postgresql_pg8000' and db.features.supports_json_field; print('TIANA pg8000 backend and JSONField feature check passed')"
 
       - name: Run Django tests
         run: uv run python manage.py test
