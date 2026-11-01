@@ -33,7 +33,7 @@ class Default(WorkerEntrypoint):
 
         # Django's R2Storage returns /media/<key> URLs. Keep user uploads off disk.
         if path.startswith("/media/"):
-            key = "tiana-media/" + unquote(path[len("/media/"):]).lstrip("/")
+            key = unquote(path[len("/media/"):]).lstrip("/")
             item = await self.env.MEDIA.get(key)
             if item is None:
                 return Response("Not found", status=404)
@@ -51,6 +51,7 @@ class Default(WorkerEntrypoint):
         if not connection_string:
             return Response("TIANA staging database is not configured.", status=503)
 
+        _active_env = self.env
         required = {
             "DJANGO_SECRET_KEY": "SECRET_KEY",
             "ALLOWED_HOSTS": "ALLOWED_HOSTS",
