@@ -51,6 +51,7 @@ class Transaction(models.Model):
     description = models.CharField(max_length=255, blank=True)
     merchant = models.CharField(max_length=120, blank=True)
     transaction_date = models.DateField(default=timezone.localdate)
+    offline_id = models.UUIDField(null=True, blank=True, unique=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

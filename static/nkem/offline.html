@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f6f2ff">
+  <meta name="description" content="TIANA offline money workspace.">
+  <link rel="icon" href="/static/money-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/nkem/offline.css">
+  <title>Offline workspace · TIANA</title>
+</head>
+<body>
+  <main class="offline-shell">
+    <header class="offline-header">
+      <a href="/" class="offline-brand"><span class="offline-mark">✳</span><span>TIANA<small>YOUR MONEY FRIEND ALWAYS</small></span></a>
+      <a class="offline-back" href="/">Back to TIANA ↗</a>
+    </header>
+    <section class="offline-hero">
+      <p class="offline-kicker">YOUR MONEY, STILL IN YOUR HANDS</p>
+      <h1>Your money space.<br><span>Even without internet.</span></h1>
+      <p>Record everyday income and expenses offline. TIANA keeps them on this device and syncs them when you're back online.</p>
+      <div class="offline-state" id="offline-status" data-online="false" role="status" aria-live="polite">Checking your connection…</div>
+    </section>
+    <section class="offline-balance-card">
+      <div><span>Saved account snapshot</span><strong id="offline-balance">Preparing your offline space</strong><small id="offline-saved-at">Open TIANA online once to prepare it.</small></div>
+      <span class="offline-orbit">✦</span>
+    </section>
+    <div class="offline-layout">
+      <section class="offline-card">
+        <div class="offline-card-head"><div><span class="offline-kicker">QUICK ENTRY</span><h2>Record money</h2></div><span class="offline-pill">Offline-ready</span></div>
+        <form id="offline-entry-form">
+          <label for="offline-account">Account</label>
+          <select name="account_id" id="offline-account" required><option value="">Preparing accounts…</option></select>
+          <div class="offline-two">
+            <div><label for="offline-kind">Type</label><select name="kind" id="offline-kind"><option value="expense">Expense</option><option value="income">Income</option></select></div>
+            <div><label for="offline-amount">Amount (FCFA)</label><input id="offline-amount" name="amount" inputmode="decimal" type="number" min="1" step="1" placeholder="e.g. 1500" required></div>
+          </div>
+          <label for="offline-category">Category</label>
+          <select name="category" id="offline-category"><option>Food</option><option>Transport</option><option>School</option><option>Internet & airtime</option><option>Housing</option><option>Health</option><option>Shopping</option><option>Other</option></select>
+          <label for="offline-description">What was it for?</label>
+          <input name="description" id="offline-description" maxlength="255" placeholder="Lunch, bus fare, allowance…">
+          <label for="offline-date">Date</label>
+          <input name="transaction_date" id="offline-date" type="date" required>
+          <button class="offline-primary" id="offline-submit" type="submit" disabled>Save on this phone <span>→</span></button>
+        </form>
+        <p class="offline-footnote">Offline entries are pending until the server accepts them. They do not change your official account balance before syncing.</p>
+      </section>
+      <section class="offline-side">
+        <div class="offline-card">
+          <div class="offline-card-head"><div><span class="offline-kicker">YOUR PLAN</span><h2>Budget snapshot</h2></div></div>
+          <div id="offline-budget-list" class="offline-list"><p class="offline-muted">Your budget snapshot will appear here.</p></div>
+        </div>
+        <div class="offline-card">
+          <div class="offline-card-head"><div><span class="offline-kicker">FUTURE YOU</span><h2>Savings goals</h2></div></div>
+          <div id="offline-goal-list" class="offline-list"><p class="offline-muted">Your savings goals will appear here.</p></div>
+        </div>
+      </section>
+    </div>
+    <section class="offline-card offline-activity">
+      <div class="offline-card-head"><div><span class="offline-kicker">ON THIS DEVICE</span><h2>Recent activity</h2></div><span id="offline-pending" class="offline-pill">0 waiting</span></div>
+      <div id="offline-recent" class="offline-list"><p class="offline-muted">Your activity will appear here after your next online visit.</p></div>
+      <div class="offline-actions"><button type="button" class="offline-secondary" id="offline-refresh">Refresh snapshot</button><button type="button" class="offline-primary" id="offline-sync">Sync now ↗</button></div>
+    </section>
+    <footer class="offline-footer">Your entries stay on this device until they sync. Keep your device locked and export your records regularly from TIANA.</footer>
+  </main>
+  <script src="/static/nkem/offline-core.js"></script>
+  <script src="/static/nkem/offline.js"></script>
+</body>
+</html>

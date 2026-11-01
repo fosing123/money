@@ -1,10 +1,17 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
+from datetime import date
+import json
+import uuid
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction as db_transaction
 from django.db.models import Sum
-from django.http import JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.views.decorators.http import require_GET, require_POST
 
 from budgets.models import Budget
 from finance.models import Account, Transaction
@@ -75,3 +82,170 @@ def health_check_view(request):
 @login_required
 def investments_coming_soon_view(request):
     return render(request, "core/investments_coming_soon.html")
+
+
+
+@require_GET
+def service_worker_view(request):
+    """Serve the dedicated Django PWA worker at the site root.
+
+    This worker never caches authenticated HTML, financial JSON, POST requests,
+    or uploaded media. The legacy prototype worker is intentionally not reused.
+    """
+    worker_path = settings.BASE_DIR / "tiana-service-worker.js"
+    try:
+        source = worker_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise Http404("TIANA service worker is unavailable.") from exc
+    response = HttpResponse(source, content_type="application/javascript; charset=utf-8")
+    response["Service-Worker-Allowed"] = "/"
+    response["Cache-Control"] = "no-cache"
+    return response
+
+
+@login_required
+@require_GET
+def offline_bootstrap_view(request):
+    """Return the signed-in user's minimum offline snapshot; never cache this response."""
+    user = request.user
+    accounts = list(Account.objects.filter(owner=user, is_active=True).values(
+        "id", "name", "account_type", "currency", "balance"
+    ))
+    budgets = []
+    for budget in Budget.objects.filter(owner=user).order_by("period", "name")[:20]:
+        budgets.append({
+            "id": budget.pk,
+            "name": budget.name,
+            "category": budget.category,
+            "amount": str(budget.amount),
+            "spent": str(budget.spent_amount),
+            "currency": budget.currency,
+            "period": budget.period,
+        })
+    goals = []
+    for goal in Goal.objects.filter(owner=user).prefetch_related("contributions__transaction").order_by("status", "target_date")[:20]:
+        goals.append({
+            "id": goal.pk,
+            "name": goal.name,
+            "target": str(goal.target_amount),
+            "saved": str(goal.saved_amount),
+            "remaining": str(goal.remaining_amount),
+            "progress": goal.progress_percentage,
+            "currency": goal.currency,
+            "status": goal.status,
+        })
+    recent = []
+    for item in Transaction.objects.filter(owner=user).select_related("account")[:30]:
+        recent.append({
+            "id": item.pk,
+            "kind": item.kind,
+            "amount": str(item.amount),
+            "currency": item.currency,
+            "category": item.category,
+            "description": item.description,
+            "merchant": item.merchant,
+            "account": item.account.name,
+            "transaction_date": item.transaction_date.isoformat(),
+        })
+    response = JsonResponse({
+        "currency": user.currency,
+        "accounts": accounts,
+        "budgets": budgets,
+        "goals": goals,
+        "recent_transactions": recent,
+        "server_date": timezone.localdate().isoformat(),
+    })
+    response["Cache-Control"] = "private, no-store, max-age=0"
+    response["Vary"] = "Cookie"
+    return response
+
+
+@login_required
+@require_POST
+def offline_sync_view(request):
+    """Idempotently accept only basic income/expense entries created offline."""
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return JsonResponse({"error": "Send valid JSON."}, status=400)
+    items = payload.get("items") if isinstance(payload, dict) else None
+    if not isinstance(items, list):
+        return JsonResponse({"error": "An items array is required."}, status=400)
+    if len(items) > 25:
+        return JsonResponse({"error": "Sync up to 25 entries at a time."}, status=413)
+
+    results = []
+    has_expense = False
+    for raw in items:
+        if not isinstance(raw, dict):
+            results.append({"id": "", "status": "rejected", "message": "Invalid entry format."})
+            continue
+        client_id = str(raw.get("id", ""))
+        try:
+            offline_id = uuid.UUID(client_id)
+        except (ValueError, TypeError, AttributeError):
+            results.append({"id": client_id, "status": "rejected", "message": "This entry has an invalid sync ID."})
+            continue
+
+        existing = Transaction.objects.filter(offline_id=offline_id).first()
+        if existing:
+            if existing.owner_id == request.user.pk:
+                results.append({"id": client_id, "status": "synced", "transaction_id": existing.pk, "duplicate": True})
+            else:
+                results.append({"id": client_id, "status": "rejected", "message": "This sync ID is already in use."})
+            continue
+
+        kind = str(raw.get("kind", "")).strip().lower()
+        if kind not in {"income", "expense"}:
+            results.append({"id": client_id, "status": "rejected", "message": "Offline sync accepts income and expense entries only."})
+            continue
+        try:
+            amount = Decimal(str(raw.get("amount", "")))
+            account_id = int(raw.get("account_id"))
+            transaction_date = date.fromisoformat(str(raw.get("transaction_date", "")))
+        except (InvalidOperation, ValueError, TypeError):
+            results.append({"id": client_id, "status": "rejected", "message": "Check the amount, account and date."})
+            continue
+        if not amount.is_finite() or amount <= 0 or amount > Decimal("999999999999.99") or amount.as_tuple().exponent < -2:
+            results.append({"id": client_id, "status": "rejected", "message": "Enter a valid positive amount with no more than two decimal places."})
+            continue
+
+        account = Account.objects.filter(pk=account_id, owner=request.user, is_active=True).first()
+        if account is None:
+            results.append({"id": client_id, "status": "rejected", "message": "That account is no longer available. Review the entry online."})
+            continue
+        currency = str(raw.get("currency") or account.currency).strip().upper()
+        if currency != account.currency.upper():
+            results.append({"id": client_id, "status": "rejected", "message": "The entry currency does not match the selected account."})
+            continue
+
+        item = Transaction(
+            owner=request.user,
+            account=account,
+            offline_id=offline_id,
+            amount=amount,
+            currency=currency,
+            kind=kind,
+            category=str(raw.get("category") or "Other").strip()[:50] or "Other",
+            description=str(raw.get("description") or "").strip()[:255],
+            merchant=str(raw.get("merchant") or "").strip()[:120],
+            transaction_date=transaction_date,
+        )
+        try:
+            with db_transaction.atomic():
+                item.save()
+            has_expense = has_expense or kind == "expense"
+            results.append({"id": client_id, "status": "synced", "transaction_id": item.pk})
+        except (ValidationError, IntegrityError):
+            existing = Transaction.objects.filter(offline_id=offline_id, owner=request.user).first()
+            if existing:
+                results.append({"id": client_id, "status": "synced", "transaction_id": existing.pk, "duplicate": True})
+            else:
+                results.append({"id": client_id, "status": "rejected", "message": "The entry could not be saved. Review it online."})
+
+    if has_expense:
+        evaluate_spending_alerts(request.user)
+    response = JsonResponse({"results": results, "server_date": timezone.localdate().isoformat()})
+    response["Cache-Control"] = "private, no-store, max-age=0"
+    response["Vary"] = "Cookie"
+    return response
