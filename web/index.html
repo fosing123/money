@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6d52ed"><meta name="color-scheme" content="light">
+<meta name="description" content="TIANA — your private money space. Track income, expenses, budgets and savings goals offline.">
+<meta property="og:type" content="website"><meta property="og:title" content="TIANA — Your Money Friend Always"><meta property="og:description" content="A private, offline-first money companion for students. Your records stay on your phone.">
+<link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/money-mark.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/icons/tiana-icon.svg">
+<title>TIANA — Your Money Friend Always</title><link rel="stylesheet" href="/app.css">
+<style>
+#app{display:none}body.tiana-installed #app{display:block}
+#install-gate{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at 8% 8%,#e9e1ff 0,transparent 36%),radial-gradient(ellipse at 95% 95%,#d9f5e9 0,transparent 33%),#f8f6ff;overflow:auto}
+#install-gate[hidden]{display:none!important}.install-card{width:min(100%,560px);padding:clamp(22px,5vw,42px);border:1px solid #e8e3f6;border-radius:28px;background:#ffffffed;box-shadow:0 24px 70px #30235a18}
+.install-brand{display:flex;align-items:center;gap:12px;margin-bottom:34px}.install-mark{width:50px;height:50px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(145deg,#8b71f4,#5940ce);color:white;font:900 25px Manrope,system-ui;box-shadow:0 12px 25px #6247df3c}
+.install-brand strong{display:block;color:#292447;font:900 19px Manrope,system-ui;letter-spacing:-.04em}.install-brand small{display:block;margin-top:4px;color:#8e88a7;font:800 9px system-ui;letter-spacing:.13em}
+.install-kicker{color:#785fe4;font:800 10px system-ui;letter-spacing:.15em}.install-card h1{margin:11px 0 12px;color:#272341;font:900 clamp(31px,6vw,46px)/1.08 Manrope,system-ui;letter-spacing:-.055em}.install-card h1 span{color:#7658e6}.install-intro{color:#77728e;font:500 14px/1.7 system-ui}
+.install-reasons{display:grid;gap:10px;margin:24px 0;padding:0;list-style:none}.install-reasons li{display:flex;gap:10px;align-items:flex-start;color:#514c6b;font:600 12px/1.5 system-ui}.install-reasons li i{font-style:normal;color:#6f51e5}
+.install-primary{width:100%;min-height:52px;border:0;border-radius:14px;background:linear-gradient(110deg,#7657f3,#5c43d1);color:#fff;font:800 14px system-ui;box-shadow:0 11px 24px #6b50e332;cursor:pointer}.install-secondary{width:100%;margin-top:9px;min-height:46px;border:1px solid #e8e2f5;border-radius:13px;background:#fff;color:#6555bb;font:700 12px system-ui;cursor:pointer}
+.install-instructions{display:none;margin-top:15px;padding:13px 15px;border-radius:13px;background:#f3efff;color:#5c5579;font:500 11px/1.65 system-ui}.install-instructions.visible{display:block}.install-footer{margin-top:20px;color:#9b96aa;font:500 10px/1.6 system-ui}.install-footer a{color:#7256dc}
+body.tiana-installed #install-gate{display:none!important}@media(max-width:480px){#install-gate{padding:12px}.install-card{border-radius:22px;padding:22px 18px}.install-brand{margin-bottom:25px}.install-card h1{font-size:34px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style></head><body>
+<div id="app"></div><div id="overlay-root" class="overlay-root"></div><div id="toast-root"></div>
+<section id="install-gate" role="dialog" aria-modal="true" aria-labelledby="install-title"><div class="install-card">
+<div class="install-brand"><span class="install-mark">T</span><span><strong>TIANA</strong><small>YOUR MONEY FRIEND ALWAYS</small></span></div>
+<div class="install-kicker">A PRIVATE MONEY SPACE</div><h1 id="install-title">Install TIANA.<br><span>Then take it anywhere.</span></h1>
+<p class="install-intro">TIANA is designed to work as an app on your phone, even when your connection disappears. Install it first, then create your private money space.</p>
+<ul class="install-reasons"><li><i>✦</i><span>Record income and expenses without an internet connection.</span></li><li><i>✦</i><span>Keep your budgets, savings goals and money notes on this device.</span></li><li><i>✦</i><span>Optionally back up an encrypted copy directly to your own Google Drive.</span></li></ul>
+<button class="install-primary" id="install-tiana-button" type="button">Install TIANA on this device</button><button class="install-secondary" id="install-help-button" type="button">Show me how to install</button>
+<div id="install-instructions" class="install-instructions" aria-live="polite"></div><p class="install-footer">Your financial records are not uploaded to TIANA’s server. <a href="/money-school.html">Read the student money guides</a>.</p>
+<p class="install-footer" id="install-status" role="status" aria-live="polite">For iPhone and iPad, use Safari’s Share menu and choose “Add to Home Screen”.</p>
+</div></section>
+<script src="/vault.js" defer></script><script src="/install-gate.js" defer></script><script src="/app.js" defer></script><script src="/privacy-telemetry.js" defer></script><script src="/google-drive-backup.js" defer></script>
+</body></html>
