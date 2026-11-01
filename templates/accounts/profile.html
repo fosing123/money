@@ -51,16 +51,18 @@
     </a>
   </nav>
 
-  <section class="profile-edit-panel" id="profile-edit-panel" {% if not form.errors %}hidden{% endif %}>
+  <div class="profile-edit-backdrop" data-profile-edit-backdrop hidden></div>
+  <section class="profile-edit-panel" id="profile-edit-panel" role="dialog" aria-modal="true" aria-labelledby="profile-edit-title" aria-hidden="true" tabindex="-1" {% if not form.errors %}hidden{% endif %}>
+    <div class="profile-sheet-handle" data-profile-sheet-handle aria-hidden="true"><span></span></div>
     <div class="profile-edit-heading">
-      <h2>Edit Profile</h2>
+      <div><p class="ui-eyebrow">YOUR DETAILS</p><h2 id="profile-edit-title">Edit Profile</h2></div>
       <button type="button" data-profile-edit-close aria-label="Close profile editor">×</button>
     </div>
     <form method="post" enctype="multipart/form-data" class="profile-edit-form" novalidate>
       {% csrf_token %}
       {% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}
       {% for field in form %}
-        <div class="profile-edit-field" id="profile-field-{{ field.name }}">
+        <div class="profile-edit-field profile-edit-field-{{ field.name }}" id="profile-field-{{ field.name }}">
           <label for="{{ field.id_for_label }}">{{ field.label }}</label>
           {{ field }}
           {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
@@ -77,27 +79,85 @@
 {% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  const root = document.querySelector(".profile-screen");
   const panel = document.getElementById("profile-edit-panel");
-  if (!panel) return;
-  const open = (fieldName) => {
-    panel.hidden = false;
-    if (fieldName) {
-      const field = panel.querySelector('[name="' + fieldName + '"]');
-      if (field) field.focus({ preventScroll: true });
-    }
-    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  const backdrop = document.querySelector("[data-profile-edit-backdrop]");
+  if (!root || !panel || !backdrop) return;
+
+  let lastTrigger = null;
+  let touchStartY = 0;
+  let touchStartX = 0;
+
+  const close = () => {
+    root.classList.remove("is-sheet-open");
+    document.body.classList.remove("profile-sheet-open");
+    panel.setAttribute("aria-hidden", "true");
+    if (lastTrigger) lastTrigger.focus({ preventScroll: true });
+    window.setTimeout(() => {
+      if (!root.classList.contains("is-sheet-open")) {
+        panel.hidden = true;
+        backdrop.hidden = true;
+      }
+    }, 280);
   };
-  document.querySelector("[data-profile-edit-toggle]")?.addEventListener("click", () => {
-    if (panel.hidden) open();
-    else panel.hidden = true;
+
+  const open = (fieldName, trigger) => {
+    lastTrigger = trigger || document.activeElement;
+    backdrop.hidden = false;
+    panel.hidden = false;
+    requestAnimationFrame(() => {
+      root.classList.add("is-sheet-open");
+      document.body.classList.add("profile-sheet-open");
+      panel.setAttribute("aria-hidden", "false");
+      const field = fieldName ? panel.querySelector('[name="' + fieldName + '"]') : panel.querySelector("input:not([type=file]), select");
+      window.setTimeout(() => {
+        if (field) {
+          field.focus({ preventScroll: true });
+          field.closest(".profile-edit-field")?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        } else panel.focus({ preventScroll: true });
+      }, 90);
+    });
+  };
+
+  document.querySelector("[data-profile-edit-toggle]")?.addEventListener("click", (event) => {
+    if (root.classList.contains("is-sheet-open")) close();
+    else open("", event.currentTarget);
   });
+
   document.querySelectorAll("[data-open-profile-edit]").forEach((button) => {
-    button.addEventListener("click", () => open(button.dataset.openProfileEdit));
+    button.addEventListener("click", () => open(button.dataset.openProfileEdit, button));
   });
-  document.querySelectorAll("[data-profile-edit-close]").forEach((button) => {
-    button.addEventListener("click", () => { panel.hidden = true; });
+  document.querySelectorAll("[data-profile-edit-close]").forEach((button) => button.addEventListener("click", close));
+  backdrop.addEventListener("click", close);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && root.classList.contains("is-sheet-open")) close();
   });
-  if (!panel.hidden) panel.scrollIntoView({ block: "start" });
+
+  const handle = document.querySelector("[data-profile-sheet-handle]");
+  handle?.addEventListener("touchstart", (event) => {
+    touchStartY = event.changedTouches[0].clientY;
+    touchStartX = event.changedTouches[0].clientX;
+  }, { passive: true });
+  handle?.addEventListener("touchend", (event) => {
+    const deltaY = event.changedTouches[0].clientY - touchStartY;
+    const deltaX = Math.abs(event.changedTouches[0].clientX - touchStartX);
+    if (deltaY > 65 && deltaY > deltaX) close();
+  }, { passive: true });
+
+  panel.addEventListener("touchstart", (event) => {
+    if (panel.scrollTop <= 0) {
+      touchStartY = event.changedTouches[0].clientY;
+      touchStartX = event.changedTouches[0].clientX;
+    } else touchStartY = 0;
+  }, { passive: true });
+  panel.addEventListener("touchend", (event) => {
+    if (!touchStartY || panel.scrollTop > 0) return;
+    const deltaY = event.changedTouches[0].clientY - touchStartY;
+    const deltaX = Math.abs(event.changedTouches[0].clientX - touchStartX);
+    if (deltaY > 95 && deltaY > deltaX) close();
+  }, { passive: true });
+
+  if (!panel.hidden) open("", null);
 });
 </script>
 {% endblock %}
