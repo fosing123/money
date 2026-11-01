@@ -13,6 +13,7 @@ from goals.views import goal_contribute_view, goal_create_view, goal_delete_view
 from insights.views import insights_view
 from marketplace.views import opportunity_detail_view, opportunity_list_view
 from notifications.views import mark_all_notifications_read_view, mark_notification_read_view, notification_list_view
+from notifications.api import backup_export_view, backup_restore_view, register_push_device_view, unregister_push_device_view
 
 admin.site.site_header = "TIANA Control Center"
 admin.site.site_title = "TIANA Admin"
@@ -47,6 +48,10 @@ urlpatterns = [
     path("goals/<int:pk>/delete/", goal_delete_view, name="goal_delete"),
     path("insights/", insights_view, name="insights"),
     path("notifications/", notification_list_view, name="notifications"),
+    path("api/push/register/", register_push_device_view, name="push_register"),
+    path("api/push/unregister/", unregister_push_device_view, name="push_unregister"),
+    path("api/backup/export/", backup_export_view, name="backup_export"),
+    path("api/backup/restore/", backup_restore_view, name="backup_restore"),
     path("notifications/<int:pk>/read/", mark_notification_read_view, name="notification_mark_read"),
     path("notifications/read-all/", mark_all_notifications_read_view, name="notifications_mark_all_read"),
     path("opportunities/", opportunity_list_view, name="opportunities"),
