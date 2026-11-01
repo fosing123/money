@@ -16,7 +16,7 @@
     <header class="setup-progress-header">
       <div class="setup-progress-topline">
         <span>YOUR STARTING PLAN</span>
-        <strong>STEP <b data-setup-count>01</b><small> / 04</small></strong>
+        <strong>STEP <b data-setup-count>01</b><small> / 05</small></strong>
       </div>
       <div class="setup-progress-track"><span data-setup-progress></span></div>
       <div class="setup-progress-caption"><span data-setup-caption>Choose your priorities</span><span>About 2 minutes</span></div>
@@ -169,6 +169,33 @@
       {% if form.non_field_errors %}<div class="message message-error setup-non-field-error">{{ form.non_field_errors }}</div>{% endif %}
     </section>
 
+    <section class="setup-step-panel" data-setup-step aria-hidden="true">
+      <div class="setup-step-kicker">
+        <span class="setup-step-icon" aria-hidden="true">₣</span>
+        <span>05 <i>·</i> YOUR WEEKLY PLAN</span>
+      </div>
+      <h2>Give your week a simple plan.</h2>
+      <p class="setup-step-intro">Set a comfortable limit for the things you spend on most. These amounts become your starting budgets, and you can change them later.</p>
+      <div class="setup-allocation-list">
+        {% for label, field, key in form.allocation_fields %}
+          <label class="setup-allocation-row" for="{{ field.id_for_label }}">
+            <span class="setup-allocation-icon" aria-hidden="true">
+              {% if key == "food" %}⌂{% elif key == "transport" %}↗{% elif key == "internet" %}⌁{% elif key == "school" %}▤{% elif key == "personal" %}✦{% else %}◇{% endif %}
+            </span>
+            <span class="setup-allocation-label">{{ label }}</span>
+            <span class="setup-allocation-input">{{ field }}<small>FCFA</small></span>
+          </label>
+          {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+        {% endfor %}
+      </div>
+      <div class="setup-allocation-summary">
+        <span>Allocated each week</span>
+        <strong><b data-allocation-total>0</b> FCFA</strong>
+      </div>
+      <small class="setup-field-hint">Your category limits plus savings should stay within your weekly income. A zero amount simply means no limit yet.</small>
+      {% if form.non_field_errors %}<div class="message message-error setup-non-field-error">{{ form.non_field_errors }}</div>{% endif %}
+    </section>
+
     <footer class="setup-controls">
       <button class="button button-secondary setup-back-button" type="button" data-setup-prev disabled>← Back</button>
       <div class="setup-controls-right">
@@ -194,8 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const progress = form.querySelector("[data-setup-progress]");
   const caption = form.querySelector("[data-setup-caption]");
   const note = form.querySelector("[data-setup-controls-note]");
-  const labels = ["Choose your priorities", "Your weekly income", "Your main account", "Your savings goal"];
-  const notes = ["Choose any priorities that feel right.", "A rough weekly estimate is perfectly fine.", "You can add other accounts whenever you need.", "Make it achievable. You can adjust it later."];
+  const labels = ["Choose your priorities", "Your weekly income", "Your main account", "Your savings goal", "Your weekly allocations"];
+  const notes = ["Choose any priorities that feel right.", "A rough weekly estimate is perfectly fine.", "You can add other accounts whenever you need.", "Make it achievable. You can adjust it later.", "Give the things you spend on a simple weekly limit."];
   const firstError = steps.findIndex((step) => step.querySelector(".field-error"));
   let index = firstError >= 0 ? firstError : 0;
 
@@ -270,6 +297,15 @@ document.addEventListener("DOMContentLoaded", () => {
   savingsInput?.addEventListener("input", updateSavingsShare);
   updateIncome();
   updateSavingsShare();
+
+  const allocationInputs = [...document.querySelectorAll(".setup-allocation-input input")];
+  const allocationTotal = document.querySelector("[data-allocation-total]");
+  const updateAllocationTotal = () => {
+    const total = allocationInputs.reduce((sum, input) => sum + Math.max(0, Number(input.value || 0)), 0);
+    if (allocationTotal) allocationTotal.textContent = formatAmount(total);
+  };
+  allocationInputs.forEach((input) => input.addEventListener("input", updateAllocationTotal));
+  updateAllocationTotal();
 
   document.querySelectorAll("[data-savings-amount]").forEach((button) => button.addEventListener("click", () => {
     if (!savingsInput) return;
