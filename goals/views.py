@@ -106,3 +106,55 @@ def goal_contribute_view(request, pk):
         "form": form,
         "accounts_available": form.fields["account"].queryset.exists(),
     })
+
+
+
+@login_required
+def goal_delete_view(request, pk):
+    goal = get_object_or_404(
+        Goal.objects.prefetch_related("contributions__transaction"),
+        pk=pk,
+        owner=request.user,
+    )
+    contributions = list(
+        goal.contributions.select_related("transaction").order_by("-created_at")
+    )
+    contributed_total = sum(
+        (item.transaction.amount for item in contributions),
+        Decimal("0.00"),
+    )
+
+    if request.method == "POST":
+        with db_transaction.atomic():
+            locked_goal = get_object_or_404(
+                Goal.objects.select_for_update(),
+                pk=pk,
+                owner=request.user,
+            )
+            linked_contributions = list(
+                GoalContribution.objects.select_for_update()
+                .filter(goal=locked_goal)
+                .select_related("transaction")
+                .order_by("-created_at")
+            )
+            for contribution in linked_contributions:
+                linked_transaction = contribution.transaction
+                # Remove the protected link first, then delete the transfer.
+                # Transaction.delete() recalculates the source account balance.
+                contribution.delete()
+                linked_transaction.delete()
+
+            goal_name = locked_goal.name
+            locked_goal.delete()
+
+        messages.success(
+            request,
+            f"{goal_name} deleted. Any top-ups made through TIANA were reversed in their linked account balances.",
+        )
+        return redirect("goals")
+
+    return render(request, "goals/goal_confirm_delete.html", {
+        "goal": goal,
+        "contribution_count": len(contributions),
+        "contributed_total": contributed_total,
+    })
