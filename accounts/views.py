@@ -100,6 +100,9 @@ def onboarding_setup_view(request):
         "payday_weekday": request.user.payday_weekday,
         "financial_priorities": request.user.financial_priorities or [],
     }
+    saved_allocations = request.user.weekly_budget_allocations or {}
+    for key in ("food", "transport", "internet", "school", "personal", "emergency"):
+        initial[f"allocation_{key}"] = saved_allocations.get(key, 0)
     form = OnboardingSetupForm(request.POST or None, initial=initial)
     if request.method == "POST" and form.is_valid():
         data = form.cleaned_data
@@ -111,8 +114,23 @@ def onboarding_setup_view(request):
         # Use an explicit check so Monday (0) remains a valid weekday.
         user.payday_weekday = None if payday_weekday in (None, "") else int(payday_weekday)
         user.financial_priorities = data["financial_priorities"]
+        category_field_map = {
+            "food": "allocation_food",
+            "transport": "allocation_transport",
+            "internet": "allocation_internet",
+            "school": "allocation_school",
+            "personal": "allocation_personal",
+            "emergency": "allocation_emergency",
+        }
+        user.weekly_budget_allocations = {
+            key: str(data.get(field_name) or 0)
+            for key, field_name in category_field_map.items()
+        }
         user.onboarding_completed = True
-        user.save(update_fields=["weekly_income", "weekly_savings_target", "payday_weekday", "financial_priorities", "onboarding_completed"])
+        user.save(update_fields=[
+            "weekly_income", "weekly_savings_target", "payday_weekday",
+            "financial_priorities", "weekly_budget_allocations", "onboarding_completed",
+        ])
         type_map = {"Cash": "cash", "MTN Mobile Money": "mtn_momo", "Orange Money": "orange_money", "Bank account": "bank"}
         account = Account.objects.filter(owner=user).order_by("created_at").first()
         if account is None:
@@ -123,11 +141,37 @@ def onboarding_setup_view(request):
         account.currency = user.currency
         account.save()
         account.recalculate_balance()
-        if data["weekly_income"] > 0 and not Budget.objects.filter(owner=user).exists():
+        category_names = {
+            "food": "Food",
+            "transport": "Transport",
+            "internet": "Internet & airtime",
+            "school": "School",
+            "personal": "Personal",
+            "emergency": "Emergency",
+        }
+        created_category_budgets = 0
+        for key, category in category_names.items():
+            amount = data.get(f"allocation_{key}") or 0
+            if amount <= 0:
+                continue
+            existing = Budget.objects.filter(
+                owner=user, period="weekly", category__iexact=category
+            ).first()
+            if existing is None:
+                Budget.objects.create(
+                    owner=user, name=category, category=category, amount=amount,
+                    currency=user.currency, period="weekly", start_date=timezone.localdate(),
+                )
+                created_category_budgets += 1
+        if (
+            data["weekly_income"] > 0
+            and created_category_budgets == 0
+            and not Budget.objects.filter(owner=user).exists()
+        ):
             Budget.objects.create(
                 owner=user,
                 name="Weekly essentials",
-                amount=data["weekly_income"],
+                amount=max(data["weekly_income"] - data["weekly_savings_target"], 0),
                 currency=user.currency,
                 period="weekly",
                 start_date=timezone.localdate(),
