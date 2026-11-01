@@ -139,7 +139,7 @@ def onboarding_setup_view(request):
 
 @login_required
 def profile_view(request):
-    form = ProfileForm(request.POST or None, instance=request.user)
+    form = ProfileForm(request.POST or None, request.FILES or None, instance=request.user)
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Your profile has been updated.")
