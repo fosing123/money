@@ -100,4 +100,7 @@ def transaction_delete_view(request, pk):
         else:
             messages.success(request, "Transaction removed and account balance refreshed.")
         return redirect("transactions")
-    return render(request, "finance/transaction_confirm_delete.html", {"transaction": item})
+    return render(request, "finance/transaction_confirm_delete.html", {
+        "transaction": item,
+        "goal_contribution": contribution,
+    })
