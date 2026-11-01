@@ -4,9 +4,9 @@
 {% block content %}
 <section class="activity-page" data-activity-dashboard>
   <header class="activity-hero">
-    <div class="activity-topline"><div><p class="ui-eyebrow activity-eyebrow">YOUR MONEY, IN MOTION</p><h1>Statistics</h1><p>Understand the rhythm of your money.</p></div><div class="activity-header-actions"><a href="{% url 'transactions' %}" class="activity-round-action" aria-label="Search activity">⌕</a><a href="{% url 'notifications' %}" class="activity-round-action" aria-label="Notifications">♧{% if unread_notification_count %}<i></i>{% endif %}</a></div></div>
+    <div class="activity-topline"><div><h1>Activity</h1></div><div class="activity-header-actions"><a href="{% url 'transactions' %}" class="activity-round-action" aria-label="Search activity">⌕</a><a href="{% url 'notifications' %}" class="activity-round-action" aria-label="Notifications">♧{% if unread_notification_count %}<i></i>{% endif %}</a></div></div>
     <div class="activity-period-switch" role="group" aria-label="Statistics period"><button type="button" data-activity-period="day">Day</button><button type="button" data-activity-period="week" class="is-active" aria-pressed="true">Week</button><button type="button" data-activity-period="month">Month</button><button type="button" data-activity-period="year">Year</button></div>
-    <div class="activity-total-block"><span>Total spendings</span><strong data-activity-total>{{ expense_total|floatformat:0 }} <small>FCFA</small></strong><div class="activity-total-meta"><span class="activity-income-meta">↗ <b data-activity-income>{{ income_total|floatformat:0 }}</b> in</span><span class="activity-expense-meta">↘ <b data-activity-expense>{{ expense_total|floatformat:0 }}</b> out</span></div></div>
+    <div class="activity-total-block"><span>Total spending</span><strong data-activity-total>{{ expense_total|floatformat:0 }} <small>FCFA</small></strong><div class="activity-total-meta"><span class="activity-income-meta">↗ <b data-activity-income>{{ income_total|floatformat:0 }}</b> in</span><span class="activity-expense-meta">↘ <b data-activity-expense>{{ expense_total|floatformat:0 }}</b> out</span></div></div>
     <div class="activity-chart-wrap">
       <div class="activity-chart-legend"><span><i class="chart-dot chart-dot-income"></i> Money in</span><span><i class="chart-dot chart-dot-expense"></i> Money out</span></div>
       <svg class="activity-chart" viewBox="0 0 720 250" role="img" aria-label="Income and expense trend chart">
@@ -22,7 +22,7 @@
   </header>
   <section class="activity-history-card">
     <div class="activity-sheet-handle" aria-hidden="true"></div>
-    <div class="activity-history-heading"><div><h2>Transaction history</h2><p>Your latest money moves, all in one place.</p></div><a href="{% url 'transactions' %}">View all <span>›</span></a></div>
+    <div class="activity-history-heading"><div><h2>Transaction history</h2></div><a href="{% url 'transactions' %}">View all <span>›</span></a></div>
     <label class="activity-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search your activity" aria-label="Search transactions" data-transaction-search></label>
     {% if transactions %}
       {% regroup transactions by transaction_date as transaction_days %}
@@ -39,7 +39,7 @@
       {% endfor %}
       </div><p class="empty-search" data-empty-search hidden>No matching transactions.</p>
     {% else %}
-      <div class="activity-empty"><span>✦</span><h3>Your activity begins here</h3><p>Add income or an expense and TIANA will turn it into a clear money story.</p><a class="button" href="{% url 'transaction_create' %}">Add your first transaction →</a></div>
+      <div class="activity-empty"><span>✦</span><h3>Your activity begins here</h3><a class="button" href="{% url 'transaction_create' %}">Add your first transaction →</a></div>
     {% endif %}
   </section>
 </section>
