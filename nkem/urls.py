@@ -9,7 +9,7 @@ from ai_assistant.views import ai_chat_view
 from budgets.views import budget_create_view, budget_list_view
 from core.views import dashboard_view, health_check_view, home_view
 from finance.views import account_create_view, transaction_create_view, transaction_delete_view, transaction_list_view, transaction_update_view
-from goals.views import goal_create_view, goal_list_view
+from goals.views import goal_contribute_view, goal_create_view, goal_list_view
 from insights.views import insights_view
 from marketplace.views import opportunity_detail_view, opportunity_list_view
 from notifications.views import mark_all_notifications_read_view, mark_notification_read_view, notification_list_view
@@ -41,6 +41,7 @@ urlpatterns = [
     path("budgets/new/", budget_create_view, name="budget_create"),
     path("goals/", goal_list_view, name="goals"),
     path("goals/new/", goal_create_view, name="goal_create"),
+    path("goals/<int:pk>/add/", goal_contribute_view, name="goal_contribute"),
     path("insights/", insights_view, name="insights"),
     path("notifications/", notification_list_view, name="notifications"),
     path("notifications/<int:pk>/read/", mark_notification_read_view, name="notification_mark_read"),
