@@ -1,0 +1,54 @@
+name: Deploy TIANA Django Worker
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "accounts/**"
+      - "ai_assistant/**"
+      - "budgets/**"
+      - "core/**"
+      - "finance/**"
+      - "goals/**"
+      - "insights/**"
+      - "marketplace/**"
+      - "notifications/**"
+      - "nkem/**"
+      - "static/**"
+      - "templates/**"
+      - "worker.py"
+      - "wrangler.jsonc"
+      - "pyproject.toml"
+      - "uv.lock"
+
+concurrency:
+  group: tiana-django-worker
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy staging Worker
+    runs-on: ubuntu-latest
+    environment: tiana-django-staging
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install Python Worker dependencies
+        run: uv sync --all-groups
+      - name: Collect Django static assets
+        env:
+          DEBUG: "1"
+          SECRET_KEY: "ci-static-collection-key"
+          DATABASE_URL: "sqlite:///db.sqlite3"
+        run: uv run python manage.py collectstatic --noinput
+      - name: Deploy to Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: uv run pywrangler deploy
