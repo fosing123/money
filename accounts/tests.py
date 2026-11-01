@@ -202,3 +202,27 @@ class AccountTests(TestCase):
         self.assertTrue(Session.objects.filter(session_key=current_session_key).exists())
 
 
+
+
+    def test_money_setup_uses_compact_icon_led_priority_cards(self):
+        user = User.objects.create_user(
+            username="setupdesign",
+            email="setupdesign@example.com",
+            password="StrongPass123!",
+        )
+        self.client.force_login(user)
+        response = self.client.get(reverse("onboarding_setup"))
+        self.assertEqual(response.status_code, 200)
+        for marker in (
+            "setup-wizard-shell",
+            "setup-progress-track",
+            "priority-card",
+            "data-weekly-income-estimate",
+            "data-savings-share",
+            "Save for school fees",
+            "Build an emergency fund",
+        ):
+            with self.subTest(marker=marker):
+                self.assertContains(response, marker)
+        self.assertNotContains(response, "min-height:310px")
+        self.assertNotContains(response, "onboarding-frame")
