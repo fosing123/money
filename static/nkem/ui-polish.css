@@ -550,3 +550,15 @@ body[data-user-theme="midnight"] .message-error{background:#3b202b!important;col
  .setup-step-panel.active{animation:none}
  .priority-card,.transaction-quick-amounts button,.transaction-category-suggestions button{transition:none}
 }
+
+.setup-account-options button>span svg{width:21px;height:21px}
+.setup-account-options button:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--brand-primary),var(--line) 48%)}
+.setup-native-select:focus-within{outline:3px solid color-mix(in srgb,var(--brand-primary),transparent 72%);outline-offset:3px}
+@media(max-width:760px){
+ .transaction-refresh-heading h1{font-size:1.58rem}
+ .transaction-refresh-heading>div>p:last-child{font-size:.72rem}
+ .transaction-section-label small{font-size:.64rem}
+ .transaction-kind-picker-large button{padding:7px}
+ .transaction-kind-icon{width:35px;height:35px;flex-basis:35px}
+ .setup-account-options button{min-height:78px}
+}
