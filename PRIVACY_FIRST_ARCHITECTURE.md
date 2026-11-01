@@ -6,7 +6,7 @@ Manual income and expenses, balance notes, budgets, savings goals, profile name/
 An IndexedDB mirror helps restore the current browser snapshot if localStorage is cleared. It is not encrypted at rest, so users should lock devices and keep a tested backup.
 
 ## Operations data
-Usage sharing is off by default. If enabled, TIANA receives only a random installation UUID and one of four event names: app_open (deduplicated once per day per install), pwa_installed, drive_backup, drive_restore. D1 stores the install UUID, first/last-seen, ban flag and aggregate event counts. Status checks run only for opted-in installations.
+Usage sharing is off by default. If enabled, TIANA receives only a random installation UUID and one of four event names: app_open (sent at most once per day per install), pwa_installed, drive_backup, drive_restore. D1 stores the install UUID, first/last-seen, ban flag and aggregate event counts. Per-install event dedupe rows and daily counts are retained for 90 days; dormant install IDs are purged after one year. Status checks run only for opted-in installations.
 
 If a member turns usage sharing off, TIANA requests deletion of that installation's pseudonymous device/event rows from D1. If offline, deletion is queued locally and retried on the next connection.
 

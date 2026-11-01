@@ -27,6 +27,11 @@ export async function onRequestPost({ request, env }) {
       "ON CONFLICT(event_date, event_name) DO UPDATE SET event_count = event_count + 1"
     ).bind(day, event).run();
   }
+  // Keep the operational database bounded: retain per-install event dedupe rows
+  // and aggregate daily counters for 90 days; purge dormant install IDs after a year.
+  await db.prepare("DELETE FROM device_event_days WHERE event_date < date('now', '-90 day')").run();
+  await db.prepare("DELETE FROM daily_usage WHERE event_date < date('now', '-90 day')").run();
+  await db.prepare("DELETE FROM devices WHERE julianday(last_seen) < julianday('now', '-365 day')").run();
   return json({ accepted: true });
 }
 
