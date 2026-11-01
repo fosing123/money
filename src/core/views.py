@@ -7,7 +7,7 @@ import uuid
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError, connection, transaction, transaction as db_transaction
+from django.db import IntegrityError, connection, transaction as db_transaction
 from django.db.models import Sum
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -83,7 +83,7 @@ def dashboard_view(request):
 def health_check_view(request):
     """Check both Django startup and a real PostgreSQL round trip."""
     try:
-        with transaction.atomic():
+        with db_transaction.atomic():
             with connection.cursor() as cursor:
                 cursor.execute("SELECT 1")
                 database_ok = cursor.fetchone() == (1,)
