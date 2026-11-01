@@ -90,3 +90,8 @@ body[data-user-theme="midnight"]{--chart-income:#b9a5ff;--chart-expense:#7657d7;
 .profile-security-link{display:flex;align-items:center;gap:12px;min-height:64px;margin-top:9px;padding:0 17px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--text);text-decoration:none;font-weight:750}
 .profile-security-link span:first-child{flex:1}
 @media(max-width:480px){.profile-screen{padding-top:2px}.profile-screen-header{margin-bottom:16px}.profile-identity-panel{padding:25px 16px 23px}.profile-user-avatar{width:92px;height:92px}.profile-setting-row{min-height:64px;padding:0 14px;gap:10px}.profile-setting-row>strong{font-size:.84rem}.profile-setting-value{font-size:.7rem}.profile-edit-panel{padding:16px}}
+
+.profile-security-page>.profile-screen-back{margin-bottom:18px}
+.profile-security-page>.profile-edit-panel{margin-top:0}
+.profile-device-actions{display:flex;justify-content:flex-end;margin-top:15px}
+.profile-security-page>.profile-security-link>strong{margin-left:auto;color:var(--brand-primary);font-size:.8rem}
