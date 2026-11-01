@@ -342,3 +342,50 @@ button.profile-setting-row{font:inherit;text-align:left}
 @media(prefers-reduced-motion:reduce){
  *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* Midnight mode surfaces stay rich and readable across every app section */
+body[data-user-theme="midnight"] .app-topbar,
+body[data-user-theme="midnight"] .mobile-bottom-nav{background:rgba(20,17,32,.94)!important;border-color:#393249!important}
+body[data-user-theme="midnight"] .card,
+body[data-user-theme="midnight"] .form-card,
+body[data-user-theme="midnight"] .professional-panel,
+body[data-user-theme="midnight"] .professional-goal-card,
+body[data-user-theme="midnight"] .professional-budget-card,
+body[data-user-theme="midnight"] .profile-edit-panel,
+body[data-user-theme="midnight"] .profile-identity-panel,
+body[data-user-theme="midnight"] .profile-setting-row,
+body[data-user-theme="midnight"] .goal-premium-card,
+body[data-user-theme="midnight"] .goal-contribute-card,
+body[data-user-theme="midnight"] .activity-history-card,
+body[data-user-theme="midnight"] .budget-allocation-card,
+body[data-user-theme="midnight"] .message{
+ background:#1b1828!important;color:#f5f1ff!important;border-color:#393249!important
+}
+body[data-user-theme="midnight"] .profile-screen-back,
+body[data-user-theme="midnight"] .profile-setting-icon,
+body[data-user-theme="midnight"] .goal-overview-icon,
+body[data-user-theme="midnight"] .goal-quick-amounts button,
+body[data-user-theme="midnight"] .profile-edit-field input,
+body[data-user-theme="midnight"] .profile-edit-field select,
+body[data-user-theme="midnight"] .goal-contribute-field input,
+body[data-user-theme="midnight"] .goal-contribute-field select{background:#242035!important;color:#f5f1ff!important;border-color:#49415e!important}
+body[data-user-theme="midnight"] .desktop-nav a{color:#d4cde5!important}
+body[data-user-theme="midnight"] .desktop-nav a:hover,
+body[data-user-theme="midnight"] .desktop-nav a[aria-current=page],
+body[data-user-theme="midnight"] .mobile-bottom-nav a[aria-current=page]{background:#30264d!important;color:#e0d4ff!important}
+body[data-user-theme="midnight"] .goal-progress-track,
+body[data-user-theme="midnight"] .progress-track{background:#393249!important}
+body[data-user-theme="midnight"] .goal-progress-ring:before{background:#1b1828!important}
+body[data-user-theme="midnight"] .goal-art-placeholder{background:linear-gradient(135deg,#30264d,#221d35)!important}
+body[data-user-theme="midnight"] .goal-contribute-summary,
+body[data-user-theme="midnight"] .goals-overview,
+body[data-user-theme="midnight"] .goal-reversal-note{background:linear-gradient(135deg,#30264d,#1b1828)!important}
+body[data-user-theme="midnight"] .button-secondary{background:#242035!important;color:#f5f1ff!important;border-color:#49415e!important}
+body[data-user-theme="midnight"] .message-success{background:#153528!important;color:#b7efd4!important;border-color:#285e48!important}
+body[data-user-theme="midnight"] .message-error{background:#3b202b!important;color:#ffc7d1!important;border-color:#6c3548!important}
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:tiana-view-out .16s ease both}
+::view-transition-new(root){animation:tiana-view-in .25s var(--tiana-ease-out) both}
+@keyframes tiana-view-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes tiana-view-out{to{opacity:0}}
+@media(prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
