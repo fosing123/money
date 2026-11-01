@@ -1,25 +1,103 @@
 {% extends 'base.html' %}
 {% block title %}Profile · TIANA{% endblock %}
 {% block content %}
-<section class="profile-page">
-  <header class="profile-page-heading"><div><p class="ui-eyebrow">YOUR SPACE</p><h1>Profile & preferences</h1><p>Make TIANA feel like yours. Keep your details and money settings up to date.</p></div><span class="profile-heading-orb" aria-hidden="true">✦</span></header>
-  <div class="profile-layout">
-    <aside class="profile-identity-card">
-      <div class="profile-identity-glow" aria-hidden="true"></div>
-      <div class="profile-large-avatar">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="Profile photo">{% else %}<span>{{ user.first_name|first|default:user.username|first|upper }}</span>{% endif %}</div>
-      <h2>{{ user.get_full_name|default:user.username }}</h2><p class="profile-email">{{ user.email }}</p>
-      <span class="profile-member-pill"><i></i> TIANA member</span>
-      <div class="profile-identity-links"><a href="{% url 'account_create' %}"><span>＋</span><span><strong>Add an account</strong><small>Connect cash, bank or mobile money</small></span><b>→</b></a><a href="{% url 'notifications' %}"><span>♧</span><span><strong>Notifications</strong><small>Manage your alerts</small></span><b>→</b></a></div>
-      <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="profile-logout" type="submit">Sign out of TIANA <span>↗</span></button></form>
-    </aside>
-    <section class="profile-settings-card">
-      <div class="profile-settings-heading"><span class="settings-icon">⚙</span><div><h2>Personal settings</h2><p>Small details that make your experience better.</p></div></div>
-      <form method="post" class="tiana-form profile-form" novalidate>{% csrf_token %}
-        {% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}
-        {% for field in form %}<div class="tiana-field tiana-field-{{ field.name }}">{% if field.label %}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{% endif %}{{ field }}{% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}</div>{% endfor %}
-        <div class="profile-save-row"><p>Your preferences are private and can be changed anytime.</p><button class="button profile-save-button" type="submit">Save changes <span>→</span></button></div>
-      </form>
-    </section>
-  </div>
+<section class="profile-screen">
+  <header class="profile-screen-header">
+    <a class="profile-screen-back" href="{% url 'dashboard' %}" aria-label="Back to overview">←</a>
+    <h1>Profile</h1>
+  </header>
+
+  <section class="profile-identity-panel" aria-label="Your profile">
+    <div class="profile-user-avatar" aria-hidden="true">{{ user.first_name|default:user.username|first|upper }}</div>
+    <h2>{{ user.get_full_name|default:user.username }}</h2>
+    <p>{{ user.email }}</p>
+    <button class="profile-edit-trigger" type="button" data-profile-edit-toggle>
+      <span aria-hidden="true">✎</span> Edit Profile
+    </button>
+  </section>
+
+  <nav class="profile-settings-list" aria-label="Profile settings">
+    <div class="profile-setting-row profile-setting-static">
+      <span class="profile-setting-icon" aria-hidden="true">文</span>
+      <strong>Language</strong>
+      <span class="profile-setting-value">English</span>
+    </div>
+    <button class="profile-setting-row" type="button" data-open-profile-edit="currency">
+      <span class="profile-setting-icon" aria-hidden="true">₣</span>
+      <strong>Currencies</strong>
+      <span class="profile-setting-value">{{ user.currency }}</span>
+      <span class="profile-setting-chevron" aria-hidden="true">›</span>
+    </button>
+    <button class="profile-setting-row" type="button" data-open-profile-edit="theme">
+      <span class="profile-setting-icon" aria-hidden="true">◉</span>
+      <strong>Appearance</strong>
+      <span class="profile-setting-value">{{ user.get_theme_display }}</span>
+      <span class="profile-setting-chevron" aria-hidden="true">›</span>
+    </button>
+    <a class="profile-setting-row" href="{% url 'application_security' %}">
+      <span class="profile-setting-icon" aria-hidden="true">♢</span>
+      <strong>Application Security</strong>
+      <span class="profile-setting-chevron" aria-hidden="true">›</span>
+    </a>
+    <a class="profile-setting-row" href="{% url 'manage_devices' %}">
+      <span class="profile-setting-icon" aria-hidden="true">▣</span>
+      <strong>Manage Devices</strong>
+      <span class="profile-setting-chevron" aria-hidden="true">›</span>
+    </a>
+    <a class="profile-setting-row" href="{% url 'password_change' %}">
+      <span class="profile-setting-icon" aria-hidden="true">♧</span>
+      <strong>Change Password</strong>
+      <span class="profile-setting-chevron" aria-hidden="true">›</span>
+    </a>
+  </nav>
+
+  <section class="profile-edit-panel" id="profile-edit-panel" {% if not form.errors %}hidden{% endif %}>
+    <div class="profile-edit-heading">
+      <h2>Edit Profile</h2>
+      <button type="button" data-profile-edit-close aria-label="Close profile editor">×</button>
+    </div>
+    <form method="post" class="profile-edit-form" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}
+        <div class="profile-edit-field" id="profile-field-{{ field.name }}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+        </div>
+      {% endfor %}
+      <div class="profile-edit-actions">
+        <button class="button button-secondary" type="button" data-profile-edit-close>Cancel</button>
+        <button class="button" type="submit">Save changes</button>
+      </div>
+    </form>
+  </section>
 </section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const panel = document.getElementById("profile-edit-panel");
+  if (!panel) return;
+  const open = (fieldName) => {
+    panel.hidden = false;
+    if (fieldName) {
+      const field = panel.querySelector('[name="' + fieldName + '"]');
+      if (field) field.focus({ preventScroll: true });
+    }
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  document.querySelector("[data-profile-edit-toggle]")?.addEventListener("click", () => {
+    if (panel.hidden) open();
+    else panel.hidden = true;
+  });
+  document.querySelectorAll("[data-open-profile-edit]").forEach((button) => {
+    button.addEventListener("click", () => open(button.dataset.openProfileEdit));
+  });
+  document.querySelectorAll("[data-profile-edit-close]").forEach((button) => {
+    button.addEventListener("click", () => { panel.hidden = true; });
+  });
+  if (!panel.hidden) panel.scrollIntoView({ block: "start" });
+});
+</script>
 {% endblock %}
