@@ -17,6 +17,7 @@
   </section>
 
   <nav class="profile-settings-list" aria-label="Profile settings">
+    <div class="profile-setting-row"><span class="profile-setting-icon" aria-hidden="true">♧</span><strong>Push notifications</strong><button type="button" class="button button-small" data-tiana-push-enable>Enable</button><span class="profile-setting-value" data-tiana-push-status role="status"></span></div>
     <div class="profile-setting-row profile-setting-static">
       <span class="profile-setting-icon" aria-hidden="true">文</span>
       <strong>Language</strong>
@@ -77,6 +78,11 @@
 </section>
 {% endblock %}
 {% block extra_js %}
+<meta name="tiana-fcm-vapid" content="{{ firebase_web_vapid_key|default:'' }}">
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js" defer></script>
+<script src="/firebase-config.js" defer></script>
+<script src="{% static 'nkem/fcm.js' %}" defer></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.querySelector(".profile-screen");
