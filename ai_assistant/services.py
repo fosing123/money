@@ -171,5 +171,18 @@ def generate_money_guidance(user, prompt):
     except (IndexError, KeyError, TypeError):
         answer = ""
     if not answer:
+        _release_ai_request(usage_id)
         raise AIServiceError("I didn't get a usable answer back. Try asking in a different way.")
-    return answer[:7000]
+
+    answer = answer[:7000]
+    now = timezone.now()
+    AIResponseCache.objects.filter(
+        user=user,
+        created_at__lt=now - timedelta(days=30),
+    ).delete()
+    AIResponseCache.objects.update_or_create(
+        user=user,
+        fingerprint=fingerprint,
+        defaults={"response": answer, "created_at": now},
+    )
+    return answer
