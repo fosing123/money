@@ -16,20 +16,24 @@ Do not use D1 or the Django Durable Object SQLite backend as the financial ledge
 
 ### 1. PostgreSQL and Hyperdrive
 
-Create or choose a PostgreSQL database with a provider such as Neon or Supabase. Create a Cloudflare Hyperdrive configuration pointing to that database. Keep its connection credentials private.
+The staging database and Hyperdrive configuration are already provisioned:
 
-Then edit the commented `hyperdrive` block in `wrangler.jsonc` and add the real Hyperdrive configuration ID:
+- Neon project: `TIANA`
+- Neon branch: `tiana-staging` (separate from the Neon `production` branch)
+- Database: `neondb`
+- Cloudflare Hyperdrive: `tiana-django-staging-db`
+- Hyperdrive configuration ID: `74744f012eb646569c58b7659715ea80`
+- Worker binding: `HYPERDRIVE` in `wrangler.jsonc`
 
-```jsonc
-"hyperdrive": [
-  {
-    "binding": "HYPERDRIVE",
-    "id": "YOUR_REAL_HYPERDRIVE_CONFIG_ID"
-  }
-]
+The Hyperdrive origin uses the staging branch's direct Neon PostgreSQL host, requires TLS, and has query caching disabled. The branch was forked after Django migrations were applied, so it has the app schema but is isolated from future writes to the production branch.
+
+For local work against staging, refresh the Neon variables into the file Django loads first:
+
+```powershell
+npx neon@latest env pull --branch tiana-staging --file .env.local
 ```
 
-Do not use the old D1 database for the Django ledger. Do not run migrations or import local SQLite data into a live database until a backup and reviewed import plan exist.
+Do not commit `.env.local` or copy connection strings into GitHub. Do not use the staging branch for production data. Do not run migrations against the production branch or import local SQLite data until a backup and reviewed data-import plan exist.
 
 ### 2. R2 for uploaded media
 
