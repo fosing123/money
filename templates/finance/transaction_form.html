@@ -1,16 +1,172 @@
 {% extends 'base.html' %}
 {% block title %}{{ title }} · TIANA{% endblock %}
 {% block content %}
-<section class="entry-page transaction-entry-page">
-  <header class="entry-heading"><a class="entry-back" href="{% url 'transactions' %}" aria-label="Back to activity">←</a><div><h1>{{ title }}</h1></div><span class="entry-heading-art" aria-hidden="true">↗</span></header>
-  <section class="entry-form-card">
-    <div class="entry-card-heading"><span class="entry-card-icon">₣</span><div><h2>Transaction details</h2></div></div>
-    <form method="post" class="tiana-form" novalidate>{% csrf_token %}
+<section class="entry-page transaction-entry-page transaction-refresh-page" data-reveal>
+  <header class="entry-heading transaction-refresh-heading">
+    <a class="entry-back" href="{% url 'transactions' %}" aria-label="Back to activity">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <div>
+      <p class="ui-eyebrow">YOUR MONEY, IN MOTION</p>
+      <h1>{{ title }}</h1>
+      <p>Keep every franc in its right place.</p>
+    </div>
+    <span class="transaction-heading-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+  </header>
+
+  <section class="entry-form-card transaction-refresh-card">
+    <div class="entry-card-heading transaction-refresh-card-heading">
+      <span class="entry-card-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H20v14H6.5A2.5 2.5 0 0 1 4 16.5zM4 8h16M15 13h2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <div>
+        <h2>Transaction details</h2>
+        <p>A quick note helps you understand your money later.</p>
+      </div>
+    </div>
+
+    <form method="post" class="tiana-form transaction-refresh-form" novalidate>
+      {% csrf_token %}
       {% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}
-      {% if form.kind %}<div class="transaction-kind-picker polished-kind-picker" data-kind-picker><button type="button" data-kind-choice="expense">↘ &nbsp; Expense</button><button type="button" data-kind-choice="income">↗ &nbsp; Income</button></div>{% endif %}
-      <div class="entry-fields-grid">{% for field in form %}<div class="tiana-field tiana-field-{{ field.name }}">{% if field.label %}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{% endif %}{{ field }}{% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}</div>{% endfor %}</div>
-      <div class="entry-form-footer"><div class="form-actions"><a class="button button-secondary" href="{% url 'transactions' %}">Cancel</a><button class="button" type="submit">Save transaction <span>→</span></button></div></div>
+
+      {% if form.kind %}
+      <section class="transaction-kind-section">
+        <div class="transaction-section-label">
+          <span>01</span>
+          <div><strong>Money movement</strong><small>What is happening to your balance?</small></div>
+        </div>
+        <div class="transaction-kind-picker polished-kind-picker transaction-kind-picker-large" data-kind-picker>
+          <button type="button" data-kind-choice="expense" aria-pressed="false">
+            <span class="transaction-kind-icon expense-kind-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 8v9H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span><strong>Expense</strong><small>Money going out</small></span>
+          </button>
+          <button type="button" data-kind-choice="income" aria-pressed="false">
+            <span class="transaction-kind-icon income-kind-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span><strong>Income</strong><small>Money coming in</small></span>
+          </button>
+        </div>
+        <div class="tiana-field-kind">{{ form.kind }}</div>
+      </section>
+      {% endif %}
+
+      <section class="transaction-amount-panel">
+        <div class="transaction-section-label">
+          <span>02</span>
+          <div><strong>How much?</strong><small>Enter the amount for this transaction.</small></div>
+        </div>
+        <div class="transaction-amount-control">
+          <span class="transaction-currency-prefix">{{ user.currency|default:"XAF" }}</span>
+          {{ form.amount }}
+        </div>
+        {% for error in form.amount.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+        <div class="transaction-quick-amounts" aria-label="Quick amount choices">
+          <button type="button" data-transaction-amount="500">500</button>
+          <button type="button" data-transaction-amount="1000">1,000</button>
+          <button type="button" data-transaction-amount="2000">2,000</button>
+          <button type="button" data-transaction-amount="5000">5,000</button>
+        </div>
+        <p class="transaction-amount-note">Use the amount of this one transaction, not your total account balance.</p>
+      </section>
+
+      <section class="transaction-details-section">
+        <div class="transaction-section-label">
+          <span>03</span>
+          <div><strong>Where and when?</strong><small>Add the details that make this easy to find later.</small></div>
+        </div>
+
+        <div class="entry-fields-grid transaction-fields-grid">
+          <div class="tiana-field tiana-field-account">
+            <label for="{{ form.account.id_for_label }}">Account</label>
+            {{ form.account }}
+            {% for error in form.account.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+
+          <div class="tiana-field tiana-field-currency">
+            <label for="{{ form.currency.id_for_label }}">Currency</label>
+            {{ form.currency }}
+            {% for error in form.currency.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+
+          <div class="tiana-field tiana-field-category">
+            <label for="{{ form.category.id_for_label }}">Category</label>
+            {{ form.category }}
+            <datalist id="transactionCategorySuggestions">
+              <option value="Food"><option value="Transport"><option value="School fees">
+              <option value="Internet & airtime"><option value="Shopping"><option value="Health">
+              <option value="Entertainment"><option value="Savings"><option value="Other">
+            </datalist>
+            <div class="transaction-category-suggestions" aria-label="Popular categories">
+              <button type="button" data-transaction-category="Food">Food</button>
+              <button type="button" data-transaction-category="Transport">Transport</button>
+              <button type="button" data-transaction-category="School fees">School</button>
+              <button type="button" data-transaction-category="Internet & airtime">Airtime</button>
+              <button type="button" data-transaction-category="Shopping">Shopping</button>
+            </div>
+            {% for error in form.category.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+
+          <div class="tiana-field tiana-field-description">
+            <label for="{{ form.description.id_for_label }}">What was it for?</label>
+            {{ form.description }}
+            {% for error in form.description.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+
+          <div class="tiana-field tiana-field-merchant">
+            <label for="{{ form.merchant.id_for_label }}">Shop or person <span class="transaction-optional">Optional</span></label>
+            {{ form.merchant }}
+            {% for error in form.merchant.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+
+          <div class="tiana-field tiana-field-transaction_date">
+            <label for="{{ form.transaction_date.id_for_label }}">Date</label>
+            {{ form.transaction_date }}
+            {% for error in form.transaction_date.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <footer class="entry-form-footer transaction-refresh-footer">
+        <p><span>✦</span> Your account balance will update automatically when you save.</p>
+        <div class="form-actions">
+          <a class="button button-secondary" href="{% url 'transactions' %}">Cancel</a>
+          <button class="button transaction-save-button" type="submit">Save transaction <span>→</span></button>
+        </div>
+      </footer>
     </form>
   </section>
 </section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const amount = document.querySelector("#{{ form.amount.id_for_label }}");
+  document.querySelectorAll("[data-transaction-amount]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (!amount) return;
+      amount.value = button.dataset.transactionAmount;
+      amount.focus();
+      amount.dispatchEvent(new Event("input", { bubbles: true }));
+      document.querySelectorAll("[data-transaction-amount]").forEach((item) => item.classList.toggle("is-active", item === button));
+    });
+  });
+
+  const category = document.querySelector("#{{ form.category.id_for_label }}");
+  if (category) category.setAttribute("list", "transactionCategorySuggestions");
+  document.querySelectorAll("[data-transaction-category]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (!category) return;
+      category.value = button.dataset.transactionCategory;
+      category.focus();
+      category.dispatchEvent(new Event("input", { bubbles: true }));
+      document.querySelectorAll("[data-transaction-category]").forEach((item) => item.classList.toggle("is-active", item === button));
+    });
+  });
+});
+</script>
 {% endblock %}
