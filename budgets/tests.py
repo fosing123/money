@@ -104,3 +104,56 @@ class BudgetTests(TestCase):
             Decimal("3000"),
         )
         self.assertEqual(Budget.objects.filter(owner=user, category__gt="").count(), 6)
+
+
+    def test_owner_can_delete_budget_and_clear_saved_allocation_and_alerts(self):
+        from notifications.models import Notification
+
+        user = User.objects.create_user(
+            username="budgetdelete",
+            email="budgetdelete@example.com",
+            password="StrongPass123!",
+            weekly_budget_allocations={"food": "3000"},
+        )
+        budget = Budget.objects.create(
+            owner=user,
+            name="Food",
+            category="Food",
+            amount=Decimal("3000"),
+            currency="XAF",
+            period="weekly",
+        )
+        Notification.objects.create(
+            user=user,
+            title="Food budget getting close",
+            message="You have used 80%.",
+            kind="warning",
+            source="system",
+            dedupe_key=f"budget:{budget.pk}:weekly:20261102:80",
+        )
+        self.client.force_login(user)
+
+        confirm = self.client.get(f"/budgets/{budget.pk}/delete/")
+        self.assertEqual(confirm.status_code, 200)
+        response = self.client.post(f"/budgets/{budget.pk}/delete/")
+        self.assertRedirects(response, "/budgets/")
+
+        self.assertFalse(Budget.objects.filter(pk=budget.pk).exists())
+        user.refresh_from_db()
+        self.assertEqual(user.weekly_budget_allocations["food"], "0")
+        self.assertFalse(Notification.objects.filter(user=user, dedupe_key__startswith=f"budget:{budget.pk}:").exists())
+
+    def test_user_cannot_delete_another_users_budget(self):
+        owner = User.objects.create_user(
+            username="budgetowner",
+            email="budgetowner@example.com",
+            password="StrongPass123!",
+        )
+        other = User.objects.create_user(
+            username="budgetother",
+            email="budgetother@example.com",
+            password="StrongPass123!",
+        )
+        budget = Budget.objects.create(owner=owner, name="Private", amount=1000)
+        self.client.force_login(other)
+        self.assertEqual(self.client.get(f"/budgets/{budget.pk}/delete/").status_code, 404)
