@@ -1,61 +1,89 @@
-# TIANA Cloudflare Pages deployment
+# TIANA Django on Cloudflare Workers
 
-1. Create a Cloudflare account, add your existing domain and create a Pages project connected to this GitHub repository.
-2. Deploy branch feat/tiana-pwa-offline-premium-sync-20261101 for preview. Use no build command and set the output directory to web.
-3. Add the custom domain and follow Cloudflare DNS/HTTPS instructions. HTTPS is required for PWA installation, IndexedDB and browser encryption.
-4. Create D1 database `tiana-ops`. Apply `migrations/0001_telemetry.sql` first and `migrations/0002_push.sql` second using Wrangler.
-5. The repository includes `wrangler.jsonc`, which is the source of truth for Pages Functions configuration. After creating D1, add its `database_id` under `d1_databases` in this file with binding exactly `TIANA_DB`, then commit and redeploy. Do not add a conflicting dashboard binding while this Wrangler configuration is active.
-6. Add secret ADMIN_TOKEN (generate a long random value). Add public variable GOOGLE_CLIENT_ID after configuring Google OAuth.
-7. Optionally add public ADSENSE_CLIENT_ID and ADSENSE_SLOT_ID only after AdSense approves the site.
+This repository deploys the Django application in `nkem/` to a **separate staging Worker** named `tiana-django-staging`. It does not change the existing `tiana-money` Pages production site or the existing `money` Worker.
 
-Pages Functions in functions/ are discovered automatically. D1 must be bound under TIANA_DB.
+## Architecture
 
-## Google Drive setup
-Enable Google Drive API in Google Cloud Console. Configure the OAuth consent screen and create a Web application OAuth client. Add the production domain as an authorized JavaScript origin. Set the OAuth client ID in Pages variables as GOOGLE_CLIENT_ID.
+- **Application runtime:** Cloudflare Python Workers with Django's WSGI adapter.
+- **Financial database:** PostgreSQL through Cloudflare Hyperdrive.
+- **Uploaded profile and goal images:** Cloudflare R2, using the `MEDIA` bucket binding and Cloudflare's `django-cf` R2 storage backend.
+- **Static files:** `collectstatic` writes to `public/static/`; the Worker Assets binding serves `/static/*`.
+- **Local development:** SQLite and local filesystem uploads. Those local defaults are not permitted in production.
 
-Member-triggered backups are encrypted on-device with AES-256-GCM and a passphrase-derived key before the browser uploads ciphertext directly to Google's app-data area. TIANA's server never receives the backup, passphrase or Google access token. This version is manual backup/restore, not continuous background sync. Keep the passphrase safe; TIANA cannot recover it.
+Do not use D1 or the Django Durable Object SQLite backend as the financial ledger. Cloudflare documents that these Django database backends do not support database transactions; TIANA's ledger and goal-contribution flows rely on transactional behaviour.
 
-For Apple devices, export a local backup JSON and save it to iCloud Drive via Files/share sheet. A browser PWA does not have a general-purpose iCloud Drive sync API.
+## Required Cloudflare setup
 
-## Privacy
-The Functions accept only an anonymous installation UUID and whitelisted usage-event names. They have no route that receives balance, income, expenses, transactions, budgets, goals, profile fields or money-coach messages. D1 stores install IDs, first/last-seen, bans and daily aggregate events. Cloudflare may process network metadata to provide the service, but TIANA's D1 tables do not store IP addresses.
+### 1. PostgreSQL and Hyperdrive
 
-Usage reporting is off by default. Opting out requests deletion of that install's D1 telemetry rows; an offline deletion is queued and retried later. A ban is a deterrent only: clearing browser data or reinstalling creates a new ID because this PWA collects no user identity.
+Create or choose a PostgreSQL database with a provider such as Neon or Supabase. Create a Cloudflare Hyperdrive configuration pointing to that database. Keep its connection credentials private.
 
-## Payments and ads
-D1 has a reserved table for verified payments to TIANA only. No gateway webhook is connected yet. A real provider's signed server-to-server webhook must be implemented before treating a payment as confirmed. Do not accept client-reported payment confirmations.
+Then edit the commented `hyperdrive` block in `wrangler.jsonc` and add the real Hyperdrive configuration ID:
 
-Money School has an optional AdSense slot. Configure publisher/ad-slot IDs only after Google approves the site. The AdSense reporting API is not connected; use your AdSense dashboard for impressions, RPM and earnings until that integration is added.
+```jsonc
+"hyperdrive": [
+  {
+    "binding": "HYPERDRIVE",
+    "id": "YOUR_REAL_HYPERDRIVE_CONFIG_ID"
+  }
+]
+```
 
-## Admin
-Open /admin.html on the deployed domain and enter the Cloudflare ADMIN_TOKEN. It is held in the tab's memory only. The console shows opt-in anonymous installs, aggregate events and ban/unban controls. It does not show members' financial data.
+Do not use the old D1 database for the Django ledger. Do not run migrations or import local SQLite data into a live database until a backup and reviewed import plan exist.
 
-## Test checklist
-- Normal browser visit shows the install gate.
-- Install TIANA and open it via the home-screen icon.
-- Complete onboarding; first balance is zero unless the user enters another value.
-- Turn off Wi-Fi/data and try adding income, expenses, budgets and goals.
-- Reconnect and confirm entries remain local.
-- Export JSON, restore on a second device, then test encrypted Drive backup/restore.
-- Opt into usage reporting; confirm the installation appears in admin; ban and unban it.
-- Inspect DevTools Network and confirm no finance data is sent.
+### 2. R2 for uploaded media
 
-The GitHub branch does not configure your Cloudflare domain, D1 binding, secrets or Google OAuth client. Those setup steps must be completed in your accounts.
+R2 is not enabled on this Cloudflare account yet. Enable R2 in the Cloudflare dashboard, create a bucket named `tiana-django-media`, then keep the `MEDIA` binding in `wrangler.jsonc`. The Django storage adapter writes media under the `tiana-media/` prefix.
 
+No S3 access keys are needed by the application when it uses the Worker R2 binding.
 
-## Firebase Cloud Messaging setup
-1. Confirm Firebase Cloud Messaging is enabled and the Web Push public key shown in `web/firebase-config.js` matches the project's current VAPID public key.
-2. Enable the Firebase Cloud Messaging API in the linked Google Cloud project.
-3. Revoke the service-account key shared in the setup conversation and generate a replacement key for the same service account. Grant the service account only the Firebase Cloud Messaging Service Editor role (`roles/cloudmessaging.editor`) if your project permits it.
-4. In Cloudflare Dashboard, open Workers & Pages > your Pages project > Settings > Variables and Secrets. Add `FIREBASE_SERVICE_ACCOUNT_JSON` as an **encrypted Secret**, and paste the complete replacement service-account JSON. Configure it for Preview and Production as needed. Never add it to GitHub, `wrangler.jsonc`, frontend code or a plain-text variable.
-5. Apply the push migration to the D1 database already bound as `TIANA_DB`: `npx wrangler d1 execute tiana-ops --remote --file=migrations/0002_push.sql`.
-6. Redeploy the Pages project so the Functions and secret are active.
-7. Open the installed TIANA PWA, go to Settings and enable notifications. Confirm an installation appears in the admin list.
-8. Open `/admin.html`, connect with `ADMIN_TOKEN`, choose the target installation with “Use for push”, and send a test notification.
-9. Verify background delivery, that clicking the notification opens TIANA, and that disabling push removes the server-side token.
+### 3. Worker configuration and secrets
 
-The Pages Functions use FCM HTTP v1 and Web Crypto to create a short-lived OAuth assertion from `FIREBASE_SERVICE_ACCOUNT_JSON`. The Python Firebase Admin SDK snippet does not run inside Cloudflare Pages Functions. The service-account private key remains server-side.
+Configure these Worker variables/secrets in Cloudflare:
 
+| Name | Type | Purpose |
+|---|---|---|
+| `DJANGO_SECRET_KEY` | Secret | Long, random Django signing key |
+| `ALLOWED_HOSTS` | Variable | Comma-separated staging hostnames |
+| `CSRF_TRUSTED_ORIGINS` | Variable | Full HTTPS origin(s), comma-separated |
+| `GEMINI_API_KEY` | Secret | Server-side Gemini API key |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | Secret | Firebase service-account JSON for server-side FCM |
+| `FIREBASE_WEB_API_KEY` | Variable | Public Firebase Web app config |
+| `FIREBASE_WEB_AUTH_DOMAIN` | Variable | Public Firebase Web app config |
+| `FIREBASE_WEB_PROJECT_ID` | Variable | Public Firebase Web app config |
+| `FIREBASE_WEB_MESSAGING_SENDER_ID` | Variable | Public Firebase Web app config |
+| `FIREBASE_WEB_APP_ID` | Variable | Public Firebase Web app config |
+| `FIREBASE_WEB_VAPID_KEY` | Variable | Public Web Push key |
 
-### Wrangler configuration note
-The repository's `wrangler.jsonc` declares `pages_build_output_dir: ./web` and is used for Pages Functions configuration. Cloudflare documents that when this file is present it becomes the source of truth for Pages project configuration. After D1 database creation, add the exact database ID to its `d1_databases` array with binding `TIANA_DB`, then commit and redeploy. Store credentials such as `ADMIN_TOKEN` and `FIREBASE_SERVICE_ACCOUNT_JSON` as encrypted Cloudflare secrets, not in the Wrangler file.
+Never put any private value into Git, `wrangler.jsonc`, client-side JavaScript or a committed `.env` file.
+
+### 4. Local verification
+
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and Node.js, then run:
+
+```powershell
+uv sync --all-groups
+Copy-Item .env.example .env
+uv run python manage.py migrate
+uv run python manage.py check
+uv run python manage.py test
+uv run python manage.py collectstatic --noinput
+uv run pywrangler dev
+```
+
+The local Worker can serve the Django app shell, but database-backed pages need a configured local PostgreSQL/Hyperdrive development connection. Do not mistake a local SQLite run for a production readiness test.
+
+### 5. First staging deployment
+
+Before deploying, confirm:
+- The Hyperdrive ID is configured and the PostgreSQL database is reachable.
+- R2 has been enabled and the `tiana-django-media` bucket exists.
+- Worker secrets and hostname/CSRF variables are configured.
+- The Django CI workflow passes.
+- A backup exists before any live data import.
+
+The repository includes `.github/workflows/deploy-worker.yml` for a staging Worker deployment. Add GitHub Actions secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to the `tiana-django-staging` environment. The API token must have permission to deploy Workers. The workflow is configured for manual staging deployment and future pushes to `main`; it does not switch the Pages production site.
+
+## Current cutover policy
+
+The existing Pages project `tiana-money` still serves the previous static prototype from its production branch. Keep it in place until the Django Worker passes authentication, financial ledger, backup/restore, uploads, notifications, and load checks. Only then should the production hostname or DNS be moved to the Django Worker.
