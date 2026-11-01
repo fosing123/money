@@ -39,7 +39,7 @@ def _user_snapshot(user):
     goals = [{
         "name": goal.name,
         "target_fcfa": str(goal.target_amount),
-        "saved_fcfa": str(goal.current_amount),
+        "saved_fcfa": str(goal.saved_amount),
         "progress_percent": goal.progress_percentage,
     } for goal in Goal.objects.filter(owner=user, status="active")[:6]]
     recent = [{
