@@ -8,7 +8,7 @@ from accounts.views import application_security_view, login_view, logout_view, m
 from ai_assistant.views import ai_chat_view
 from budgets.views import budget_allocations_view, budget_delete_view, budget_list_view
 from core.views import dashboard_view, health_check_view, home_view, investments_coming_soon_view, money_school_view, offline_bootstrap_view, offline_sync_view, premium_view, service_worker_view
-from finance.views import account_create_view, transaction_create_view, transaction_delete_view, transaction_list_view, transaction_update_view
+from finance.views import account_create_view, transaction_create_view, transaction_delete_view, transaction_export_view, transaction_list_view, transaction_update_view
 from goals.views import goal_contribute_view, goal_create_view, goal_delete_view, goal_list_view
 from insights.views import insights_view
 from marketplace.views import opportunity_detail_view, opportunity_list_view
@@ -34,6 +34,7 @@ urlpatterns = [
     path("dashboard/", dashboard_view, name="dashboard"),
     path("accounts/new/", account_create_view, name="account_create"),
     path("transactions/", transaction_list_view, name="transactions"),
+    path("transactions/export.csv", transaction_export_view, name="transaction_export"),
     path("transactions/new/", transaction_create_view, name="transaction_create"),
     path("transactions/<int:pk>/edit/", transaction_update_view, name="transaction_update"),
     path("transactions/<int:pk>/delete/", transaction_delete_view, name="transaction_delete"),
