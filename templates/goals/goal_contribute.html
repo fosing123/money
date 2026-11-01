@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Add to {{ goal.name }} · TIANA{% endblock %}
+{% block content %}
+<section class="goal-contribute-page">
+  <header class="goal-contribute-heading">
+    <a class="entry-back" href="{% url 'goals' %}" aria-label="Back to savings goals">←</a>
+    <div><h1>Add money</h1><p>{{ goal.name }}</p></div>
+  </header>
+
+  <section class="goal-contribute-summary">
+    <div class="goal-contribute-summary-top"><span>YOUR PROGRESS</span><strong>{{ goal.progress_percentage }}%</strong></div>
+    <div class="goal-progress-track"><span style="width:{{ goal.progress_percentage }}%"></span></div>
+    <div class="goal-contribute-numbers"><div><small>Saved</small><strong>{{ goal.saved_amount|floatformat:0 }} {{ goal.currency }}</strong></div><div><small>Target</small><strong>{{ goal.target_amount|floatformat:0 }} {{ goal.currency }}</strong></div><div><small>Remaining</small><strong>{{ goal.remaining_amount|floatformat:0 }} {{ goal.currency }}</strong></div></div>
+  </section>
+
+  <section class="goal-contribute-card">
+    <h2>How much would you like to add?</h2>
+    {% if not accounts_available %}
+      <div class="goal-no-accounts">
+        <p>You need an active account in {{ goal.currency }} to add money to this goal.</p>
+        <a class="button" href="{% url 'account_create' %}">Add an account <span>→</span></a>
+      </div>
+    {% else %}
+      {% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}
+      <form method="post" class="goal-contribute-form" novalidate>
+        {% csrf_token %}
+        <div class="goal-amount-field">
+          <label for="{{ form.amount.id_for_label }}">Amount</label>
+          <div class="goal-amount-input-wrap">{{ form.amount }}<span>{{ goal.currency }}</span></div>
+          {% for error in form.amount.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </div>
+        <div class="goal-quick-amounts" aria-label="Quick amounts">
+          <button type="button" data-goal-quick-amount="500">+500</button>
+          <button type="button" data-goal-quick-amount="1000">+1,000</button>
+          <button type="button" data-goal-quick-amount="2000">+2,000</button>
+          <button type="button" data-goal-quick-amount="5000">+5,000</button>
+        </div>
+        <div class="goal-contribute-field">
+          <label for="{{ form.account.id_for_label }}">From account</label>
+          {{ form.account }}
+          {% for error in form.account.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </div>
+        <div class="goal-contribute-field">
+          <label for="{{ form.note.id_for_label }}">Note <span>Optional</span></label>
+          {{ form.note }}
+          {% for error in form.note.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </div>
+        <div class="goal-contribute-footnote"><span>↗</span> This amount will be moved out of the selected account and added to this goal.</div>
+        <div class="goal-contribute-actions">
+          <a class="button button-secondary" href="{% url 'goals' %}">Cancel</a>
+          <button class="button" type="submit">Add to my goal <span>→</span></button>
+        </div>
+      </form>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.querySelector("#{{ form.amount.id_for_label }}");
+  if (!input) return;
+  document.querySelectorAll("[data-goal-quick-amount]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const value = Number(input.value || 0) + Number(button.dataset.goalQuickAmount);
+      input.value = String(value);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  });
+});
+</script>
+{% endblock %}

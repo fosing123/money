@@ -1,6 +1,7 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import SESSION_KEY, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.sessions.models import Session
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
@@ -99,6 +100,9 @@ def onboarding_setup_view(request):
         "payday_weekday": request.user.payday_weekday,
         "financial_priorities": request.user.financial_priorities or [],
     }
+    saved_allocations = request.user.weekly_budget_allocations or {}
+    for key in ("food", "transport", "internet", "school", "personal", "emergency"):
+        initial[f"allocation_{key}"] = saved_allocations.get(key, 0)
     form = OnboardingSetupForm(request.POST or None, initial=initial)
     if request.method == "POST" and form.is_valid():
         data = form.cleaned_data
@@ -110,8 +114,23 @@ def onboarding_setup_view(request):
         # Use an explicit check so Monday (0) remains a valid weekday.
         user.payday_weekday = None if payday_weekday in (None, "") else int(payday_weekday)
         user.financial_priorities = data["financial_priorities"]
+        category_field_map = {
+            "food": "allocation_food",
+            "transport": "allocation_transport",
+            "internet": "allocation_internet",
+            "school": "allocation_school",
+            "personal": "allocation_personal",
+            "emergency": "allocation_emergency",
+        }
+        user.weekly_budget_allocations = {
+            key: str(data.get(field_name) or 0)
+            for key, field_name in category_field_map.items()
+        }
         user.onboarding_completed = True
-        user.save(update_fields=["weekly_income", "weekly_savings_target", "payday_weekday", "financial_priorities", "onboarding_completed"])
+        user.save(update_fields=[
+            "weekly_income", "weekly_savings_target", "payday_weekday",
+            "financial_priorities", "weekly_budget_allocations", "onboarding_completed",
+        ])
         type_map = {"Cash": "cash", "MTN Mobile Money": "mtn_momo", "Orange Money": "orange_money", "Bank account": "bank"}
         account = Account.objects.filter(owner=user).order_by("created_at").first()
         if account is None:
@@ -122,15 +141,26 @@ def onboarding_setup_view(request):
         account.currency = user.currency
         account.save()
         account.recalculate_balance()
-        if data["weekly_income"] > 0 and not Budget.objects.filter(owner=user).exists():
-            Budget.objects.create(
-                owner=user,
-                name="Weekly essentials",
-                amount=data["weekly_income"],
-                currency=user.currency,
-                period="weekly",
-                start_date=timezone.localdate(),
-            )
+        category_names = {
+            "food": "Food",
+            "transport": "Transport",
+            "internet": "Internet & airtime",
+            "school": "School",
+            "personal": "Personal",
+            "emergency": "Emergency",
+        }
+        for key, category in category_names.items():
+            amount = data.get(f"allocation_{key}") or 0
+            if amount <= 0:
+                continue
+            existing = Budget.objects.filter(
+                owner=user, period="weekly", category__iexact=category
+            ).first()
+            if existing is None:
+                Budget.objects.create(
+                    owner=user, name=category, category=category, amount=amount,
+                    currency=user.currency, period="weekly", start_date=timezone.localdate(),
+                )
         messages.success(request, "Your starting plan is saved. There is no perfect budget—just a useful place to begin.")
         return redirect("dashboard")
     return render(request, "accounts/setup.html", {"form": form})
@@ -138,9 +168,37 @@ def onboarding_setup_view(request):
 
 @login_required
 def profile_view(request):
-    form = ProfileForm(request.POST or None, instance=request.user)
+    form = ProfileForm(request.POST or None, request.FILES or None, instance=request.user)
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Your profile has been updated.")
         return redirect("profile")
     return render(request, "accounts/profile.html", {"form": form})
+
+
+
+@login_required
+def application_security_view(request):
+    return render(request, "accounts/security.html")
+
+
+@login_required
+def manage_devices_view(request):
+    active_sessions = []
+    for session in Session.objects.filter(expire_date__gt=timezone.now()).iterator():
+        data = session.get_decoded()
+        if str(data.get(SESSION_KEY, "")) == str(request.user.pk):
+            active_sessions.append(session)
+
+    current_key = request.session.session_key
+    other_sessions = [session for session in active_sessions if session.session_key != current_key]
+
+    if request.method == "POST":
+        for session in other_sessions:
+            session.delete()
+        messages.success(request, f"Signed out of {len(other_sessions)} other session(s).")
+        return redirect("manage_devices")
+
+    return render(request, "accounts/manage_devices.html", {
+        "other_session_count": len(other_sessions),
+    })

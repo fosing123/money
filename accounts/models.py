@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from core.validators import validate_uploaded_image
+
 
 class User(AbstractUser):
     THEME_CHOICES = [
@@ -19,6 +21,7 @@ class User(AbstractUser):
     currency = models.CharField(max_length=10, default="XAF")
     timezone = models.CharField(max_length=64, default="Africa/Douala")
     phone_number = models.CharField(max_length=20, blank=True, default="")
+    avatar = models.ImageField(upload_to="tiana/profiles/%Y/%m/", blank=True, null=True, validators=[validate_uploaded_image])
     is_verified = models.BooleanField(default=False)
     theme = models.CharField(max_length=16, choices=THEME_CHOICES, default="violet")
     onboarding_completed = models.BooleanField(default=False)
@@ -26,6 +29,7 @@ class User(AbstractUser):
     weekly_savings_target = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     payday_weekday = models.PositiveSmallIntegerField(choices=WEEKDAYS, null=True, blank=True)
     financial_priorities = models.JSONField(default=list, blank=True)
+    weekly_budget_allocations = models.JSONField(default=dict, blank=True)
 
     REQUIRED_FIELDS = ["email"]
 

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Goal
+from .models import Goal, GoalContribution
 
 
 @admin.register(Goal)
@@ -12,8 +12,31 @@ class GoalAdmin(admin.ModelAdmin):
     autocomplete_fields = ("owner",)
     readonly_fields = ("preview", "created_at", "updated_at")
 
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.contributions.exists():
+            return False
+        return super().has_delete_permission(request, obj)
+
+    def delete_queryset(self, request, queryset):
+        protected_ids = queryset.filter(contributions__isnull=False).values_list("pk", flat=True)
+        super().delete_queryset(request, queryset.exclude(pk__in=protected_ids))
+
     @admin.display(description="Goal image")
     def preview(self, obj):
         if not obj or not obj.image:
             return "No image"
         return format_html('<img src="{}" alt="" style="width:110px;height:80px;object-fit:cover;border-radius:10px"/>', obj.image.url)
+
+
+@admin.register(GoalContribution)
+class GoalContributionAdmin(admin.ModelAdmin):
+    list_display = ("goal", "owner", "transaction", "created_at")
+    list_filter = ("created_at",)
+    search_fields = ("goal__name", "owner__username", "owner__email", "note")
+    readonly_fields = ("owner", "goal", "transaction", "note", "created_at")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False

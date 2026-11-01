@@ -1,16 +1,57 @@
 {% extends 'base.html' %}
-{% block title %}Goals · TIANA{% endblock %}
+{% block title %}Savings Goals · TIANA{% endblock %}
 {% block content %}
-<section class="workspace-heading" data-reveal><div><h1>Savings goals</h1><p>Track progress towards the things you're saving for.</p></div><a class="button" href="{% url 'goal_create' %}">Create goal</a></section>
-<div class="goal-grid professional-goal-grid">
-{% for goal in goals %}
-<article class="card professional-goal-card" data-reveal>
-<div class="professional-goal-card-top"><div><h2>{{ goal.name }}</h2><p>{{ goal.description|default:'Savings goal' }}</p></div><span class="goal-status {% if goal.status == 'completed' %}is-complete{% endif %}">{{ goal.get_status_display }}</span></div>
-<div class="goal-target-amount">{{ goal.target_amount|floatformat:0 }} <span>FCFA</span></div>
-<div class="professional-progress-detail"><span>{{ goal.current_amount|floatformat:0 }} saved</span><strong>{{ goal.remaining_amount|floatformat:0 }} remaining</strong></div>
-<div class="progress-track green goal-large-progress"><span data-progress style="width:{{ goal.progress_percentage }}%"></span></div>
-<div class="professional-goal-footer"><strong>{{ goal.progress_percentage }}% complete</strong>{% if goal.target_date %}<span>Target · {{ goal.target_date|date:"j M Y" }}</span>{% endif %}</div>
-</article>
-{% empty %}<div class="card professional-empty professional-empty-wide" data-reveal><h3>No savings goals yet</h3><p>Create a goal and track progress towards your target.</p><a class="button" href="{% url 'goal_create' %}">Create your first goal</a></div>{% endfor %}
-</div>
+<section class="goals-page">
+  <header class="goals-page-heading">
+    <div><h1>Savings goals</h1></div>
+    <a class="button goals-create-button" href="{% url 'goal_create' %}"><span>＋</span> New goal</a>
+  </header>
+
+  <section class="goals-overview" aria-label="Savings overview">
+    <div class="goals-overview-copy"><span class="goals-overview-icon">✦</span><div><small>Total saved</small><strong>{{ total_saved|floatformat:0 }} <span>{{ user.currency }}</span></strong></div></div>
+    <div class="goals-overview-divider"></div>
+    <div class="goals-overview-copy"><span class="goals-overview-icon goals-overview-icon--soft">◎</span><div><small>Active goals</small><strong>{{ active_goals_count }}</strong></div></div>
+  </section>
+
+  <div class="goals-grid">
+    {% for goal in goals %}
+      <article class="goal-premium-card" data-reveal>
+        <div class="goal-premium-art">
+          {% if goal.image %}
+            <img src="{{ goal.image.url }}" alt="">
+          {% else %}
+            <div class="goal-art-placeholder goal-art-{{ forloop.counter0|divisibleby:4|yesno:'one,two' }}"><span>{% cycle "✦" "◈" "⌂" "◎" %}</span></div>
+          {% endif %}
+          <span class="goal-premium-status {% if goal.status == 'completed' %}is-complete{% elif goal.status == 'archived' %}is-archived{% endif %}">{{ goal.get_status_display }}</span>
+        </div>
+        <div class="goal-premium-content">
+          <div class="goal-premium-title-row"><div><h2>{{ goal.name }}</h2>{% if goal.target_date %}<p>Target · {{ goal.target_date|date:"j M Y" }}</p>{% endif %}</div><span class="goal-progress-ring" style="--goal-progress:{{ goal.progress_percentage }}%"><b>{{ goal.progress_percentage }}%</b></span></div>
+          <div class="goal-money-row"><div><small>Saved so far</small><strong>{{ goal.saved_amount|floatformat:0 }} <span>{{ goal.currency }}</span></strong></div><div class="goal-money-remaining"><small>To go</small><strong>{{ goal.remaining_amount|floatformat:0 }} <span>{{ goal.currency }}</span></strong></div></div>
+          <div class="goal-progress-track"><span data-progress style="width:{{ goal.progress_percentage }}%"></span></div>
+          <div class="goal-premium-footer">
+            {% if goal.status == "active" and goal.remaining_amount > 0 %}
+              <a class="goal-add-money" href="{% url 'goal_contribute' goal.pk %}"><span>＋</span> Add money</a>
+            {% elif goal.status == "completed" or goal.remaining_amount <= 0 %}
+              <span class="goal-complete-note">Goal reached <span>✓</span></span>
+            {% else %}
+              <span class="goal-complete-note">Archived</span>
+            {% endif %}
+            <div class="goal-card-actions">
+              {% if goal.contributions.count %}
+                <span class="goal-contribution-count">{{ goal.contributions.count }} top-ups</span>
+              {% endif %}
+              <a class="goal-delete-action" href="{% url 'goal_delete' goal.pk %}">Delete goal</a>
+            </div>
+          </div>
+        </div>
+      </article>
+    {% empty %}
+      <div class="goals-empty">
+        <span class="goals-empty-art">✦</span>
+        <h2>Your next milestone starts here.</h2>
+        <a class="button" href="{% url 'goal_create' %}">Create a savings goal <span>→</span></a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
 {% endblock %}

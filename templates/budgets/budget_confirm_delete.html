@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Delete budget · TIANA{% endblock %}
+{% block content %}
+<section class="entry-page delete-confirm-page">
+  <header class="entry-heading">
+    <a class="entry-back" href="{% url 'budgets' %}" aria-label="Back to budgets">←</a>
+    <div><p class="ui-eyebrow">BUDGET SETTINGS</p><h1>Delete this budget?</h1></div>
+  </header>
+  <section class="entry-form-card delete-confirm-card">
+    <span class="delete-confirm-icon" aria-hidden="true">−</span>
+    <h2>{{ budget.name }}</h2>
+    <p>This removes the {{ budget.get_period_display|lower }} limit and its automatic budget warnings. Your transaction history stays untouched.</p>
+    {% if budget.period == "weekly" and budget.category %}
+      <p class="delete-confirm-note">The saved weekly allocation for {{ budget.category }} will also be cleared.</p>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-actions">
+        <a class="button button-secondary" href="{% url 'budgets' %}">Keep budget</a>
+        <button class="button button-danger" type="submit">Delete budget</button>
+      </div>
+    </form>
+  </section>
+</section>
+{% endblock %}

@@ -25,3 +25,18 @@ class TransactionAdmin(admin.ModelAdmin):
     autocomplete_fields = ("owner", "account")
     date_hierarchy = "transaction_date"
     readonly_fields = ("created_at", "updated_at")
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj and getattr(obj, "goal_contribution", None):
+            return tuple(field.name for field in self.model._meta.fields)
+        return super().get_readonly_fields(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and getattr(obj, "goal_contribution", None):
+            return False
+        return super().has_delete_permission(request, obj)
+
+    def delete_queryset(self, request, queryset):
+        protected = queryset.filter(goal_contribution__isnull=False)
+        deletable = queryset.exclude(pk__in=protected.values_list("pk", flat=True))
+        super().delete_queryset(request, deletable)

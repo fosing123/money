@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Invest · TIANA{% endblock %}
+{% block content %}
+<section class="coming-soon-page" data-reveal>
+  <a class="coming-soon-back" href="{% url 'dashboard' %}">← Home</a>
+  <div class="coming-soon-symbol" aria-hidden="true">↗</div>
+  <p class="ui-eyebrow">TIANA INVEST</p>
+  <h1>Investing is coming soon.</h1>
+  <p>We're preparing this space. Investment features are not available in TIANA yet, and no investments can be made here today.</p>
+  <a class="button button-secondary" href="{% url 'dashboard' %}">Back to your money</a>
+</section>
+{% endblock %}

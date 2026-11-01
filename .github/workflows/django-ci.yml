@@ -5,10 +5,15 @@ on:
     branches:
       - "feat/tiana-django-rebuild-enhanced-mvp-20261029"
       - "feat/nkem-reference-welcome-screen-20261030"
+      - "feat/tiana-home-dashboard-tour-20261031"
+      - "feat/tiana-ui-polish-profile-forms-20261031"
+      - "feat/tiana-transaction-onboarding-refresh-20261101"
   pull_request:
     branches:
       - "main"
       - "feat/tiana-django-rebuild-enhanced-mvp-20261029"
+      - "feat/tiana-home-dashboard-tour-20261031"
+      - "feat/tiana-ui-polish-profile-forms-20261031"
 
 jobs:
   test:

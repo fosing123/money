@@ -1,19 +1,163 @@
 {% extends 'base.html' %}
 {% block title %}Profile · TIANA{% endblock %}
 {% block content %}
-<section class="workspace-heading" data-reveal><div><h1>Profile</h1><p>Manage your personal details and app preferences.</p></div></section>
-<section class="profile-grid professional-profile-grid">
-  <div class="card profile-summary professional-profile-summary" data-reveal>
-    <div class="profile-avatar">{% if brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</div>
+<section class="profile-screen">
+  <header class="profile-screen-header">
+    <a class="profile-screen-back" href="{% url 'dashboard' %}" aria-label="Back to overview">←</a>
+    <h1>Profile</h1>
+  </header>
+
+  <section class="profile-identity-panel" aria-label="Your profile">
+    <div class="profile-user-avatar" aria-hidden="true">{% if user.avatar %}<img src="{{ user.avatar.url }}" alt="">{% elif brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|default:user.username|first|upper }}{% endif %}</div>
     <h2>{{ user.get_full_name|default:user.username }}</h2>
     <p>{{ user.email }}</p>
-    <a class="button button-secondary" href="{% url 'account_create' %}">Add account</a>
-    <a class="profile-secondary-link" href="{% url 'notifications' %}">Notification settings</a>
-    <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="button button-secondary" type="submit">Log out</button></form>
-  </div>
-  <div class="card professional-profile-form" data-reveal>
-    <div class="professional-panel-heading"><div><h2>Personal settings</h2><p>Update your details, currency and appearance.</p></div></div>
-    <form method="post">{% csrf_token %}{{ form.as_p }}<div class="form-actions"><button class="button" type="submit">Save changes</button></div></form>
-  </div>
+    <button class="profile-edit-trigger" type="button" data-profile-edit-toggle>
+      <span aria-hidden="true">✎</span> Edit Profile
+    </button>
+  </section>
+
+  <nav class="profile-settings-list" aria-label="Profile settings">
+    <div class="profile-setting-row profile-setting-static">
+      <span class="profile-setting-icon" aria-hidden="true">文</span>
+      <strong>Language</strong>
+      <span class="profile-setting-value">English</span>
+    </div>
+    <button class="profile-setting-row" type="button" data-open-profile-edit="currency">
+      <span class="profile-setting-icon" aria-hidden="true">₣</span>
+      <strong>Currencies</strong>
+      <span class="profile-setting-value">{{ user.currency }}</span>
+      <span class="profile-setting-chevron" aria-hidden="true">›</span>
+    </button>
+    <button class="profile-setting-row" type="button" data-open-profile-edit="theme">
+      <span class="profile-setting-icon" aria-hidden="true">◉</span>
+      <strong>Appearance</strong>
+      <span class="profile-setting-value">{{ user.get_theme_display }}</span>
+      <span class="profile-setting-chevron" aria-hidden="true">›</span>
+    </button>
+    <a class="profile-setting-row" href="{% url 'application_security' %}">
+      <span class="profile-setting-icon" aria-hidden="true">♢</span>
+      <strong>Application Security</strong>
+      <span class="profile-setting-chevron" aria-hidden="true">›</span>
+    </a>
+    <a class="profile-setting-row" href="{% url 'manage_devices' %}">
+      <span class="profile-setting-icon" aria-hidden="true">▣</span>
+      <strong>Manage Devices</strong>
+      <span class="profile-setting-chevron" aria-hidden="true">›</span>
+    </a>
+    <a class="profile-setting-row" href="{% url 'password_change' %}">
+      <span class="profile-setting-icon" aria-hidden="true">♧</span>
+      <strong>Change Password</strong>
+      <span class="profile-setting-chevron" aria-hidden="true">›</span>
+    </a>
+  </nav>
+
+  <div class="profile-edit-backdrop" data-profile-edit-backdrop hidden></div>
+  <section class="profile-edit-panel" id="profile-edit-panel" role="dialog" aria-modal="true" aria-labelledby="profile-edit-title" aria-hidden="true" tabindex="-1" {% if not form.errors %}hidden{% endif %}>
+    <div class="profile-sheet-handle" data-profile-sheet-handle aria-hidden="true"><span></span></div>
+    <div class="profile-edit-heading">
+      <div><p class="ui-eyebrow">YOUR DETAILS</p><h2 id="profile-edit-title">Edit Profile</h2></div>
+      <button type="button" data-profile-edit-close aria-label="Close profile editor">×</button>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="profile-edit-form" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}
+        <div class="profile-edit-field profile-edit-field-{{ field.name }}" id="profile-field-{{ field.name }}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+        </div>
+      {% endfor %}
+      <div class="profile-edit-actions">
+        <button class="button button-secondary" type="button" data-profile-edit-close>Cancel</button>
+        <button class="button" type="submit">Save changes</button>
+      </div>
+    </form>
+  </section>
 </section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const root = document.querySelector(".profile-screen");
+  const panel = document.getElementById("profile-edit-panel");
+  const backdrop = document.querySelector("[data-profile-edit-backdrop]");
+  if (!root || !panel || !backdrop) return;
+
+  let lastTrigger = null;
+  let touchStartY = 0;
+  let touchStartX = 0;
+
+  const close = () => {
+    root.classList.remove("is-sheet-open");
+    document.body.classList.remove("profile-sheet-open");
+    panel.setAttribute("aria-hidden", "true");
+    if (lastTrigger) lastTrigger.focus({ preventScroll: true });
+    window.setTimeout(() => {
+      if (!root.classList.contains("is-sheet-open")) {
+        panel.hidden = true;
+        backdrop.hidden = true;
+      }
+    }, 280);
+  };
+
+  const open = (fieldName, trigger) => {
+    lastTrigger = trigger || document.activeElement;
+    backdrop.hidden = false;
+    panel.hidden = false;
+    requestAnimationFrame(() => {
+      root.classList.add("is-sheet-open");
+      document.body.classList.add("profile-sheet-open");
+      panel.setAttribute("aria-hidden", "false");
+      const field = fieldName ? panel.querySelector('[name="' + fieldName + '"]') : panel.querySelector("input:not([type=file]), select");
+      window.setTimeout(() => {
+        if (field) {
+          field.focus({ preventScroll: true });
+          field.closest(".profile-edit-field")?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        } else panel.focus({ preventScroll: true });
+      }, 90);
+    });
+  };
+
+  document.querySelector("[data-profile-edit-toggle]")?.addEventListener("click", (event) => {
+    if (root.classList.contains("is-sheet-open")) close();
+    else open("", event.currentTarget);
+  });
+
+  document.querySelectorAll("[data-open-profile-edit]").forEach((button) => {
+    button.addEventListener("click", () => open(button.dataset.openProfileEdit, button));
+  });
+  document.querySelectorAll("[data-profile-edit-close]").forEach((button) => button.addEventListener("click", close));
+  backdrop.addEventListener("click", close);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && root.classList.contains("is-sheet-open")) close();
+  });
+
+  const handle = document.querySelector("[data-profile-sheet-handle]");
+  handle?.addEventListener("touchstart", (event) => {
+    touchStartY = event.changedTouches[0].clientY;
+    touchStartX = event.changedTouches[0].clientX;
+  }, { passive: true });
+  handle?.addEventListener("touchend", (event) => {
+    const deltaY = event.changedTouches[0].clientY - touchStartY;
+    const deltaX = Math.abs(event.changedTouches[0].clientX - touchStartX);
+    if (deltaY > 65 && deltaY > deltaX) close();
+  }, { passive: true });
+
+  panel.addEventListener("touchstart", (event) => {
+    if (panel.scrollTop <= 0) {
+      touchStartY = event.changedTouches[0].clientY;
+      touchStartX = event.changedTouches[0].clientX;
+    } else touchStartY = 0;
+  }, { passive: true });
+  panel.addEventListener("touchend", (event) => {
+    if (!touchStartY || panel.scrollTop > 0) return;
+    const deltaY = event.changedTouches[0].clientY - touchStartY;
+    const deltaX = Math.abs(event.changedTouches[0].clientX - touchStartX);
+    if (deltaY > 95 && deltaY > deltaX) close();
+  }, { passive: true });
+
+  if (!panel.hidden) open("", null);
+});
+</script>
 {% endblock %}

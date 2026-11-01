@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Application Security · TIANA{% endblock %}
+{% block content %}
+<section class="profile-security-page">
+  <a class="profile-screen-back" href="{% url 'profile' %}" aria-label="Back to profile">←</a>
+  <h1>Application Security</h1>
+  <a class="profile-security-link" href="{% url 'manage_devices' %}"><span>Manage Devices</span><span aria-hidden="true">›</span></a>
+  <a class="profile-security-link" href="{% url 'password_change' %}"><span>Change Password</span><span aria-hidden="true">›</span></a>
+</section>
+{% endblock %}

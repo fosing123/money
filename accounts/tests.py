@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
+from django.contrib.sessions.models import Session
 from django.contrib.staticfiles import finders
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from finance.models import Account
@@ -87,6 +88,8 @@ class AccountTests(TestCase):
         self.assertTrue(user.onboarding_completed)
         account = Account.objects.get(owner=user)
         self.assertEqual(str(account.opening_balance), "5000.00")
+        from budgets.models import Budget
+        self.assertFalse(Budget.objects.filter(owner=user).exists())
 
     def test_setup_preserves_monday_as_valid_payday_zero(self):
         user = User.objects.create_user(username="setupmonday", email="setupmonday@example.com", password="StrongPass123!")
@@ -167,3 +170,149 @@ class AccountTests(TestCase):
         self.assertNotContains(response, "onboarding-status")
         self.assertNotContains(response, "onboarding-status-icons")
         self.assertNotContains(response, "9:41")
+    def test_profile_uses_compact_reference_settings_layout(self):
+        user = User.objects.create_user(username="profileui", email="profileui@example.com", password="StrongPass123!")
+        self.client.force_login(user)
+        response = self.client.get(reverse("profile"))
+        self.assertEqual(response.status_code, 200)
+        for label in ("Profile", "Edit Profile", "Language", "Currencies", "Appearance", "Application Security", "Manage Devices", "Change Password"):
+            with self.subTest(label=label):
+                self.assertContains(response, label)
+
+    def test_profile_security_and_password_pages_load(self):
+        user = User.objects.create_user(username="securityui", email="securityui@example.com", password="StrongPass123!")
+        self.client.force_login(user)
+        for url_name in ("application_security", "manage_devices", "password_change"):
+            with self.subTest(url_name=url_name):
+                response = self.client.get(reverse(url_name))
+                self.assertEqual(response.status_code, 200)
+
+    def test_manage_devices_signs_out_other_sessions_only(self):
+        user = User.objects.create_user(username="deviceuser", email="deviceuser@example.com", password="StrongPass123!")
+        other_client = Client()
+        other_client.force_login(user)
+        other_session_key = other_client.session.session_key
+
+        self.client.force_login(user)
+        current_session_key = self.client.session.session_key
+        self.assertTrue(Session.objects.filter(session_key=other_session_key).exists())
+        self.assertTrue(Session.objects.filter(session_key=current_session_key).exists())
+
+        response = self.client.post(reverse("manage_devices"))
+        self.assertRedirects(response, reverse("manage_devices"))
+        self.assertFalse(Session.objects.filter(session_key=other_session_key).exists())
+        self.assertTrue(Session.objects.filter(session_key=current_session_key).exists())
+
+
+
+
+    def test_money_setup_uses_compact_icon_led_priority_cards(self):
+        user = User.objects.create_user(
+            username="setupdesign",
+            email="setupdesign@example.com",
+            password="StrongPass123!",
+        )
+        self.client.force_login(user)
+        response = self.client.get(reverse("onboarding_setup"))
+        self.assertEqual(response.status_code, 200)
+        for marker in (
+            "setup-wizard-shell",
+            "setup-progress-track",
+            "priority-card",
+            "data-weekly-income-estimate",
+            "data-savings-share",
+            "Save for school fees",
+            "Build an emergency fund",
+        ):
+            with self.subTest(marker=marker):
+                self.assertContains(response, marker)
+        self.assertNotContains(response, "min-height:310px")
+        self.assertNotContains(response, "onboarding-frame")
+
+
+    def test_setup_saves_weekly_category_allocations_as_real_budgets(self):
+        user = User.objects.create_user(
+            username="allocationuser",
+            email="allocationuser@example.com",
+            password="StrongPass123!",
+        )
+        self.client.force_login(user)
+        response = self.client.post(reverse("onboarding_setup"), {
+            "weekly_income": "10000",
+            "opening_balance": "5000",
+            "weekly_savings_target": "2000",
+            "account_name": "Cash",
+            "payday_weekday": "1",
+            "financial_priorities": ["daily_expenses"],
+            "allocation_food": "3500",
+            "allocation_transport": "1500",
+            "allocation_internet": "1000",
+            "allocation_school": "1000",
+            "allocation_personal": "500",
+            "allocation_emergency": "500",
+        })
+        self.assertRedirects(response, reverse("dashboard"))
+        user.refresh_from_db()
+        self.assertEqual(user.weekly_budget_allocations["food"], "3500")
+        from budgets.models import Budget
+        food = Budget.objects.get(owner=user, category="Food", period="weekly")
+        self.assertEqual(food.amount, 3500)
+        self.assertEqual(Budget.objects.filter(owner=user, period="weekly", category__gt="").count(), 6)
+
+    def test_setup_rejects_allocations_that_exceed_weekly_income(self):
+        user = User.objects.create_user(
+            username="overallocated",
+            email="overallocated@example.com",
+            password="StrongPass123!",
+        )
+        self.client.force_login(user)
+        response = self.client.post(reverse("onboarding_setup"), {
+            "weekly_income": "10000",
+            "opening_balance": "0",
+            "weekly_savings_target": "2000",
+            "account_name": "Cash",
+            "financial_priorities": [],
+            "allocation_food": "9000",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "higher than your weekly income")
+        user.refresh_from_db()
+        self.assertFalse(user.onboarding_completed)
+
+
+    def test_profile_editor_is_a_mobile_bottom_sheet(self):
+        user = User.objects.create_user(
+            username="profile_sheet",
+            email="profile_sheet@example.com",
+            password="StrongPass123!",
+        )
+        self.client.force_login(user)
+        response = self.client.get(reverse("profile"))
+        self.assertEqual(response.status_code, 200)
+        for marker in (
+            "profile-edit-backdrop",
+            "profile-sheet-handle",
+            'role="dialog"',
+            'data-open-profile-edit="theme"',
+        ):
+            with self.subTest(marker=marker):
+                self.assertContains(response, marker)
+
+
+    def test_mobile_navigation_exposes_marketplace_and_investment_placeholder(self):
+        user = User.objects.create_user(
+            username="navuser",
+            email="navuser@example.com",
+            password="StrongPass123!",
+            onboarding_completed=True,
+        )
+        self.client.force_login(user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse("opportunities"))
+        self.assertContains(response, reverse("investments"))
+        self.assertContains(response, "Market")
+        self.assertContains(response, "Invest")
+        invest = self.client.get(reverse("investments"))
+        self.assertEqual(invest.status_code, 200)
+        self.assertContains(invest, "Investing is coming soon")

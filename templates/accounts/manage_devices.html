@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Manage Devices · TIANA{% endblock %}
+{% block content %}
+<section class="profile-security-page">
+  <a class="profile-screen-back" href="{% url 'profile' %}" aria-label="Back to profile">←</a>
+  <h1>Manage Devices</h1>
+  <div class="profile-security-link"><span>This device</span><strong>Active now</strong></div>
+  <div class="profile-security-link"><span>Other active sessions</span><strong>{{ other_session_count }}</strong></div>
+  {% if other_session_count %}
+    <form method="post" class="profile-device-actions">{% csrf_token %}
+      <button class="button" type="submit">Sign out other devices</button>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}

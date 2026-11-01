@@ -1,14 +1,15 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, reverse_lazy
+from django.contrib.auth.views import PasswordChangeDoneView, PasswordChangeView
 
-from accounts.views import login_view, logout_view, onboarding_setup_view, onboarding_view, profile_view, register_view, registration_welcome_view
+from accounts.views import application_security_view, login_view, logout_view, manage_devices_view, onboarding_setup_view, onboarding_view, profile_view, register_view, registration_welcome_view
 from ai_assistant.views import ai_chat_view
-from budgets.views import budget_create_view, budget_list_view
-from core.views import dashboard_view, health_check_view, home_view
+from budgets.views import budget_allocations_view, budget_delete_view, budget_list_view
+from core.views import dashboard_view, health_check_view, home_view, investments_coming_soon_view
 from finance.views import account_create_view, transaction_create_view, transaction_delete_view, transaction_list_view, transaction_update_view
-from goals.views import goal_create_view, goal_list_view
+from goals.views import goal_contribute_view, goal_create_view, goal_delete_view, goal_list_view
 from insights.views import insights_view
 from marketplace.views import opportunity_detail_view, opportunity_list_view
 from notifications.views import mark_all_notifications_read_view, mark_notification_read_view, notification_list_view
@@ -26,6 +27,10 @@ urlpatterns = [
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
     path("profile/", profile_view, name="profile"),
+    path("profile/security/", application_security_view, name="application_security"),
+    path("profile/devices/", manage_devices_view, name="manage_devices"),
+    path("profile/password/", PasswordChangeView.as_view(template_name="accounts/password_change_form.html", success_url=reverse_lazy("password_change_done")), name="password_change"),
+    path("profile/password/done/", PasswordChangeDoneView.as_view(template_name="accounts/password_change_done.html"), name="password_change_done"),
     path("dashboard/", dashboard_view, name="dashboard"),
     path("accounts/new/", account_create_view, name="account_create"),
     path("transactions/", transaction_list_view, name="transactions"),
@@ -33,14 +38,18 @@ urlpatterns = [
     path("transactions/<int:pk>/edit/", transaction_update_view, name="transaction_update"),
     path("transactions/<int:pk>/delete/", transaction_delete_view, name="transaction_delete"),
     path("budgets/", budget_list_view, name="budgets"),
-    path("budgets/new/", budget_create_view, name="budget_create"),
+    path("budgets/allocations/", budget_allocations_view, name="budget_allocations"),
+    path("budgets/<int:pk>/delete/", budget_delete_view, name="budget_delete"),
     path("goals/", goal_list_view, name="goals"),
     path("goals/new/", goal_create_view, name="goal_create"),
+    path("goals/<int:pk>/add/", goal_contribute_view, name="goal_contribute"),
+    path("goals/<int:pk>/delete/", goal_delete_view, name="goal_delete"),
     path("insights/", insights_view, name="insights"),
     path("notifications/", notification_list_view, name="notifications"),
     path("notifications/<int:pk>/read/", mark_notification_read_view, name="notification_mark_read"),
     path("notifications/read-all/", mark_all_notifications_read_view, name="notifications_mark_all_read"),
     path("opportunities/", opportunity_list_view, name="opportunities"),
+    path("invest/", investments_coming_soon_view, name="investments"),
     path("opportunities/<int:pk>/", opportunity_detail_view, name="opportunity_detail"),
     path("ai/", ai_chat_view, name="ai_chat"),
     path("health/", health_check_view, name="health_check"),

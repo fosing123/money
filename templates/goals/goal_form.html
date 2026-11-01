@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}Create a savings goal · TIANA{% endblock %}
 {% block content %}
-<div class="page-heading"><div><p class="eyebrow">A DREAM WITH A PLAN</p><h1>What are you saving for?</h1><p class="section-copy">Your goal can be big or small. The point is to make it yours.</p></div></div>
-<section class="card form-card"><form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}{% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}{% for field in form %}<p><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}</p>{% endfor %}<div class="form-actions"><button class="button" type="submit">Save my goal</button><a class="button button-secondary" href="{% url 'goals' %}">Cancel</a></div></form></section>
+<section class="entry-page">
+  <header class="entry-heading goal-entry-heading"><a class="entry-back" href="{% url 'goals' %}" aria-label="Back to goals">←</a><div><h1>What are you working towards?</h1></div><span class="entry-heading-art" aria-hidden="true">◎</span></header>
+  <section class="entry-form-card">
+    <div class="entry-card-heading"><span class="entry-card-icon">✧</span><div><h2>Your savings goal</h2></div></div>
+    <form method="post" enctype="multipart/form-data" class="tiana-form" novalidate>{% csrf_token %}{% if form.non_field_errors %}<div class="message message-error">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="entry-fields-grid goal-fields-grid">{% for field in form %}<div class="tiana-field tiana-field-{{ field.name }}">{% if field.label %}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{% endif %}{{ field }}{% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}</div>{% endfor %}</div>
+      <div class="entry-form-footer"><div class="form-actions"><a class="button button-secondary" href="{% url 'goals' %}">Cancel</a><button class="button" type="submit">Save my goal <span>→</span></button></div></div>
+    </form>
+  </section>
+</section>
 {% endblock %}
