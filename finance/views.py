@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import AccountForm, TransactionForm
 from .models import Account, Transaction
+from notifications.services import evaluate_spending_alerts
 
 
 @login_required
@@ -60,6 +61,8 @@ def transaction_create_view(request):
             form.add_error("account", "Choose one of your own active accounts.")
         else:
             item.save()
+            if item.kind == "expense":
+                evaluate_spending_alerts(request.user)
             messages.success(request, "Transaction saved. Your balance has been recalculated.")
             return redirect("transactions")
     return render(request, "finance/transaction_form.html", {"form": form, "title": "Add transaction"})
@@ -79,6 +82,8 @@ def transaction_update_view(request, pk):
             form.add_error("account", "Choose one of your own active accounts.")
         else:
             updated.save()
+            if updated.kind == "expense":
+                evaluate_spending_alerts(request.user)
             messages.success(request, "Transaction updated and account balance refreshed.")
             return redirect("transactions")
     return render(request, "finance/transaction_form.html", {"form": form, "title": "Edit transaction"})
