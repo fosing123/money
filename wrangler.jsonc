@@ -6,6 +6,9 @@
   "compatibility_flags": [
     "python_workers"
   ],
+  "limits": {
+    "cpu_ms": 30000
+  },
   "vars": {
     "ALLOWED_HOSTS": "tiana-django-staging.fosingkameni.workers.dev",
     "CSRF_TRUSTED_ORIGINS": "https://tiana-django-staging.fosingkameni.workers.dev",
