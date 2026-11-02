@@ -3,17 +3,17 @@
 {% block extra_head %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="{% static 'nkem/auth.css' %}?v=20261031-auth-flow-2">
 {% endblock %}
 {% block content %}
 <div class="tiana-welcome-journey">
   <section class="tiana-welcome-card" aria-labelledby="tiana-welcome-title">
     <div class="tiana-welcome-art">
-      <img src="{% static 'assets/tiana-signup-welcome.webp' %}" alt="A smiling student waving hello on campus">
+      <picture><source type="image/webp" srcset="{% static 'assets/optimized/tiana-signup-welcome-640.webp' %} 640w, {% static 'assets/optimized/tiana-signup-welcome-1200.webp' %} 1200w" sizes="(max-width: 760px) 100vw, 560px"><img src="{% static 'assets/tiana-signup-welcome.webp' %}" alt="A smiling student waving hello on campus" fetchpriority="high" decoding="async"></picture>
       <div class="tiana-welcome-art-glow"></div>
       <a class="tiana-welcome-logo" href="{% url 'home' %}" aria-label="TIANA — Your Money Friend Always">
-        <img src="{% static 'assets/tiana-logo-transparent.png' %}" alt="TIANA — Your Money Friend Always">
+        <picture class="tiana-optimized-logo"><source type="image/webp" srcset="{% static 'assets/optimized/tiana-logo-transparent-320.webp' %} 320w, {% static 'assets/optimized/tiana-logo-transparent-640.webp' %} 640w" sizes="220px"><img src="{% static 'assets/tiana-logo-transparent.png' %}" alt="TIANA — Your Money Friend Always" width="1660" height="716" decoding="async"></picture>
       </a>
       <span class="tiana-welcome-sparkle tiana-welcome-sparkle--one" aria-hidden="true">✦</span>
       <span class="tiana-welcome-sparkle tiana-welcome-sparkle--two" aria-hidden="true">✧</span>
