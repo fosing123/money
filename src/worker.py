@@ -5,6 +5,7 @@ once per isolate; a failed setup is recorded rather than re-entered on the next
 request, which would trigger Django's "populate() isn't reentrant" exception.
 """
 import asyncio
+import json
 import os
 import traceback
 from urllib.parse import unquote, urlsplit
@@ -98,6 +99,29 @@ class Default(WorkerEntrypoint):
         # Public static assets are served directly from the bundled asset store.
         if path.startswith("/static/"):
             return await self.env.ASSETS.fetch(request)
+
+        # Keep root-level public files out of Django's Python startup path.
+        # The build step copies these files into the Cloudflare Assets directory.
+        if path in {"/service-worker.js", "/robots.txt", "/favicon.ico"}:
+            return await self.env.ASSETS.fetch(request)
+
+        # Firebase Web configuration is public client configuration. Return it
+        # from Worker bindings directly so service-worker installation does not
+        # need to initialize the full Django application.
+        if path == "/firebase-config.js":
+            config = {
+                "apiKey": getattr(self.env, "FIREBASE_WEB_API_KEY", "") or "",
+                "authDomain": getattr(self.env, "FIREBASE_WEB_AUTH_DOMAIN", "") or "",
+                "projectId": getattr(self.env, "FIREBASE_WEB_PROJECT_ID", "") or "",
+                "messagingSenderId": getattr(self.env, "FIREBASE_WEB_MESSAGING_SENDER_ID", "") or "",
+                "appId": getattr(self.env, "FIREBASE_WEB_APP_ID", "") or "",
+            }
+            body = "self.TIANA_FIREBASE_CONFIG = " + json.dumps(config) + ";"
+            return Response(body, headers={
+                "Content-Type": "application/javascript; charset=utf-8",
+                "Cache-Control": "no-store",
+                "X-Content-Type-Options": "nosniff",
+            })
 
         # Django's R2Storage returns /media/<key> URLs. Keep user uploads off disk.
         if path.startswith("/media/"):
