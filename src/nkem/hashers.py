@@ -15,7 +15,7 @@ from django.utils.encoding import force_bytes
 def _webcrypto_pbkdf2(hash_name, password, salt, iterations, dklen):
     """Use native Workers Web Crypto from synchronous Django code."""
     try:
-        from js import Object, Uint8Array, crypto
+        from js import Array, Object, Uint8Array, crypto
         from pyodide.ffi import run_sync
     except ImportError as exc:
         raise RuntimeError(
@@ -47,13 +47,16 @@ def _webcrypto_pbkdf2(hash_name, password, salt, iterations, dklen):
     key_algorithm = Object.new()
     key_algorithm.name = "PBKDF2"
 
+    key_usages = Array.new()
+    key_usages.push("deriveBits")
+
     async def derive():
         key = await crypto.subtle.importKey(
             "raw",
             password_buffer,
             key_algorithm,
             False,
-            ["deriveBits"],
+            key_usages,
         )
 
         parameters = Object.new()
