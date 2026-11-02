@@ -3,7 +3,7 @@
 {% block title %}Budgets · TIANA{% endblock %}
 {% block content %}
 <section class="budget-page" data-budget-dashboard>
-  <header class="budget-welcome"><div><h1>Make room for what matters.</h1></div><a class="budget-avatar" href="{% url 'profile' %}" aria-label="Open profile">{% if user.avatar %}<img src="{{ user.avatar.url }}" alt="">{% elif brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</a></header>
+  <header class="budget-welcome"><div><h1>Make room for what matters.</h1></div><a class="budget-avatar" href="{% url 'profile' %}" aria-label="Open profile">{% if user.avatar %}<img src="{{ user.avatar.url }}" alt="" width="53" height="53" decoding="async">{% elif brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="" width="53" height="53" decoding="async">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</a></header>
   <div class="budget-account-strip">
     <article class="budget-mini-summary"><span class="budget-mini-icon">◎</span><small>Active budgets</small><strong>{{ budgets|length }}</strong></article>
     <article class="budget-mini-summary budget-mini-highlight"><span class="budget-mini-icon">✦</span><small>Personal currency</small><strong>{{ user.currency }}</strong></article>
