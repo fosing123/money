@@ -12,7 +12,7 @@ The Python Worker entrypoint is `src/worker.py`. Django applications, project se
 - **CPU budget:** Workers Paid plan with a 30-second per-request CPU limit. Django's import and initialization workload can exceed Free-plan limits; the staging Worker requires the Paid plan for reliable execution. This is configured as `limits.cpu_ms: 30000` in `wrangler.jsonc`.
 - **Financial database:** PostgreSQL through Cloudflare Hyperdrive.
 - **Uploaded profile and goal images:** Cloudflare R2, using the `MEDIA` bucket binding and Cloudflare's `django-cf` R2 storage backend.
-- **Static files:** `collectstatic` writes to `public/static/`; the Worker Assets binding serves `/static/*`.
+- **Static files:** the image build step generates responsive WebP assets, then `collectstatic` writes to `public/static/`. Worker static assets are configured asset-first (`run_worker_first: false`) so matching images, CSS and JavaScript are served directly from Cloudflare's edge without invoking Python. Missing routes fall through to Django. The build also publishes the root service worker and `robots.txt`.
 - **Local development:** SQLite and local filesystem uploads. Those local defaults are not permitted in production.
 
 Do not use D1 or the Django Durable Object SQLite backend as the financial ledger. Cloudflare documents that these Django database backends do not support database transactions; TIANA's ledger and goal-contribution flows rely on transactional behaviour.
@@ -76,6 +76,7 @@ Copy-Item .env.example .env
 uv run python manage.py migrate
 uv run python manage.py check
 uv run python manage.py test
+uv run python scripts/optimize_images.py
 uv run python manage.py collectstatic --noinput
 uv run pywrangler dev
 ```
