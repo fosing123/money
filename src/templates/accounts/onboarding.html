@@ -10,9 +10,9 @@
   <title>Discover TIANA · Your Money Friend Always</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="{% static 'assets/tiana-onboarding-money-clarity-4k.webp' %}" fetchpriority="high">
-  <link rel="preload" as="image" href="{% static 'assets/tiana-logo-transparent.png' %}">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap"></noscript>
+  <link rel="preload" as="image" type="image/webp" href="{% static 'assets/optimized/tiana-onboarding-money-clarity-1200.webp' %}" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" href="{% static 'assets/optimized/tiana-logo-transparent-640.webp' %}">
   <link rel="stylesheet" href="{% static 'nkem/onboarding.css' %}?v=20261031-onboarding-premium-v2">
 </head>
 <body class="onboarding-page" data-user-theme="{{ user.theme|default:'violet' }}">
@@ -26,13 +26,10 @@
       </button>
 
       <a class="onboarding-logo" href="{% url 'home' %}" aria-label="TIANA — Your Money Friend Always">
-        <img
-          src="{% static 'assets/tiana-logo-transparent.png' %}"
-          alt="TIANA — Your Money Friend Always"
-          width="1660"
-          height="716"
-          decoding="async"
-        >
+        <picture>
+          <source type="image/webp" srcset="{% static 'assets/optimized/tiana-logo-transparent-320.webp' %} 320w, {% static 'assets/optimized/tiana-logo-transparent-640.webp' %} 640w" sizes="166px">
+          <img src="{% static 'assets/tiana-logo-transparent.png' %}" alt="TIANA — Your Money Friend Always" width="1660" height="716" decoding="async">
+        </picture>
       </a>
 
       <a class="onboarding-skip" href="{% url 'register' %}">Skip</a>
@@ -41,12 +38,10 @@
     <section class="onboarding-stage" data-onboarding-stage aria-label="TIANA features" tabindex="0">
       <article class="onboarding-slide is-active" data-onboarding-slide aria-hidden="false">
         <div class="onboarding-art onboarding-art-control">
-          <img
-            src="{% static 'assets/tiana-onboarding-money-clarity-4k.webp' %}"
-            alt="A student reviewing her finances on her phone in a bright campus study space"
-            fetchpriority="high"
-            decoding="async"
-          >
+          <picture>
+            <source type="image/webp" srcset="{% static 'assets/optimized/tiana-onboarding-money-clarity-640.webp' %} 640w, {% static 'assets/optimized/tiana-onboarding-money-clarity-1200.webp' %} 1200w" sizes="(max-width: 760px) 92vw, 560px">
+            <img src="{% static 'assets/tiana-onboarding-money-clarity-4k.webp' %}" alt="A student reviewing her finances on her phone in a bright campus study space" fetchpriority="high" decoding="async">
+          </picture>
         </div>
         <div class="onboarding-copy">
           <span class="onboarding-kicker">01 / MONEY CLARITY</span>
@@ -57,12 +52,10 @@
 
       <article class="onboarding-slide" data-onboarding-slide aria-hidden="true">
         <div class="onboarding-art onboarding-art-goals">
-          <img
-            src="{% static 'assets/tiana-onboarding-savings-goals-4k.webp' %}"
-            alt="A student planning her savings in a notebook beside a coin jar and goal target"
-            loading="lazy"
-            decoding="async"
-          >
+          <picture>
+            <source type="image/webp" srcset="{% static 'assets/optimized/tiana-onboarding-savings-goals-640.webp' %} 640w, {% static 'assets/optimized/tiana-onboarding-savings-goals-1200.webp' %} 1200w" sizes="(max-width: 760px) 92vw, 560px">
+            <img src="{% static 'assets/tiana-onboarding-savings-goals-4k.webp' %}" alt="A student planning her savings in a notebook beside a coin jar and goal target" loading="lazy" decoding="async">
+          </picture>
         </div>
         <div class="onboarding-copy">
           <span class="onboarding-kicker">02 / BIGGER PLANS</span>
@@ -73,12 +66,10 @@
 
       <article class="onboarding-slide" data-onboarding-slide aria-hidden="true">
         <div class="onboarding-art onboarding-art-coach">
-          <img
-            src="{% static 'assets/tiana-onboarding-ai-coach-4k.webp' %}"
-            alt="A student in lavender headphones using her phone with friendly AI chat symbols nearby"
-            loading="lazy"
-            decoding="async"
-          >
+          <picture>
+            <source type="image/webp" srcset="{% static 'assets/optimized/tiana-onboarding-ai-coach-640.webp' %} 640w, {% static 'assets/optimized/tiana-onboarding-ai-coach-1200.webp' %} 1200w" sizes="(max-width: 760px) 92vw, 560px">
+            <img src="{% static 'assets/tiana-onboarding-ai-coach-4k.webp' %}" alt="A student in lavender headphones using her phone with friendly AI chat symbols nearby" loading="lazy" decoding="async">
+          </picture>
         </div>
         <div class="onboarding-copy">
           <span class="onboarding-kicker">03 / YOUR MONEY COACH</span>
