@@ -37,6 +37,12 @@ class PortablePasswordHasherTests(TestCase):
         expected = hashlib.pbkdf2_hmac("sha256", password, salt, 1200)
         self.assertEqual(portable_pbkdf2("sha256", password, salt, 1200), expected)
 
+    def test_worker_hasher_uses_runtime_safe_round_count_for_new_passwords(self):
+        hasher = PortablePBKDF2PasswordHasher()
+        encoded = hasher.encode("StrongPass123!", "tiana-test-salt")
+        self.assertEqual(encoded.split("$")[1], "120000")
+        self.assertTrue(hasher.verify("StrongPass123!", encoded))
+
     def test_worker_hasher_uses_django_compatible_pbkdf2_format(self):
         password = "StrongPass123!"
         salt = "tiana-test-salt"

@@ -67,7 +67,15 @@ def _derive_pbkdf2(hash_name, password, salt, iterations):
 
 
 class PortablePBKDF2PasswordHasher(PBKDF2PasswordHasher):
-    """Django PBKDF2-SHA256 hasher with an optimized Pyodide fallback."""
+    """Django PBKDF2-SHA256 hasher tuned for the Cloudflare WASM runtime.
+
+    Cloudflare's Python runtime has a much smaller CPU budget than a typical
+    server. New hashes use 120,000 PBKDF2 rounds to keep registration/login
+    responsive. verify() still honors the iteration count stored in existing
+    hashes, so this does not invalidate previously created accounts.
+    """
+
+    iterations = 120_000
 
     def encode(self, password, salt, iterations=None):
         iterations = iterations or self.iterations
