@@ -7,7 +7,7 @@
     "python_workers"
   ],
   "limits": {
-    "cpu_ms": 30000
+    "cpu_ms": 60000
   },
   "vars": {
     "ALLOWED_HOSTS": "tiana-django-staging.fosingkameni.workers.dev",
@@ -52,7 +52,6 @@
       "django/contrib/admindocs/**",
       "django/contrib/flatpages/**",
       "django/contrib/redirects/**",
-      "django/contrib/sites/**",
       "django/contrib/sitemaps/**",
       "django/contrib/postgres/**",
       "PIL/AvifImagePlugin.py",
