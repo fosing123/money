@@ -1,15 +1,41 @@
 {% extends 'base.html' %}{% load static %}
 {% block title %}TIANA AI · Your money companion{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'nkem/ai-assistant.css' %}?v=20261102-minimal">{% endblock %}
 {% block content %}
-<div class="page-heading"><div> <h1>Let's talk money.</h1></div></div>
-<section class="ai-layout">
-  <aside class="ai-side"><div class="coach-head"><span class="coach-avatar">{% if brand_assets.coach_avatar %}<img src="{{ brand_assets.coach_avatar.image.url }}" alt="">{% else %}<img src="{% static 'assets/onboarding-ai.svg' %}" alt="TIANA AI">{% endif %}</span><div><strong>TIANA</strong> </div></div><h2 style="font-size:1.35rem">Your money, your next step.</h2>{% if configured %}<span class="pill success">TIANA AI connected</span>{% else %}<span class="pill warning">Preview mode</span><p style="margin-top:12px;font-size:.78rem">Live Gemini AI guidance activates when the server has a valid GEMINI_API_KEY. Don't paste keys or passwords here.</p>{% endif %}{% if brand_assets.onboarding_ai %}<img src="{{ brand_assets.onboarding_ai.image.url }}" alt="Friendly TIANA AI illustration">{% else %}<img src="{% static 'assets/onboarding-ai.svg' %}" alt="Friendly TIANA AI illustration">{% endif %}<small style="color:#e5ddff">Helpful guidance, not professional financial or investment advice.</small></aside>
-  <section class="card ai-chat-card"><div class="card-head"><div><h2>What's on your mind?</h2></div><span class="pill">✦ Friendly advice</span></div>
-    {% if error %}<div class="message message-error">{{ error }}</div>{% endif %}{% if not configured %}<div class="info-banner" style="margin-bottom:16px">TIANA AI is not connected to Gemini yet, so this chat won't pretend a live AI response has been generated. You can still explore the budgeting tools while the server key is configured.</div>{% endif %}
-    <div class="quick-prompts"><button type="button" data-fill-prompt="Help me make a weekly budget with my income.">Make a weekly budget</button><button type="button" data-fill-prompt="How can I spend less without feeling miserable?">Spend a little smarter</button><button type="button" data-fill-prompt="Help me choose a realistic savings goal.">Set a savings goal</button></div>
-    <div class="chat-history" aria-live="polite">{% for entry in history %}<div class="chat-message user">{{ entry.prompt }}</div><div class="chat-message assistant">{{ entry.response }}</div>{% empty %}<div class="chat-message assistant">Hey {{ user.first_name|default:user.username }} 👋 What would you like to work through?</div>{% endfor %}{% if response and not history %}<div class="chat-message user">{{ submitted_prompt }}</div><div class="chat-message assistant">{{ response }}</div>{% endif %}</div>
-    <form method="post" class="chat-composer">{% csrf_token %}<textarea id="aiPrompt" name="prompt" rows="2" maxlength="1500" placeholder="Tell me what's going on with your money…" required></textarea><button class="button" type="submit" aria-label="Send your message">➤</button></form>
-    <small class="muted-text" style="margin-top:10px">Avoid sharing passwords, PINs, API keys or details you don't need for your question.</small>
+<section class="ai-page">
+  <header class="ai-intro">
+    <div class="ai-brandline">
+      <span class="ai-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.8 14.2 9.8 21.2 12 14.2 14.2 12 21.2 9.8 14.2 2.8 12 9.8 9.8 12 2.8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m19 2 .8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8L19 2Z" fill="currentColor"/></svg></span>
+      <div><h1 class="ai-title">TIANA AI</h1><p class="ai-subtitle">A little clarity for your money decisions.</p></div>
+    </div>
+    <span class="ai-state {% if not configured %}preview{% endif %}">{% if configured %}AI ready{% else %}Preview mode{% endif %}</span>
+  </header>
+  <section class="ai-workspace" aria-label="TIANA AI chat">
+    <div class="ai-workspace-head"><strong>Your private conversation</strong><span>Personal money guidance</span></div>
+    {% if error %}<div class="message message-error ai-error" role="alert">{{ error }}</div>{% endif %}
+    {% if not configured %}<div class="info-banner ai-error">Gemini is not configured on the server yet. This chat will not pretend to generate live AI answers.</div>{% endif %}
+    <div class="ai-transcript" data-ai-transcript aria-live="polite">
+      {% for entry in history %}
+        <div class="ai-message user"><span class="ai-message-label">You</span>{{ entry.prompt }}</div>
+        <div class="ai-message assistant"><span class="ai-message-label">TIANA AI</span>{{ entry.response }}</div>
+      {% empty %}
+        <div class="ai-welcome"><div class="ai-welcome-orb"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.8 14.2 9.8 21.2 12 14.2 14.2 12 21.2 9.8 14.2 2.8 12 9.8 9.8 12 2.8Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div><h2>What would you like to figure out?</h2><p>From building a budget to reaching a savings goal, let's take it one step at a time.</p></div>
+      {% endfor %}
+      <div class="ai-loading" data-ai-loading aria-label="TIANA AI is thinking"><i></i><i></i><i></i></div>
+    </div>
+    <div class="ai-prompts" aria-label="Suggested questions">
+      <button type="button" data-fill-prompt="Help me make a realistic weekly budget.">Build a weekly budget</button>
+      <button type="button" data-fill-prompt="How can I save more with the money I have?">Save more</button>
+      <button type="button" data-fill-prompt="Help me decide whether I can afford a purchase.">Plan a purchase</button>
+    </div>
+    <div class="ai-compose-wrap">
+      <form method="post" class="ai-compose" data-ai-form>{% csrf_token %}
+        <textarea id="aiPrompt" name="prompt" rows="1" maxlength="1500" placeholder="Ask TIANA anything about your money…" aria-label="Your message" required></textarea>
+        <button class="ai-send" type="submit" data-ai-send aria-label="Send message"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12 20 4l-5 16-3.5-6.5L4 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="m11.5 13.5 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      </form>
+    </div>
+    <p class="ai-footnote">Please don't share passwords, PINs or account credentials. AI guidance is educational, not financial advice.</p>
   </section>
 </section>
 {% endblock %}
+{% block extra_js %}<script src="{% static 'nkem/ai-assistant.js' %}?v=20261102-minimal" defer></script>{% endblock %}
