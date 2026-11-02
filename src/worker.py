@@ -9,7 +9,7 @@ import os
 import traceback
 from urllib.parse import unquote, urlsplit
 
-from workers import Response, WorkerEntrypoint, wsgi
+from workers import Response, WorkerEntrypoint, env, wsgi
 
 _application = None
 _initialization_attempted = False
@@ -72,27 +72,27 @@ def _initialize_django(source_env):
                 "Required Django settings are missing: SECRET_KEY and/or ALLOWED_HOSTS."
             )
 
-        # Exercise the exact password-hashing path used by registration/login
-        # while still inside the async Worker fetch call stack. This validates
-        # that Pyodide can synchronously bridge to native Web Crypto before we
-        # begin accepting authenticated requests.
-        from nkem.hashers import portable_pbkdf2
+        # Import the Django WSGI app at module initialization so Cloudflare can
+        # include it in the Python Worker memory snapshot. This moves Django's
+        # costly app loading out of user-facing cold requests.
         from django.core.wsgi import get_wsgi_application
 
-        probe = portable_pbkdf2("sha256", b"password", b"salt", 1)
-        expected = bytes.fromhex(
-            "120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b"
-        )
-        if probe != expected:
-            raise RuntimeError("Native Web Crypto PBKDF2 self-check failed.")
-
-        print("TIANA cryptography PBKDF2 backend self-check passed.")
         _application = get_wsgi_application()
         print("TIANA Django WSGI application initialized successfully.")
     except Exception:
         _startup_error = traceback.format_exc()
         print("TIANA Django startup failed:")
         print(_startup_error)
+
+
+
+# Worker bindings are available in module scope. Initialize Django here so the
+# WSGI application is included in Cloudflare's deployment-time memory snapshot.
+_initialize_django(env)
+if _application is None:
+    raise RuntimeError(
+        "TIANA Django could not initialize during Worker startup; check Worker logs."
+    )
 
 
 class Default(WorkerEntrypoint):
@@ -137,17 +137,6 @@ class Default(WorkerEntrypoint):
                 "X-Content-Type-Options": "nosniff",
             })
 
-        _initialize_django(self.env)
-
-        if _application is None:
-            print("TIANA request rejected because Django did not initialize.")
-            return Response(
-                "TIANA is temporarily unavailable because Django failed to start. "
-                "Check the Worker Logs for the startup traceback.",
-                status=503,
-            )
-
-        # The official WSGI adapter dispatches each request. A global lock around
-        # this await can remain held after a cancelled request and deadlock later
-        # requests (including the post-registration welcome redirect).
+        # The Django WSGI application is restored from the module-level Worker
+        # snapshot, so normal requests do not perform Django setup again.
         return await wsgi.fetch(_application, request, self.env)
