@@ -1,14 +1,24 @@
 """Cloudflare Python Worker entry point for the TIANA Django app.
 
-Initialize Django once during isolate startup, following Cloudflare's
-Python Workers WSGI integration pattern. Static assets are served from the
-Worker Assets binding and uploaded media from the dedicated R2 bucket.
+Bindings are read only inside fetch handlers. Django initialization is attempted
+once per isolate; a failed setup is recorded rather than re-entered on the next
+request, which would trigger Django's "populate() isn't reentrant" exception.
 """
+import asyncio
 import os
 import traceback
 from urllib.parse import unquote, urlsplit
 
-from workers import Response, WorkerEntrypoint, env, wsgi
+from workers import Response, WorkerEntrypoint, wsgi
+
+_application = None
+_initialization_attempted = False
+_startup_error = None
+
+# A synchronous PostgreSQL driver must not be driven concurrently by requests
+# sharing this isolate. Keep the WSGI request path serialized.
+_django_request_lock = asyncio.Lock()
+_initialization_lock = asyncio.Lock()
 
 
 def _copy_secret(source_env, source, target=None):
@@ -17,51 +27,67 @@ def _copy_secret(source_env, source, target=None):
         os.environ[target or source] = str(value)
 
 
-# Read environment variables and secrets from the Worker global env binding
-# before importing Django settings or starting the application registry.
-for source, target in {
-    "DJANGO_SECRET_KEY": "SECRET_KEY",
-    "ALLOWED_HOSTS": "ALLOWED_HOSTS",
-    "CSRF_TRUSTED_ORIGINS": "CSRF_TRUSTED_ORIGINS",
-    "GEMINI_API_KEY": "GEMINI_API_KEY",
-    "FIREBASE_SERVICE_ACCOUNT_JSON": "FIREBASE_SERVICE_ACCOUNT_JSON",
-    "FIREBASE_WEB_API_KEY": "FIREBASE_WEB_API_KEY",
-    "FIREBASE_WEB_AUTH_DOMAIN": "FIREBASE_WEB_AUTH_DOMAIN",
-    "FIREBASE_WEB_PROJECT_ID": "FIREBASE_WEB_PROJECT_ID",
-    "FIREBASE_WEB_MESSAGING_SENDER_ID": "FIREBASE_WEB_MESSAGING_SENDER_ID",
-    "FIREBASE_WEB_APP_ID": "FIREBASE_WEB_APP_ID",
-    "FIREBASE_WEB_VAPID_KEY": "FIREBASE_WEB_VAPID_KEY",
-}.items():
-    _copy_secret(env, source, target)
+async def _initialize_django(source_env):
+    """Initialize Django once, after request-handler access to Worker bindings."""
+    global _application, _initialization_attempted, _startup_error
 
-os.environ["DEBUG"] = "0"
-os.environ["DB_CONN_MAX_AGE"] = "0"
-os.environ["DJANGO_DB_BACKEND"] = "nkem.db_backends.pg8000"
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nkem.settings")
-os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
+    if _initialization_attempted:
+        return
 
-_hyperdrive = getattr(env, "HYPERDRIVE", None)
-_connection_string = getattr(_hyperdrive, "connectionString", None) if _hyperdrive else None
-if _connection_string:
-    os.environ["DATABASE_URL"] = str(_connection_string)
+    async with _initialization_lock:
+        if _initialization_attempted:
+            return
 
-_application = None
-_startup_error = None
+        # Mark before importing Django. If setup raises, never call setup again
+        # in this isolate: Django's app registry is not re-entrant.
+        _initialization_attempted = True
 
-if not _connection_string:
-    _startup_error = "Cloudflare Hyperdrive binding HYPERDRIVE is missing or has no connection string."
-elif not os.environ.get("SECRET_KEY") or not os.environ.get("ALLOWED_HOSTS"):
-    _startup_error = "Required Django settings are missing: SECRET_KEY and/or ALLOWED_HOSTS."
-else:
-    try:
-        from django.core.wsgi import get_wsgi_application
+        try:
+            required = {
+                "DJANGO_SECRET_KEY": "SECRET_KEY",
+                "ALLOWED_HOSTS": "ALLOWED_HOSTS",
+                "CSRF_TRUSTED_ORIGINS": "CSRF_TRUSTED_ORIGINS",
+                "GEMINI_API_KEY": "GEMINI_API_KEY",
+                "FIREBASE_SERVICE_ACCOUNT_JSON": "FIREBASE_SERVICE_ACCOUNT_JSON",
+                "FIREBASE_WEB_API_KEY": "FIREBASE_WEB_API_KEY",
+                "FIREBASE_WEB_AUTH_DOMAIN": "FIREBASE_WEB_AUTH_DOMAIN",
+                "FIREBASE_WEB_PROJECT_ID": "FIREBASE_WEB_PROJECT_ID",
+                "FIREBASE_WEB_MESSAGING_SENDER_ID": "FIREBASE_WEB_MESSAGING_SENDER_ID",
+                "FIREBASE_WEB_APP_ID": "FIREBASE_WEB_APP_ID",
+                "FIREBASE_WEB_VAPID_KEY": "FIREBASE_WEB_VAPID_KEY",
+            }
+            for source, target in required.items():
+                _copy_secret(source_env, source, target)
 
-        _application = get_wsgi_application()
-        print("TIANA Django WSGI application initialized successfully.")
-    except Exception:
-        _startup_error = traceback.format_exc()
-        print("TIANA Django startup failed:")
-        print(_startup_error)
+            hyperdrive = getattr(source_env, "HYPERDRIVE", None)
+            connection_string = (
+                getattr(hyperdrive, "connectionString", None) if hyperdrive else None
+            )
+            if not connection_string:
+                raise RuntimeError(
+                    "Cloudflare Hyperdrive binding HYPERDRIVE is missing or has no connection string."
+                )
+
+            os.environ["DATABASE_URL"] = str(connection_string)
+            os.environ["DEBUG"] = "0"
+            os.environ["DB_CONN_MAX_AGE"] = "0"
+            os.environ["DJANGO_DB_BACKEND"] = "nkem.db_backends.pg8000"
+            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nkem.settings")
+            os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
+
+            if not os.environ.get("SECRET_KEY") or not os.environ.get("ALLOWED_HOSTS"):
+                raise RuntimeError(
+                    "Required Django settings are missing: SECRET_KEY and/or ALLOWED_HOSTS."
+                )
+
+            from django.core.wsgi import get_wsgi_application
+
+            _application = get_wsgi_application()
+            print("TIANA Django WSGI application initialized successfully.")
+        except Exception:
+            _startup_error = traceback.format_exc()
+            print("TIANA Django startup failed:")
+            print(_startup_error)
 
 
 class Default(WorkerEntrypoint):
@@ -86,13 +112,15 @@ class Default(WorkerEntrypoint):
                 "X-Content-Type-Options": "nosniff",
             })
 
-        # Do not retry Django setup after a failed startup. Django's app registry
-        # is not re-entrant; a retry would hide the original startup exception.
-        if _application is None:
-            print("TIANA request rejected because Django did not initialize.")
-            return Response(
-                "TIANA is temporarily unavailable because the Django application failed to start. Check Worker Logs.",
-                status=503,
-            )
+        async with _django_request_lock:
+            await _initialize_django(self.env)
 
-        return await wsgi.fetch(_application, request, self.env)
+            if _application is None:
+                print("TIANA request rejected because Django did not initialize.")
+                return Response(
+                    "TIANA is temporarily unavailable because Django failed to start. "
+                    "Check the Worker Logs for the startup traceback.",
+                    status=503,
+                )
+
+            return await wsgi.fetch(_application, request, self.env)
