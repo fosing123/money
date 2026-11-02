@@ -8,6 +8,7 @@ Original files remain untouched. Generated files live under static/assets/optimi
 and are picked up by Django collectstatic and Cloudflare Workers Assets.
 """
 from pathlib import Path
+import shutil
 
 from PIL import Image, ImageOps
 
@@ -51,6 +52,14 @@ ASSETS = [
 
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    public_dir = ROOT / "public"
+    public_dir.mkdir(parents=True, exist_ok=True)
+    service_worker = ROOT / "tiana-service-worker.js"
+    if not service_worker.is_file():
+        raise FileNotFoundError(f"Required service worker is missing: {service_worker}")
+    shutil.copy2(service_worker, public_dir / "service-worker.js")
+    print("Copied service worker to public/service-worker.js")
+
     original_total = 0
     optimized_total = 0
 
