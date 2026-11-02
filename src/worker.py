@@ -70,6 +70,7 @@ async def _initialize_django(source_env):
 
             os.environ["DATABASE_URL"] = str(connection_string)
             os.environ["DEBUG"] = "0"
+            os.environ["CLOUDFLARE_WORKER"] = "1"
             os.environ["DB_CONN_MAX_AGE"] = "0"
             os.environ["DJANGO_DB_BACKEND"] = "nkem.db_backends.pg8000"
             os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nkem.settings")
