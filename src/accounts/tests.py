@@ -21,10 +21,10 @@ class PortablePasswordHasherTests(TestCase):
             "120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b",
         )
 
-    def test_cryptography_pbkdf2_matches_python_hashlib_at_worker_cost(self):
+    def test_worker_pbkdf2_matches_python_hashlib_at_recommended_cost(self):
         password = b"TIANA-password-test"
         salt = b"TIANA-random-salt"
-        iterations = 120000
+        iterations = 600000
         expected = hashlib.pbkdf2_hmac("sha256", password, salt, iterations)
         self.assertEqual(
             portable_pbkdf2("sha256", password, salt, iterations),
@@ -40,8 +40,22 @@ class PortablePasswordHasherTests(TestCase):
     def test_worker_hasher_uses_runtime_safe_round_count_for_new_passwords(self):
         hasher = PortablePBKDF2PasswordHasher()
         encoded = hasher.encode("StrongPass123!", "tiana-test-salt")
-        self.assertEqual(encoded.split("$")[1], "120000")
+        self.assertEqual(encoded.split("$")[1], "600000")
         self.assertTrue(hasher.verify("StrongPass123!", encoded))
+
+    def test_worker_hasher_upgrades_temporary_120k_hashes_without_downgrading_stronger_hashes(self):
+        hasher = PortablePBKDF2PasswordHasher()
+        native = PBKDF2PasswordHasher()
+        weak_legacy = native.encode(
+            "StrongPass123!", "legacy-120k-salt", iterations=120000
+        )
+        stronger_legacy = native.encode(
+            "StrongPass123!", "legacy-1200k-salt", iterations=1200000
+        )
+        self.assertTrue(hasher.must_update(weak_legacy))
+        self.assertFalse(hasher.must_update(stronger_legacy))
+        self.assertTrue(hasher.verify("StrongPass123!", weak_legacy))
+        self.assertTrue(hasher.verify("StrongPass123!", stronger_legacy))
 
     def test_worker_hasher_uses_django_compatible_pbkdf2_format(self):
         password = "StrongPass123!"
