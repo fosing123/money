@@ -51,7 +51,12 @@
     if (!navigator.onLine || refreshInProgress) return;
     refreshInProgress = true;
     try {
-      await window.TianaOffline.syncPending();
+      // Do not fetch the full private finance snapshot on every page view.
+      // Only wake the sync path when this device actually has queued entries.
+      const queued = await window.TianaOffline.listPending();
+      if (queued.some(item => item.status === "pending")) {
+        await window.TianaOffline.syncPending();
+      }
     } catch (error) {
       console.info("TIANA will retry offline sync when the connection is available.", error);
     } finally {

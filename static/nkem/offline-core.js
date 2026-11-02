@@ -125,7 +125,11 @@
           }
         }
       }
-      try { await refreshSnapshot(); } catch (_) { /* The queued entries are already safely acknowledged. */ }
+      // A full bootstrap is only needed after a successful local write sync.
+      // Empty queues must never trigger a database-heavy snapshot request.
+      if (synced > 0) {
+        try { await refreshSnapshot(); } catch (_) { /* The queued entries are already safely acknowledged. */ }
+      }
       return { synced, pending: (await all("outbox")).length };
     } finally {
       syncing = false;

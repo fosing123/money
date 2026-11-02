@@ -15,6 +15,7 @@ from django.db.models import Sum
 from django.utils import timezone
 
 from budgets.models import Budget
+from budgets.services import attach_budget_spending
 from finance.models import Transaction
 from goals.models import Goal
 from .models import AIResponseCache, AIUsage
@@ -38,12 +39,14 @@ def _user_snapshot(user):
     month = Transaction.objects.filter(owner=user, transaction_date__gte=month_start, transaction_date__lte=today)
     income = month.filter(kind__in=["income", "refund", "transfer_in"]).aggregate(total=Sum("amount"))["total"] or 0
     expenses = month.filter(kind__in=["expense", "transfer_out"]).aggregate(total=Sum("amount"))["total"] or 0
+    budget_rows = list(Budget.objects.filter(owner=user)[:6])
+    attach_budget_spending(budget_rows, owner=user)
     budgets = [{
         "category_or_name": budget.category or budget.name,
         "limit_fcfa": str(budget.amount),
         "spent_fcfa": str(budget.spent_amount),
         "period": budget.get_period_display(),
-    } for budget in Budget.objects.filter(owner=user)[:6]]
+    } for budget in budget_rows]
     goals = [{
         "name": goal.name,
         "target_fcfa": str(goal.target_amount),
@@ -141,7 +144,7 @@ def generate_money_guidance(user, prompt):
                               + "\n\nMy question:\n" + prompt}],
         }],
         # Keep configuration portable across current Gemini Flash model generations.
-        "generationConfig": {"maxOutputTokens": 520},
+        "generationConfig": {"maxOutputTokens": 380},
     }
     endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
     request = Request(
