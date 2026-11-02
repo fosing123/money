@@ -1,7 +1,10 @@
+import traceback
+
 from django.contrib import messages
 from django.contrib.auth import SESSION_KEY, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.models import Session
+from django.db import IntegrityError, transaction
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
@@ -26,23 +29,49 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data["email"].strip()
-            base_username = email.split("@")[0][:140] or "tiana"
-            username, counter = base_username, 1
-            while User.objects.filter(username__iexact=username).exists():
-                username = f"{base_username[:140-len(str(counter))]}{counter}"
-                counter += 1
-            first_name, _, last_name = form.cleaned_data["full_name"].strip().partition(" ")
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                password=form.cleaned_data["password1"],
-                first_name=first_name.strip(),
-                last_name=last_name.strip(),
-                phone_number=form.cleaned_data.get("phone_number", "").strip(),
-            )
-            Account.objects.create(owner=user, name="Daily money", account_type="cash", currency=user.currency)
-            login(request, user)
-            return redirect("registration_welcome")
+            try:
+                # User and their initial wallet/account are one operation. If any
+                # step fails, roll back the user row instead of leaving a broken
+                # half-created account behind.
+                with transaction.atomic():
+                    base_username = email.split("@")[0][:140] or "tiana"
+                    username, counter = base_username, 1
+                    while User.objects.filter(username__iexact=username).exists():
+                        suffix = str(counter)
+                        username = f"{base_username[:150-len(suffix)]}{suffix}"
+                        counter += 1
+
+                    first_name, _, last_name = form.cleaned_data["full_name"].strip().partition(" ")
+                    user = User.objects.create_user(
+                        username=username,
+                        email=email,
+                        password=form.cleaned_data["password1"],
+                        first_name=first_name.strip(),
+                        last_name=last_name.strip(),
+                        phone_number=form.cleaned_data.get("phone_number", "").strip(),
+                    )
+                    Account.objects.create(
+                        owner=user,
+                        name="Daily money",
+                        account_type="cash",
+                        currency=user.currency,
+                    )
+                    login(request, user)
+                return redirect("registration_welcome")
+            except IntegrityError:
+                # Do not expose SQL, credentials, or submitted form values.
+                print("TIANA registration failed with a database integrity error.")
+                traceback.print_exc()
+                if User.objects.filter(email__iexact=email).exists():
+                    form.add_error("email", "An account with this email already exists. Please sign in instead.")
+                else:
+                    form.add_error(None, "We couldn't complete your registration. Please check your details and try again.")
+            except Exception:
+                # Django's production error page hides the traceback. Emit it to
+                # Worker logs with no request body or personal form values.
+                print("TIANA registration failed with an unexpected application error.")
+                traceback.print_exc()
+                form.add_error(None, "We couldn't complete your registration just now. Please try again.")
     else:
         form = RegisterForm()
     return render(request, "accounts/register.html", {"form": form})
