@@ -21,6 +21,16 @@ class PortablePasswordHasherTests(TestCase):
             "120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b",
         )
 
+    def test_cryptography_pbkdf2_matches_python_hashlib_at_worker_cost(self):
+        password = b"TIANA-password-test"
+        salt = b"TIANA-random-salt"
+        iterations = 120000
+        expected = hashlib.pbkdf2_hmac("sha256", password, salt, iterations)
+        self.assertEqual(
+            portable_pbkdf2("sha256", password, salt, iterations),
+            expected,
+        )
+
     def test_portable_pbkdf2_matches_python_hashlib(self):
         password = b"TIANA-password-test"
         salt = b"TIANA-random-salt"

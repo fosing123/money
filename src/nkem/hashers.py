@@ -1,53 +1,57 @@
-"""PBKDF2 password hashing compatible with Pyodide/Cloudflare Workers.
+"""Fast PBKDF2 password hashing for Pyodide/Cloudflare Workers.
 
-Pyodide does not ship OpenSSL-backed hashlib.pbkdf2_hmac. This module keeps
-Django's existing PBKDF2 encoding unchanged and computes the same RFC 8018
-PBKDF2 result using the portable hashlib SHA digest + HMAC implementation.
+Pyodide does not expose OpenSSL-backed hashlib.pbkdf2_hmac. Reimplementing
+Django's production PBKDF2 iteration count in Python is prohibitively slow.
+The cryptography wheel included in Pyodide provides an optimized WebAssembly
+implementation while preserving Django's standard PBKDF2 hash format.
 """
 import base64
 import hashlib
-import hmac
 
 from django.contrib.auth.hashers import PBKDF2PasswordHasher
 from django.utils.encoding import force_bytes
 
 
 def portable_pbkdf2(hash_name, password, salt, iterations, dklen=None):
-    """Portable PBKDF2-HMAC implementation for runtimes without OpenSSL."""
+    """Derive PBKDF2 using the optimized cryptography backend."""
     if not isinstance(iterations, int) or iterations < 1:
         raise ValueError("iterations must be a positive integer")
 
-    digest = getattr(hashlib, hash_name, None)
-    if digest is None:
-        raise ValueError("Unsupported hash digest: %s" % hash_name)
+    # cryptography is built for Pyodide and runs the KDF in compiled WASM code.
+    # Import lazily so non-Worker environments may still use native hashlib.
+    try:
+        from cryptography.hazmat.primitives import hashes
+        from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+    except ImportError as exc:
+        raise RuntimeError(
+            "TIANA requires the cryptography Pyodide package to hash passwords "
+            "when hashlib.pbkdf2_hmac is unavailable."
+        ) from exc
 
-    password = force_bytes(password)
-    salt = force_bytes(salt)
-    digest_size = digest().digest_size
-    if dklen is None:
-        dklen = digest_size
-    if not isinstance(dklen, int) or dklen < 1:
+    digest_name = hash_name.replace("-", "").lower()
+    algorithms = {
+        "sha1": hashes.SHA1,
+        "sha224": hashes.SHA224,
+        "sha256": hashes.SHA256,
+        "sha384": hashes.SHA384,
+        "sha512": hashes.SHA512,
+    }
+    algorithm_factory = algorithms.get(digest_name)
+    if algorithm_factory is None:
+        raise ValueError("Unsupported PBKDF2 digest: %s" % hash_name)
+
+    algorithm = algorithm_factory()
+    length = dklen or algorithm.digest_size
+    if length < 1:
         raise ValueError("dklen must be a positive integer")
 
-    block_count = (dklen + digest_size - 1) // digest_size
-    if block_count > 0xFFFFFFFF:
-        raise OverflowError("derived key is too long")
-
-    derived = bytearray()
-    for block_index in range(1, block_count + 1):
-        u_value = hmac.digest(
-            password,
-            salt + block_index.to_bytes(4, byteorder="big"),
-            digest,
-        )
-        accumulator = bytearray(u_value)
-        for _ in range(iterations - 1):
-            u_value = hmac.digest(password, u_value, digest)
-            for byte_index, value in enumerate(u_value):
-                accumulator[byte_index] ^= value
-        derived.extend(accumulator)
-
-    return bytes(derived[:dklen])
+    kdf = PBKDF2HMAC(
+        algorithm=algorithm,
+        length=length,
+        salt=force_bytes(salt),
+        iterations=iterations,
+    )
+    return kdf.derive(force_bytes(password))
 
 
 def _derive_pbkdf2(hash_name, password, salt, iterations):
@@ -57,13 +61,13 @@ def _derive_pbkdf2(hash_name, password, salt, iterations):
             return native_pbkdf2(hash_name, password, salt, iterations)
         except (AttributeError, NotImplementedError):
             # Some WebAssembly builds expose hashlib but omit OpenSSL-backed
-            # key-derivation functions. Fall through to the portable version.
+            # PBKDF2. Use the optimized cryptography implementation instead.
             pass
     return portable_pbkdf2(hash_name, password, salt, iterations)
 
 
 class PortablePBKDF2PasswordHasher(PBKDF2PasswordHasher):
-    """Django PBKDF2-SHA256 hasher with a Pyodide-safe fallback."""
+    """Django PBKDF2-SHA256 hasher with an optimized Pyodide fallback."""
 
     def encode(self, password, salt, iterations=None):
         iterations = iterations or self.iterations
