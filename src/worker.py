@@ -86,7 +86,7 @@ def _initialize_django(source_env):
         if probe != expected:
             raise RuntimeError("Native Web Crypto PBKDF2 self-check failed.")
 
-        print("TIANA native Web Crypto PBKDF2 self-check passed.")
+        print("TIANA cryptography PBKDF2 backend self-check passed.")
         _application = get_wsgi_application()
         print("TIANA Django WSGI application initialized successfully.")
     except Exception:
