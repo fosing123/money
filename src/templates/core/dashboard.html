@@ -6,7 +6,7 @@
 <div class="tiana-home" data-dashboard-tour-root>
   <section class="home-greeting" data-tour="greeting">
     <div class="home-greeting-copy"><h1>Good to see you, {{ user.first_name|default:user.username }} <span aria-hidden="true">✦</span></h1></div>
-    <a class="home-avatar" href="{% url 'profile' %}" aria-label="Open your profile">{% if user.avatar %}<img src="{{ user.avatar.url }}" alt="">{% elif brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</a>
+    <a class="home-avatar" href="{% url 'profile' %}" aria-label="Open your profile">{% if user.avatar %}<img src="{{ user.avatar.url }}" alt="" width="52" height="52" decoding="async">{% elif brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="" width="52" height="52" decoding="async">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</a>
   </section>
   <section class="home-balance-card" data-tour="balance" aria-label="Your total balance">
     <div class="home-balance-orb" aria-hidden="true"></div>
