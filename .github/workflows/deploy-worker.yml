@@ -86,6 +86,9 @@ jobs:
           node --check static/nkem/pwa.js
           node --check static/nkem/fcm.js
 
+      - name: Generate responsive WebP image assets
+        run: uv run python scripts/optimize_images.py
+
       - name: Collect Django static assets
         run: uv run python manage.py collectstatic --noinput
 
