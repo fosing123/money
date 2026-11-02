@@ -26,6 +26,7 @@ def env_list(name, default=""):
 
 
 DEBUG = env_bool("DEBUG", True)
+CLOUDFLARE_WORKER = env_bool("CLOUDFLARE_WORKER", False)
 SECRET_KEY = os.environ.get("SECRET_KEY", "")
 if not SECRET_KEY:
     if DEBUG:
@@ -47,7 +48,7 @@ INSTALLED_APPS = [
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    *([] if CLOUDFLARE_WORKER else ["whitenoise.middleware.WhiteNoiseMiddleware"]),
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -142,9 +143,14 @@ STORAGES = {
         else {"BACKEND": "django.core.files.storage.FileSystemStorage"}
     ),
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
-        if not DEBUG
-        else "django.contrib.staticfiles.storage.StaticFilesStorage"
+        # Cloudflare serves collected files through env.ASSETS, not from
+        # STATIC_ROOT inside the Python runtime filesystem. Avoid WhiteNoise's
+        # filesystem manifest lookup in that environment.
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+            if DEBUG or CLOUDFLARE_WORKER
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        )
     },
 }
 
