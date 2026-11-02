@@ -1,7 +1,9 @@
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
+from django.db import connection
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
 from budgets.models import Budget
@@ -11,6 +13,41 @@ User = get_user_model()
 
 
 class BudgetTests(TestCase):
+    def test_multiple_budget_spending_totals_use_one_aggregate_query(self):
+        from budgets.services import attach_budget_spending
+
+        user = User.objects.create_user(
+            username="budgetbatch",
+            email="budgetbatch@example.com",
+            password="StrongPass123!",
+        )
+        account = Account.objects.create(owner=user, name="Cash", currency="XAF", balance=0)
+        today = timezone.localdate()
+        week_start = today - timezone.timedelta(days=today.weekday())
+        food = Budget.objects.create(
+            owner=user, name="Food", category="Food", amount=10000,
+            currency="XAF", period="weekly", start_date=week_start,
+        )
+        transport = Budget.objects.create(
+            owner=user, name="Transport", category="Transport", amount=5000,
+            currency="XAF", period="weekly", start_date=week_start,
+        )
+        Transaction.objects.create(
+            owner=user, account=account, kind="expense", amount="2500",
+            currency="XAF", category="Food", transaction_date=today,
+        )
+        Transaction.objects.create(
+            owner=user, account=account, kind="expense", amount="1000",
+            currency="XAF", category="Transport", transaction_date=today,
+        )
+
+        with CaptureQueriesContext(connection) as captured:
+            budgets = attach_budget_spending([food, transport], owner=user)
+            spent = [budget.spent_amount for budget in budgets]
+
+        self.assertEqual(len(captured), 1)
+        self.assertEqual(spent, [Decimal("2500"), Decimal("1000")])
+
     def test_budget_remaining_amount_is_calculated(self):
         user = User.objects.create_user(username="budgeter", email="budgeter@example.com", password="StrongPass123!")
         account = Account.objects.create(owner=user, name="Cash", currency="XAF", balance=0)

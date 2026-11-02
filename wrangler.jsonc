@@ -6,6 +6,9 @@
   "compatibility_flags": [
     "python_workers"
   ],
+  "placement": {
+    "region": "aws:eu-west-2"
+  },
   "limits": {
     "cpu_ms": 60000
   },

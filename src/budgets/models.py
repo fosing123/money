@@ -46,19 +46,29 @@ class Budget(models.Model):
 
     @property
     def spent_amount(self):
+        cached = getattr(self, "_spent_amount_cache", None)
+        if cached is not None:
+            return cached
+
+        from django.db.models import Sum
         from finance.models import Transaction
+
         start, end = self._current_window()
         if end < start:
-            return Decimal("0.00")
-        qs = Transaction.objects.filter(
-            owner=self.owner,
-            kind="expense",
-            currency=self.currency,
-            transaction_date__range=(start, end),
-        )
-        if self.category:
-            qs = qs.filter(category__iexact=self.category.strip())
-        return sum((item.amount for item in qs), Decimal("0.00"))
+            total = Decimal("0.00")
+        else:
+            qs = Transaction.objects.filter(
+                owner_id=self.owner_id,
+                kind="expense",
+                currency=self.currency,
+                transaction_date__range=(start, end),
+            )
+            if self.category:
+                qs = qs.filter(category__iexact=self.category.strip())
+            total = qs.aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
+
+        self._spent_amount_cache = total
+        return total
 
     @property
     def remaining_amount(self):

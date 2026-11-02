@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection, transaction as db_transaction
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -16,6 +16,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from accounts.models import User
 from budgets.models import Budget
+from budgets.services import attach_budget_spending
 from finance.models import Account, Transaction
 from goals.models import Goal
 from notifications.services import evaluate_spending_alerts
@@ -37,16 +38,21 @@ def dashboard_view(request):
         return redirect("onboarding_setup")
     today = timezone.localdate()
     month_start = today.replace(day=1)
-    accounts = Account.objects.filter(owner=user, is_active=True)
-    total_balance = accounts.aggregate(total=Sum("balance"))["total"] or Decimal("0.00")
+    accounts = list(Account.objects.filter(owner=user, is_active=True))
+    total_balance = sum((account.balance for account in accounts), Decimal("0.00"))
     month_transactions = Transaction.objects.filter(owner=user, transaction_date__gte=month_start, transaction_date__lte=today)
-    income_total = month_transactions.filter(kind__in=["income", "refund", "transfer_in"]).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
-    expense_total = month_transactions.filter(kind__in=["expense", "transfer_out"]).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
+    month_totals = month_transactions.aggregate(
+        income_total=Sum("amount", filter=Q(kind__in=["income", "refund", "transfer_in"])),
+        expense_total=Sum("amount", filter=Q(kind__in=["expense", "transfer_out"])),
+    )
+    income_total = month_totals["income_total"] or Decimal("0.00")
+    expense_total = month_totals["expense_total"] or Decimal("0.00")
     recent_transactions = Transaction.objects.filter(owner=user).select_related("account")[:6]
-    evaluate_spending_alerts(user)
-    budgets = Budget.objects.filter(owner=user)[:4]
-    goals = Goal.objects.filter(owner=user, status="active").prefetch_related("contributions__transaction")[:4]
-    all_goals = Goal.objects.filter(owner=user).prefetch_related("contributions__transaction")
+    all_budgets = list(Budget.objects.filter(owner=user))
+    evaluate_spending_alerts(user, budgets=all_budgets)
+    budgets = all_budgets[:4]
+    all_goals = list(Goal.objects.filter(owner=user).prefetch_related("contributions__transaction"))
+    goals = [goal for goal in all_goals if goal.status == "active"][:4]
     goal_savings_total = sum((goal.saved_amount for goal in all_goals), Decimal("0.00"))
     budget_amount = sum((item.amount for item in budgets), Decimal("0.00"))
     budget_spent = sum((item.spent_amount for item in budgets), Decimal("0.00"))
@@ -152,9 +158,11 @@ def offline_bootstrap_view(request):
     accounts = list(Account.objects.filter(owner=user, is_active=True).values(
         "id", "name", "account_type", "currency", "balance"
     ))
-    budgets = []
-    for budget in Budget.objects.filter(owner=user).order_by("period", "name")[:20]:
-        budgets.append({
+    budgets = list(Budget.objects.filter(owner=user).order_by("period", "name")[:20])
+    attach_budget_spending(budgets, owner=user)
+    budget_payload = []
+    for budget in budgets:
+        budget_payload.append({
             "id": budget.pk,
             "name": budget.name,
             "category": budget.category,
@@ -191,7 +199,7 @@ def offline_bootstrap_view(request):
     response = JsonResponse({
         "currency": user.currency,
         "accounts": accounts,
-        "budgets": budgets,
+        "budgets": budget_payload,
         "goals": goals,
         "recent_transactions": recent,
         "server_date": timezone.localdate().isoformat(),

@@ -4,23 +4,27 @@ These alerts do not call the AI provider. The AI coach is reserved for
 personalized recommendations and questions from the user.
 """
 from budgets.models import Budget
+from budgets.services import attach_budget_spending
 from .models import Notification
 
 
 ALERT_THRESHOLDS = (80, 100)
 
 
-def evaluate_spending_alerts(user):
-    """Create at most one 80% and one 100% alert per budget period."""
+def evaluate_spending_alerts(user, budgets=None):
+    """Create deduplicated alerts after one aggregate for all budget totals."""
     created = []
-    budgets = Budget.objects.filter(owner=user).select_related("owner")
+    if budgets is None:
+        budgets = Budget.objects.filter(owner=user)
+    budgets = attach_budget_spending(budgets, owner=user)
 
     for budget in budgets:
         amount = budget.amount
         if amount <= 0:
             continue
 
-        percent = budget.percent_used
+        spent = budget.spent_amount
+        percent = float(spent / amount * 100)
         if percent < ALERT_THRESHOLDS[0]:
             continue
 
@@ -29,7 +33,6 @@ def evaluate_spending_alerts(user):
             continue
 
         label = (budget.category or budget.name or "category").strip()
-        spent = budget.spent_amount
         for threshold in ALERT_THRESHOLDS:
             if percent < threshold:
                 continue
