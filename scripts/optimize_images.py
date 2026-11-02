@@ -58,7 +58,11 @@ def main() -> None:
     if not service_worker.is_file():
         raise FileNotFoundError(f"Required service worker is missing: {service_worker}")
     shutil.copy2(service_worker, public_dir / "service-worker.js")
-    print("Copied service worker to public/service-worker.js")
+    (public_dir / "robots.txt").write_text(
+        "User-agent: *\\nAllow: /\\nDisallow: /admin/\\nDisallow: /api/\\n",
+        encoding="utf-8",
+    )
+    print("Prepared public/service-worker.js and public/robots.txt")
 
     original_total = 0
     optimized_total = 0
