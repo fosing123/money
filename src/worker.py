@@ -72,8 +72,21 @@ def _initialize_django(source_env):
                 "Required Django settings are missing: SECRET_KEY and/or ALLOWED_HOSTS."
             )
 
+        # Exercise the exact password-hashing path used by registration/login
+        # while still inside the async Worker fetch call stack. This validates
+        # that Pyodide can synchronously bridge to native Web Crypto before we
+        # begin accepting authenticated requests.
+        from nkem.hashers import portable_pbkdf2
         from django.core.wsgi import get_wsgi_application
 
+        probe = portable_pbkdf2("sha256", b"password", b"salt", 1)
+        expected = bytes.fromhex(
+            "120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b"
+        )
+        if probe != expected:
+            raise RuntimeError("Native Web Crypto PBKDF2 self-check failed.")
+
+        print("TIANA native Web Crypto PBKDF2 self-check passed.")
         _application = get_wsgi_application()
         print("TIANA Django WSGI application initialized successfully.")
     except Exception:
