@@ -31,6 +31,25 @@ class PortablePasswordHasherTests(TestCase):
             expected,
         )
 
+    def test_cryptography_backend_matches_hashlib_at_full_worker_work_factor(self):
+        from nkem.hashers import _cryptography_pbkdf2
+
+        password = b"TIANA-password-test"
+        salt = b"TIANA-random-salt"
+        expected = hashlib.pbkdf2_hmac("sha256", password, salt, 600000)
+        actual = _cryptography_pbkdf2("sha256", password, salt, 600000, 32)
+        self.assertEqual(actual, expected)
+
+    def test_cryptography_backend_verifies_existing_120k_and_1200k_hashes(self):
+        from nkem.hashers import _cryptography_pbkdf2
+
+        password = b"Existing-TIANA-password"
+        salt = b"existing-salt"
+        for rounds in (120000, 1200000):
+            expected = hashlib.pbkdf2_hmac("sha256", password, salt, rounds)
+            actual = _cryptography_pbkdf2("sha256", password, salt, rounds, 32)
+            self.assertEqual(actual, expected)
+
     def test_portable_pbkdf2_matches_python_hashlib(self):
         password = b"TIANA-password-test"
         salt = b"TIANA-random-salt"

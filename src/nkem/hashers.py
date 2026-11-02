@@ -1,9 +1,9 @@
-"""Django PBKDF2 password hashing using Cloudflare's native Web Crypto API.
+"""Django PBKDF2 hashing with a Pyodide-compatible cryptography backend.
 
-Cloudflare's Python runtime omits OpenSSL's hashlib.pbkdf2_hmac. Calling a
-Python-level PBKDF2 loop in Pyodide is too slow. Pyodide's run_sync bridge lets
-Django's synchronous WSGI code await the Workers Web Crypto PBKDF2 primitive,
-while retaining Django's standard encoded password format.
+Cloudflare's Python runtime omits OpenSSL's hashlib.pbkdf2_hmac, and its
+Web Crypto PBKDF2 implementation rejects work factors above 100,000 rounds.
+The cryptography package provides an optimized PBKDF2 implementation that
+supports the full work factor while preserving Django's standard hash format.
 """
 import base64
 import hashlib
@@ -12,75 +12,40 @@ from django.contrib.auth.hashers import PBKDF2PasswordHasher
 from django.utils.encoding import force_bytes
 
 
-def _webcrypto_pbkdf2(hash_name, password, salt, iterations, dklen):
-    """Use native Workers Web Crypto from synchronous Django code."""
+def _cryptography_pbkdf2(hash_name, password, salt, iterations, dklen):
+    """Use the compiled cryptography backend for high-work-factor PBKDF2."""
     try:
-        from js import Array, Object, Uint8Array, crypto
-        from pyodide.ffi import run_sync
+        from cryptography.hazmat.primitives import hashes
+        from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
     except ImportError as exc:
         raise RuntimeError(
-            "Cloudflare password hashing requires Pyodide run_sync and Web Crypto."
+            "TIANA requires the cryptography package for PBKDF2 on Cloudflare Workers."
         ) from exc
 
     digest_name = hash_name.replace("-", "").lower()
-    web_digests = {
-        "sha1": "SHA-1",
-        "sha256": "SHA-256",
-        "sha384": "SHA-384",
-        "sha512": "SHA-512",
+    algorithms = {
+        "sha1": hashes.SHA1,
+        "sha224": hashes.SHA224,
+        "sha256": hashes.SHA256,
+        "sha384": hashes.SHA384,
+        "sha512": hashes.SHA512,
     }
-    web_digest = web_digests.get(digest_name)
-    if web_digest is None:
-        raise ValueError("Unsupported Web Crypto PBKDF2 digest: %s" % hash_name)
+    algorithm_factory = algorithms.get(digest_name)
+    if algorithm_factory is None:
+        raise ValueError("Unsupported PBKDF2 digest: %s" % hash_name)
 
-    password_bytes = force_bytes(password)
-    salt_bytes = force_bytes(salt)
-
-    password_buffer = Uint8Array.new(len(password_bytes))
-    for index, value in enumerate(password_bytes):
-        password_buffer[index] = value
-
-    salt_buffer = Uint8Array.new(len(salt_bytes))
-    for index, value in enumerate(salt_bytes):
-        salt_buffer[index] = value
-
-    key_algorithm = Object.new()
-    key_algorithm.name = "PBKDF2"
-
-    key_usages = Array.new()
-    key_usages.push("deriveBits")
-
-    async def derive():
-        key = await crypto.subtle.importKey(
-            "raw",
-            password_buffer,
-            key_algorithm,
-            False,
-            key_usages,
-        )
-
-        parameters = Object.new()
-        parameters.name = "PBKDF2"
-        parameters.salt = salt_buffer
-        parameters.iterations = iterations
-        parameters.hash = web_digest
-
-        buffer = await crypto.subtle.deriveBits(
-            parameters,
-            key,
-            dklen * 8,
-        )
-        result = Uint8Array.new(buffer)
-        return bytes(int(result[index]) for index in range(dklen))
-
-    # This is Pyodide's supported sync-over-async bridge for APIs such as
-    # crypto.subtle.deriveBits; it avoids doing hundreds of thousands of HMAC
-    # rounds in Python/WebAssembly bytecode.
-    return run_sync(derive())
+    algorithm = algorithm_factory()
+    kdf = PBKDF2HMAC(
+        algorithm=algorithm,
+        length=dklen,
+        salt=force_bytes(salt),
+        iterations=iterations,
+    )
+    return kdf.derive(force_bytes(password))
 
 
 def portable_pbkdf2(hash_name, password, salt, iterations, dklen=None):
-    """Derive PBKDF2 using native hashlib locally or Web Crypto on Workers."""
+    """Derive PBKDF2 natively where available, otherwise via cryptography."""
     if not isinstance(iterations, int) or iterations < 1:
         raise ValueError("iterations must be a positive integer")
 
@@ -93,20 +58,26 @@ def portable_pbkdf2(hash_name, password, salt, iterations, dklen=None):
     native_pbkdf2 = getattr(hashlib, "pbkdf2_hmac", None)
     if native_pbkdf2 is not None:
         try:
-            return native_pbkdf2(hash_name, force_bytes(password), force_bytes(salt), iterations, dklen=length)
+            return native_pbkdf2(
+                hash_name,
+                force_bytes(password),
+                force_bytes(salt),
+                iterations,
+                dklen=length,
+            )
         except (AttributeError, NotImplementedError):
-            # Some WebAssembly builds expose hashlib without OpenSSL PBKDF2.
+            # Pyodide builds may expose hashlib but omit OpenSSL PBKDF2.
             pass
 
-    return _webcrypto_pbkdf2(hash_name, password, salt, iterations, length)
+    return _cryptography_pbkdf2(hash_name, password, salt, iterations, length)
 
 
 class PortablePBKDF2PasswordHasher(PBKDF2PasswordHasher):
-    """Django PBKDF2-SHA256 hasher tuned for Cloudflare's Worker runtime.
+    """Django PBKDF2-SHA256 hasher for Cloudflare's Python runtime.
 
-    New hashes use OWASP's 600,000-round PBKDF2-HMAC-SHA256 recommendation.
-    Existing hashes keep their encoded work factor when verified; stronger
-    historical hashes are never silently downgraded.
+    New hashes use 600,000 PBKDF2-HMAC-SHA256 rounds. The encoded round count
+    remains part of each hash, so older 120k temporary hashes and stronger
+    pre-existing hashes can still be verified without changing their format.
     """
 
     iterations = 600_000
@@ -115,16 +86,16 @@ class PortablePBKDF2PasswordHasher(PBKDF2PasswordHasher):
         iterations = iterations or self.iterations
         hash_value = portable_pbkdf2(
             self.digest().name,
-            force_bytes(password),
-            force_bytes(salt),
+            password,
+            salt,
             iterations,
         )
         encoded_hash = base64.b64encode(hash_value).decode("ascii").strip()
         return "%s$%d$%s$%s" % (self.algorithm, iterations, salt, encoded_hash)
 
     def must_update(self, encoded):
-        # Upgrade weak legacy rounds (e.g. the temporary 120k Worker hashes),
-        # but never downgrade prior Django hashes that used 1.2M iterations.
+        # Upgrade the temporary 120k work factor on next successful login,
+        # while preserving any older hash that already uses stronger rounds.
         try:
             _, rounds, _, _ = encoded.split("$", 3)
             return int(rounds) < self.iterations
