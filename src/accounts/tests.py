@@ -1,4 +1,8 @@
+import hashlib
+
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import PBKDF2PasswordHasher
+from nkem.hashers import PortablePBKDF2PasswordHasher, portable_pbkdf2
 from django.contrib.sessions.models import Session
 from django.contrib.staticfiles import finders
 from django.test import Client, TestCase
@@ -7,6 +11,33 @@ from django.urls import reverse
 from finance.models import Account
 
 User = get_user_model()
+
+
+class PortablePasswordHasherTests(TestCase):
+    def test_portable_pbkdf2_matches_known_sha256_vector(self):
+        derived = portable_pbkdf2("sha256", b"password", b"salt", 1)
+        self.assertEqual(
+            derived.hex(),
+            "120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b",
+        )
+
+    def test_portable_pbkdf2_matches_python_hashlib(self):
+        password = b"TIANA-password-test"
+        salt = b"TIANA-random-salt"
+        expected = hashlib.pbkdf2_hmac("sha256", password, salt, 1200)
+        self.assertEqual(portable_pbkdf2("sha256", password, salt, 1200), expected)
+
+    def test_worker_hasher_uses_django_compatible_pbkdf2_format(self):
+        password = "StrongPass123!"
+        salt = "tiana-test-salt"
+        iterations = 1200
+        portable = PortablePBKDF2PasswordHasher()
+        native = PBKDF2PasswordHasher()
+        expected = native.encode(password, salt, iterations=iterations)
+        encoded = portable.encode(password, salt, iterations=iterations)
+        self.assertEqual(encoded, expected)
+        self.assertTrue(portable.verify(password, encoded))
+        self.assertFalse(portable.verify("IncorrectPass123!", encoded))
 
 
 class AccountTests(TestCase):

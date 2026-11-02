@@ -118,6 +118,17 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+# Pyodide omits OpenSSL-backed hashlib.pbkdf2_hmac. Keep Django's standard
+# PBKDF2-SHA256 storage format, but use a portable implementation on Workers.
+PASSWORD_HASHERS = [
+    "nkem.hashers.PortablePBKDF2PasswordHasher",
+    "nkem.hashers.PortablePBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
+]
+
 AUTH_USER_MODEL = "accounts.User"
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Africa/Douala"
