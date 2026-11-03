@@ -2,13 +2,14 @@
 
 Only derived finance summaries are sent; never send passwords, API keys,
 bank credentials, full account identifiers, or contact details to the model.
+Cloudflare Workers outbound HTTP must use the runtime Fetch API, not sockets.
 """
-import json
 import hashlib
+import json
+import logging
 from datetime import timedelta
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
+from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.db import transaction as db_transaction
 from django.db.models import Sum
@@ -19,6 +20,8 @@ from budgets.services import attach_budget_spending
 from finance.models import Transaction
 from goals.models import Goal
 from .models import AIResponseCache, AIUsage
+
+logger = logging.getLogger(__name__)
 
 
 class AIConfigurationError(Exception):
@@ -97,28 +100,28 @@ def _release_ai_request(usage_id):
             usage.save(update_fields=["request_count", "updated_at"])
 
 
-def generate_money_guidance(user, prompt):
+def _prepare_ai_request(user, prompt):
     api_key = getattr(settings, "GEMINI_API_KEY", "") or getattr(settings, "AI_API_KEY", "")
     provider = getattr(settings, "AI_PROVIDER", "gemini").lower()
     model = getattr(settings, "GEMINI_MODEL", "") or getattr(settings, "AI_MODEL", "gemini-3.8-flash")
+
+    if provider != "gemini" or not api_key:
+        raise AIConfigurationError("Gemini is not configured on the server yet.")
 
     snapshot = _user_snapshot(user)
     snapshot_json = json.dumps(snapshot, ensure_ascii=False, sort_keys=True)
     normalized_prompt = " ".join(str(prompt).split()).casefold()
     fingerprint = hashlib.sha256((normalized_prompt + "\\n" + snapshot_json).encode("utf-8")).hexdigest()
+
     cached = AIResponseCache.objects.filter(
         user=user,
         fingerprint=fingerprint,
         created_at__gte=timezone.now() - timedelta(hours=24),
     ).first()
     if cached:
-        return cached.response
-
-    if provider != "gemini" or not api_key:
-        raise AIConfigurationError("Gemini is not configured on the server yet.")
+        return {"cached_response": cached.response}
 
     usage_id = _reserve_ai_request(user)
-
     system_prompt = (
         "You are TIANA, a warm, respectful personal money companion for students and young people "
         "in Cameroon. Use FCFA/XAF unless the user has another currency. Speak naturally, briefly, "
@@ -139,45 +142,43 @@ def generate_money_guidance(user, prompt):
         "systemInstruction": {"parts": [{"text": system_prompt}]},
         "contents": [{
             "role": "user",
-            "parts": [{"text": "Here is a limited summary of my finance app data (numbers are FCFA where noted):\n"
-                              + snapshot_json
-                              + "\n\nMy question:\n" + prompt}],
+            "parts": [{
+                "text": "Here is a limited summary of my finance app data (numbers are FCFA where noted):\\n"
+                        + snapshot_json
+                        + "\\n\\nMy question:\\n" + prompt
+            }],
         }],
-        # Keep configuration portable across current Gemini Flash model generations.
         "generationConfig": {"maxOutputTokens": 380},
     }
     endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-    request = Request(
+    return {
+        "endpoint": endpoint,
+        "api_key": api_key,
+        "body": json.dumps(contents, ensure_ascii=False),
+        "usage_id": usage_id,
+        "user": user,
+        "fingerprint": fingerprint,
+        "model": model,
+    }
+
+
+async def _fetch_gemini_response(endpoint, api_key, body):
+    """Call Gemini using Cloudflare's asynchronous Fetch runtime API."""
+    from workers import fetch
+
+    response = await fetch(
         endpoint,
-        data=json.dumps(contents).encode("utf-8"),
-        headers={"Content-Type": "application/json", "x-goog-api-key": api_key},
         method="POST",
+        headers={
+            "Content-Type": "application/json",
+            "x-goog-api-key": api_key,
+        },
+        body=body,
     )
-    try:
-        with urlopen(request, timeout=18) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-    except HTTPError as exc:
-        _release_ai_request(usage_id)
-        if exc.code in (401, 403):
-            raise AIServiceError("Gemini did not accept the configured server key. Check GEMINI_API_KEY.") from exc
-        if exc.code == 429:
-            raise AIServiceError("The AI coach is taking a short breather. Please try again in a moment.") from exc
-        raise AIServiceError("The AI coach could not complete that request right now.") from exc
-    except (URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
-        _release_ai_request(usage_id)
-        raise AIServiceError("I couldn't reach the AI coach just now. Please try again shortly.") from exc
+    return response.status, await response.text()
 
-    try:
-        candidates = payload.get("candidates", [])
-        parts = candidates[0]["content"]["parts"]
-        answer = "\n".join(part.get("text", "") for part in parts if part.get("text")).strip()
-    except (IndexError, KeyError, TypeError):
-        answer = ""
-    if not answer:
-        _release_ai_request(usage_id)
-        raise AIServiceError("I didn't get a usable answer back. Try asking in a different way.")
 
-    answer = answer[:7000]
+def _store_ai_response(user, fingerprint, answer):
     now = timezone.now()
     AIResponseCache.objects.filter(
         user=user,
@@ -187,5 +188,80 @@ def generate_money_guidance(user, prompt):
         user=user,
         fingerprint=fingerprint,
         defaults={"response": answer, "created_at": now},
+    )
+
+
+async def generate_money_guidance(user, prompt):
+    """Build a private finance snapshot, call Gemini over Workers fetch, and cache the answer."""
+    prepared = await sync_to_async(_prepare_ai_request, thread_sensitive=True)(user, prompt)
+    if "cached_response" in prepared:
+        return prepared["cached_response"]
+
+    usage_id = prepared["usage_id"]
+    try:
+        status, raw_body = await _fetch_gemini_response(
+            prepared["endpoint"],
+            prepared["api_key"],
+            prepared["body"],
+        )
+    except Exception as exc:
+        await sync_to_async(_release_ai_request, thread_sensitive=True)(usage_id)
+        logger.exception("Gemini request failed before an HTTP response was received.")
+        raise AIServiceError(
+            "I couldn't connect to the AI service just now. Please try again shortly."
+        ) from exc
+
+    try:
+        payload = json.loads(raw_body)
+    except (TypeError, json.JSONDecodeError) as exc:
+        await sync_to_async(_release_ai_request, thread_sensitive=True)(usage_id)
+        logger.warning("Gemini returned a non-JSON response (HTTP %s).", status)
+        raise AIServiceError(
+            "The AI service returned an unexpected response. Please try again shortly."
+        ) from exc
+
+    if status < 200 or status >= 300:
+        await sync_to_async(_release_ai_request, thread_sensitive=True)(usage_id)
+        detail = str(payload.get("error", {}).get("message", ""))[:240]
+        logger.warning("Gemini returned HTTP %s: %s", status, detail or "No error detail provided.")
+        if status in (401, 403):
+            raise AIServiceError(
+                "Gemini rejected the configured server key or its API permissions. Check the Gemini API key and project access."
+            )
+        if status == 429:
+            raise AIServiceError(
+                "The AI coach has reached a temporary Gemini rate limit. Please try again in a moment."
+            )
+        if status == 404:
+            raise AIServiceError(
+                f"The configured Gemini model is unavailable ({prepared['model']}). Check the model ID and API access."
+            )
+        raise AIServiceError(
+            f"Gemini could not complete the request (HTTP {status}). Please try again shortly."
+        )
+
+    try:
+        candidates = payload.get("candidates", [])
+        parts = candidates[0]["content"]["parts"]
+        answer = "\\n".join(part.get("text", "") for part in parts if part.get("text")).strip()
+    except (IndexError, KeyError, TypeError):
+        answer = ""
+
+    if not answer:
+        await sync_to_async(_release_ai_request, thread_sensitive=True)(usage_id)
+        feedback = payload.get("promptFeedback", {}).get("blockReason", "")
+        if feedback:
+            logger.info("Gemini blocked a prompt (reason: %s).", str(feedback)[:80])
+            raise AIServiceError(
+                "I couldn't answer that exact wording. Try rephrasing your question."
+            )
+        logger.warning("Gemini returned HTTP 200 without a text candidate.")
+        raise AIServiceError(
+            "I didn't get a usable answer back. Try asking in a different way."
+        )
+
+    answer = answer[:7000]
+    await sync_to_async(_store_ai_response, thread_sensitive=True)(
+        prepared["user"], prepared["fingerprint"], answer
     )
     return answer
