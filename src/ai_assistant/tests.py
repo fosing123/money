@@ -24,7 +24,7 @@ class MoneyCoachFallbackTests(TestCase):
         response = self.client.get(reverse("ai_chat"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Preview mode")
-        self.assertContains(response, "will not pretend this is a live AI answer")
+        self.assertContains(response, "will not pretend to generate live AI answers")
 
     def test_fallback_is_saved_to_the_member_chat_history(self):
         response = self.client.post(reverse("ai_chat"), {"prompt": "Help me plan food spending"})
@@ -98,3 +98,31 @@ class AIRequestCostControlTests(TestCase):
 
         self.assertIn("rejected the configured server key", str(raised.exception))
         self.assertEqual(AIUsage.objects.get(user=self.user).request_count, 0)
+
+@override_settings(AI_PROVIDER="gemini", GEMINI_API_KEY="ci-test-key", AI_API_KEY="")
+class AIChatViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="ai-view-user",
+            email="ai-view-user@example.com",
+            password="StrongPass123!",
+        )
+        self.client.force_login(self.user)
+
+    def test_configured_chat_calls_gemini_and_saves_the_reply(self):
+        from unittest.mock import AsyncMock
+
+        with patch(
+            "ai_assistant.views.generate_money_guidance",
+            new=AsyncMock(return_value="Start with a 1,000 FCFA weekly saving target."),
+        ) as provider:
+            response = self.client.post(
+                reverse("ai_chat"),
+                {"prompt": "Help me save every week"},
+            )
+
+        self.assertEqual(response.status_code, 302)
+        provider.assert_awaited_once()
+        saved = ChatMessage.objects.get(user=self.user)
+        self.assertEqual(saved.prompt, "Help me save every week")
+        self.assertEqual(saved.response, "Start with a 1,000 FCFA weekly saving target.")
