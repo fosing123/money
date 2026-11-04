@@ -91,9 +91,28 @@ class PWAOfflineAndPremiumTests(TestCase):
         self.assertContains(response, "Premium checkout is not connected yet")
 
 
-    def test_money_school_is_public_and_ads_remain_disabled_without_approved_ids(self):
+    def test_money_school_exposes_the_adsense_verification_code_but_no_ad_units(self):
         response = self.client.get(reverse("money_school"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Student Money School")
         self.assertContains(response, "budget")
+        self.assertContains(
+            response,
+            'src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1554607983371431"',
+        )
+        self.assertNotContains(response, '<ins class="adsbygoogle"')
+
+    def test_authenticated_financial_pages_do_not_load_the_adsense_script(self):
+        from django.contrib.auth import get_user_model
+
+        user = get_user_model().objects.create_user(
+            username="ads-private-member",
+            email="ads-private-member@example.com",
+            password="StrongPass123!",
+            onboarding_completed=True,
+        )
+        self.client.force_login(user)
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "pagead2.googlesyndication.com")
