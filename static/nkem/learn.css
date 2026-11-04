@@ -36,7 +36,7 @@
 .learn-search svg{width:18px;height:18px;flex:none;color:#817993}
 .learn-search input{width:100%;border:0;outline:0;background:transparent;color:var(--learn-ink);font:inherit;font-size:.88rem}
 .learn-filter-list{display:flex;flex-wrap:wrap;gap:7px}
-.learn-filter{padding:8px 12px;border:1px solid var(--learn-line);border-radius:999px;background:#fff;color:#6f6882;font:700 .75rem inherit;cursor:pointer;transition:background .18s,border-color .18s,color .18s}
+.learn-filter{padding:8px 12px;border:1px solid var(--learn-line);border-radius:999px;background:#fff;color:#6f6882;font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;transition:background .18s,border-color .18s,color .18s}
 .learn-filter[aria-pressed=true]{border-color:#d8ccff;background:var(--learn-lilac);color:var(--learn-violet-dark)}
 .learn-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
 .learn-card{display:flex;min-width:0;flex-direction:column;padding:21px;border:1px solid var(--learn-line);border-radius:21px;background:#fff;box-shadow:0 8px 25px #35235d07;transition:transform .2s,box-shadow .2s,border-color .2s}
