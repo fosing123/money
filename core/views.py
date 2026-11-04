@@ -2,6 +2,7 @@ from decimal import Decimal, InvalidOperation
 from datetime import date
 import json
 import uuid
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -309,6 +310,57 @@ def learning_article_view(request, slug):
 
 
 @require_GET
+@require_GET
+def sitemap_view(request):
+    """Publish crawlable public pages only; exclude member and financial endpoints."""
+    public_paths = [
+        reverse("home"),
+        reverse("learn_hub"),
+        reverse("about"),
+        reverse("contact"),
+        reverse("privacy"),
+        reverse("terms"),
+        reverse("disclaimer"),
+    ]
+    public_paths.extend(
+        reverse("learn_article", kwargs={"slug": article["slug"]})
+        for article in ARTICLES
+    )
+    root = Element("urlset", {"xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9"})
+    last_modified = timezone.localdate().isoformat()
+    for path in public_paths:
+        entry = SubElement(root, "url")
+        SubElement(entry, "loc").text = request.build_absolute_uri(path)
+        SubElement(entry, "lastmod").text = last_modified
+    return HttpResponse(tostring(root, encoding="utf-8", xml_declaration=True), content_type="application/xml")
+
+
+@require_GET
+def robots_txt_view(request):
+    """Allow public editorial content while keeping private application routes out of search."""
+    sitemap_url = request.build_absolute_uri(reverse("sitemap"))
+    body = "\n".join([
+        "User-agent: *",
+        "Allow: /",
+        "Disallow: /admin/",
+        "Disallow: /dashboard/",
+        "Disallow: /transactions/",
+        "Disallow: /budgets/",
+        "Disallow: /goals/",
+        "Disallow: /insights/",
+        "Disallow: /notifications/",
+        "Disallow: /profile/",
+        "Disallow: /ai/",
+        "Disallow: /api/",
+        "Disallow: /accounts/",
+        "Disallow: /onboarding/",
+        "Disallow: /setup/",
+        f"Sitemap: {sitemap_url}",
+        "",
+    ])
+    return HttpResponse(body, content_type="text/plain; charset=utf-8")
+
+
 @require_GET
 def ads_txt_view(request):
     """Publish Google's seller declaration only when a valid publisher ID is configured."""
