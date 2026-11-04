@@ -144,5 +144,5 @@ class PWAOfflineAndPremiumTests(TestCase):
             self.assertEqual(response["Content-Type"], "text/plain; charset=utf-8")
             self.assertEqual(
                 response.content.decode(),
-                "google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0\\n",
+                "google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0\n",
             )
