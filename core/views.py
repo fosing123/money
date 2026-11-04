@@ -17,6 +17,8 @@ from budgets.models import Budget
 from finance.models import Account, Transaction
 from goals.models import Goal
 from notifications.services import evaluate_spending_alerts
+from core.learning_content import ARTICLES, EDITORIAL_BYLINE, EDITORIAL_UPDATED, get_article, get_related_articles
+from core.public_pages import PUBLIC_PAGES
 
 
 def home_view(request):
@@ -260,10 +262,64 @@ def premium_view(request):
     })
 
 
+def _learn_context(request):
+    client_id = settings.ADSENSE_CLIENT_ID
+    if not client_id.startswith("ca-pub-"):
+        client_id = ""
+    slot_id = settings.ADSENSE_SLOT_ID if settings.ADSENSE_SLOT_ID.isdigit() else ""
+    return {
+        "adsense_client_id": client_id,
+        "adsense_slot_id": slot_id,
+        "adsense_enabled": bool(settings.ADSENSE_ENABLED and client_id and slot_id),
+        "canonical_url": request.build_absolute_uri(request.path),
+    }
+
+
 @require_GET
-def money_school_view(request):
-    return render(request, "core/money_school.html", {
-        "adsense_enabled": settings.ADSENSE_ENABLED,
-        "adsense_client_id": settings.ADSENSE_CLIENT_ID,
-        "adsense_slot_id": settings.ADSENSE_SLOT_ID,
+def learning_hub_view(request):
+    categories = []
+    seen = set()
+    for article in ARTICLES:
+        if article["category_slug"] not in seen:
+            categories.append({"slug": article["category_slug"], "name": article["category"]})
+            seen.add(article["category_slug"])
+    featured_article = next((article for article in ARTICLES if article.get("featured")), ARTICLES[0])
+    context = _learn_context(request)
+    context.update({
+        "articles": ARTICLES,
+        "categories": categories,
+        "featured_article": featured_article,
     })
+    return render(request, "core/learn_hub.html", context)
+
+
+@require_GET
+def learning_article_view(request, slug):
+    article = get_article(slug)
+    if article is None:
+        raise Http404("This TIANA Learn article does not exist.")
+    context = _learn_context(request)
+    context.update({
+        "article": article,
+        "related_articles": get_related_articles(article),
+        "editorial_byline": EDITORIAL_BYLINE,
+        "editorial_updated": EDITORIAL_UPDATED,
+    })
+    return render(request, "core/learn_article.html", context)
+
+
+@require_GET
+def public_info_view(request, page_slug):
+    page = PUBLIC_PAGES.get(page_slug)
+    if page is None:
+        raise Http404("This public page does not exist.")
+    return render(request, "core/public_info.html", {
+        "page": page,
+        "contact_email": settings.PUBLIC_CONTACT_EMAIL,
+        "canonical_url": request.build_absolute_uri(request.path),
+    })
+
+
+def money_school_view(request):
+    """Keep old bookmarks working while moving the public school to /learn/."""
+    return redirect("learn_hub", permanent=True)
