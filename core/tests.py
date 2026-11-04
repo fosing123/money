@@ -133,6 +133,23 @@ class PWAOfflineAndPremiumTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertEqual(response.status_code, 302)
 
+    def test_public_sitemap_contains_learning_and_policy_pages_only(self):
+        response = self.client.get(reverse("sitemap"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("application/xml", response["Content-Type"])
+        self.assertContains(response, reverse("learn_hub"))
+        self.assertContains(response, reverse("learn_article", kwargs={"slug": "student-budget-that-works"}))
+        self.assertContains(response, reverse("privacy"))
+        self.assertNotContains(response, "/dashboard/")
+        self.assertNotContains(response, "/transactions/")
+
+    def test_robots_txt_points_to_sitemap_and_disallows_member_routes(self):
+        response = self.client.get(reverse("robots_txt"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Sitemap:")
+        self.assertContains(response, "Disallow: /dashboard/")
+        self.assertContains(response, "Disallow: /transactions/")
+
     def test_ads_txt_is_only_published_for_a_configured_publisher_id(self):
         with override_settings(ADSENSE_CLIENT_ID="", ADSENSE_SLOT_ID="", ADSENSE_ENABLED=False):
             missing = self.client.get(reverse("ads_txt"))
