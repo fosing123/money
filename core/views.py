@@ -315,9 +315,9 @@ def ads_txt_view(request):
     client_id = settings.ADSENSE_CLIENT_ID
     publisher_id = client_id.removeprefix("ca-pub-")
     if not client_id.startswith("ca-pub-") or not publisher_id.isdigit():
-        return HttpResponse("AdSense publisher not configured.\\n", status=404, content_type="text/plain; charset=utf-8")
+        return HttpResponse("AdSense publisher not configured.\n", status=404, content_type="text/plain; charset=utf-8")
     response = HttpResponse(
-        f"google.com, pub-{publisher_id}, DIRECT, f08c47fec0942fa0\\n",
+        f"google.com, pub-{publisher_id}, DIRECT, f08c47fec0942fa0\n",
         content_type="text/plain; charset=utf-8",
     )
     response["Cache-Control"] = "public, max-age=300"
