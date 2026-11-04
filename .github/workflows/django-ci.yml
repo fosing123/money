@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feat/tiana-django-cloudflare-cleanup-20261101
+      - feat/tiana-learn-adsense-foundation-20261104
   pull_request:
     branches:
       - main
@@ -32,6 +33,6 @@ jobs:
       - name: Check migration consistency
         run: python manage.py makemigrations --check --dry-run
       - name: Check Django service-worker JavaScript
-        run: node --check tiana-service-worker.js && node --check static/nkem/offline-core.js && node --check static/nkem/offline.js && node --check static/nkem/pwa.js && node --check static/nkem/fcm.js
+        run: node --check static/nkem/learn.js && node --check tiana-service-worker.js && node --check static/nkem/offline-core.js && node --check static/nkem/offline.js && node --check static/nkem/pwa.js && node --check static/nkem/fcm.js
       - name: Run Django tests
         run: python manage.py test
