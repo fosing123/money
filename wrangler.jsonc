@@ -13,8 +13,8 @@
     "cpu_ms": 60000
   },
   "vars": {
-    "ALLOWED_HOSTS": "tiana-django-staging.fosingkameni.workers.dev",
-    "CSRF_TRUSTED_ORIGINS": "https://tiana-django-staging.fosingkameni.workers.dev",
+    "ALLOWED_HOSTS": "tiana-django-staging.fosingkameni.workers.dev,staging.tiana.lol,tiana.lol,www.tiana.lol",
+    "CSRF_TRUSTED_ORIGINS": "https://tiana-django-staging.fosingkameni.workers.dev,https://staging.tiana.lol,https://tiana.lol,https://www.tiana.lol",
     "SECURE_SSL_REDIRECT": "1",
     "FIREBASE_WEB_VAPID_KEY": "BBribgqIk3PI0TDvioC34aAzlCOgpntHQRfSVCgMqqFaA2t27bM03GgQLJYlCWcBDsyi9BEcYavppOPJVk81Fgs",
     "FIREBASE_WEB_API_KEY": "AIzaSyACoGDU4MgYndo6ddPgruFC64kThnWfqwY",
@@ -37,7 +37,7 @@
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
-      "id": "74744f012eb646569c58b7659715ea80"
+      "id": "74744f012eb646569c58b8c55ba1e1f92"
     }
   ],
   "observability": {
@@ -90,7 +90,6 @@
       "PIL/PsdImagePlugin.py",
       "PIL/QoiImagePlugin.py",
       "PIL/SgiImagePlugin.py",
-      "PIL/SpiderImagePlugin.py",
       "PIL/SunImagePlugin.py",
       "PIL/TgaImagePlugin.py",
       "PIL/WmfImagePlugin.py",
