@@ -5,6 +5,7 @@
 <meta name="description" content="{{ page.description }}">
 <link rel="canonical" href="{{ canonical_url }}">
 <link rel="stylesheet" href="{% static 'nkem/learn.css' %}?v=20261104">
+{% if adsense_client_id %}<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_client_id }}" crossorigin="anonymous"></script>{% endif %}
 {% endblock %}
 {% block content %}
 <main class="learn-public-page">
