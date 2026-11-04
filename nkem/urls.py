@@ -7,7 +7,7 @@ from django.contrib.auth.views import PasswordChangeDoneView, PasswordChangeView
 from accounts.views import application_security_view, login_view, logout_view, manage_devices_view, onboarding_setup_view, onboarding_view, profile_view, register_view, registration_welcome_view
 from ai_assistant.views import ai_chat_view
 from budgets.views import budget_allocations_view, budget_delete_view, budget_list_view
-from core.views import dashboard_view, health_check_view, home_view, investments_coming_soon_view, ads_txt_view, learning_article_view, learning_hub_view, money_school_view, offline_bootstrap_view, offline_sync_view, premium_view, public_info_view, service_worker_view
+from core.views import ads_txt_view, dashboard_view, health_check_view, home_view, investments_coming_soon_view, learning_article_view, learning_hub_view, money_school_view, offline_bootstrap_view, offline_sync_view, premium_view, public_info_view, robots_txt_view, service_worker_view, sitemap_view
 from finance.views import account_create_view, transaction_create_view, transaction_delete_view, transaction_export_view, transaction_list_view, transaction_update_view
 from goals.views import goal_contribute_view, goal_create_view, goal_delete_view, goal_list_view
 from insights.views import insights_view
@@ -60,6 +60,8 @@ urlpatterns = [
     path("invest/", investments_coming_soon_view, name="investments"),
     path("premium/", premium_view, name="premium"),
     path("ads.txt", ads_txt_view, name="ads_txt"),
+    path("robots.txt", robots_txt_view, name="robots_txt"),
+    path("sitemap.xml", sitemap_view, name="sitemap"),
     path("learn/", learning_hub_view, name="learn_hub"),
     path("learn/<slug:slug>/", learning_article_view, name="learn_article"),
     path("about/", public_info_view, {"page_slug": "about"}, name="about"),
