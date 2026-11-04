@@ -13,6 +13,8 @@ class WelcomePageTests(TestCase):
         self.assertContains(response, "of your money")
         self.assertContains(response, "Track expenses, save for your goals")
         self.assertContains(response, reverse("onboarding"))
+        self.assertContains(response, reverse("learn_hub"))
+        self.assertContains(response, "Explore TIANA Learn")
         self.assertContains(response, "assets/tiana-logo-transparent.png")
         self.assertContains(response, "assets/tiana-welcome-student-campus-4k.jpg")
         self.assertNotContains(response, "assets/tiana-welcome-student-campus-4k.webp")
@@ -91,9 +93,42 @@ class PWAOfflineAndPremiumTests(TestCase):
         self.assertContains(response, "Premium checkout is not connected yet")
 
 
-    def test_money_school_is_public_and_ads_remain_disabled_without_approved_ids(self):
-        response = self.client.get(reverse("money_school"))
+    def test_tiana_learn_hub_is_public_and_ads_are_disabled_by_default(self):
+        response = self.client.get(reverse("learn_hub"))
+
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Student Money School")
-        self.assertContains(response, "budget")
+        self.assertTemplateUsed(response, "core/learn_hub.html")
+        self.assertContains(response, "TIANA Learn")
+        self.assertContains(response, "Build a student budget that works with real life")
+        self.assertContains(response, "Search TIANA Learn articles")
+        self.assertContains(response, reverse("privacy"))
         self.assertNotContains(response, "pagead2.googlesyndication.com")
+
+    def test_learning_articles_are_public_and_have_related_content(self):
+        response = self.client.get(reverse("learn_article", kwargs={"slug": "student-budget-that-works"}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "core/learn_article.html")
+        self.assertContains(response, "Build a student budget that works with real life")
+        self.assertContains(response, "TIANA Learn Editorial Team")
+        self.assertContains(response, "Keep this in mind")
+        self.assertContains(response, reverse("learn_article", kwargs={"slug": "save-on-a-small-income"}))
+
+    def test_unknown_learning_article_returns_404(self):
+        response = self.client.get(reverse("learn_article", kwargs={"slug": "not-a-real-guide"}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_legacy_money_school_url_redirects_to_tiana_learn(self):
+        response = self.client.get(reverse("money_school"))
+        self.assertRedirects(response, reverse("learn_hub"), status_code=301)
+
+    def test_public_about_privacy_terms_contact_and_disclaimer_pages_render(self):
+        for page_name in ("about", "privacy", "terms", "contact", "disclaimer"):
+            with self.subTest(page=page_name):
+                response = self.client.get(reverse(page_name))
+                self.assertEqual(response.status_code, 200)
+                self.assertTemplateUsed(response, "core/public_info.html")
+
+    def test_private_finance_tools_remain_login_protected(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 302)
