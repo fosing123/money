@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}TIANA Learn — Practical money skills for students{% endblock %}
+{% block extra_head %}
+<meta name="description" content="Explore practical, student-friendly guides to budgeting, saving, Mobile Money safety and everyday financial decisions from TIANA Learn.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="TIANA Learn — Practical money skills for students">
+<meta property="og:description" content="Clear, useful guides to help students understand money and make more confident everyday choices.">
+<link rel="canonical" href="{{ canonical_url }}">
+<link rel="stylesheet" href="{% static 'nkem/learn.css' %}?v=20261104">
+{% if adsense_client_id %}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_client_id }}" crossorigin="anonymous"></script>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="learn-page">
+  <section class="learn-hero" aria-labelledby="learn-title">
+    <div>
+      <p class="learn-eyebrow">A TIANA learning space · Made for student life</p>
+      <h1 id="learn-title">Your money.<br><span>Better understood.</span></h1>
+      <p class="learn-hero-copy">Practical lessons for the money decisions that show up in real student life — from planning a weekly allowance to protecting a Mobile Money account and building a savings habit.</p>
+      <div class="learn-hero-actions">
+        <a class="button" href="#latest-guides">Explore the guides <span aria-hidden="true">↘</span></a>
+        <a class="learn-secondary-link" href="{% url 'register' %}">Try the TIANA money tools →</a>
+      </div>
+    </div>
+    <div class="learn-visual" aria-hidden="true">
+      <div class="learn-visual-orbit"></div>
+      <span class="learn-spark learn-spark-one">✦</span>
+      <span class="learn-spark learn-spark-two">✧</span>
+      <div class="learn-visual-card">
+        <div class="learn-visual-label">A clearer money week</div>
+        <div class="learn-visual-number">Plan · Save · Review</div>
+        <div class="learn-visual-sub">Small, repeatable decisions add up.</div>
+        <div class="learn-visual-bars"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="featured-title">
+    <div class="learn-section-head">
+      <div><h2 id="featured-title">A good place to start</h2><p>One practical guide to help you build a plan you can keep using.</p></div>
+    </div>
+    <div class="learn-featured">
+      <div class="learn-featured-art"><small>Featured guide · Budgeting</small><strong>Make your money plan fit real life.</strong><span>Start with what you know. Adjust as life happens.</span></div>
+      <div class="learn-featured-copy">
+        <span class="learn-category">Budgeting</span>
+        <h3>{{ featured_article.title }}</h3>
+        <p>{{ featured_article.summary }}</p>
+        <a class="learn-read-link" href="{% url 'learn_article' featured_article.slug %}">Read the guide <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="latest-guides" aria-labelledby="guides-title">
+    <div class="learn-section-head">
+      <div><h2 id="guides-title">Explore TIANA Learn</h2><p>Clear explanations, useful checklists and steps you can put into practice.</p></div>
+    </div>
+    <div class="learn-toolbar">
+      <label class="learn-search">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <input type="search" placeholder="Search money guides…" aria-label="Search TIANA Learn articles" data-learn-search>
+      </label>
+      <div class="learn-filter-list" role="group" aria-label="Filter guides by topic">
+        <button class="learn-filter" type="button" data-learn-filter="all" aria-pressed="true">All guides</button>
+        {% for category in categories %}
+        <button class="learn-filter" type="button" data-learn-filter="{{ category.slug }}" aria-pressed="false">{{ category.name }}</button>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="learn-grid" id="learn-article-grid">
+      {% for article in articles %}
+      <article class="learn-card" data-learn-card data-category="{{ article.category_slug }}" data-search="{{ article.title }} {{ article.summary }} {{ article.category }}">
+        <div class="learn-card-top"><span class="learn-category">{{ article.category }}</span><span class="learn-read-time">{{ article.reading_time }}</span></div>
+        <h3>{{ article.title }}</h3>
+        <p>{{ article.summary }}</p>
+        <a class="learn-read-link" href="{% url 'learn_article' article.slug %}">Read article <span aria-hidden="true">→</span></a>
+      </article>
+      {% endfor %}
+      <div class="learn-empty" data-learn-empty hidden>No guides match that search. Try another word or choose “All guides”.</div>
+    </div>
+  </section>
+
+  {% if adsense_enabled %}
+  <section class="learn-ad" aria-label="Advertisement">
+    <span class="learn-ad-label">Advertisement</span>
+    <ins class="adsbygoogle" style="display:block;min-height:100px" data-ad-client="{{ adsense_client_id }}" data-ad-slot="{{ adsense_slot_id }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  </section>
+  <script>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
+  {% endif %}
+
+  <section class="learn-cta-panel">
+    <h2>Turn what you learn into a steady habit.</h2>
+    <p>Use TIANA to record everyday money activity, plan a budget and keep track of the goals that matter to you.</p>
+    <a class="button" href="{% url 'register' %}">Get started with TIANA</a>
+  </section>
+
+  <footer class="learn-footer">
+    <span>© {% now "Y" %} TIANA · Practical money education for everyday student life.</span>
+    <nav class="learn-footer-links" aria-label="Legal and company links">
+      <a href="{% url 'about' %}">About</a><a href="{% url 'contact' %}">Contact</a><a href="{% url 'privacy' %}">Privacy</a><a href="{% url 'terms' %}">Terms</a><a href="{% url 'disclaimer' %}">Disclaimer</a>
+    </nav>
+  </footer>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'nkem/learn.js' %}?v=20261104" defer></script>
+{% endblock %}
