@@ -93,6 +93,16 @@ class PWAOfflineAndPremiumTests(TestCase):
         self.assertContains(response, "Premium checkout is not connected yet")
 
 
+    def test_homepage_loads_ad_sense_site_verification_only_when_publisher_id_exists(self):
+        with override_settings(ADSENSE_CLIENT_ID=""):
+            without_id = self.client.get(reverse("home"))
+            self.assertNotContains(without_id, "pagead2.googlesyndication.com")
+
+        with override_settings(ADSENSE_CLIENT_ID="ca-pub-1234567890123456"):
+            with_id = self.client.get(reverse("home"))
+            self.assertContains(with_id, "pagead2.googlesyndication.com")
+            self.assertContains(with_id, "ca-pub-1234567890123456")
+
     def test_tiana_learn_hub_is_public_and_ads_are_disabled_by_default(self):
         response = self.client.get(reverse("learn_hub"))
 
