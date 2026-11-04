@@ -151,9 +151,17 @@ AI_API_KEY = GEMINI_API_KEY or os.environ.get("AI_API_KEY", "")
 AI_MODEL = GEMINI_MODEL
 
 # AdSense remains disabled until Google approves the site and provides IDs.
+PUBLIC_CONTACT_EMAIL = os.environ.get("PUBLIC_CONTACT_EMAIL", "").strip()
 ADSENSE_CLIENT_ID = os.environ.get("ADSENSE_CLIENT_ID", "").strip()
 ADSENSE_SLOT_ID = os.environ.get("ADSENSE_SLOT_ID", "").strip()
-ADSENSE_ENABLED = ADSENSE_CLIENT_ID.startswith("ca-pub-") and ADSENSE_SLOT_ID.isdigit()
+ADSENSE_SITE_CONNECTED = ADSENSE_CLIENT_ID.startswith("ca-pub-")
+# Loading the publisher script can verify site ownership; ad units stay off until
+# Google has approved the site and the operator explicitly enables serving.
+ADSENSE_ENABLED = (
+    env_bool("ADSENSE_ENABLED", False)
+    and ADSENSE_SITE_CONNECTED
+    and ADSENSE_SLOT_ID.isdigit()
+)
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", not DEBUG)
