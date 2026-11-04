@@ -84,6 +84,14 @@ Before deploying, confirm:
 
 The repository includes `.github/workflows/deploy-worker.yml` for a staging Worker deployment. Add GitHub Actions secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to the `tiana-django-staging` environment. The API token must have permission to deploy Workers. The workflow is configured for manual staging deployment and future pushes to `main`; it does not switch the Pages production site.
 
+## Public TIANA Learn routes
+
+The Django application includes a public learning hub at `/learn/`, article pages at `/learn/<slug>/`, and public About, Contact, Privacy, Terms and Disclaimer pages. These routes are part of the same Django application; they do not require a second Pages project, Worker or subdomain.
+
+Before exposing the production hostname to this Django Worker, add the production host to `ALLOWED_HOSTS` and its full HTTPS origin to `CSRF_TRUSTED_ORIGINS` in the Worker environment. The new feature branch does not alter DNS or custom-domain bindings. Test the routes on staging first and follow the existing cutover checks below.
+
+See [TIANA_LEARN_ADSENSE.md](TIANA_LEARN_ADSENSE.md) for the publisher ID, approval, ad-slot and `ads.txt` configuration lifecycle.
+
 ## Current cutover policy
 
 The existing Pages project `tiana-money` still serves the previous static prototype from its production branch. Keep it in place until the Django Worker passes authentication, financial ledger, backup/restore, uploads, notifications, and load checks. Only then should the production hostname or DNS be moved to the Django Worker.
