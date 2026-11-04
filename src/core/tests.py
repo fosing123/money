@@ -15,6 +15,10 @@ class WelcomePageTests(TestCase):
         self.assertContains(response, reverse("onboarding"))
         self.assertContains(response, "assets/tiana-logo-transparent.png")
         self.assertContains(response, "assets/tiana-welcome-student-campus-4k.jpg")
+        self.assertContains(
+            response,
+            'src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1554607983371431"',
+        )
         self.assertNotContains(response, "assets/tiana-welcome-student-campus-4k.webp")
         self.assertNotContains(response, "welcome-status")
         self.assertNotContains(response, "welcome-time")
