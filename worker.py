@@ -64,6 +64,7 @@ class Default(WorkerEntrypoint):
             "FIREBASE_WEB_MESSAGING_SENDER_ID": "FIREBASE_WEB_MESSAGING_SENDER_ID",
             "FIREBASE_WEB_APP_ID": "FIREBASE_WEB_APP_ID",
             "FIREBASE_WEB_VAPID_KEY": "FIREBASE_WEB_VAPID_KEY",
+            "PUBLIC_CONTACT_EMAIL": "PUBLIC_CONTACT_EMAIL",
         }
         for source, target in required.items():
             _copy_secret(source, target)
