@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ page.title }} · TIANA{% endblock %}
+{% block extra_head %}
+<meta name="description" content="{{ page.description }}">
+<link rel="canonical" href="{{ canonical_url }}">
+<link rel="stylesheet" href="{% static 'nkem/learn.css' %}?v=20261104">
+{% endblock %}
+{% block content %}
+<main class="learn-public-page">
+  <p class="learn-eyebrow">{{ page.eyebrow }}</p>
+  <h1>{{ page.title }}</h1>
+  <p class="learn-public-lead">{{ page.description }}</p>
+  {% for section in page.sections %}
+  <section class="learn-public-section">
+    <h2>{{ section.heading }}</h2>
+    {% for paragraph in section.paragraphs %}<p>{{ paragraph }}</p>{% endfor %}
+  </section>
+  {% endfor %}
+  {% if page.links %}
+  <section class="learn-public-section">
+    <h2>Useful links</h2>
+    <ul>{% for item in page.links %}<li><a href="{{ item.url }}" rel="noopener noreferrer" target="_blank">{{ item.label }}</a></li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+  {% if page.contact_email_required %}
+    {% if contact_email %}
+    <div class="learn-contact-note"><strong>TIANA support:</strong> <a href="mailto:{{ contact_email }}">{{ contact_email }}</a></div>
+    {% else %}
+    <div class="learn-contact-note">Our public support email is being configured. The contact address must be added before TIANA opens public support requests.</div>
+    {% endif %}
+  {% endif %}
+  <footer class="learn-footer">
+    <span>© {% now "Y" %} TIANA</span>
+    <nav class="learn-footer-links" aria-label="Company and policy links">
+      <a href="{% url 'learn_hub' %}">TIANA Learn</a><a href="{% url 'about' %}">About</a><a href="{% url 'contact' %}">Contact</a><a href="{% url 'privacy' %}">Privacy</a><a href="{% url 'terms' %}">Terms</a><a href="{% url 'disclaimer' %}">Disclaimer</a>
+    </nav>
+  </footer>
+</main>
+{% endblock %}
