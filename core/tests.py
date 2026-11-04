@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 
@@ -132,3 +132,17 @@ class PWAOfflineAndPremiumTests(TestCase):
     def test_private_finance_tools_remain_login_protected(self):
         response = self.client.get(reverse("dashboard"))
         self.assertEqual(response.status_code, 302)
+
+    def test_ads_txt_is_only_published_for_a_configured_publisher_id(self):
+        with override_settings(ADSENSE_CLIENT_ID="", ADSENSE_SLOT_ID="", ADSENSE_ENABLED=False):
+            missing = self.client.get(reverse("ads_txt"))
+            self.assertEqual(missing.status_code, 404)
+
+        with override_settings(ADSENSE_CLIENT_ID="ca-pub-1234567890123456"):
+            response = self.client.get(reverse("ads_txt"))
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response["Content-Type"], "text/plain; charset=utf-8")
+            self.assertEqual(
+                response.content.decode(),
+                "google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0\\n",
+            )
