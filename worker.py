@@ -65,6 +65,9 @@ class Default(WorkerEntrypoint):
             "FIREBASE_WEB_APP_ID": "FIREBASE_WEB_APP_ID",
             "FIREBASE_WEB_VAPID_KEY": "FIREBASE_WEB_VAPID_KEY",
             "PUBLIC_CONTACT_EMAIL": "PUBLIC_CONTACT_EMAIL",
+            "ADSENSE_CLIENT_ID": "ADSENSE_CLIENT_ID",
+            "ADSENSE_SLOT_ID": "ADSENSE_SLOT_ID",
+            "ADSENSE_ENABLED": "ADSENSE_ENABLED",
         }
         for source, target in required.items():
             _copy_secret(source, target)
