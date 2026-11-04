@@ -24,7 +24,7 @@ from core.public_pages import PUBLIC_PAGES
 def home_view(request):
     if request.user.is_authenticated:
         return redirect("dashboard" if request.user.onboarding_completed else "onboarding_setup")
-    return render(request, "core/landing.html")
+    return render(request, "core/landing.html", {"adsense_client_id": settings.ADSENSE_CLIENT_ID if settings.ADSENSE_CLIENT_ID.startswith("ca-pub-") else ""})
 
 
 @login_required
@@ -331,6 +331,7 @@ def public_info_view(request, page_slug):
     return render(request, "core/public_info.html", {
         "page": page,
         "contact_email": settings.PUBLIC_CONTACT_EMAIL,
+        "adsense_client_id": settings.ADSENSE_CLIENT_ID if settings.ADSENSE_CLIENT_ID.startswith("ca-pub-") else "",
         "canonical_url": request.build_absolute_uri(request.path),
     })
 
