@@ -47,8 +47,11 @@ def _category_budget(user, currency, category):
     ).order_by("period", "-created_at")
     category_key = (category or "").strip().casefold()
     for budget in candidates:
-        budget_key = (budget.category or budget.name or "").strip().casefold()
-        if budget_key == category_key or budget.name.strip().casefold() == category_key:
+        # A named budget without a category may represent an overall limit.
+        # Do not treat it as a category budget: its spent_amount covers all
+        # expenses in that period and would produce a misleading category score.
+        budget_key = (budget.category or "").strip().casefold()
+        if budget_key and budget_key == category_key:
             return budget
     return None
 
