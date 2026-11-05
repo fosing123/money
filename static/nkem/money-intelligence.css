@@ -132,3 +132,53 @@
   .money-currency-note{font-size:.62rem}
 }
 @media(prefers-reduced-motion:reduce){.money-goal-card{transition:none}}
+
+
+/* Currency-separated account centre */
+.money-accounts-page{max-width:920px;margin:0 auto;padding:clamp(8px,2vw,22px) 0 38px}
+.money-accounts-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:21px}
+.money-accounts-heading h1{margin:5px 0 4px;font-size:clamp(1.7rem,5vw,2.35rem);letter-spacing:-.05em}
+.money-accounts-heading p{margin:0;color:var(--muted);font-size:.8rem}
+.money-account-overview{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:21px 23px;border-radius:23px;background:linear-gradient(118deg,#24134f,#6749b8 70%,#8b76dc);color:#fff;box-shadow:0 16px 34px #5136a126}
+.money-account-overview>div:first-child{display:grid;gap:5px}
+.money-account-overview small{font-size:.66rem;color:#ffffffb8}
+.money-account-overview strong{font-family:'Manrope',sans-serif;font-size:2rem;letter-spacing:-.05em}
+.money-account-overview strong span{font:650 .45em 'Inter',sans-serif;color:#ffffffc6}
+.money-account-overview-count{display:grid;justify-items:end}
+.money-account-overview-count b{font-size:1.65rem}
+.money-account-note{display:flex;gap:10px;margin:13px 0 21px;padding:12px 14px;border-radius:14px;background:var(--brand-soft);color:var(--muted);font-size:.69rem;line-height:1.55}
+.money-account-note>span{color:var(--brand-primary);font-size:1.05rem}
+.money-account-group{margin:0 0 18px}
+.money-account-group>header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:9px;padding:0 2px}
+.money-account-group h2{margin:4px 0 0;font-size:1.05rem}
+.money-account-group>header>strong{font-family:'Manrope',sans-serif;font-size:1.15rem}
+.money-account-group>header>strong small{font:650 .55em 'Inter',sans-serif;color:var(--muted)}
+.money-account-list{display:grid;gap:8px}
+.money-account-card{display:flex;align-items:center;gap:12px;padding:14px 15px;border:1px solid var(--line);border-radius:17px;background:var(--surface);box-shadow:var(--shadow-sm)}
+.money-account-symbol{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:14px;background:var(--brand-soft);color:var(--brand-primary);font-size:1.2rem}
+.money-account-symbol--savings{background:#e6f7ef;color:#23845e}
+.money-account-symbol--mtn_momo{background:#fff2d9;color:#926b21}
+.money-account-symbol--orange_money{background:#fff0e3;color:#bd652c}
+.money-account-info{flex:1;min-width:0}
+.money-account-info strong,.money-account-info small{display:block}
+.money-account-info strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem}
+.money-account-info small{margin-top:3px;color:var(--muted);font-size:.66rem}
+.money-account-balance{text-align:right;font-variant-numeric:tabular-nums}
+.money-account-balance strong,.money-account-balance small{display:block}
+.money-account-balance strong{font-size:.9rem}
+.money-account-balance small{margin-top:2px;color:var(--muted);font-size:.61rem}
+.money-account-empty{display:grid;justify-items:center;text-align:center;padding:45px 20px;border:1px dashed var(--line);border-radius:22px;background:var(--surface)}
+.money-account-empty>span{display:grid;place-items:center;width:55px;height:55px;border-radius:18px;background:var(--brand-soft);color:var(--brand-primary);font-size:1.5rem}
+.money-account-empty h2{margin:14px 0 5px;font-size:1.05rem}
+.money-account-empty p{max-width:380px;margin:0 0 16px;color:var(--muted);font-size:.76rem;line-height:1.55}
+.money-inactive-accounts{margin-top:22px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.money-inactive-accounts summary{cursor:pointer;color:var(--muted);font-size:.74rem;font-weight:800}
+.money-inactive-accounts>div{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid var(--line);font-size:.7rem}
+.money-inactive-accounts>div:first-of-type{margin-top:12px}
+@media(max-width:540px){
+  .money-accounts-page{padding-top:0}
+  .money-accounts-heading{align-items:flex-start;flex-direction:column}
+  .money-accounts-heading .button{width:100%}
+  .money-account-overview{padding:18px;border-radius:20px}
+  .money-account-overview strong{font-size:1.65rem}
+}
