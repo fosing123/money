@@ -58,7 +58,7 @@ def health_check_view(request):
             # Verify the two JSONField columns TIANA actually uses. Roll back
             # the probe row so this public health endpoint never leaves data.
             probe_name = f"__health_{uuid.uuid4().hex}"
-            expected_priorities = ["cloudflare", "psycopg"]
+            expected_priorities = ["cloudflare", "pg8000"]
             expected_allocations = {"health_probe": 1}
             probe_user = User.objects.create(
                 username=probe_name,
