@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions", "django.contrib.messages", "django.contrib.staticfiles",
     "rest_framework", "whitenoise.runserver_nostatic",
     "accounts", "core", "finance", "budgets", "goals", "insights",
-    "ai_assistant", "notifications", "marketplace",
+    "ai_assistant", "expense_analyzer", "notifications", "marketplace",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
