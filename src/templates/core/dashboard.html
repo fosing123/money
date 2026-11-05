@@ -118,7 +118,7 @@
       <a href="{% url 'insights' %}">Insights <span aria-hidden="true">→</span></a>
     </div>
     <div class="money-flow-grid">
-      <div><span class="money-flow-mark is-in">↙</span><small>Income</small><strong>+{{ money_in_total|floatformat:0 }} <i>{{ currency }}</i></strong></div>
+      <div><span class="money-flow-mark is-in">↙</span><small>Money in</small><strong>+{{ money_in_total|floatformat:0 }} <i>{{ currency }}</i></strong></div>
       <div><span class="money-flow-mark is-out">↗</span><small>Expenses</small><strong>−{{ expense_total|floatformat:0 }} <i>{{ currency }}</i></strong></div>
       <div><span class="money-flow-mark is-net">≈</span><small>Net flow</small><strong>{{ net_cash_flow|floatformat:0 }} <i>{{ currency }}</i></strong></div>
     </div>
