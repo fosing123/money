@@ -87,8 +87,10 @@
     </article>
   </section>
 
+  {% if analyzer_error %}<p class="analyzer-form-error" role="alert">{{ analyzer_error }}</p>{% endif %}
   {% if report %}
   <section class="analyzer-report" aria-live="polite">
+    <p class="analyzer-ai-status">{% if ai_enhanced %}✦ Gemini personalized this assessment using your financial goals and spending context.{% else %}Your financial score is ready. {{ ai_error|default:"Personalized AI wording is temporarily unavailable; the transparent score and built-in guidance are shown." }}{% endif %}</p>
     <header class="analyzer-report-heading">
       <div>
         <span class="analyzer-eyebrow">YOUR FINANCIAL ASSESSMENT</span>
