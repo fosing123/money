@@ -30,7 +30,7 @@ class WelcomePageTests(TestCase):
         self.assertTemplateUsed(response, "accounts/onboarding.html")
         self.assertContains(response, "Take control of your money")
         self.assertContains(response, "Reach your goals faster")
-        self.assertContains(response, "Your AI money coach")
+        self.assertContains(response, "Make confident money decisions")
         self.assertContains(response, "assets/tiana-logo-transparent.png")
         self.assertContains(response, "assets/tiana-onboarding-money-clarity-4k.webp")
         self.assertContains(response, "assets/tiana-onboarding-savings-goals-4k.webp")
