@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'nkem/money-intelligence.css' %}?v=20261105-foundation">{% endblock %}
 {% block title %}Accounts · TIANA{% endblock %}
 {% block content %}
 <section class="money-accounts-page">
