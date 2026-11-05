@@ -11,6 +11,10 @@ from urllib.parse import unquote, urlsplit
 
 from workers import Response, WorkerEntrypoint, wsgi
 
+# Django auth forms import this module dynamically. Keep the import explicit so
+# the Python Worker bundler includes django.contrib.sites in the runtime bundle.
+import django.contrib.sites.shortcuts  # noqa: F401
+
 _application = None
 _initialization_attempted = False
 _startup_error = None

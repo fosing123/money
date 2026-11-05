@@ -436,3 +436,13 @@ class HyperdrivePg8000ProtocolTests(TestCase):
             ["COMMIT", "ROLLBACK"],
         )
         self.assertEqual(self.connection.extended_queries, [])
+
+
+class CloudflareWorkerDependencyTests(TestCase):
+    def test_django_auth_sites_dependency_is_importable(self):
+        # Django auth forms import get_current_site dynamically; this package
+        # must exist in the Cloudflare Python Worker bundle.
+        from django.contrib.sites.shortcuts import get_current_site
+
+        self.assertTrue(callable(get_current_site))
+
