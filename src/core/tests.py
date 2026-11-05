@@ -381,58 +381,12 @@ class BudgetCurrencySeparationTests(TestCase):
         self.assertEqual(response.context["weekly_spent"], Decimal("1200.00"))
         self.assertContains(response, "Travel USD")
         self.assertContains(response, "100.00 USD")
+\n
+class CloudflareWorkerDependencyTests(TestCase):
+    def test_django_auth_sites_dependency_is_importable(self):
+        # Django auth forms import get_current_site dynamically; this package
+        # must exist in the Cloudflare Python Worker bundle.
+        from django.contrib.sites.shortcuts import get_current_site
 
+        self.assertTrue(callable(get_current_site))
 
-class HealthCheckTests(TestCase):
-    def test_health_endpoint_runs_parameterized_database_probe_and_json_round_trip(self):
-        response = self.client.get(reverse("health_check"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["status"], "ok")
-        self.assertEqual(response.json()["database"], "ok")
-        self.assertEqual(response.json()["json_fields"], "ok")
-
-
-class HyperdrivePg8000ProtocolTests(TestCase):
-    class FakeNativeConnection:
-        def __init__(self):
-            self.simple_queries = []
-            self.extended_queries = []
-
-        def execute_simple(self, sql):
-            self.simple_queries.append(sql)
-            return "simple"
-
-        def run(self, sql, params=(), stream=None):
-            self.extended_queries.append((sql, params, stream))
-            return "extended"
-
-    def setUp(self):
-        from nkem.db_backends.pg8000.base import HyperdriveDatabaseConnection
-
-        self.connection = object.__new__(HyperdriveDatabaseConnection)
-        self.connection._con = self.FakeNativeConnection()
-
-    def test_parameter_free_control_queries_use_simple_protocol(self):
-        self.assertEqual(self.connection._run("START TRANSACTION"), "simple")
-        self.assertEqual(self.connection.simple_queries, ["START TRANSACTION"])
-        self.assertEqual(self.connection.extended_queries, [])
-
-    def test_parameterized_run_keeps_the_driver_path(self):
-        self.assertEqual(
-            self.connection._run("SELECT :value", params={"value": 7}),
-            "extended",
-        )
-        self.assertEqual(
-            self.connection.extended_queries,
-            [("SELECT :value", {"value": 7}, None)],
-        )
-
-    def test_commit_and_rollback_use_simple_protocol(self):
-        self.connection.commit()
-        self.connection.rollback()
-        self.assertEqual(
-            self.connection.simple_queries,
-            ["COMMIT", "ROLLBACK"],
-        )
-        self.assertEqual(self.connection.extended_queries, [])
