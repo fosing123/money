@@ -381,3 +381,12 @@ class BudgetCurrencySeparationTests(TestCase):
         self.assertEqual(response.context["weekly_spent"], Decimal("1200.00"))
         self.assertContains(response, "Travel USD")
         self.assertContains(response, "100.00 USD")
+\n
+class CloudflareWorkerDependencyTests(TestCase):
+    def test_django_auth_sites_dependency_is_importable(self):
+        # Django auth forms import get_current_site dynamically; this package
+        # must exist in the Cloudflare Python Worker bundle.
+        from django.contrib.sites.shortcuts import get_current_site
+
+        self.assertTrue(callable(get_current_site))
+
