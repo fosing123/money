@@ -1,3 +1,4 @@
+from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -151,7 +152,7 @@ class ExpenseAnalyzerScoringTests(TestCase):
             current_amount="12000.00",
             currency="XAF",
             status="active",
-            target_date=self.today + timezone.timedelta(days=90),
+            target_date=self.today + timedelta(days=90),
         )
 
         from expense_analyzer.scoring import analyze_planned_purchase
