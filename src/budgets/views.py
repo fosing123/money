@@ -1,7 +1,8 @@
+from decimal import Decimal
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-from decimal import Decimal
 
 from .forms import BudgetForm, WeeklyBudgetAllocationForm
 from .models import Budget
@@ -10,15 +11,30 @@ from .services import attach_budget_spending
 
 @login_required
 def budget_list_view(request):
-    budgets = list(Budget.objects.filter(owner=request.user))
-    attach_budget_spending(budgets, owner=request.user)
+    all_budgets = list(Budget.objects.filter(owner=request.user))
+    attach_budget_spending(all_budgets, owner=request.user)
     currency = (request.user.currency or "XAF").upper()
-    weekly_budgets = [
-        budget for budget in budgets
-        if budget.period == "weekly" and budget.currency.upper() == currency
+
+    # The donut and primary weekly pulse represent one currency only.
+    budgets = [
+        budget for budget in all_budgets
+        if budget.currency.upper() == currency
     ]
-    weekly_planned = sum((Decimal(str(item.amount or 0)) for item in weekly_budgets), Decimal("0.00"))
-    weekly_spent = sum((Decimal(str(item.spent_amount or 0)) for item in weekly_budgets), Decimal("0.00"))
+    other_currency_budgets = [
+        budget for budget in all_budgets
+        if budget.currency.upper() != currency
+    ]
+    weekly_budgets = [
+        budget for budget in budgets if budget.period == "weekly"
+    ]
+    weekly_planned = sum(
+        (Decimal(str(item.amount or 0)) for item in weekly_budgets),
+        Decimal("0.00"),
+    )
+    weekly_spent = sum(
+        (Decimal(str(item.spent_amount or 0)) for item in weekly_budgets),
+        Decimal("0.00"),
+    )
     weekly_remaining = sum(
         (max(Decimal(str(item.remaining_amount or 0)), Decimal("0.00")) for item in weekly_budgets),
         Decimal("0.00"),
@@ -32,6 +48,8 @@ def budget_list_view(request):
     )
     return render(request, "budgets/budgets.html", {
         "budgets": budgets,
+        "other_currency_budgets": other_currency_budgets,
+        "budget_count": len(all_budgets),
         "weekly_budgets": weekly_budgets,
         "weekly_planned": weekly_planned,
         "weekly_spent": weekly_spent,
@@ -67,6 +85,7 @@ def budget_allocations_view(request):
                 owner=user,
                 period="weekly",
                 category__iexact=category,
+                currency=user.currency,
             )
             existing = matching.order_by("-created_at").first()
             if amount <= 0:
@@ -75,8 +94,7 @@ def budget_allocations_view(request):
                 existing.name = category
                 existing.category = category
                 existing.amount = amount
-                existing.currency = user.currency
-                existing.save(update_fields=["name", "category", "amount", "currency", "updated_at"])
+                existing.save(update_fields=["name", "category", "amount", "updated_at"])
             else:
                 Budget.objects.create(
                     owner=user,
@@ -91,7 +109,6 @@ def budget_allocations_view(request):
         messages.success(request, "Your weekly category limits have been updated.")
         return redirect("budgets")
     return render(request, "budgets/allocation_form.html", {"form": form})
-
 
 
 @login_required
@@ -117,7 +134,7 @@ def budget_delete_view(request, pk):
                 "personal": "personal",
                 "emergency": "emergency",
             }
-            if budget.period == "weekly" and budget.category:
+            if budget.period == "weekly" and budget.category and budget.currency.upper() == (user.currency or "XAF").upper():
                 key = category_keys.get(budget.category.strip().casefold())
                 if key:
                     allocations = dict(user.weekly_budget_allocations or {})
