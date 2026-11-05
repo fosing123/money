@@ -1,5 +1,6 @@
 from datetime import timedelta
 from decimal import Decimal
+from unittest.mock import AsyncMock, patch
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -167,6 +168,60 @@ class ExpenseAnalyzerScoringTests(TestCase):
         self.assertEqual(report.financial_context["active_goals"][0]["name"], "New laptop")
         self.assertEqual(report.financial_context["active_goals"][0]["remaining_amount"], "68000.00")
         self.assertTrue(any("New laptop" in item for item in report.reasoning))
+
+    @patch(
+        "expense_analyzer.views.generate_expense_insights",
+        new_callable=AsyncMock,
+    )
+    def test_planned_analysis_uses_gemini_to_personalize_the_saved_report(self, gemini):
+        gemini.return_value = {
+            "summary": "This school purchase fits your current weekly plan.",
+            "reasoning": ["Your weekly savings target remains protected."],
+            "recommendations": ["Keep enough for transport this week.", "Record the final amount after purchase."],
+            "alternatives": ["Compare a lower-cost option before paying."],
+        }
+
+        response = self.client.post(
+            reverse("analyzer"),
+            {
+                "action": "planned",
+                "description": "School notebook",
+                "amount": "500.00",
+                "category": "School",
+                "purchase_date": self.today.isoformat(),
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        gemini.assert_awaited_once()
+        report = ExpenseAnalysis.objects.get(user=self.user, analysis_type="PLANNED")
+        self.assertEqual(report.summary, "This school purchase fits your current weekly plan.")
+        self.assertContains(response, "Gemini personalized this assessment")
+
+    @patch(
+        "expense_analyzer.views.generate_expense_insights",
+        new_callable=AsyncMock,
+    )
+    def test_analyzer_keeps_deterministic_report_when_gemini_is_unavailable(self, gemini):
+        from expense_analyzer.ai import ExpenseAIUnavailable
+        gemini.side_effect = ExpenseAIUnavailable("Gemini is temporarily unreachable.")
+
+        response = self.client.post(
+            reverse("analyzer"),
+            {
+                "action": "planned",
+                "description": "Lunch",
+                "amount": "500.00",
+                "category": "Food",
+                "purchase_date": self.today.isoformat(),
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        report = ExpenseAnalysis.objects.get(user=self.user, analysis_type="PLANNED")
+        self.assertTrue(report.summary)
+        self.assertContains(response, "Gemini is temporarily unreachable")
+        self.assertNotContains(response, "Gemini personalized this assessment")
 
     def test_completed_analysis_rejects_non_expense_transactions(self):
         income = Transaction.objects.create(
