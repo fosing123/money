@@ -44,7 +44,15 @@ body[data-user-authenticated="true"] .professional-empty > p,
 body[data-user-authenticated="true"] .premium-page-grid .premium-plan-card > p,
 body[data-user-authenticated="true"] .coming-soon-page > .ui-eyebrow,
 body[data-user-authenticated="true"] .coming-soon-page > p,
-body[data-user-authenticated="true"] .opportunity-card .muted-text,
+body[data-user-authenticated="true"] .card .muted-text,
+body[data-user-authenticated="true"] .entry-heading > div > p:not(.ui-eyebrow),
+body[data-user-authenticated="true"] .entry-card-heading > div > p,
+body[data-user-authenticated="true"] .budget-live-pulse .budget-section-heading p,
+body[data-user-authenticated="true"] .home-section-heading p,
+body[data-user-authenticated="true"] .budget-allocation-edit-note,
+body[data-user-authenticated="true"] .transaction-kind-picker small,
+body[data-user-authenticated="true"] .transaction-main > small,
+body[data-user-authenticated="true"] .money-account-info > small,
 body[data-user-authenticated="true"] .page-heading > div > .eyebrow,
 body[data-user-authenticated="true"] .page-heading > div > .section-copy {
   display: none !important;
@@ -93,8 +101,7 @@ body[data-user-authenticated="true"] .money-account-empty > p,
 body[data-user-authenticated="true"] .money-empty-plan p,
 body[data-user-authenticated="true"] .goals-empty > p,
 body[data-user-authenticated="true"] .goal-no-accounts > p,
-body[data-user-authenticated="true"] .activity-empty > p,
-body[data-user-authenticated="true"] .premium-disclaimer {
+body[data-user-authenticated="true"] .activity-empty > p {
   display: none !important;
 }
 
