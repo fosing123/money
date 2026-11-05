@@ -36,10 +36,10 @@ jobs:
           SECRET_KEY: "ci-test-secret-key-not-for-production"
           ALLOWED_HOSTS: "localhost"
           DATABASE_URL: "postgresql://tiana:unused@127.0.0.1:5432/neondb"
-          DJANGO_DB_BACKEND: "nkem.db_backends.pg8000"
+          DJANGO_DB_BACKEND: "django.db.backends.postgresql"
         run: |
           PYTHONPATH=src python manage.py check
-          DJANGO_SETTINGS_MODULE=nkem.settings PYTHONPATH=src python -c "from django.db import connections; db = connections['default']; assert db.vendor == 'postgresql_pg8000' and db.features.supports_json_field; print('TIANA pg8000 backend and JSONField feature check passed')"
+          DJANGO_SETTINGS_MODULE=nkem.settings PYTHONPATH=src python -c "from django.db import connections; from django.db.backends.postgresql.base import Cursor; from psycopg import ClientCursor; db = connections['default']; assert db.vendor == 'postgresql'; assert issubclass(Cursor, ClientCursor); assert db.settings_dict['OPTIONS']['server_side_binding'] is False; print('TIANA Psycopg client-side cursor backend check passed')"
       - name: Check migration consistency
         run: python manage.py makemigrations --check --dry-run
       - name: Check Django service-worker JavaScript
