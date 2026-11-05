@@ -49,8 +49,6 @@
       "django/contrib/**/static/**",
       "**/__pycache__/**",
       "**/*.pyi",
-      "**/*.dist-info/**",
-      "**/*.egg-info/**",
       "**/*.mo",
       "**/*.pot",
       "**/*.po",
