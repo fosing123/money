@@ -46,6 +46,8 @@
   "python_modules": {
     "exclude": [
       "**/*.pyc",
+      "**/locale/**",
+      "django/contrib/**/static/**",
       "**/__pycache__/**",
       "**/*.pyi",
       "**/*.dist-info/**",
