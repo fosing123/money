@@ -116,6 +116,8 @@ def build_money_snapshot(user, today=None):
         if category_total > ZERO else 0
         for item in categories
     ]
+    for item, percentage in zip(categories, percentages):
+        item["percent"] = percentage
     category_one_percent = percentages[0] if len(percentages) > 0 else 0
     category_two_end = category_one_percent + (percentages[1] if len(percentages) > 1 else 0)
     category_three_end = category_two_end + (percentages[2] if len(percentages) > 2 else 0)
