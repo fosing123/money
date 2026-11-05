@@ -50,7 +50,7 @@ def health_check_view(request):
     try:
         with db_transaction.atomic():
             with connection.cursor() as cursor:
-                cursor.execute("SELECT 1")
+                cursor.execute("SELECT %s", [1])
                 database_ok = cursor.fetchone() == (1,)
             if not database_ok:
                 raise RuntimeError("Database health probe returned an unexpected result.")
@@ -58,7 +58,7 @@ def health_check_view(request):
             # Verify the two JSONField columns TIANA actually uses. Roll back
             # the probe row so this public health endpoint never leaves data.
             probe_name = f"__health_{uuid.uuid4().hex}"
-            expected_priorities = ["cloudflare", "pg8000"]
+            expected_priorities = ["cloudflare", "psycopg"]
             expected_allocations = {"health_probe": 1}
             probe_user = User.objects.create(
                 username=probe_name,
