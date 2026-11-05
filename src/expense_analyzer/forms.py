@@ -59,5 +59,5 @@ class CompletedExpenseForm(forms.Form):
                     currency__iexact=(user.currency or "XAF"),
                 )
                 .select_related("account")
-                .order_by("-transaction_date", "-created_at")[:100]
+                .order_by("-transaction_date", "-created_at")
             )
