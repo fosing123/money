@@ -186,7 +186,7 @@
 
   <section class="home-lower-grid money-lower-grid">
     <a class="home-mini-card" href="{% url 'budgets' %}"><span class="home-mini-icon">▤</span><span><strong>Budget controls</strong><small>{{ weekly_budgets|length }} weekly plan{{ weekly_budgets|length|pluralize }} · {{ budget_usage_percent|floatformat:0 }}% used</small></span><b>→</b></a>
-    <a class="home-mini-card" href="{% url 'account_create' %}"><span class="home-mini-icon">▣</span><span><strong>Manage accounts</strong><small>Add cash, MTN, Orange or bank accounts</small></span><b>→</b></a>
+    <a class="home-mini-card" href="{% url 'accounts' %}"><span class="home-mini-icon">▣</span><span><strong>Manage accounts</strong><small>Add cash, MTN, Orange or bank accounts</small></span><b>→</b></a>
   </section>
   <div class="home-tour-launch"><button type="button" data-tour-restart>Take the app tour</button></div>
 </div>
