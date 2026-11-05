@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from expense_analyzer.models import ExpenseAnalysis
 from finance.models import Account, Transaction
+from goals.models import Goal
 
 
 User = get_user_model()
@@ -141,6 +142,30 @@ class ExpenseAnalyzerScoringTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(ExpenseAnalysis.objects.filter(user=self.user).exists())
         self.assertContains(response, "Select a valid choice")
+
+    def test_active_savings_goals_are_recorded_in_the_analysis_context(self):
+        Goal.objects.create(
+            owner=self.user,
+            name="New laptop",
+            target_amount="80000.00",
+            current_amount="12000.00",
+            currency="XAF",
+            status="active",
+            target_date=self.today + timezone.timedelta(days=90),
+        )
+
+        from expense_analyzer.scoring import analyze_planned_purchase
+        report = analyze_planned_purchase(
+            self.user,
+            amount="1000.00",
+            category="Food",
+            description="Lunch",
+        )
+
+        self.assertEqual(report.financial_context["active_goal_count"], 1)
+        self.assertEqual(report.financial_context["active_goals"][0]["name"], "New laptop")
+        self.assertEqual(report.financial_context["active_goals"][0]["remaining_amount"], "68000.00")
+        self.assertTrue(any("New laptop" in item for item in report.reasoning))
 
     def test_completed_analysis_rejects_non_expense_transactions(self):
         income = Transaction.objects.create(
