@@ -46,7 +46,6 @@
   "python_modules": {
     "exclude": [
       "**/*.pyc",
-      "**/locale/**",
       "django/contrib/**/static/**",
       "**/__pycache__/**",
       "**/*.pyi",
@@ -55,7 +54,6 @@
       "**/*.mo",
       "**/*.pot",
       "**/*.po",
-      "**/locale/**",
       "**/*.md",
       "**/LICENSE*",
       "**/licenses/**",
@@ -72,9 +70,6 @@
       "django/contrib/sitemaps/**",
       "django/contrib/postgres/**",
       "django/contrib/admin/static/**",
-      "django/contrib/admin/locale/**",
-      "django/contrib/auth/locale/**",
-      "django/conf/locale/**",
       "tzdata/zoneinfo/America/**",
       "tzdata/zoneinfo/Antarctica/**",
       "tzdata/zoneinfo/Arctic/**",
