@@ -335,3 +335,48 @@ class BudgetIntelligencePageTests(TestCase):
         self.assertEqual(response.context["weekly_spent"], Decimal("1200.00"))
         self.assertEqual(response.context["weekly_planned"], Decimal("3000.00"))
         self.assertContains(response, "40% of weekly limits used")
+
+
+class BudgetCurrencySeparationTests(TestCase):
+    def test_budget_donut_and_weekly_totals_exclude_other_currencies_but_keep_them_visible(self):
+        from decimal import Decimal
+        from django.contrib.auth import get_user_model
+        from django.utils import timezone
+        from budgets.models import Budget
+        from finance.models import Account, Transaction
+
+        user = get_user_model().objects.create_user(
+            username="multi-currency-budget-member",
+            email="multi-currency-budget@example.com",
+            password="StrongPass123!",
+            currency="XAF",
+        )
+        cash = Account.objects.create(
+            owner=user, name="Daily cash", account_type="cash", currency="XAF",
+            opening_balance="10000.00", balance="10000.00",
+        )
+        Budget.objects.create(
+            owner=user, name="Food XAF", category="Food", amount="3000.00",
+            currency="XAF", period="weekly", start_date=timezone.localdate(),
+        )
+        usd_budget = Budget.objects.create(
+            owner=user, name="Travel USD", category="Travel", amount="100.00",
+            currency="USD", period="monthly", start_date=timezone.localdate(),
+        )
+        Transaction.objects.create(
+            owner=user, account=cash, amount="1200.00", currency="XAF",
+            kind="expense", category="Food", transaction_date=timezone.localdate(),
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("budgets"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["budget_count"], 2)
+        self.assertEqual(len(response.context["budgets"]), 1)
+        self.assertEqual(len(response.context["other_currency_budgets"]), 1)
+        self.assertEqual(response.context["other_currency_budgets"][0].pk, usd_budget.pk)
+        self.assertEqual(response.context["weekly_planned"], Decimal("3000.00"))
+        self.assertEqual(response.context["weekly_spent"], Decimal("1200.00"))
+        self.assertContains(response, "Travel USD")
+        self.assertContains(response, "100.00 USD")
