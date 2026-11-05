@@ -137,7 +137,7 @@ def build_money_snapshot(user, today=None):
         (max(_money(item.remaining_amount), ZERO) for item in weekly_budgets), ZERO
     )
     budget_usage_percent = (
-        min(100, float(weekly_budget_spent / weekly_budget_total * 100))
+        float(weekly_budget_spent / weekly_budget_total * 100)
         if weekly_budget_total > ZERO else 0
     )
     budget_attention = next(
