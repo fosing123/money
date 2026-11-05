@@ -1,0 +1,117 @@
+/* TIANA sparse UI: remove secondary captions and helper copy, keep essential controls and financial data. */
+body[data-user-authenticated="true"] .ui-eyebrow,
+body[data-user-authenticated="true"] .money-eyebrow,
+body[data-user-authenticated="true"] .section-copy,
+body[data-user-authenticated="true"] .form-help,
+body[data-user-authenticated="true"] .money-safe-caption,
+body[data-user-authenticated="true"] .money-safe-footnote,
+body[data-user-authenticated="true"] .money-stat-note,
+body[data-user-authenticated="true"] .money-currency-note,
+body[data-user-authenticated="true"] .money-section-heading > div > p,
+body[data-user-authenticated="true"] .money-week-progress-note,
+body[data-user-authenticated="true"] .money-budget-row > small,
+body[data-user-authenticated="true"] .money-trend-note,
+body[data-user-authenticated="true"] .money-goals-total,
+body[data-user-authenticated="true"] .money-account-note,
+body[data-user-authenticated="true"] .money-accounts-heading > div > p,
+body[data-user-authenticated="true"] .activity-chart-note,
+body[data-user-authenticated="true"] .activity-chart-legend,
+body[data-user-authenticated="true"] .activity-history-main > small,
+body[data-user-authenticated="true"] .home-transaction-main > small,
+body[data-user-authenticated="true"] .ai-subtitle,
+body[data-user-authenticated="true"] .ai-workspace-head > span,
+body[data-user-authenticated="true"] .ai-welcome > p,
+body[data-user-authenticated="true"] .ai-footnote,
+body[data-user-authenticated="true"] .setup-page-heading .ui-eyebrow,
+body[data-user-authenticated="true"] .setup-page-heading > div > p,
+body[data-user-authenticated="true"] .setup-step-intro,
+body[data-user-authenticated="true"] .setup-field-hint,
+body[data-user-authenticated="true"] .setup-controls-note,
+body[data-user-authenticated="true"] .setup-progress-caption > span:last-child,
+body[data-user-authenticated="true"] .priority-card-copy > small,
+body[data-user-authenticated="true"] .setup-income-estimate,
+body[data-user-authenticated="true"] .setup-savings-insight,
+body[data-user-authenticated="true"] .transaction-refresh-heading .ui-eyebrow,
+body[data-user-authenticated="true"] .transaction-refresh-heading > div > p,
+body[data-user-authenticated="true"] .transaction-refresh-card-heading > div > p,
+body[data-user-authenticated="true"] .transaction-section-label small,
+body[data-user-authenticated="true"] .transaction-amount-note,
+body[data-user-authenticated="true"] .transaction-refresh-footer > p,
+body[data-user-authenticated="true"] .goal-premium-title-row > div > p,
+body[data-user-authenticated="true"] .goal-contribute-footnote,
+body[data-user-authenticated="true"] .goal-contribute-heading > div > p,
+body[data-user-authenticated="true"] .professional-empty > p,
+body[data-user-authenticated="true"] .premium-page-grid .premium-plan-card > p,
+body[data-user-authenticated="true"] .coming-soon-page > .ui-eyebrow,
+body[data-user-authenticated="true"] .coming-soon-page > p,
+body[data-user-authenticated="true"] .card .muted-text,
+body[data-user-authenticated="true"] .entry-heading > div > p:not(.ui-eyebrow),
+body[data-user-authenticated="true"] .entry-card-heading > div > p,
+body[data-user-authenticated="true"] .budget-live-pulse .budget-section-heading p,
+body[data-user-authenticated="true"] .home-section-heading p,
+body[data-user-authenticated="true"] .budget-allocation-edit-note,
+body[data-user-authenticated="true"] .transaction-kind-picker small,
+body[data-user-authenticated="true"] .transaction-main > small,
+body[data-user-authenticated="true"] .money-account-info > small,
+body[data-user-authenticated="true"] .page-heading > div > .eyebrow,
+body[data-user-authenticated="true"] .page-heading > div > .section-copy {
+  display: none !important;
+}
+
+/* Give the title and the primary content room to breathe. */
+body[data-user-authenticated="true"] .page-heading,
+body[data-user-authenticated="true"] .workspace-heading,
+body[data-user-authenticated="true"] .entry-heading,
+body[data-user-authenticated="true"] .money-section-heading,
+body[data-user-authenticated="true"] .home-section-heading {
+  margin-bottom: 24px;
+}
+
+body[data-user-authenticated="true"] .money-week-card,
+body[data-user-authenticated="true"] .money-month-card,
+body[data-user-authenticated="true"] .money-goals-section,
+body[data-user-authenticated="true"] .budget-live-pulse,
+body[data-user-authenticated="true"] .money-account-group,
+body[data-user-authenticated="true"] .activity-history-card,
+body[data-user-authenticated="true"] .ai-workspace {
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+body[data-user-authenticated="true"] .tiana-field,
+body[data-user-authenticated="true"] .profile-edit-field {
+  margin-bottom: 20px;
+}
+
+body[data-user-authenticated="true"] .money-section-heading h2,
+body[data-user-authenticated="true"] .home-section-heading h2,
+body[data-user-authenticated="true"] .budget-section-heading h2 {
+  font-size: 1.16rem;
+}
+
+body[data-user-authenticated="true"] .activity-history-row,
+body[data-user-authenticated="true"] .home-transaction {
+  padding-top: 17px;
+  padding-bottom: 17px;
+}
+
+/* Empty states keep a heading and the next action, not another paragraph. */
+body[data-user-authenticated="true"] .money-account-empty > p,
+body[data-user-authenticated="true"] .money-empty-plan p,
+body[data-user-authenticated="true"] .goals-empty > p,
+body[data-user-authenticated="true"] .goal-no-accounts > p,
+body[data-user-authenticated="true"] .activity-empty > p {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  body[data-user-authenticated="true"] .money-week-card,
+  body[data-user-authenticated="true"] .money-month-card,
+  body[data-user-authenticated="true"] .money-goals-section,
+  body[data-user-authenticated="true"] .budget-live-pulse,
+  body[data-user-authenticated="true"] .activity-history-card,
+  body[data-user-authenticated="true"] .ai-workspace {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+}
