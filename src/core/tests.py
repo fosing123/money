@@ -244,3 +244,93 @@ class MoneyIntelligenceTests(TestCase):
         self.assertContains(response, "YOUR WEEKLY PLAN")
         self.assertContains(response, "Your money flow")
         self.assertContains(response, "Transfers between your own accounts")
+
+
+class AccountsCentreTests(TestCase):
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        self.user = get_user_model().objects.create_user(
+            username="account-centre-member",
+            email="account-centre@example.com",
+            password="StrongPass123!",
+            currency="XAF",
+        )
+
+    def test_accounts_are_grouped_by_currency_and_private_to_the_member(self):
+        from finance.models import Account
+        from django.contrib.auth import get_user_model
+
+        Account.objects.create(
+            owner=self.user, name="Pocket cash", account_type="cash",
+            currency="XAF", opening_balance="2500.00", balance="2500.00",
+        )
+        Account.objects.create(
+            owner=self.user, name="Savings reserve", account_type="savings",
+            currency="XAF", opening_balance="10000.00", balance="10000.00",
+        )
+        Account.objects.create(
+            owner=self.user, name="Dollar wallet", account_type="bank",
+            currency="USD", opening_balance="50.00", balance="50.00",
+        )
+        other = get_user_model().objects.create_user(
+            username="another-member", email="another-member@example.com",
+            password="StrongPass123!",
+        )
+        Account.objects.create(
+            owner=other, name="Private account", account_type="cash",
+            currency="XAF", opening_balance="900000.00", balance="900000.00",
+        )
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("accounts"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Pocket cash")
+        self.assertContains(response, "Savings reserve")
+        self.assertContains(response, "Dollar wallet")
+        self.assertContains(response, "XAF")
+        self.assertContains(response, "USD")
+        self.assertNotContains(response, "Private account")
+        self.assertEqual(len(response.context["account_groups"]), 2)
+        self.assertEqual(response.context["primary_total_balance"], 12500)
+
+    def test_accounts_centre_requires_authentication(self):
+        response = self.client.get(reverse("accounts"))
+        self.assertEqual(response.status_code, 302)
+
+
+class BudgetIntelligencePageTests(TestCase):
+    def test_budget_page_shows_live_weekly_pulse_from_real_transactions(self):
+        from django.contrib.auth import get_user_model
+        from django.utils import timezone
+        from budgets.models import Budget
+        from finance.models import Account, Transaction
+
+        user = get_user_model().objects.create_user(
+            username="budget-pulse-member",
+            email="budget-pulse@example.com",
+            password="StrongPass123!",
+            currency="XAF",
+        )
+        account = Account.objects.create(
+            owner=user, name="Daily cash", account_type="cash", currency="XAF",
+            opening_balance="10000.00", balance="10000.00",
+        )
+        Budget.objects.create(
+            owner=user, name="Food", category="Food", amount="3000.00",
+            currency="XAF", period="weekly", start_date=timezone.localdate(),
+        )
+        Transaction.objects.create(
+            owner=user, account=account, amount="1200.00", currency="XAF",
+            kind="expense", category="Food", transaction_date=timezone.localdate(),
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("budgets"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "LIVE WEEKLY PULSE")
+        self.assertContains(response, "1,200")
+        self.assertContains(response, "3,000")
+        self.assertContains(response, "40% of weekly limits used")
