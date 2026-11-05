@@ -240,6 +240,7 @@ class MoneyIntelligenceTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "SAFE TO SPEND THIS WEEK")
+        self.assertContains(response, "minimal-copy.css")
         self.assertContains(response, "A gentle daily guide")
         self.assertContains(response, "YOUR WEEKLY PLAN")
         self.assertContains(response, "Your money flow")
