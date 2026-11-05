@@ -126,3 +126,40 @@ class AIChatViewTests(TestCase):
         saved = ChatMessage.objects.get(user=self.user)
         self.assertEqual(saved.prompt, "Help me save every week")
         self.assertEqual(saved.response, "Start with a 1,000 FCFA weekly saving target.")
+
+
+class AIUsesMoneyIntelligenceSnapshotTests(TestCase):
+    def test_ai_snapshot_uses_the_shared_safe_to_spend_calculation(self):
+        from decimal import Decimal
+        from django.utils import timezone
+        from finance.models import Account, Transaction
+        from ai_assistant.services import _user_snapshot
+
+        user = User.objects.create_user(
+            username="ai-money-snapshot",
+            email="ai-money-snapshot@example.com",
+            password="StrongPass123!",
+            currency="XAF",
+            weekly_savings_target="2000.00",
+        )
+        cash = Account.objects.create(
+            owner=user, name="Daily cash", account_type="cash", currency="XAF",
+            opening_balance="10000.00", balance="10000.00",
+        )
+        Account.objects.create(
+            owner=user, name="Savings reserve", account_type="savings",
+            currency="XAF", opening_balance="5000.00", balance="5000.00",
+        )
+        Transaction.objects.create(
+            owner=user, account=cash, amount="500.00", currency="XAF",
+            kind="transfer_out", category="Savings",
+            transaction_date=timezone.localdate(),
+        )
+
+        snapshot = _user_snapshot(user)
+
+        self.assertEqual(snapshot["safe_to_spend_this_week"], "8000.00")
+        self.assertEqual(snapshot["weekly_savings_still_to_protect"], "1500.00")
+        self.assertIn("Future bills are not included", snapshot["safe_to_spend_basis"])
+        self.assertNotIn("Daily cash", str(snapshot))
+        self.assertNotIn("Savings reserve", str(snapshot))
