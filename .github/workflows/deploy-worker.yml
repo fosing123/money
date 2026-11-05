@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - feat/tiana-expense-analyzer-foundation-20261105
+  pull_request:
+    branches:
+      - feat/tiana-money-intelligence-foundation-20261105
   workflow_dispatch:
 
 concurrency:
