@@ -108,11 +108,11 @@ jobs:
         run: |
           set -euo pipefail
           for name in GEMINI_API_KEY FIREBASE_SERVICE_ACCOUNT_JSON; do
-            printf '%s' "${!name}" | npx --yes wrangler secret put "$name" --name tiana-django-staging
+            printf '%s' "${!name}" | npx --yes wrangler versions secret put "$name" --name tiana-django-staging
           done
           for name in FIREBASE_WEB_API_KEY FIREBASE_WEB_AUTH_DOMAIN FIREBASE_WEB_PROJECT_ID FIREBASE_WEB_MESSAGING_SENDER_ID FIREBASE_WEB_APP_ID FIREBASE_WEB_VAPID_KEY; do
             if [[ -n "${!name}" ]]; then
-              printf '%s' "${!name}" | npx --yes wrangler secret put "$name" --name tiana-django-staging
+              printf '%s' "${!name}" | npx --yes wrangler versions secret put "$name" --name tiana-django-staging
             fi
           done
           echo "Required Gemini and Firebase Admin credentials were synced to the staging Worker. Optional Firebase Web values were synced when provided. The existing Django signing secret was preserved."
