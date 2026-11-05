@@ -37,40 +37,67 @@ class AIUsageLimitError(AIServiceError):
 
 
 def _user_snapshot(user):
-    today = timezone.localdate()
-    month_start = today.replace(day=1)
-    month = Transaction.objects.filter(owner=user, transaction_date__gte=month_start, transaction_date__lte=today)
-    income = month.filter(kind__in=["income", "refund", "transfer_in"]).aggregate(total=Sum("amount"))["total"] or 0
-    expenses = month.filter(kind__in=["expense", "transfer_out"]).aggregate(total=Sum("amount"))["total"] or 0
-    budget_rows = list(Budget.objects.filter(owner=user)[:6])
+    """Build the same currency-safe money summary used by the dashboard."""
+    from core.money_intelligence import build_money_snapshot
+
+    snapshot = build_money_snapshot(user)
+    currency = snapshot["currency"]
+
+    budget_rows = list(
+        Budget.objects.filter(owner=user, currency=currency)
+        .order_by("period", "name")[:6]
+    )
     attach_budget_spending(budget_rows, owner=user)
     budgets = [{
         "category_or_name": budget.category or budget.name,
-        "limit_fcfa": str(budget.amount),
-        "spent_fcfa": str(budget.spent_amount),
+        "limit": str(budget.amount),
+        "spent": str(budget.spent_amount),
+        "remaining": str(budget.remaining_amount),
+        "currency": currency,
         "period": budget.get_period_display(),
     } for budget in budget_rows]
+
     goals = [{
         "name": goal.name,
-        "target_fcfa": str(goal.target_amount),
-        "saved_fcfa": str(goal.saved_amount),
+        "target": str(goal.target_amount),
+        "saved": str(goal.saved_amount),
+        "remaining": str(goal.remaining_amount),
         "progress_percent": goal.progress_percentage,
-    } for goal in Goal.objects.filter(owner=user, status="active")[:6]]
+        "currency": currency,
+    } for goal in Goal.objects.filter(
+        owner=user, currency=currency, status="active"
+    ).prefetch_related("contributions__transaction")[:6]]
+
     recent = [{
         "type": tx.get_kind_display(),
         "category": tx.category,
-        "amount_fcfa": str(tx.amount),
+        "amount": str(tx.amount),
+        "currency": tx.currency,
         "date": tx.transaction_date.isoformat(),
-    } for tx in Transaction.objects.filter(owner=user).order_by("-transaction_date", "-created_at")[:8]]
+    } for tx in snapshot["recent_transactions"]]
+
     return {
-        "currency": user.currency,
-        "weekly_income_estimate_fcfa": str(user.weekly_income),
-        "weekly_savings_target_fcfa": str(user.weekly_savings_target),
-        "weekly_budget_allocations_fcfa": user.weekly_budget_allocations or {},
-        "current_month_income_fcfa": str(income),
-        "current_month_outflow_fcfa": str(expenses),
-        "budgets": budgets,
-        "goals": goals,
+        "currency": currency,
+        "accounts_in_primary_currency": snapshot["account_count"],
+        "total_balance_across_accounts": str(snapshot["total_balance"]),
+        "spendable_account_balance_excluding_savings": str(snapshot["spendable_balance"]),
+        "safe_to_spend_this_week": str(snapshot["safe_to_spend"]),
+        "weekly_savings_target": str(snapshot["weekly_savings_target"]),
+        "weekly_savings_already_funded": str(snapshot["weekly_savings_funded"]),
+        "weekly_savings_still_to_protect": str(snapshot["weekly_savings_remaining"]),
+        "safe_to_spend_basis": (
+            "Active non-savings accounts in the primary currency, minus the "
+            "unfunded part of the weekly savings target. Future bills are not "
+            "included because scheduled bills are not tracked yet."
+        ),
+        "weekly_income_estimate": str(user.weekly_income),
+        "weekly_budget_allocations": user.weekly_budget_allocations or {},
+        "month_to_date_money_in": str(snapshot["money_in_total"]),
+        "month_to_date_expenses": str(snapshot["expense_total"]),
+        "month_to_date_net_cash_flow": str(snapshot["net_cash_flow"]),
+        "month_to_date_expense_change_percent": snapshot["expense_change_percent"],
+        "weekly_budgets": budgets,
+        "savings_goals": goals,
         "recent_transactions": recent,
     }
 
@@ -130,6 +157,10 @@ def _prepare_ai_request(user, prompt):
         "facts, claim to move money, or promise investment returns. Do not give high-risk investment "
         "instructions. Make it clear when you are estimating. Financial education only, not a "
         "licensed financial adviser. Never request passwords, PINs, API keys or full account numbers. "
+        "The financial snapshot includes a deterministic safe_to_spend_this_week value. Treat "
+        "that value as the authoritative spending guardrail. It protects the unfilled weekly savings "
+        "target and excludes savings accounts, but future bills are not yet included. Never invent "
+        "bill commitments or claim the value includes them. Explain this limitation when it matters. "
         "Your role is personalized guidance: help the user make progress toward their stated goals, "
         "compare priorities, plan an affordable purchase, and choose realistic next steps using their "
         "weekly plan and recent activity. The app's deterministic budget engine handles threshold "
