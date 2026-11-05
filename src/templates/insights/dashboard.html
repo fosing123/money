@@ -1,16 +1,53 @@
 {% extends 'base.html' %}
 {% block title %}Insights · TIANA{% endblock %}
 {% block content %}
-<section class="workspace-heading" data-reveal><div><h1>Insights</h1></div></section>
-<section class="transaction-summary-grid professional-summary-grid insights-summary" data-reveal>
-<div class="card transaction-summary income-summary"><span class="summary-icon">↗</span><div><small>Income this month</small><strong>{{ income_total|floatformat:0 }} <small>FCFA</small></strong></div></div>
-<div class="card transaction-summary expense-summary"><span class="summary-icon">↘</span><div><small>Expenses this month</small><strong>{{ expense_total|floatformat:0 }} <small>FCFA</small></strong></div></div>
-<div class="card transaction-summary"><span class="summary-icon">≈</span><div><small>Net cash flow</small><strong>{{ net_flow|floatformat:0 }} <small>FCFA</small></strong></div></div>
+<section class="workspace-heading" data-reveal>
+  <div>
+    <h1>Money insights</h1>
+    <p>See the real pulse of your cash, your next income and the runway you have left.</p>
+  </div>
 </section>
+
+<section class="transaction-summary-grid professional-summary-grid insights-summary" data-reveal>
+  <div class="card transaction-summary income-summary"><span class="summary-icon">↗</span><div><small>Money in this month</small><strong>{{ income_total|floatformat:0 }} <small>{{ currency }}</small></strong></div></div>
+  <div class="card transaction-summary expense-summary"><span class="summary-icon">↘</span><div><small>Expenses this month</small><strong>{{ expense_total|floatformat:0 }} <small>{{ currency }}</small></strong></div></div>
+  <div class="card transaction-summary"><span class="summary-icon">≈</span><div><small>Net cash flow</small><strong>{{ net_flow|floatformat:0 }} <small>{{ currency }}</small></strong></div></div>
+  <div class="card transaction-summary"><span class="summary-icon">◎</span><div><small>Safe to spend</small><strong>{{ safe_to_spend|floatformat:0 }} <small>{{ currency }}</small></strong></div></div>
+  <div class="card transaction-summary"><span class="summary-icon">↺</span><div><small>Runway</small><strong>{{ financial_runway_days }} <small>days</small></strong></div></div>
+  <div class="card transaction-summary"><span class="summary-icon">✦</span><div><small>Next income</small><strong>+{{ next_expected_income|floatformat:0 }} <small>{{ currency }}</small></strong></div></div>
+</section>
+
 <section class="analytics-grid professional-analytics-grid">
-<div class="card panel-card professional-panel" data-reveal><div class="professional-panel-heading"><div><h2>Weekly cash flow</h2></div></div>
-<div class="weekly-chart professional-weekly-chart">{% for week in weeks %}<div class="week-column"><div class="week-bars"><span class="week-bar income-bar" style="height:{% widthratio week.income week.max 100 %}%" title="Income {{ week.income|floatformat:0 }} FCFA"></span><span class="week-bar expense-bar" style="height:{% widthratio week.expenses week.max 100 %}%" title="Expenses {{ week.expenses|floatformat:0 }} FCFA"></span></div><span>{{ week.label }}</span></div>{% empty %}<p class="professional-empty">Weekly trends will appear when you record transactions.</p>{% endfor %}</div><div class="chart-legend"><span><i class="income-key"></i>Income</span><span><i class="expense-key"></i>Expenses</span></div></div>
-<div class="card panel-card professional-panel" data-reveal><div class="professional-panel-heading"><div><h2>Spending categories</h2></div></div>
-{% for row in category_rows %}<div class="professional-progress-item"><div class="professional-progress-heading"><strong>{{ row.category }}</strong><span>{{ row.value|floatformat:0 }} FCFA</span></div><div class="progress-track green"><span data-progress style="width:{{ row.percent }}%"></span></div></div>{% empty %}<div class="professional-empty"><p>No expense categories yet.</p></div>{% endfor %}</div>
+  <div class="card panel-card professional-panel" data-reveal>
+    <div class="professional-panel-heading">
+      <div><h2>Forecast pulse</h2></div>
+    </div>
+    <div class="professional-progress-item">
+      <div class="professional-progress-heading"><strong>Next income</strong><span>{{ next_income_label }}</span></div>
+      <div class="progress-track green"><span data-progress style="width:100%"></span></div>
+      <small class="professional-empty">+{{ next_expected_income|floatformat:0 }} {{ currency }}</small>
+    </div>
+    <div class="professional-progress-item">
+      <div class="professional-progress-heading"><strong>Upcoming bills</strong><span>{{ upcoming_bills_total|floatformat:0 }} {{ currency }}</span></div>
+      <div class="progress-track green"><span data-progress style="width:{% if budget_usage_percent > 100 %}100{% else %}{{ budget_usage_percent }}{% endif %}%"></span></div>
+      <small class="professional-empty">Budget usage: {{ budget_usage_percent|floatformat:0 }}%</small>
+    </div>
+    <div class="professional-progress-item">
+      <div class="professional-progress-heading"><strong>Weekly plan left</strong><span>{{ weekly_budget_remaining|floatformat:0 }} {{ currency }}</span></div>
+      <div class="progress-track green"><span data-progress style="width:{% if budget_usage_percent > 100 %}100{% else %}{{ budget_usage_percent }}{% endif %}%"></span></div>
+      <small class="professional-empty">{{ goal_count }} active goal{{ goal_count|pluralize }}</small>
+    </div>
+  </div>
+
+  <div class="card panel-card professional-panel" data-reveal>
+    <div class="professional-panel-heading"><div><h2>Weekly cash flow</h2></div></div>
+    <div class="weekly-chart professional-weekly-chart">{% for week in weeks %}<div class="week-column"><div class="week-bars"><span class="week-bar income-bar" style="height:{% widthratio week.income week.max 100 %}%" title="Income {{ week.income|floatformat:0 }} {{ currency }}"></span><span class="week-bar expense-bar" style="height:{% widthratio week.expenses week.max 100 %}%" title="Expenses {{ week.expenses|floatformat:0 }} {{ currency }}"></span></div><span>{{ week.label }}</span></div>{% empty %}<p class="professional-empty">Weekly trends will appear when you record transactions.</p>{% endfor %}</div>
+    <div class="chart-legend"><span><i class="income-key"></i>Income</span><span><i class="expense-key"></i>Expenses</span></div>
+  </div>
+
+  <div class="card panel-card professional-panel" data-reveal>
+    <div class="professional-panel-heading"><div><h2>Spending categories</h2></div></div>
+    {% for row in category_rows %}<div class="professional-progress-item"><div class="professional-progress-heading"><strong>{{ row.category }}</strong><span>{{ row.value|floatformat:0 }} {{ currency }}</span></div><div class="progress-track green"><span data-progress style="width:{{ row.percent }}%"></span></div></div>{% empty %}<div class="professional-empty"><p>No expense categories yet.</p></div>{% endfor %}
+  </div>
 </section>
 {% endblock %}

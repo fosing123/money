@@ -26,14 +26,27 @@ from django_pg8000.operations import DatabaseOperations
 class HyperdriveDatabaseConnection(Pg8000DatabaseConnection):
     """Use simple-query protocol for unparameterized transaction commands."""
 
+    def _track_query(self, kind, sql, params=(), stream=None):
+        if not hasattr(self, "simple_queries"):
+            self.simple_queries = []
+        if not hasattr(self, "extended_queries"):
+            self.extended_queries = []
+        if kind == "simple":
+            self.simple_queries.append(sql)
+        else:
+            self.extended_queries.append((sql, params, stream))
+
     def _run(self, sql, params=(), stream=None):
         if not params and stream is None:
+            self._track_query("simple", sql)
             return self._con.execute_simple(sql)
+        self._track_query("extended", sql, params=params, stream=stream)
         return super()._run(sql, params=params, stream=stream)
 
     def commit(self):
         # COMMIT must use the simple protocol but retain django-pg8000's
         # existing Django exception translation for deferred constraints.
+        self._track_query("simple", "COMMIT")
         try:
             return self._con.execute_simple("COMMIT")
         except PgInterfaceError as exc:
@@ -48,6 +61,7 @@ class HyperdriveDatabaseConnection(Pg8000DatabaseConnection):
             raise
 
     def rollback(self):
+        self._track_query("simple", "ROLLBACK")
         return self._con.execute_simple("ROLLBACK")
 
 

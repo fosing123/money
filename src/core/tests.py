@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -224,6 +226,32 @@ class MoneyIntelligenceTests(TestCase):
         self.assertEqual(snapshot["weekly_budget_remaining"], Decimal("1800.00"))
         self.assertEqual(snapshot["budget_usage_percent"], 40)
 
+    def test_dashboard_forecast_tracks_next_income_bills_and_runway(self):
+        from budgets.models import Budget
+        from core.money_intelligence import build_money_snapshot
+
+        self.user.weekly_income = Decimal("12000.00")
+        self.user.payday_weekday = self.today.weekday()
+        self.user.save(update_fields=["weekly_income", "payday_weekday"])
+        cash = self.create_account("Daily cash", "14000.00")
+        self.create_transaction(cash, "1800.00", "expense", "Food")
+        Budget.objects.create(
+            owner=self.user,
+            name="Food",
+            category="Food",
+            amount="3000.00",
+            currency="XAF",
+            period="weekly",
+            start_date=self.today,
+        )
+
+        snapshot = build_money_snapshot(self.user, today=self.today)
+
+        self.assertEqual(snapshot["next_expected_income"], Decimal("12000.00"))
+        self.assertEqual(snapshot["next_income_label"], "Due today")
+        self.assertEqual(snapshot["upcoming_bills_total"], Decimal("1200.00"))
+        self.assertGreaterEqual(snapshot["financial_runway_days"], 3)
+
     def test_dashboard_uses_the_live_money_intelligence_snapshot(self):
         from finance.models import Account
 
@@ -242,6 +270,7 @@ class MoneyIntelligenceTests(TestCase):
         self.assertContains(response, "SAFE TO SPEND THIS WEEK")
         self.assertContains(response, "minimal-copy.css")
         self.assertContains(response, "A gentle daily guide")
+        self.assertContains(response, "YOUR MONEY FORECAST")
         self.assertContains(response, "YOUR WEEKLY PLAN")
         self.assertContains(response, "Your money flow")
         self.assertContains(response, "Transfers between your own accounts")

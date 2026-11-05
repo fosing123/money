@@ -140,12 +140,39 @@ def build_money_snapshot(user, today=None):
         float(weekly_budget_spent / weekly_budget_total * 100)
         if weekly_budget_total > ZERO else 0
     )
+    upcoming_bills_total = max(weekly_budget_total - weekly_budget_spent, ZERO)
     budget_attention = next(
         (item for item in sorted(
             weekly_budgets, key=lambda budget: budget.percent_used, reverse=True
         ) if item.percent_used >= 80),
         None,
     )
+
+    daily_average_spending = ZERO
+    recent_days = max(1, min(30, (today.day if today.day > 0 else 1)))
+    recent_spend = Transaction.objects.filter(
+        owner=user,
+        currency=currency,
+        kind="expense",
+        transaction_date__range=(today - timedelta(days=recent_days - 1), today),
+    ).aggregate(total=Sum("amount"))["total"] or ZERO
+    if recent_spend > ZERO:
+        daily_average_spending = _money(recent_spend) / Decimal(recent_days)
+
+    runway_days = 0
+    if daily_average_spending > ZERO and total_balance > ZERO:
+        runway_days = max(0, int(total_balance / daily_average_spending))
+
+    next_expected_income = _money(user.weekly_income)
+    next_income_label = "No expected income set"
+    if next_expected_income > ZERO and user.payday_weekday is not None:
+        delta_days = (user.payday_weekday - today.weekday()) % 7
+        if delta_days == 0:
+            next_income_label = "Due today"
+        else:
+            next_income_label = f"Due in {delta_days} day{'s' if delta_days != 1 else ''}"
+    elif next_expected_income > ZERO:
+        next_income_label = "Estimated this week"
 
     goals = list(
         Goal.objects.filter(owner=user, currency=currency, status="active")
@@ -226,8 +253,12 @@ def build_money_snapshot(user, today=None):
         "weekly_budget_total": weekly_budget_total,
         "weekly_budget_spent": weekly_budget_spent,
         "weekly_budget_remaining": weekly_budget_remaining,
+        "upcoming_bills_total": upcoming_bills_total,
         "budget_usage_percent": budget_usage_percent,
         "budget_attention": budget_attention,
+        "next_expected_income": next_expected_income,
+        "next_income_label": next_income_label,
+        "financial_runway_days": runway_days,
         "goals": goals,
         "goal_savings_total": goal_savings_total,
         "active_goal_count": len(goals),

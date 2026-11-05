@@ -72,6 +72,33 @@
     <a class="home-action" href="{% url 'account_create' %}"><span class="home-action-icon">▣</span><span>Account</span></a>
   </section>
 
+  <section class="home-section money-section" aria-label="Your money forecast">
+    <div class="money-section-heading">
+      <div><span class="money-eyebrow">YOUR MONEY FORECAST</span><h2>Know what is coming next.</h2><p>Simple checks for the next week, the next bill and the runway you have left.</p></div>
+      <a href="{% url 'insights' %}">See forecast <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="money-flow-grid">
+      <div>
+        <span class="money-flow-mark is-in">↙</span>
+        <small>Next income</small>
+        <strong>+{{ next_expected_income|floatformat:0 }} <i>{{ currency }}</i></strong>
+        <small>{{ next_income_label }}</small>
+      </div>
+      <div>
+        <span class="money-flow-mark is-out">↗</span>
+        <small>Upcoming bills</small>
+        <strong>{{ upcoming_bills_total|floatformat:0 }} <i>{{ currency }}</i></strong>
+        <small>Committed this week</small>
+      </div>
+      <div>
+        <span class="money-flow-mark is-net">≈</span>
+        <small>Runway</small>
+        <strong>{{ financial_runway_days }} <i>days</i></strong>
+        <small>At your current spend rate</small>
+      </div>
+    </div>
+  </section>
+
   <section class="money-week-card">
     <div class="money-section-heading">
       <div><span class="money-eyebrow">YOUR WEEKLY PLAN</span><h2>Make this week work.</h2><p>Live progress from the transactions you've recorded.</p></div>
