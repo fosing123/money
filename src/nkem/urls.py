@@ -5,7 +5,6 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth.views import PasswordChangeDoneView, PasswordChangeView
 
 from accounts.views import application_security_view, login_view, logout_view, manage_devices_view, onboarding_setup_view, onboarding_view, profile_view, register_view, registration_welcome_view
-from ai_assistant.views import ai_chat_view
 from expense_analyzer.views import analyzer_view
 from budgets.views import budget_allocations_view, budget_delete_view, budget_list_view
 from core.views import dashboard_view, health_check_view, home_view, investments_coming_soon_view, money_school_view, offline_bootstrap_view, offline_sync_view, premium_view, service_worker_view
@@ -64,7 +63,7 @@ urlpatterns = [
     path("money-school/", money_school_view, name="money_school"),
     path("opportunities/<int:pk>/", opportunity_detail_view, name="opportunity_detail"),
     path("analyzer/", analyzer_view, name="analyzer"),
-    path("ai/", ai_chat_view, name="ai_chat"),
+    path("ai/", analyzer_view, name="ai_chat"),  # Legacy URL now opens the Expense Analyzer.
     path("health/", health_check_view, name="health_check"),
     path("service-worker.js", service_worker_view, name="service_worker"),
     path("api/offline/bootstrap/", offline_bootstrap_view, name="offline_bootstrap"),
