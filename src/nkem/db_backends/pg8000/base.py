@@ -10,6 +10,9 @@ query protocol. Django-pg8000 already composes ORM parameters client-side and
 executes ordinary ORM statements through execute_simple().
 """
 from django.conf import settings
+from django.db import IntegrityError as DjangoIntegrityError
+
+from pg8000.native import DatabaseError as PgDatabaseError, InterfaceError as PgInterfaceError
 
 from django_pg8000 import base as pg8000_base
 from django_pg8000.base import (
@@ -29,8 +32,20 @@ class HyperdriveDatabaseConnection(Pg8000DatabaseConnection):
         return super()._run(sql, params=params, stream=stream)
 
     def commit(self):
-        # COMMIT/ROLLBACK must use the same simple protocol as START TRANSACTION.
-        return self._con.execute_simple("COMMIT")
+        # COMMIT must use the simple protocol but retain django-pg8000's
+        # existing Django exception translation for deferred constraints.
+        try:
+            return self._con.execute_simple("COMMIT")
+        except PgInterfaceError as exc:
+            if str(exc) != "in failed transaction block":
+                raise
+        except PgDatabaseError as exc:
+            error_arg = exc.args[0]
+            error_code = error_arg["C"]
+            error_message = error_arg["M"]
+            if error_code.startswith("23"):
+                raise DjangoIntegrityError(error_message) from exc
+            raise
 
     def rollback(self):
         return self._con.execute_simple("ROLLBACK")
