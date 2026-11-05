@@ -331,6 +331,7 @@ class BudgetIntelligencePageTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "LIVE WEEKLY PULSE")
-        self.assertContains(response, "1,200")
-        self.assertContains(response, "3,000")
+        from decimal import Decimal
+        self.assertEqual(response.context["weekly_spent"], Decimal("1200.00"))
+        self.assertEqual(response.context["weekly_planned"], Decimal("3000.00"))
         self.assertContains(response, "40% of weekly limits used")
