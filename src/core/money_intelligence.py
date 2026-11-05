@@ -85,6 +85,7 @@ def build_money_snapshot(user, today=None):
     )
     income_total = _money(month_totals["income"])
     refund_total = _money(month_totals["refunds"])
+    money_in_total = income_total + refund_total
     expense_total = _money(month_totals["expenses"])
 
     previous_start, previous_end = _previous_month_to_date(today)
@@ -128,6 +129,8 @@ def build_money_snapshot(user, today=None):
         ).order_by("name")
     )
     attach_budget_spending(weekly_budgets, owner=user)
+    for budget in weekly_budgets:
+        budget.over_amount = max(-_money(budget.remaining_amount), ZERO)
     weekly_budget_total = sum((_money(item.amount) for item in weekly_budgets), ZERO)
     weekly_budget_spent = sum((_money(item.spent_amount) for item in weekly_budgets), ZERO)
     weekly_budget_remaining = sum(
@@ -213,6 +216,7 @@ def build_money_snapshot(user, today=None):
         "weekly_savings_remaining": savings_remaining,
         "income_total": income_total,
         "refund_total": refund_total,
+        "money_in_total": money_in_total,
         "expense_total": expense_total,
         "net_cash_flow": income_total + refund_total - expense_total,
         "previous_expense_total": previous_expense_total,
