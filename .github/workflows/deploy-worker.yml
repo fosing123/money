@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/tiana-expense-analyzer-foundation-20261105
   workflow_dispatch:
 
 concurrency:
@@ -26,31 +27,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify Cloudflare and TIANA runtime credentials are configured
+      - name: Verify Cloudflare deployment credentials are configured
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-          FIREBASE_WEB_API_KEY: ${{ vars.FIREBASE_WEB_API_KEY || secrets.FIREBASE_WEB_API_KEY }}
-          FIREBASE_WEB_AUTH_DOMAIN: ${{ vars.FIREBASE_WEB_AUTH_DOMAIN || secrets.FIREBASE_WEB_AUTH_DOMAIN }}
-          FIREBASE_WEB_PROJECT_ID: ${{ vars.FIREBASE_WEB_PROJECT_ID || secrets.FIREBASE_WEB_PROJECT_ID }}
-          FIREBASE_WEB_MESSAGING_SENDER_ID: ${{ vars.FIREBASE_WEB_MESSAGING_SENDER_ID || secrets.FIREBASE_WEB_MESSAGING_SENDER_ID }}
-          FIREBASE_WEB_APP_ID: ${{ vars.FIREBASE_WEB_APP_ID || secrets.FIREBASE_WEB_APP_ID }}
-          FIREBASE_WEB_VAPID_KEY: ${{ vars.FIREBASE_WEB_VAPID_KEY || secrets.FIREBASE_WEB_VAPID_KEY }}
         shell: bash
         run: |
-          required=(CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID GEMINI_API_KEY FIREBASE_SERVICE_ACCOUNT_JSON)
+          required=(CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID)
           missing=()
           for name in "${required[@]}"; do
             if [[ -z "${!name}" ]]; then missing+=("$name"); fi
           done
           if (( ${#missing[@]} )); then
-            printf '::error::Missing GitHub environment values: %s\n' "${missing[*]}"
-            echo "Add secret values under repository Settings > Environments > tiana-django-staging. Public Firebase web configuration may be stored as environment variables."
+            printf '::error::Missing GitHub environment values: %s\\n' "${missing[*]}"
+            echo "Add Cloudflare credentials under repository Settings > Environments > tiana-django-staging."
             exit 1
           fi
-          echo "Cloudflare, Gemini, and Firebase Admin credentials are present. Firebase browser push configuration is optional and can be added later."
+          echo "Cloudflare deployment credentials are present. Existing Worker runtime secrets are preserved."
 
       - uses: astral-sh/setup-uv@v6
         with:
@@ -91,31 +84,6 @@ jobs:
 
       - name: Collect Django static assets
         run: uv run python manage.py collectstatic --noinput
-
-      - name: Sync TIANA runtime secrets to Cloudflare
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-          FIREBASE_WEB_API_KEY: ${{ vars.FIREBASE_WEB_API_KEY || secrets.FIREBASE_WEB_API_KEY }}
-          FIREBASE_WEB_AUTH_DOMAIN: ${{ vars.FIREBASE_WEB_AUTH_DOMAIN || secrets.FIREBASE_WEB_AUTH_DOMAIN }}
-          FIREBASE_WEB_PROJECT_ID: ${{ vars.FIREBASE_WEB_PROJECT_ID || secrets.FIREBASE_WEB_PROJECT_ID }}
-          FIREBASE_WEB_MESSAGING_SENDER_ID: ${{ vars.FIREBASE_WEB_MESSAGING_SENDER_ID || secrets.FIREBASE_WEB_MESSAGING_SENDER_ID }}
-          FIREBASE_WEB_APP_ID: ${{ vars.FIREBASE_WEB_APP_ID || secrets.FIREBASE_WEB_APP_ID }}
-          FIREBASE_WEB_VAPID_KEY: ${{ vars.FIREBASE_WEB_VAPID_KEY || secrets.FIREBASE_WEB_VAPID_KEY }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          for name in GEMINI_API_KEY FIREBASE_SERVICE_ACCOUNT_JSON; do
-            printf '%s' "${!name}" | npx --yes wrangler secret put "$name" --name tiana-django-staging
-          done
-          for name in FIREBASE_WEB_API_KEY FIREBASE_WEB_AUTH_DOMAIN FIREBASE_WEB_PROJECT_ID FIREBASE_WEB_MESSAGING_SENDER_ID FIREBASE_WEB_APP_ID FIREBASE_WEB_VAPID_KEY; do
-            if [[ -n "${!name}" ]]; then
-              printf '%s' "${!name}" | npx --yes wrangler secret put "$name" --name tiana-django-staging
-            fi
-          done
-          echo "Required Gemini and Firebase Admin credentials were synced to the staging Worker. Optional Firebase Web values were synced when provided. The existing Django signing secret was preserved."
 
       - name: Deploy to Cloudflare staging Worker
         env:
