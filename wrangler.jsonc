@@ -49,7 +49,6 @@
       "django/contrib/**/static/**",
       "**/__pycache__/**",
       "**/*.pyi",
-      "**/*.mo",
       "**/*.pot",
       "**/*.po",
       "**/*.md",
