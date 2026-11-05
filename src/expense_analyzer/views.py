@@ -68,7 +68,8 @@ def _render_analyzer(request, planned_form, completed_form, report, ai_enhanced,
 
 @login_required
 @require_http_methods(["GET", "POST"])
-async def analyzer_view(request):
+async @login_required
+def analyzer_view(request):
     report = None
     ai_enhanced = False
     ai_error = ""

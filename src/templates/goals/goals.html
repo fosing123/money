@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Savings Goals · TIANA{% endblock %}
+{% load static %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'nkem/expense-analyzer.css' %}?v=20261105-integrated-analysis">{% endblock %}
 {% block content %}
 <section class="goals-page">
   <header class="goals-page-heading">
@@ -40,6 +42,7 @@
               {% if goal.contributions.count %}
                 <span class="goal-contribution-count">{{ goal.contributions.count }} top-ups</span>
               {% endif %}
+              <a class="goal-analysis-action" href="{% url 'analyzer' %}?scope=goal&amp;goal_id={{ goal.pk }}">✦ Analyze goal</a>
               <a class="goal-delete-action" href="{% url 'goal_delete' goal.pk %}">Delete goal</a>
             </div>
           </div>

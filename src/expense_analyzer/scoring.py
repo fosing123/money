@@ -196,8 +196,8 @@ def _summary_for_completed(amount, currency, score, shortfall):
     return "This expense has tightened your available room. Review the remaining category budget and protect essential spending first."
 
 
-def analyze_planned_purchase(user, *, amount, category, description="", is_essential=False, purchase_date=None):
-    """Score and save a proposed purchase without changing any account balance."""
+def analyze_planned_purchase(user, *, amount, category, description="", is_essential=False, purchase_date=None, persist=True):
+    """Score a proposed purchase; persist=False returns a read-only preview."""
     amount = _money(amount)
     if amount <= ZERO:
         raise ValueError("Enter an amount greater than zero.")
@@ -290,39 +290,29 @@ def analyze_planned_purchase(user, *, amount, category, description="", is_essen
     else:
         next_action = ExpenseAnalysis.POSTPONE
 
-    report = ExpenseAnalysis.objects.create(
-        user=user,
-        analysis_type=ExpenseAnalysis.PLANNED,
-        description=(description or "").strip()[:255],
-        category=category,
-        amount=amount,
-        currency=currency,
-        is_essential=bool(is_essential),
-        purchase_date=purchase_date,
-        score=score,
-        verdict=verdict,
-        score_breakdown=breakdown,
-        financial_context=context,
-        financial_impact={
+    report_data = {
+        "user": user, "analysis_type": ExpenseAnalysis.PLANNED,
+        "description": (description or "").strip()[:255], "category": category,
+        "amount": amount, "currency": currency, "is_essential": bool(is_essential),
+        "purchase_date": purchase_date, "score": score, "verdict": verdict,
+        "score_breakdown": breakdown, "financial_context": context,
+        "financial_impact": {
             "spendable_balance_before": str(balance),
             "estimated_spendable_balance_after": str(balance_after),
-            "safe_to_spend_before": str(safe),
-            "safe_to_spend_after": str(safe_after),
+            "safe_to_spend_before": str(safe), "safe_to_spend_after": str(safe_after),
             "weekly_savings_remaining_to_protect": str(snapshot["weekly_savings_remaining"]),
             "category_budget_remaining_after": str(budget_remaining_after) if budget_remaining_after is not None else None,
         },
-        summary=_summary_for_planned(amount, currency, score, safe),
-        reasoning=reasoning,
-        recommendations=recommendations,
-        alternatives=alternatives,
-        next_action=next_action,
-        confidence=_confidence(snapshot, budget, history_count),
-    )
-    return report
+        "summary": _summary_for_planned(amount, currency, score, safe),
+        "reasoning": reasoning, "recommendations": recommendations,
+        "alternatives": alternatives, "next_action": next_action,
+        "confidence": _confidence(snapshot, budget, history_count),
+    }
+    return ExpenseAnalysis.objects.create(**report_data) if persist else report_data
 
 
-def analyze_completed_expense(user, transaction, *, is_essential=False):
-    """Assess an already-recorded expense without modifying the ledger."""
+def analyze_completed_expense(user, transaction, *, is_essential=False, persist=True):
+    """Assess an existing expense; persist=False returns a read-only preview."""
     if transaction.owner_id != user.pk:
         raise ValueError("This transaction does not belong to your account.")
     if transaction.kind != "expense":
@@ -422,20 +412,14 @@ def analyze_completed_expense(user, transaction, *, is_essential=False):
         budget_remaining is not None and budget_remaining < ZERO
     ) else ExpenseAnalysis.ADJUST if score < 75 else ExpenseAnalysis.PROCEED
 
-    report = ExpenseAnalysis.objects.create(
-        user=user,
-        transaction=transaction,
-        analysis_type=ExpenseAnalysis.COMPLETED,
-        description=(transaction.description or "").strip()[:255],
-        category=category,
-        amount=amount,
-        currency=currency,
-        is_essential=bool(is_essential),
-        score=score,
-        verdict=verdict,
-        score_breakdown=breakdown,
-        financial_context=context,
-        financial_impact={
+    report_data = {
+        "user": user, "transaction": transaction,
+        "analysis_type": ExpenseAnalysis.COMPLETED,
+        "description": (transaction.description or "").strip()[:255],
+        "category": category, "amount": amount, "currency": currency,
+        "is_essential": bool(is_essential), "score": score, "verdict": verdict,
+        "score_breakdown": breakdown, "financial_context": context,
+        "financial_impact": {
             "spendable_balance_before_estimate": str(balance_before_estimate),
             "spendable_balance_after": str(balance_after),
             "safe_to_spend_after": str(safe_after),
@@ -443,11 +427,9 @@ def analyze_completed_expense(user, transaction, *, is_essential=False):
             "weekly_savings_remaining_to_protect": str(snapshot["weekly_savings_remaining"]),
             "category_budget_remaining_after": str(budget_remaining) if budget_remaining is not None else None,
         },
-        summary=_summary_for_completed(amount, currency, score, shortfall),
-        reasoning=reasoning,
-        recommendations=recommendations,
-        alternatives=alternatives,
-        next_action=next_action,
-        confidence=_confidence(snapshot, budget, history_count),
-    )
-    return report
+        "summary": _summary_for_completed(amount, currency, score, shortfall),
+        "reasoning": reasoning, "recommendations": recommendations,
+        "alternatives": alternatives, "next_action": next_action,
+        "confidence": _confidence(snapshot, budget, history_count),
+    }
+    return ExpenseAnalysis.objects.create(**report_data) if persist else report_data

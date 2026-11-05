@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}{{ title }} · TIANA{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'nkem/expense-analyzer.css' %}?v=20261105-integrated-analysis">{% endblock %}
 {% block content %}
 <section class="entry-page transaction-entry-page transaction-refresh-page" data-reveal>
   <header class="entry-heading transaction-refresh-heading">
@@ -135,9 +137,11 @@
         <p><span>✦</span> Your account balance will update automatically when you save.</p>
         <div class="form-actions">
           <a class="button button-secondary" href="{% url 'transactions' %}">Cancel</a>
+          {% if form.kind %}<button class="button button-secondary transaction-inline-analyze" type="button" data-transaction-analyze data-url="{% url 'analyzer_transaction_preview' %}">✦ Analyze this expense</button>{% endif %}
           <button class="button transaction-save-button" type="submit">Save transaction <span>→</span></button>
         </div>
       </footer>
+      <section class="transaction-analysis-preview" data-transaction-analysis-preview hidden aria-live="polite"></section>
     </form>
   </section>
 </section>
@@ -157,6 +161,73 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const category = document.querySelector("#{{ form.category.id_for_label }}");
+  const entryForm = document.querySelector(".transaction-refresh-form");
+  const analyzeButton = document.querySelector("[data-transaction-analyze]");
+  const analysisPanel = document.querySelector("[data-transaction-analysis-preview]");
+  if (entryForm && analyzeButton && analysisPanel) {
+    const kindField = entryForm.querySelector("[name=kind]");
+    const refreshAnalyzeVisibility = () => {
+      analyzeButton.hidden = !!kindField && kindField.value !== "expense";
+    };
+    refreshAnalyzeVisibility();
+    if (kindField) kindField.addEventListener("change", refreshAnalyzeVisibility);
+    analyzeButton.addEventListener("click", async () => {
+      const values = new FormData(entryForm);
+      const csrf = entryForm.querySelector("[name=csrfmiddlewaretoken]");
+      const payload = {
+        kind: kindField ? kindField.value : "expense",
+        amount: values.get("amount") || "",
+        category: values.get("category") || "General",
+        description: values.get("description") || "",
+        is_essential: false
+      };
+      analysisPanel.hidden = false;
+      analysisPanel.textContent = "TIANA is checking this expense against your recorded balance, budget and savings plan…";
+      analyzeButton.disabled = true;
+      try {
+        const response = await fetch(analyzeButton.dataset.url, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrf ? csrf.value : ""
+          },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "TIANA could not analyze this expense.");
+        analysisPanel.replaceChildren();
+        const heading = document.createElement("div");
+        heading.className = "transaction-analysis-preview-heading";
+        const score = document.createElement("strong");
+        score.textContent = result.score + "/100";
+        const verdict = document.createElement("span");
+        verdict.textContent = result.verdict;
+        heading.append(score, verdict);
+        const summary = document.createElement("p");
+        summary.textContent = result.ai_insights ? result.ai_insights.summary : result.summary;
+        analysisPanel.append(heading, summary);
+        const list = document.createElement("ul");
+        const suggestions = result.ai_insights ? result.ai_insights.recommendations : result.recommendations;
+        (suggestions || []).forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          list.appendChild(li);
+        });
+        analysisPanel.appendChild(list);
+        const note = document.createElement("small");
+        note.textContent = result.ai_enhanced
+          ? "Gemini added a personalized explanation. This preview has not saved a transaction or changed your balance."
+          : (result.ai_error || "This is a read-only preview. Save the transaction only when you are ready.");
+        analysisPanel.appendChild(note);
+      } catch (error) {
+        analysisPanel.textContent = error.message;
+      } finally {
+        analyzeButton.disabled = false;
+      }
+    });
+  }
+
   if (category) category.setAttribute("list", "transactionCategorySuggestions");
   document.querySelectorAll("[data-transaction-category]").forEach((button) => {
     button.addEventListener("click", () => {

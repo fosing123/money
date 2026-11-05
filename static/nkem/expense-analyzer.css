@@ -103,3 +103,24 @@
 
 
 .analyzer-ai-status{margin:0 0 1rem;padding:.85rem 1rem;border:1px solid rgba(142,111,220,.22);border-radius:14px;background:rgba(142,111,220,.08);color:var(--text-secondary,#625b70);font-size:.9rem;line-height:1.5}
+
+
+/* Entry-point actions: analysis lives beside the money record it explains. */
+.activity-analyze-link{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border:1px solid color-mix(in srgb,var(--brand-primary),transparent 70%);border-radius:99px;background:var(--brand-soft);color:var(--brand-primary);font-size:.65rem;font-weight:850;text-decoration:none;white-space:nowrap}
+.activity-history-analyze{display:inline-flex;align-items:center;justify-content:flex-end;margin:-5px 0 7px;padding:4px 2px;color:var(--brand-primary);font-size:.61rem;font-weight:850;text-decoration:none}
+.budget-analyze-action,.goal-analysis-action{display:inline-flex;align-items:center;gap:5px;color:var(--brand-primary)!important;font-size:.66rem;font-weight:850;text-decoration:none}
+.transaction-inline-analyze{border:1px solid color-mix(in srgb,var(--brand-primary),transparent 72%)!important;background:var(--brand-soft)!important;color:var(--brand-primary)!important}
+.transaction-inline-analyze[hidden]{display:none!important}
+.transaction-inline-analyze:disabled{opacity:.65;cursor:wait}
+.transaction-analysis-preview{display:grid;gap:10px;margin:14px 0 4px;padding:16px;border:1px solid color-mix(in srgb,var(--brand-primary),transparent 65%);border-radius:17px;background:var(--brand-soft);color:var(--text)}
+.transaction-analysis-preview[hidden]{display:none}
+.transaction-analysis-preview-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.transaction-analysis-preview-heading strong{font:900 1.3rem 'Manrope',sans-serif;color:var(--brand-primary)}
+.transaction-analysis-preview-heading span{padding:5px 9px;border-radius:99px;background:var(--surface);font-size:.65rem;font-weight:850}
+.transaction-analysis-preview p{margin:0;color:var(--text);font-size:.74rem;line-height:1.55}
+.transaction-analysis-preview ul{display:grid;gap:6px;margin:0;padding-left:18px;color:var(--muted);font-size:.68rem;line-height:1.5}
+.transaction-analysis-preview>small{color:var(--muted);font-size:.6rem;line-height:1.5}
+@media(max-width:520px){
+ .activity-analyze-link{min-height:32px;padding:0 9px;font-size:.58rem}
+ .activity-history-analyze{margin-left:44px}
+}
