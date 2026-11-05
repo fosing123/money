@@ -90,7 +90,15 @@ if DATABASE_URL.startswith(("postgres://", "postgresql://")):
         database_options = {"ssl_context": False}
     elif database_backend == "django.db.backends.postgresql":
         database_options = {
-            "sslmode": params.get("sslmode", ["prefer" if DEBUG else "require"])[0]
+            "sslmode": (
+                "disable"
+                if CLOUDFLARE_WORKER
+                else params.get("sslmode", ["prefer" if DEBUG else "require"])[0]
+            ),
+            # Hyperdrive uses transaction pooling. Django's Psycopg 3 backend
+            # defaults to ClientCursor; keep client-side binding explicit so
+            # ORM queries do not rely on connection-scoped prepared statements.
+            "server_side_binding": False,
         }
     else:
         raise ImproperlyConfigured(
