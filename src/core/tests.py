@@ -381,3 +381,13 @@ class BudgetCurrencySeparationTests(TestCase):
         self.assertEqual(response.context["weekly_spent"], Decimal("1200.00"))
         self.assertContains(response, "Travel USD")
         self.assertContains(response, "100.00 USD")
+
+
+class HealthCheckTests(TestCase):
+    def test_health_endpoint_runs_parameterized_database_probe_and_json_round_trip(self):
+        response = self.client.get(reverse("health_check"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["status"], "ok")
+        self.assertEqual(response.json()["database"], "ok")
+        self.assertEqual(response.json()["json_fields"], "ok")
