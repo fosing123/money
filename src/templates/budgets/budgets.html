@@ -6,7 +6,7 @@
 <section class="budget-page" data-budget-dashboard>
   <header class="budget-welcome"><div><h1>Make room for what matters.</h1></div><a class="budget-avatar" href="{% url 'profile' %}" aria-label="Open profile">{% if user.avatar %}<img src="{{ user.avatar.url }}" alt="" width="53" height="53" decoding="async">{% elif brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="" width="53" height="53" decoding="async">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</a></header>
   <div class="budget-account-strip">
-    <article class="budget-mini-summary"><span class="budget-mini-icon">◎</span><small>Active budgets</small><strong>{{ budgets|length }}</strong></article>
+    <article class="budget-mini-summary"><span class="budget-mini-icon">◎</span><small>Active budgets</small><strong>{{ budget_count }}</strong></article>
     <article class="budget-mini-summary budget-mini-highlight"><span class="budget-mini-icon">✦</span><small>Personal currency</small><strong>{{ user.currency }}</strong></article>
     <a class="budget-create-tile" href="{% url 'budget_allocations' %}"><span>✎</span><strong>Edit weekly plan</strong></a>
   </div>
@@ -14,7 +14,7 @@
     <div class="budget-section-heading"><div><h2>Budget snapshot</h2></div><a href="{% url 'insights' %}">View analytics <span>↗</span></a></div>
     <div class="budget-allocation-layout">
       <div class="budget-donut" data-budget-donut role="img" aria-label="Budget allocation by category"><div class="budget-donut-hole"><small>Total planned</small><strong data-budget-total>0</strong><span>{{ user.currency }}</span><i data-budget-spent>0 spent</i></div></div>
-      <div class="budget-allocation-legend" data-budget-legend><p class="budget-legend-placeholder">Your category breakdown will appear here.</p></div>
+      <div class="budget-allocation-legend" data-budget-legend><p class="budget-legend-placeholder">{% if other_currency_budgets %}Your other-currency plans are shown separately below. This chart only includes {{ currency }}.{% else %}Your category breakdown will appear here.{% endif %}</p></div>
     </div>
     <div class="budget-allocation-foot"><span><i></i> Planned budget</span><strong data-budget-planned>0 {{ user.currency }}</strong><span><i></i> Actual spent</span><strong data-budget-actual>0 {{ user.currency }}</strong></div>
   </section>
@@ -48,6 +48,28 @@
     {% endfor %}
     </div>
   </section>
+  {% if other_currency_budgets %}
+    <section class="budget-list-section budget-other-currency-section">
+      <div class="budget-section-heading">
+        <div><span class="money-eyebrow">SEPARATE CURRENCY PLANS</span><h2>Budgets in other currencies</h2><p>These plans are kept separate from your {{ currency }} totals and chart.</p></div>
+      </div>
+      <div class="budget-plan-list">
+        {% for item in other_currency_budgets %}
+          <article class="budget-plan-card budget-other-currency-card">
+            <div class="budget-plan-top">
+              <span class="budget-plan-icon">¤</span>
+              <div class="budget-plan-copy"><strong>{{ item.name }}</strong><small>{% if item.category %}{{ item.category }}{% else %}All categories{% endif %} · {{ item.get_period_display }} · {{ item.currency }}</small></div>
+              <span class="budget-plan-status {% if item.percent_used >= 100 %}is-over{% elif item.percent_used >= 80 %}is-near{% endif %}">{{ item.percent_used|floatformat:0 }}% used</span>
+            </div>
+            <div class="budget-plan-values"><strong>{{ item.spent_amount|floatformat:2 }} <small>spent · {{ item.currency }}</small></strong><span>{{ item.remaining_amount|floatformat:2 }} {{ item.currency }} remaining</span></div>
+            <div class="budget-plan-track"><span style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div>
+            <div class="budget-plan-foot"><span>{{ item.amount|floatformat:2 }} {{ item.currency }} planned</span><span>{{ item.get_period_display }}</span></div>
+            <div class="budget-plan-actions"><a href="{% url 'budget_delete' item.pk %}" aria-label="Delete {{ item.name }} budget">Delete budget</a></div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
 </section>
 {% endblock %}
 {% block extra_js %}<script src="{% static 'nkem/budget-allocation.js' %}?v=20261031-budget" defer></script>{% endblock %}
