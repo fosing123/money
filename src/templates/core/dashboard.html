@@ -1,33 +1,192 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Home · TIANA{% endblock %}
-{% block extra_head %}<link rel="stylesheet" href="{% static 'nkem/dashboard.css' %}?v=20261031-home">{% endblock %}
+{% block title %}Your money · TIANA{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'nkem/dashboard.css' %}?v=20261031-home">
+<link rel="stylesheet" href="{% static 'nkem/money-intelligence.css' %}?v=20261105-foundation">
+{% endblock %}
 {% block content %}
-<div class="tiana-home" data-dashboard-tour-root>
+<div class="tiana-home money-home" data-dashboard-tour-root>
   <section class="home-greeting" data-tour="greeting">
-    <div class="home-greeting-copy"><h1>Good to see you, {{ user.first_name|default:user.username }} <span aria-hidden="true">✦</span></h1></div>
+    <div class="home-greeting-copy">
+      <span class="money-eyebrow">YOUR MONEY, IN PLAIN SIGHT</span>
+      <h1>Good to see you, {{ user.first_name|default:user.username }} <span aria-hidden="true">✦</span></h1>
+      <p>Here's what your money is telling you today.</p>
+    </div>
     <a class="home-avatar" href="{% url 'profile' %}" aria-label="Open your profile">{% if user.avatar %}<img src="{{ user.avatar.url }}" alt="" width="52" height="52" decoding="async">{% elif brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="" width="52" height="52" decoding="async">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</a>
   </section>
-  <section class="home-balance-card" data-tour="balance" aria-label="Your total balance">
-    <div class="home-balance-orb" aria-hidden="true"></div>
-    <div class="home-balance-top"><div><span class="home-card-label">TOTAL BALANCE</span><div class="home-balance-value" id="balanceValue" data-amount="{{ total_balance|floatformat:0 }} FCFA" data-hidden="false">{{ total_balance|floatformat:0 }} <small>FCFA</small></div></div><button type="button" class="home-balance-toggle" data-toggle-balance="#balanceValue" aria-label="Hide balance"><span aria-hidden="true">◉</span></button></div>
-    <div class="home-balance-foot"><span><i class="home-trend-dot"></i> Across {{ accounts|length }} active account{{ accounts|length|pluralize }}</span><span class="home-balance-period">THIS MONTH</span></div>
-    <div class="home-month-stats"><div><span>Money in</span><strong>+{{ income_total|floatformat:0 }} <small>FCFA</small></strong></div><div><span>Money out</span><strong>−{{ expense_total|floatformat:0 }} <small>FCFA</small></strong></div></div>
+
+  <section class="money-safe-card" data-tour="balance" aria-label="Safe to spend this week">
+    <div class="money-safe-orb" aria-hidden="true"></div>
+    <div class="money-safe-top">
+      <div>
+        <span class="money-safe-label">SAFE TO SPEND THIS WEEK</span>
+        <div class="money-safe-value" id="safeSpendValue" data-amount="{{ safe_to_spend|floatformat:0 }} {{ currency }}" data-hidden="false">{{ safe_to_spend|floatformat:0 }} <small>{{ currency }}</small></div>
+      </div>
+      <button type="button" class="money-safe-toggle" data-toggle-balance="#safeSpendValue" aria-label="Hide safe-to-spend amount"><span aria-hidden="true">◉</span></button>
+    </div>
+    {% if account_count %}
+      <p class="money-safe-caption">After protecting the rest of your weekly savings target. You have {{ days_remaining_in_week }} day{{ days_remaining_in_week|pluralize }} left in this week.</p>
+      <div class="money-safe-daily">
+        <span class="money-daily-icon" aria-hidden="true">↗</span>
+        <span><small>A gentle daily guide</small><strong>About {{ daily_safe_to_spend|floatformat:0 }} {{ currency }} per day</strong></span>
+      </div>
+    {% else %}
+      <p class="money-safe-caption">Add your first cash or mobile-money account to see how much you can safely spend.</p>
+      <a class="money-safe-action" href="{% url 'account_create' %}">Add an account <span aria-hidden="true">→</span></a>
+    {% endif %}
+    {% if safe_to_spend_shortfall > 0 %}
+      <div class="money-safe-warning">Your accounts are {{ safe_to_spend_shortfall|floatformat:0 }} {{ currency }} below the savings amount you planned to protect. Review your plan before spending.</div>
+    {% endif %}
+    <div class="money-safe-footnote">Based on active {{ currency }} accounts excluding savings accounts. Future bills are not deducted yet.</div>
   </section>
+
+  <section class="money-stat-grid" aria-label="Your money at a glance">
+    <article class="money-stat-card">
+      <span class="money-stat-icon money-stat-icon--balance" aria-hidden="true">◈</span>
+      <small>Across your accounts</small>
+      <strong id="balanceValue" data-amount="{{ total_balance|floatformat:0 }} {{ currency }}" data-hidden="false">{{ total_balance|floatformat:0 }} <small>{{ currency }}</small></strong>
+      <span class="money-stat-note">{{ account_count }} active account{{ account_count|pluralize }}</span>
+    </article>
+    <article class="money-stat-card">
+      <span class="money-stat-icon money-stat-icon--save" aria-hidden="true">◎</span>
+      <small>Still to save this week</small>
+      <strong>{{ weekly_savings_remaining|floatformat:0 }} <small>{{ currency }}</small></strong>
+      <span class="money-stat-note">{{ weekly_savings_funded|floatformat:0 }} already set aside</span>
+    </article>
+    <article class="money-stat-card">
+      <span class="money-stat-icon money-stat-icon--daily" aria-hidden="true">⌁</span>
+      <small>Weekly plan left</small>
+      <strong>{{ weekly_budget_remaining|floatformat:0 }} <small>{{ currency }}</small></strong>
+      <span class="money-stat-note">Across your weekly budgets</span>
+    </article>
+  </section>
+  {% if other_currency_account_count %}
+    <p class="money-currency-note">{{ other_currency_account_count }} account{{ other_currency_account_count|pluralize }} in another currency {{ other_currency_account_count|pluralize:'is,are' }} excluded from these totals to avoid mixing currencies.</p>
+  {% endif %}
+
   <section class="home-quick-actions" data-tour="actions" aria-label="Quick actions">
     <a class="home-action" href="{% url 'transaction_create' %}?kind=income"><span class="home-action-icon">＋</span><span>Add money</span></a>
     <a class="home-action" href="{% url 'transaction_create' %}?kind=expense"><span class="home-action-icon">↗</span><span>Add expense</span></a>
     <a class="home-action" href="{% url 'goals' %}"><span class="home-action-icon">◎</span><span>Goals</span></a>
-    <a class="home-action" href="{% url 'budgets' %}"><span class="home-action-icon">•••</span><span>More</span></a>
+    <a class="home-action" href="{% url 'account_create' %}"><span class="home-action-icon">▣</span><span>Account</span></a>
   </section>
-  <section class="home-coach-card" data-tour="coach"><div class="home-coach-copy"><div class="home-coach-title"><span class="home-coach-spark">✦</span><strong>TIANA AI</strong><span class="home-ai-pill">PERSONAL ADVICE</span></div><p>{{ coach_tip }}</p><a href="{% url 'ai_chat' %}">Chat with TIANA AI <span aria-hidden="true">→</span></a></div><div class="home-coach-art" aria-hidden="true"><span>✧</span><b>✦</b><i>☺</i></div></section>
-  <section class="home-section" data-tour="activity"><div class="home-section-heading"><div><h2>Recent activity</h2></div><a href="{% url 'transactions' %}">See all <span aria-hidden="true">→</span></a></div>
-    {% if recent_transactions %}<div class="home-transaction-list">{% for tx in recent_transactions %}<a class="home-transaction" href="{% url 'transactions' %}"><span class="home-transaction-icon {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}is-income{% else %}is-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}↙{% else %}↗{% endif %}</span><span class="home-transaction-main"><strong>{{ tx.description|default:tx.category }}</strong><small>{{ tx.category }} · {{ tx.transaction_date|date:"D, j M" }}</small></span><span class="home-transaction-amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}is-income{% else %}is-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }}<small>FCFA</small></span></a>{% endfor %}</div>
-    {% else %}<div class="home-empty-state"><span>✦</span><strong>Your story starts with one entry.</strong><a href="{% url 'transaction_create' %}" class="home-empty-cta">Add your first entry →</a></div>{% endif %}
+
+  <section class="money-week-card">
+    <div class="money-section-heading">
+      <div><span class="money-eyebrow">YOUR WEEKLY PLAN</span><h2>Make this week work.</h2><p>Live progress from the transactions you've recorded.</p></div>
+      <a href="{% url 'budgets' %}" aria-label="Open budgets">See plan <span aria-hidden="true">→</span></a>
+    </div>
+    {% if weekly_budgets %}
+      <div class="money-week-total">
+        <div><small>Recorded spending</small><strong>{{ weekly_budget_spent|floatformat:0 }} <span>{{ currency }}</span></strong></div>
+        <div class="money-week-total-right"><small>Planned this week</small><strong>{{ weekly_budget_total|floatformat:0 }} <span>{{ currency }}</span></strong></div>
+      </div>
+      <div class="money-progress-track"><span style="width:{% if budget_usage_percent > 100 %}100{% else %}{{ budget_usage_percent }}{% endif %}%"></span></div>
+      <div class="money-week-progress-note"><span>{{ budget_usage_percent|floatformat:0 }}% used</span><strong>{{ weekly_budget_remaining|floatformat:0 }} {{ currency }} of category limits left</strong></div>
+      <div class="money-budget-list">
+        {% for item in weekly_budgets|slice:":4" %}
+          <div class="money-budget-row">
+            <div class="money-budget-row-top"><span>{{ item.name }}</span><strong>{{ item.spent_amount|floatformat:0 }} / {{ item.amount|floatformat:0 }} {{ currency }}</strong></div>
+            <div class="money-budget-track {% if item.percent_used >= 100 %}is-over{% elif item.percent_used >= 80 %}is-near{% endif %}"><span style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div>
+            <small>{% if item.remaining_amount < 0 %}{{ item.remaining_amount|stringformat:".0f"|slice:"1:" }} {{ currency }} over plan{% else %}{{ item.remaining_amount|floatformat:0 }} {{ currency }} left{% endif %}</small>
+          </div>
+        {% endfor %}
+      </div>
+      {% if budget_attention %}
+        <div class="money-budget-alert {% if budget_attention.percent_used >= 100 %}is-over{% endif %}">
+          {% if budget_attention.percent_used >= 100 %}{{ budget_attention.name }} has reached its weekly limit.{% else %}Keep an eye on {{ budget_attention.name }} — {{ budget_attention.percent_used|floatformat:0 }}% of its limit is used.{% endif %}
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="money-empty-plan"><span aria-hidden="true">◌</span><div><strong>Your weekly plan is waiting.</strong><p>Set category limits once. TIANA will compare them with your real spending as you go.</p></div><a href="{% url 'budget_allocations' %}">Build my plan →</a></div>
+    {% endif %}
   </section>
-  <section class="home-lower-grid"><a class="home-mini-card" href="{% url 'goals' %}"><span class="home-mini-icon">◎</span><span><strong>Your savings goals</strong><small>{{ goals|length }} active goal{{ goals|length|pluralize }} · {{ goal_savings_total|floatformat:0 }} FCFA saved</small></span><b>→</b></a><a class="home-mini-card" href="{% url 'budgets' %}"><span class="home-mini-icon">▤</span><span><strong>Budget check-in</strong><small>{{ budget_usage_percent|floatformat:0 }}% of planned budget used</small></span><b>→</b></a></section>
+
+  <section class="home-coach-card money-coach-card" data-tour="coach">
+    <div class="home-coach-copy">
+      <div class="home-coach-title"><span class="home-coach-spark">✦</span><strong>TIANA MONEY COACH</strong><span class="home-ai-pill">YOUR NEXT STEP</span></div>
+      <p>{{ coach_tip }}</p>
+      <a href="{% url 'ai_chat' %}">Ask TIANA about your money <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="home-coach-art" aria-hidden="true"><span>✧</span><b>✦</b><i>☺</i></div>
+  </section>
+
+  <section class="money-month-card">
+    <div class="money-section-heading">
+      <div><span class="money-eyebrow">MONTH TO DATE</span><h2>Your money flow</h2><p>Transfers between your own accounts are kept out of income and spending.</p></div>
+      <a href="{% url 'insights' %}">Insights <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="money-flow-grid">
+      <div><span class="money-flow-mark is-in">↙</span><small>Income</small><strong>+{{ income_total|floatformat:0 }} <i>{{ currency }}</i></strong></div>
+      <div><span class="money-flow-mark is-out">↗</span><small>Expenses</small><strong>−{{ expense_total|floatformat:0 }} <i>{{ currency }}</i></strong></div>
+      <div><span class="money-flow-mark is-net">≈</span><small>Net flow</small><strong>{{ net_cash_flow|floatformat:0 }} <i>{{ currency }}</i></strong></div>
+    </div>
+    {% if expense_change_percent > 0 %}
+      <p class="money-trend-note is-up">Recorded expenses are {{ expense_change_percent }}% higher than the same point last month.</p>
+    {% elif expense_change_percent < 0 %}
+      <p class="money-trend-note is-down">Recorded expenses are {{ expense_change_percent|stringformat:"d"|slice:"1:" }}% lower than the same point last month.</p>
+    {% elif expense_change_percent == None and expense_total > 0 %}
+      <p class="money-trend-note">You have recorded expenses this month; there was no spending in the comparison period.</p>
+    {% else %}
+      <p class="money-trend-note">Your spending is being compared with the same number of days last month.</p>
+    {% endif %}
+    {% if expense_categories %}
+      <div class="money-category-list">
+        <div class="money-category-heading">Where this month's spending goes</div>
+        {% for category in expense_categories %}
+          <div class="money-category-row">
+            <div><span>{{ category.category|default:"Other" }}</span><strong>{{ category.amount|floatformat:0 }} {{ currency }}</strong></div>
+            <div class="money-category-track"><span style="width:{{ category.percent }}%"></span></div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="home-section money-activity-section" data-tour="activity">
+    <div class="home-section-heading"><div><h2>Recent activity</h2><p>Your latest recorded money movements.</p></div><a href="{% url 'transactions' %}">See all <span aria-hidden="true">→</span></a></div>
+    {% if recent_transactions %}
+      <div class="home-transaction-list">
+        {% for tx in recent_transactions %}
+          <a class="home-transaction" href="{% url 'transactions' %}">
+            <span class="home-transaction-icon {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}is-income{% else %}is-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}↙{% else %}↗{% endif %}</span>
+            <span class="home-transaction-main"><strong>{{ tx.description|default:tx.category }}</strong><small>{{ tx.category }} · {{ tx.account.name }} · {{ tx.transaction_date|date:"D, j M" }}</small></span>
+            <span class="home-transaction-amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}is-income{% else %}is-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }}<small>{{ currency }}</small></span>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="home-empty-state"><span>✦</span><strong>Your story starts with one entry.</strong><p>Record an income or expense and TIANA will start building your money timeline.</p><a href="{% url 'transaction_create' %}" class="home-empty-cta">Add your first entry →</a></div>
+    {% endif %}
+  </section>
+
+  <section class="money-goals-section">
+    <div class="money-section-heading"><div><span class="money-eyebrow">WHAT YOU'RE BUILDING TOWARDS</span><h2>Your savings goals</h2></div><a href="{% url 'goals' %}">All goals <span aria-hidden="true">→</span></a></div>
+    {% if goals %}
+      <div class="money-goal-grid">
+        {% for goal in goals %}
+          <a class="money-goal-card" href="{% url 'goal_contribute' goal.pk %}">
+            <div class="money-goal-top"><span class="money-goal-symbol" aria-hidden="true">◎</span><b>{{ goal.progress_percentage }}%</b></div>
+            <strong>{{ goal.name }}</strong>
+            <div class="money-goal-track"><span style="width:{{ goal.progress_percentage }}%"></span></div>
+            <div class="money-goal-foot"><span>{{ goal.saved_amount|floatformat:0 }} {{ currency }}</span><small>{{ goal.remaining_amount|floatformat:0 }} to go</small></div>
+          </a>
+        {% endfor %}
+      </div>
+      <p class="money-goals-total">You've built {{ goal_savings_total|floatformat:0 }} {{ currency }} across your savings goals.</p>
+    {% else %}
+      <div class="money-empty-plan"><span aria-hidden="true">◎</span><div><strong>Give your next goal a name.</strong><p>Whether it's a laptop, school fees or an emergency cushion, small contributions add up.</p></div><a href="{% url 'goal_create' %}">Create a goal →</a></div>
+    {% endif %}
+  </section>
+
+  <section class="home-lower-grid money-lower-grid">
+    <a class="home-mini-card" href="{% url 'budgets' %}"><span class="home-mini-icon">▤</span><span><strong>Budget controls</strong><small>{{ weekly_budgets|length }} weekly plan{{ weekly_budgets|length|pluralize }} · {{ budget_usage_percent|floatformat:0 }}% used</small></span><b>→</b></a>
+    <a class="home-mini-card" href="{% url 'account_create' %}"><span class="home-mini-icon">▣</span><span><strong>Manage accounts</strong><small>Add cash, MTN, Orange or bank accounts</small></span><b>→</b></a>
+  </section>
   <div class="home-tour-launch"><button type="button" data-tour-restart>Take the app tour</button></div>
 </div>
+
 <div class="tiana-tour" data-dashboard-tour hidden aria-hidden="true"><div class="tiana-tour-backdrop" data-tour-close></div><section class="tiana-tour-card" role="dialog" aria-modal="true" aria-labelledby="tour-title"><div class="tiana-tour-progress"><span data-tour-progress></span></div><button type="button" class="tiana-tour-close" data-tour-close aria-label="Close tour">×</button><span class="tiana-tour-kicker">A QUICK TOUR WITH TIANA</span><h2 id="tour-title" data-tour-title>Welcome to your money home</h2><p data-tour-description>Everything you need to understand your money, in one calm place.</p><div class="tiana-tour-footer"><span data-tour-count>1 of 5</span><div><button type="button" class="tiana-tour-skip" data-tour-close>Skip</button><button type="button" class="tiana-tour-next" data-tour-next>Next →</button></div></div></section></div>
 {% endblock %}
 {% block extra_js %}<script src="{% static 'nkem/dashboard-tour.js' %}?v=20261031-tour" defer></script>{% endblock %}
