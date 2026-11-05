@@ -85,6 +85,19 @@ jobs:
       - name: Collect Django static assets
         run: uv run python manage.py collectstatic --noinput
 
+      - name: Inspect Worker package footprint before upload
+        run: |
+          uv run pywrangler deploy --dry-run --outdir .worker-bundle
+          echo "Largest vendored Python package directories:"
+          if [[ -d python_modules ]]; then
+            du -ah python_modules | sort -hr | head -35
+          fi
+          echo "Largest emitted bundle files:"
+          if [[ -d .worker-bundle ]]; then
+            find .worker-bundle -type f -printf '%s %p\\n' | sort -nr | head -35
+            du -sh .worker-bundle
+          fi
+
       - name: Deploy to Cloudflare staging Worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
