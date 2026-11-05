@@ -182,3 +182,24 @@
   .money-account-overview{padding:18px;border-radius:20px}
   .money-account-overview strong{font-size:1.65rem}
 }
+
+
+/* Budget page live weekly pulse */
+.budget-live-pulse{margin:0 0 17px;padding:20px;border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow-sm)}
+.budget-live-pulse .budget-section-heading{margin-bottom:13px}
+.budget-live-pulse .budget-section-heading h2{margin:4px 0;font-size:1.05rem}
+.budget-live-pulse .budget-section-heading p{margin:0;color:var(--muted);font-size:.68rem}
+.budget-live-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:13px}
+.budget-live-metrics>div{min-width:0;display:grid;gap:4px;padding:11px;border-radius:13px;background:var(--brand-soft)}
+.budget-live-metrics small{color:var(--muted);font-size:.6rem}
+.budget-live-metrics strong{overflow-wrap:anywhere;font-family:'Manrope',sans-serif;font-size:clamp(.8rem,2vw,1.08rem)}
+.budget-live-metrics i{font:650 .55em 'Inter',sans-serif;color:var(--muted);font-style:normal}
+.budget-live-pulse .money-progress-track{margin-top:2px}
+.budget-live-empty{color:var(--muted);font-size:.72rem;line-height:1.5}
+.budget-live-link{color:var(--brand-primary);font-size:.74rem;font-weight:850}
+@media(max-width:540px){
+ .budget-live-pulse{padding:15px;border-radius:19px}
+ .budget-live-metrics{gap:6px}
+ .budget-live-metrics>div{padding:9px 7px}
+ .budget-live-metrics strong{font-size:.78rem}
+}
