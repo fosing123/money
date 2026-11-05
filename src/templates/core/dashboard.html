@@ -89,7 +89,7 @@
           <div class="money-budget-row">
             <div class="money-budget-row-top"><span>{{ item.name }}</span><strong>{{ item.spent_amount|floatformat:0 }} / {{ item.amount|floatformat:0 }} {{ currency }}</strong></div>
             <div class="money-budget-track {% if item.percent_used >= 100 %}is-over{% elif item.percent_used >= 80 %}is-near{% endif %}"><span style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div>
-            <small>{% if item.remaining_amount < 0 %}{{ item.remaining_amount|stringformat:".0f"|slice:"1:" }} {{ currency }} over plan{% else %}{{ item.remaining_amount|floatformat:0 }} {{ currency }} left{% endif %}</small>
+            <small>{% if item.remaining_amount < 0 %}{{ item.over_amount|floatformat:0 }} {{ currency }} over plan{% else %}{{ item.remaining_amount|floatformat:0 }} {{ currency }} left{% endif %}</small>
           </div>
         {% endfor %}
       </div>
@@ -118,15 +118,19 @@
       <a href="{% url 'insights' %}">Insights <span aria-hidden="true">→</span></a>
     </div>
     <div class="money-flow-grid">
-      <div><span class="money-flow-mark is-in">↙</span><small>Income</small><strong>+{{ income_total|floatformat:0 }} <i>{{ currency }}</i></strong></div>
+      <div><span class="money-flow-mark is-in">↙</span><small>Income</small><strong>+{{ money_in_total|floatformat:0 }} <i>{{ currency }}</i></strong></div>
       <div><span class="money-flow-mark is-out">↗</span><small>Expenses</small><strong>−{{ expense_total|floatformat:0 }} <i>{{ currency }}</i></strong></div>
       <div><span class="money-flow-mark is-net">≈</span><small>Net flow</small><strong>{{ net_cash_flow|floatformat:0 }} <i>{{ currency }}</i></strong></div>
     </div>
-    {% if expense_change_percent > 0 %}
-      <p class="money-trend-note is-up">Recorded expenses are {{ expense_change_percent }}% higher than the same point last month.</p>
-    {% elif expense_change_percent < 0 %}
-      <p class="money-trend-note is-down">Recorded expenses are {{ expense_change_percent|stringformat:"d"|slice:"1:" }}% lower than the same point last month.</p>
-    {% elif expense_change_percent == None and expense_total > 0 %}
+    {% if expense_change_percent != None %}
+      {% if expense_change_percent > 0 %}
+        <p class="money-trend-note is-up">Recorded expenses are {{ expense_change_percent }}% higher than the same point last month.</p>
+      {% elif expense_change_percent < 0 %}
+        <p class="money-trend-note is-down">Recorded expenses are {{ expense_change_percent|stringformat:"d"|slice:"1:" }}% lower than the same point last month.</p>
+      {% else %}
+        <p class="money-trend-note">Recorded expenses are level with the same point last month.</p>
+      {% endif %}
+    {% elif expense_total > 0 %}
       <p class="money-trend-note">You have recorded expenses this month; there was no spending in the comparison period.</p>
     {% else %}
       <p class="money-trend-note">Your spending is being compared with the same number of days last month.</p>
