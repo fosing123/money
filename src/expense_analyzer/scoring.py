@@ -44,7 +44,7 @@ def _category_budget(user, currency, category):
         owner=user,
         currency__iexact=currency,
         period__in=["weekly", "monthly"],
-    ).order_by("period", "-created_at")
+    ).order_by("-period", "-created_at")
     category_key = (category or "").strip().casefold()
     for budget in candidates:
         # A named budget without a category may represent an overall limit.
@@ -88,7 +88,7 @@ def _pattern_points(amount, average, count):
 def _breakdown(values):
     maxima = {
         "budget_fit": ("Category budget", 30),
-        "savings_protection": ("Savings-goal protection", 25),
+        "savings_protection": ("Weekly savings protection", 25),
         "balance_resilience": ("Available balance", 20),
         "priority_fit": ("Essential-spending priority", 15),
         "spending_pattern": ("Spending pattern", 10),
@@ -124,6 +124,16 @@ def _shared_context(user, category, *, today=None, exclude_transaction=None):
             "remaining": str(budget.remaining_amount),
             "period": budget.period,
         }
+    active_goals = [
+        {
+            "name": goal.name,
+            "target_amount": str(goal.target_amount),
+            "saved_amount": str(goal.saved_amount),
+            "remaining_amount": str(goal.remaining_amount),
+            "target_date": goal.target_date.isoformat() if goal.target_date else None,
+        }
+        for goal in snapshot["goals"]
+    ]
     context = {
         "currency": currency,
         "account_count": snapshot["account_count"],
@@ -132,6 +142,7 @@ def _shared_context(user, category, *, today=None, exclude_transaction=None):
         "safe_to_spend_shortfall": str(snapshot["safe_to_spend_shortfall"]),
         "weekly_savings_remaining": str(snapshot["weekly_savings_remaining"]),
         "active_goal_count": snapshot["active_goal_count"],
+        "active_goals": active_goals,
         "budget": budget_data,
         "category_average_90d": str(average),
         "category_history_count_90d": history_count,
@@ -235,6 +246,15 @@ def analyze_planned_purchase(user, *, amount, category, description="", is_essen
     reasoning = [
         f"The purchase costs {amount:,.0f} {currency}.",
         f"Your recorded safe-to-spend amount is {safe:,.0f} {currency}.",
+    ]
+    if context["active_goals"]:
+        names = ", ".join(goal["name"] for goal in context["active_goals"][:3])
+        reasoning.append(
+            f"Your active savings goal(s) include {names}. TIANA protects only the "
+            "weekly savings amount you have configured; it does not assume an "
+            "unrecorded contribution schedule for these longer-term goals."
+        )
+    reasoning.extend([
         (
             f"The current {budget.period} {category} budget has "
             f"{_money(budget.remaining_amount):,.0f} {currency} remaining."
@@ -244,7 +264,7 @@ def analyze_planned_purchase(user, *, amount, category, description="", is_essen
             f"TIANA has {history_count} comparable expense record(s) in the last 90 days."
             if history_count else "There is not enough category history to compare this purchase with your past spending."
         ),
-    ]
+    ])
     recommendations = []
     alternatives = []
     if amount > safe:
@@ -364,6 +384,14 @@ def analyze_completed_expense(user, transaction, *, is_essential=False):
     reasoning = [
         f"The recorded expense was {amount:,.0f} {currency} on {transaction.transaction_date:%d %b %Y}.",
         f"Your current spendable balance is {balance_after:,.0f} {currency}.",
+    ]
+    if context["active_goals"]:
+        names = ", ".join(goal["name"] for goal in context["active_goals"][:3])
+        reasoning.append(
+            f"Your active savings goal(s) include {names}. The weekly savings amount "
+            "protected by safe-to-spend is based on your configured weekly target."
+        )
+    reasoning.extend([
         (
             f"The {budget.period} {category} budget is {budget.percent_used:.0f}% used."
             if budget else "No matching category budget is recorded, so TIANA cannot assess a category limit."
@@ -372,7 +400,7 @@ def analyze_completed_expense(user, transaction, *, is_essential=False):
             f"TIANA compared this with {history_count} other expense record(s) in the last 90 days."
             if history_count else "There is not enough category history for a reliable spending-pattern comparison."
         ),
-    ]
+    ])
     recommendations = []
     alternatives = [
         "Use the remaining budget for essential costs first.",
