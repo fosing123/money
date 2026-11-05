@@ -1,15 +1,45 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from decimal import Decimal
 
 from .forms import BudgetForm, WeeklyBudgetAllocationForm
 from .models import Budget
+from .services import attach_budget_spending
 
 
 @login_required
 def budget_list_view(request):
-    budgets = Budget.objects.filter(owner=request.user)
-    return render(request, "budgets/budgets.html", {"budgets": budgets})
+    budgets = list(Budget.objects.filter(owner=request.user))
+    attach_budget_spending(budgets, owner=request.user)
+    currency = (request.user.currency or "XAF").upper()
+    weekly_budgets = [
+        budget for budget in budgets
+        if budget.period == "weekly" and budget.currency.upper() == currency
+    ]
+    weekly_planned = sum((Decimal(str(item.amount or 0)) for item in weekly_budgets), Decimal("0.00"))
+    weekly_spent = sum((Decimal(str(item.spent_amount or 0)) for item in weekly_budgets), Decimal("0.00"))
+    weekly_remaining = sum(
+        (max(Decimal(str(item.remaining_amount or 0)), Decimal("0.00")) for item in weekly_budgets),
+        Decimal("0.00"),
+    )
+    weekly_overage = sum(
+        (max(-Decimal(str(item.remaining_amount or 0)), Decimal("0.00")) for item in weekly_budgets),
+        Decimal("0.00"),
+    )
+    weekly_usage_percent = (
+        float(weekly_spent / weekly_planned * 100) if weekly_planned > 0 else 0
+    )
+    return render(request, "budgets/budgets.html", {
+        "budgets": budgets,
+        "weekly_budgets": weekly_budgets,
+        "weekly_planned": weekly_planned,
+        "weekly_spent": weekly_spent,
+        "weekly_remaining": weekly_remaining,
+        "weekly_overage": weekly_overage,
+        "weekly_usage_percent": weekly_usage_percent,
+        "currency": currency,
+    })
 
 
 @login_required
