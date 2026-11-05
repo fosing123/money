@@ -82,20 +82,12 @@ if DATABASE_URL.startswith(("postgres://", "postgresql://")):
     parsed = urlparse(DATABASE_URL)
     params = parse_qs(parsed.query)
     database_backend = os.environ.get(
-        "DJANGO_DB_BACKEND", "django.db.backends.postgresql"
+        "DJANGO_DB_BACKEND", "nkem.db_backends.pg8000"
     )
-    if database_backend == "django.db.backends.postgresql":
-        database_options = {
-            "sslmode": (
-                "disable"
-                if CLOUDFLARE_WORKER
-                else params.get("sslmode", ["prefer" if DEBUG else "require"])[0]
-            ),
-            # Hyperdrive uses transaction pooling. Django's Psycopg 3 backend
-            # defaults to ClientCursor; keep client-side binding explicit so
-            # ORM queries do not rely on connection-scoped prepared statements.
-            "server_side_binding": False,
-        }
+    if database_backend == "nkem.db_backends.pg8000":
+        # Hyperdrive terminates TLS at its edge; use plaintext TCP from the
+        # Worker to the Hyperdrive endpoint. Local/direct PostgreSQL uses TLS.
+        database_options = {"ssl_context": False if CLOUDFLARE_WORKER else True}
     else:
         raise ImproperlyConfigured(
             f"Unsupported PostgreSQL backend: {database_backend!r}"
