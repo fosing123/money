@@ -9,6 +9,7 @@ on:
   pull_request:
     branches:
       - main
+      - feat/tiana-money-intelligence-foundation-20261105
 
 jobs:
   test:
