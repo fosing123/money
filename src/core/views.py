@@ -20,6 +20,7 @@ from budgets.services import attach_budget_spending
 from finance.models import Account, Transaction
 from goals.models import Goal
 from notifications.services import evaluate_spending_alerts
+from core.money_intelligence import build_money_snapshot
 
 
 logger = logging.getLogger(__name__)
@@ -36,54 +37,11 @@ def dashboard_view(request):
     user = request.user
     if not user.onboarding_completed:
         return redirect("onboarding_setup")
-    today = timezone.localdate()
-    month_start = today.replace(day=1)
-    accounts = list(Account.objects.filter(owner=user, is_active=True))
-    total_balance = sum((account.balance for account in accounts), Decimal("0.00"))
-    month_transactions = Transaction.objects.filter(owner=user, transaction_date__gte=month_start, transaction_date__lte=today)
-    month_totals = month_transactions.aggregate(
-        income_total=Sum("amount", filter=Q(kind__in=["income", "refund", "transfer_in"])),
-        expense_total=Sum("amount", filter=Q(kind__in=["expense", "transfer_out"])),
-    )
-    income_total = month_totals["income_total"] or Decimal("0.00")
-    expense_total = month_totals["expense_total"] or Decimal("0.00")
-    recent_transactions = Transaction.objects.filter(owner=user).select_related("account")[:6]
+
     all_budgets = list(Budget.objects.filter(owner=user))
     evaluate_spending_alerts(user, budgets=all_budgets)
-    budgets = all_budgets[:4]
-    all_goals = list(Goal.objects.filter(owner=user).prefetch_related("contributions__transaction"))
-    goals = [goal for goal in all_goals if goal.status == "active"][:4]
-    goal_savings_total = sum((goal.saved_amount for goal in all_goals), Decimal("0.00"))
-    budget_amount = sum((item.amount for item in budgets), Decimal("0.00"))
-    budget_spent = sum((item.spent_amount for item in budgets), Decimal("0.00"))
-    budget_usage_percent = min(100, float(budget_spent / budget_amount * 100)) if budget_amount > 0 else 0
-    categories = list(month_transactions.filter(kind="expense").values("category").annotate(amount=Sum("amount")).order_by("-amount")[:4])
-    category_total = sum((item["amount"] or Decimal("0.00") for item in categories), Decimal("0.00"))
-    percentages = [int(item["amount"] / category_total * 100) if category_total else 0 for item in categories]
-    category_one_percent = percentages[0] if len(percentages) > 0 else 0
-    category_two_end = category_one_percent + (percentages[1] if len(percentages) > 1 else 0)
-    category_three_end = category_two_end + (percentages[2] if len(percentages) > 2 else 0)
-    coach_tip = (
-        "Get guidance shaped around your savings goals, weekly plan and recent activity. "
-        "Ask TIANA for a practical next step or help deciding what to prioritise."
-    )
-    return render(request, "core/dashboard.html", {
-        "accounts": accounts,
-        "total_balance": total_balance,
-        "income_total": income_total,
-        "expense_total": expense_total,
-        "net_cash_flow": income_total - expense_total,
-        "recent_transactions": recent_transactions,
-        "budgets": budgets,
-        "goals": goals,
-        "goal_savings_total": goal_savings_total,
-        "budget_usage_percent": budget_usage_percent,
-        "expense_categories": categories,
-        "category_one_percent": category_one_percent,
-        "category_two_end": category_two_end,
-        "category_three_end": category_three_end,
-        "coach_tip": coach_tip,
-    })
+    snapshot = build_money_snapshot(user)
+    return render(request, "core/dashboard.html", snapshot)
 
 
 @require_GET

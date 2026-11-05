@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Budgets · TIANA{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'nkem/money-intelligence.css' %}?v=20261105-foundation">{% endblock %}
 {% block content %}
 <section class="budget-page" data-budget-dashboard>
   <header class="budget-welcome"><div><h1>Make room for what matters.</h1></div><a class="budget-avatar" href="{% url 'profile' %}" aria-label="Open profile">{% if user.avatar %}<img src="{{ user.avatar.url }}" alt="" width="53" height="53" decoding="async">{% elif brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="" width="53" height="53" decoding="async">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</a></header>
@@ -16,6 +17,21 @@
       <div class="budget-allocation-legend" data-budget-legend><p class="budget-legend-placeholder">Your category breakdown will appear here.</p></div>
     </div>
     <div class="budget-allocation-foot"><span><i></i> Planned budget</span><strong data-budget-planned>0 {{ user.currency }}</strong><span><i></i> Actual spent</span><strong data-budget-actual>0 {{ user.currency }}</strong></div>
+  </section>
+  <section class="budget-live-pulse">
+    <div class="budget-section-heading"><div><span class="money-eyebrow">LIVE WEEKLY PULSE</span><h2>Your plan, updated as you spend.</h2><p>Only recorded expenses in {{ currency }} count toward these weekly totals.</p></div></div>
+    <div class="budget-live-metrics">
+      <div><small>Planned</small><strong>{{ weekly_planned|floatformat:0 }} <i>{{ currency }}</i></strong></div>
+      <div><small>Recorded spending</small><strong>{{ weekly_spent|floatformat:0 }} <i>{{ currency }}</i></strong></div>
+      <div><small>Category limits left</small><strong>{{ weekly_remaining|floatformat:0 }} <i>{{ currency }}</i></strong></div>
+    </div>
+    {% if weekly_planned %}
+      <div class="money-progress-track"><span style="width:{% if weekly_usage_percent > 100 %}100{% else %}{{ weekly_usage_percent }}{% endif %}%"></span></div>
+      <div class="money-week-progress-note"><span>{{ weekly_usage_percent|floatformat:0 }}% of weekly limits used</span><strong>{% if weekly_overage %}{{ weekly_overage|floatformat:0 }} {{ currency }} over plan{% else %}{{ weekly_remaining|floatformat:0 }} {{ currency }} remaining{% endif %}</strong></div>
+    {% else %}
+      <p class="budget-live-empty">You haven't created a weekly plan in {{ currency }} yet. Set category limits to see this pulse update automatically.</p>
+      <a class="budget-live-link" href="{% url 'budget_allocations' %}">Build your weekly plan →</a>
+    {% endif %}
   </section>
   <section class="budget-list-section"><div class="budget-section-heading"><div><h2>Your budget plans</h2></div><div class="budget-heading-actions"><a href="{% url 'budget_allocations' %}">Edit weekly plan</a></div></div>
     <div class="budget-plan-list">

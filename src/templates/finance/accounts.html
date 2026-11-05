@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'nkem/money-intelligence.css' %}?v=20261105-foundation">{% endblock %}
+{% block title %}Accounts · TIANA{% endblock %}
+{% block content %}
+<section class="money-accounts-page">
+  <header class="money-accounts-heading">
+    <div>
+      <span class="money-eyebrow">YOUR MONEY, ALL IN ONE PLACE</span>
+      <h1>Accounts</h1>
+      <p>Keep every wallet and account visible, without mixing currencies.</p>
+    </div>
+    <a class="button" href="{% url 'account_create' %}">＋ Add account</a>
+  </header>
+
+  <section class="money-account-overview">
+    <div>
+      <small>Accounts in your main currency · {{ primary_currency }}</small>
+      <strong>{{ primary_total_balance|floatformat:0 }} <span>{{ primary_currency }}</span></strong>
+    </div>
+    <div class="money-account-overview-count">
+      <b>{{ active_account_count }}</b>
+      <small>active account{{ active_account_count|pluralize }}</small>
+    </div>
+  </section>
+
+  <div class="money-account-note">
+    <span aria-hidden="true">✦</span>
+    TIANA keeps each currency separate. Your safe-to-spend calculation uses active non-savings accounts in your main currency; savings accounts remain visible here but are not treated as everyday spending money.
+  </div>
+
+  {% for group in account_groups %}
+    <section class="money-account-group">
+      <header>
+        <div><span class="money-eyebrow">CURRENCY</span><h2>{{ group.currency }}</h2></div>
+        <strong>{{ group.total_balance|floatformat:0 }} <small>{{ group.currency }}</small></strong>
+      </header>
+      <div class="money-account-list">
+        {% for account in group.accounts %}
+          <article class="money-account-card">
+            <span class="money-account-symbol money-account-symbol--{{ account.account_type }}" aria-hidden="true">
+              {% if account.account_type == "mtn_momo" %}◉{% elif account.account_type == "orange_money" %}◌{% elif account.account_type == "bank" %}▤{% elif account.account_type == "savings" %}◎{% elif account.account_type == "card" %}▭{% else %}◈{% endif %}
+            </span>
+            <div class="money-account-info">
+              <strong>{{ account.name }}</strong>
+              <small>{{ account.get_account_type_display }}{% if account.account_type == "savings" %} · Protected savings{% endif %}</small>
+            </div>
+            <div class="money-account-balance">
+              <strong>{{ account.balance|floatformat:0 }}</strong>
+              <small>{{ group.currency }}</small>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% empty %}
+    <section class="money-account-empty">
+      <span aria-hidden="true">◈</span>
+      <h2>Start with the accounts you already use.</h2>
+      <p>Add your cash, MTN Mobile Money, Orange Money or bank account. TIANA will keep each balance and currency organised.</p>
+      <a class="button" href="{% url 'account_create' %}">Add your first account →</a>
+    </section>
+  {% endfor %}
+
+  {% if inactive_accounts %}
+    <details class="money-inactive-accounts">
+      <summary>Inactive accounts ({{ inactive_account_count }})</summary>
+      {% for account in inactive_accounts %}
+        <div><span>{{ account.name }} · {{ account.currency }}</span><strong>{{ account.balance|floatformat:0 }} {{ account.currency }}</strong></div>
+      {% endfor %}
+    </details>
+  {% endif %}
+</section>
+{% endblock %}

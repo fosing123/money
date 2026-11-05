@@ -14,6 +14,39 @@ from notifications.services import evaluate_spending_alerts
 
 
 @login_required
+def account_list_view(request):
+    active_accounts = list(
+        Account.objects.filter(owner=request.user, is_active=True).order_by("currency", "name")
+    )
+    inactive_accounts = list(
+        Account.objects.filter(owner=request.user, is_active=False).order_by("currency", "name")
+    )
+
+    groups = []
+    by_currency = {}
+    for account in active_accounts:
+        currency = account.currency.upper()
+        if currency not in by_currency:
+            group = {"currency": currency, "accounts": [], "total_balance": Decimal("0.00")}
+            by_currency[currency] = group
+            groups.append(group)
+        group = by_currency[currency]
+        group["accounts"].append(account)
+        group["total_balance"] += Decimal(str(account.balance or 0))
+
+    primary_currency = (request.user.currency or "XAF").upper()
+    primary_group = by_currency.get(primary_currency)
+    return render(request, "finance/accounts.html", {
+        "account_groups": groups,
+        "inactive_accounts": inactive_accounts,
+        "active_account_count": len(active_accounts),
+        "inactive_account_count": len(inactive_accounts),
+        "primary_currency": primary_currency,
+        "primary_total_balance": primary_group["total_balance"] if primary_group else Decimal("0.00"),
+    })
+
+
+@login_required
 def account_create_view(request):
     form = AccountForm(request.POST or None, user=request.user)
     if request.method == "POST" and form.is_valid():
