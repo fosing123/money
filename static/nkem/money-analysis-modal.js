@@ -128,7 +128,7 @@
     });
   };
   const renderInsights = (insights) => {
-    const observations = insights.observations || [];
+    const observations = insights.observations || insights.reasoning || [];
     const recommendations = insights.recommendations || [];
     const goalSuggestions = insights.goal_suggestions || [];
     const alternatives = insights.alternatives || [];
@@ -200,6 +200,8 @@
         scope: trigger.dataset.analysisScope || "activity",
         object_id: trigger.dataset.analysisObjectId || null,
         period: trigger.dataset.analysisPeriod || "week",
+        start_date: trigger.dataset.analysisStartDate || "",
+        end_date: trigger.dataset.analysisEndDate || "",
       },
     };
   };
