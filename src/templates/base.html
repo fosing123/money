@@ -15,8 +15,36 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="{% static 'nkem/app.css' %}?v=20261105-expense-analyzer-nav"><link rel="stylesheet" href="{% static 'nkem/theme.css' %}?v=20261101-palettes-final"><link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030"><link rel="stylesheet" href="{% static 'nkem/ui-polish.css' %}?v=20261101-delete-nav-market-invest">
 <link rel="stylesheet" href="{% static 'nkem/minimal-copy.css' %}?v=20261105-minimal-copy">
-<link rel="stylesheet" href="{% static 'nkem/expense-analyzer.css' %}?v=20261106-coach-modal">
-<style>.tiana-pwa-actions{display:flex;align-items:center;gap:7px}.tiana-pwa-actions [hidden]{display:none!important}@media(max-width:760px){.tiana-pwa-actions .button{font-size:.68rem;padding:8px 9px}}</style>
+<link rel="stylesheet" href="{% static 'nkem/expense-analyzer.css' %}?v=20261106-premium-layer-v2">
+<style>
+.tiana-pwa-actions{display:flex;align-items:center;gap:7px}
+.tiana-pwa-actions [hidden],[data-tiana-analysis-modal][hidden],.tiana-analysis-overlay[hidden]{display:none!important}
+@media(max-width:760px){.tiana-pwa-actions .button{font-size:.68rem;padding:8px 9px}}
+/* Critical modal geometry stays available even while optional theme assets load. */
+.tiana-analysis-open{overflow:hidden}
+.tiana-analysis-overlay{position:fixed!important;inset:0!important;z-index:3200!important;display:grid;place-items:center;padding:24px;background:rgba(20,16,34,.54);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.tiana-analysis-overlay[hidden]{display:none!important}
+.tiana-analysis-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;cursor:default}
+.tiana-analysis-dialog{position:relative;z-index:1;display:flex;flex-direction:column;width:min(100%,880px);max-height:min(92dvh,940px);min-height:0;overflow:hidden;border:1px solid rgba(255,255,255,.78);border-radius:28px;background:var(--surface,#fff);box-shadow:0 32px 100px rgba(12,8,28,.32)}
+.tiana-analysis-dialog-header{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:76px;padding:15px 22px;border-bottom:1px solid var(--line,#ece8f2);background:var(--surface,#fff)}
+.tiana-analysis-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.tiana-analysis-brand>span{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:14px;background:var(--brand-soft,#f0eaff);color:var(--brand-primary,#7655cb);font-size:1.25rem}
+.tiana-analysis-brand>div{display:grid;gap:3px;min-width:0}
+.tiana-analysis-brand small{color:var(--brand-primary,#7655cb);font-size:.6rem;font-weight:850;letter-spacing:.13em}
+.tiana-analysis-brand strong{overflow:hidden;color:var(--text,#292338);font:800 .94rem Manrope,Inter,sans-serif;text-overflow:ellipsis;white-space:nowrap}
+.tiana-analysis-close{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border:1px solid var(--line,#ece8f2);border-radius:13px;background:var(--surface,#fff);color:var(--text,#292338);font-size:1.5rem;cursor:pointer}
+.tiana-analysis-loading,.tiana-analysis-personalization,.tiana-analysis-result{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.tiana-analysis-error{margin:22px;padding:18px;border:1px solid #f1d3d6;border-radius:17px;background:#fff5f5;color:#98444d;font-size:.82rem;line-height:1.6}
+.tiana-analysis-result,.tiana-analysis-personalization{padding:24px}
+@media(max-width:680px){
+ .tiana-analysis-overlay{align-items:end;padding:0}
+ .tiana-analysis-dialog{width:100%;max-height:94dvh;max-height:94vh;border:0;border-radius:27px 27px 0 0;box-shadow:0 -18px 70px rgba(12,8,28,.28)}
+ .tiana-analysis-dialog-header{min-height:68px;padding:12px 17px}
+ .tiana-analysis-result,.tiana-analysis-personalization{padding:19px 17px max(22px,env(safe-area-inset-bottom))}
+ .tiana-analysis-loading{padding:56px 22px}
+ .tiana-analysis-error{margin:16px}
+}
+</style>
 {% block extra_head %}{% endblock %}
 </head>
 <body data-user-theme="{{ user.theme|default:'violet' }}" data-page="{{ request.resolver_match.url_name|default:'' }}" data-user-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}">
