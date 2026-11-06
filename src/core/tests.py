@@ -14,6 +14,9 @@ class WelcomePageTests(TestCase):
         self.assertContains(response, "Track expenses, save for your goals")
         self.assertContains(response, reverse("onboarding"))
         self.assertContains(response, "assets/tiana-logo-transparent.png")
+        self.assertContains(response, "data-tiana-page-loader")
+        self.assertContains(response, "nkem/page-loader.css")
+        self.assertContains(response, "nkem/page-loader.js")
         self.assertContains(response, "assets/tiana-welcome-student-campus-4k.jpg")
         self.assertContains(
             response,
@@ -54,7 +57,9 @@ class PWAOfflineAndPremiumTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("javascript", response["Content-Type"])
         self.assertEqual(response["Service-Worker-Allowed"], "/")
-        self.assertContains(response, "tiana-pwa-shell-v2")
+        self.assertContains(response, "tiana-pwa-shell-v3")
+        self.assertContains(response, '/static/nkem/page-loader.css')
+        self.assertContains(response, '/static/nkem/page-loader.js')
         self.assertNotContains(response, "caches.put(event.request")
 
     def test_offline_bootstrap_requires_a_signed_in_member(self):
