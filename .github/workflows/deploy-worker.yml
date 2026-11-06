@@ -80,6 +80,7 @@ jobs:
           node --check static/nkem/fcm.js
           node --check static/nkem/money-analysis-modal.js
           node --check static/nkem/activity-chart.js
+          node --check static/nkem/page-loader.js
           node --check static/nkem/app.js
 
       - name: Generate responsive WebP image assets
