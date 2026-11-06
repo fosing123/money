@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Add to {{ goal.name }} · TIANA{% endblock %}
-{% block extra_head %}
-<link rel="stylesheet" href="{% static 'nkem/expense-analyzer.css' %}?v=20261106-goal-topup-sheet">
-{% endblock %}
 {% block content %}
 <section class="goal-topup-stage" data-goal-topup>
   <div class="goal-topup-backdrop" data-topup-backdrop aria-hidden="true"></div>
