@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f7faf8">
-<meta name="description" content="TIANA personal finance. Track your money, manage budgets and plan savings.">
+<meta name="description" content="{% block meta_description %}TIANA helps you track money, plan budgets and build savings goals with clear, practical tools.{% endblock %}">
 <title>{% block title %}TIANA · Personal finance{% endblock %}</title>
 <meta name="google-adsense-account" content="ca-pub-1554607983371431">
 {% if not user.is_authenticated %}<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1554607983371431"
@@ -28,6 +28,9 @@
 {% else %}<nav class="header-actions" aria-label="Account navigation"><a class="button button-secondary header-login" href="{% url 'money_school' %}">Money School</a><a class="button button-secondary header-login" href="{% url 'login' %}">Log in</a><a class="button" href="{% url 'register' %}">Get started</a></nav>{% endif %}
 </header>
 <main class="page-shell">{% if messages %}<div class="messages" role="status" aria-live="polite">{% for message in messages %}<div class="message message-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}</main>
+{% if not user.is_authenticated %}
+<footer class="public-site-footer"><div class="public-site-footer-inner"><a class="public-site-footer-brand" href="{% url 'home' %}">TIANA <span>Money, made clearer.</span></a><nav aria-label="Footer navigation"><a href="{% url 'about' %}">About</a><a href="{% url 'money_school' %}">Money School</a><a href="{% url 'privacy' %}">Privacy</a><a href="{% url 'terms' %}">Terms</a></nav><small>© {% now "Y" %} TIANA. A little more clarity for every money decision.</small></div></footer>
+{% endif %}
 {% if user.is_authenticated %}
 <div class="tiana-analysis-overlay" data-tiana-analysis-modal hidden data-insight-url="{% url 'analyzer_insight' %}" data-preview-url="{% url 'analyzer_transaction_preview' %}" data-personalization-url="{% url 'analyzer_personalization' %}">
   <button type="button" class="tiana-analysis-backdrop" data-analysis-dismiss aria-label="Close analysis"></button>
