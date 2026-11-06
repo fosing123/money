@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}About TIANA · Money tools for everyday life{% endblock %}
+{% block meta_description %}Meet TIANA: a practical money companion for tracking spending, planning budgets and building savings goals, with a focus on students and everyday financial confidence.{% endblock %}
+{% block content %}
+<section class="public-content-page">
+  <header class="public-content-hero">
+    <span class="public-content-eyebrow">ABOUT TIANA</span>
+    <h1>Make your money feel a little less complicated.</h1>
+    <p>TIANA is a personal money companion built to make everyday financial habits easier to understand, practise and improve.</p>
+  </header>
+  <div class="public-content-layout">
+    <article class="public-content-main">
+      <h2>Why TIANA exists</h2>
+      <p>Managing money is not only about how much someone earns. It is also about knowing what is coming in, understanding what is going out, planning for the things that matter and having a simple way to follow progress.</p>
+      <p>TIANA brings those everyday tasks into one place. The aim is to make budgeting and saving approachable for students, young adults and anyone who wants a clearer picture of their money.</p>
+      <h2>What you can do with TIANA</h2>
+      <ul>
+        <li>Record income and expenses and review your activity over a day, week, month or year.</li>
+        <li>Create budgets and see how much of each limit has been used.</li>
+        <li>Set savings goals, contribute from an account and follow your progress.</li>
+        <li>Explore practical money lessons and receive explanations based on the records you choose to analyse.</li>
+      </ul>
+      <h2>Built around real-life decisions</h2>
+      <p>Money plans should leave room for food, transport, school, family responsibilities and unexpected costs. TIANA is designed to help people see those trade-offs without shame or unrealistic promises.</p>
+      <h2>What TIANA is not</h2>
+      <p>TIANA is not a bank, mobile-money operator, lender or licensed investment adviser. It does not guarantee financial outcomes. Always verify payment details with your provider and make important financial decisions using your own judgement.</p>
+    </article>
+    <aside class="public-content-aside">
+      <span>THE TIANA APPROACH</span>
+      <strong>Clarity first.</strong>
+      <p>Know what happened, understand what matters, then choose one useful next step.</p>
+      <a href="{% url 'money_school' %}">Explore Money School →</a>
+      <a href="{% url 'register' %}">Create your TIANA account →</a>
+    </aside>
+  </div>
+</section>
+{% endblock %}

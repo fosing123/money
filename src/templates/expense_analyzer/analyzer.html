@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Money analysis · TIANA{% endblock %}
+{% block content %}
+<section class="analysis-centre-page">
+  <header class="analysis-centre-hero">
+    <div>
+      <span class="analysis-centre-eyebrow">YOUR MONEY, WITH A LITTLE MORE CLARITY</span>
+      <h1>What would you like to understand?</h1>
+      <p>Pick a part of your money life. TIANA will bring the numbers together, explain what matters and help you choose a sensible next step.</p>
+    </div>
+    <div class="analysis-centre-art" aria-hidden="true"><span>✦</span><i>◎</i><b>↗</b></div>
+  </header>
+
+  <div class="analysis-centre-toolbar">
+    <div><span class="analysis-centre-label">LOOK AT</span><strong>Choose a time period</strong></div>
+    <div class="analysis-period-picker" role="group" aria-label="Analysis period">
+      <button type="button" data-centre-period="day" class="{% if period == 'day' %}is-active{% endif %}" aria-pressed="{% if period == 'day' %}true{% else %}false{% endif %}">Day</button>
+      <button type="button" data-centre-period="week" class="{% if period == 'week' %}is-active{% endif %}" aria-pressed="{% if period == 'week' %}true{% else %}false{% endif %}">Week</button>
+      <button type="button" data-centre-period="month" class="{% if period == 'month' %}is-active{% endif %}" aria-pressed="{% if period == 'month' %}true{% else %}false{% endif %}">Month</button>
+      <button type="button" data-centre-period="year" class="{% if period == 'year' %}is-active{% endif %}" aria-pressed="{% if period == 'year' %}true{% else %}false{% endif %}">Year</button>
+      <button type="button" data-centre-period="custom" class="{% if period == 'custom' %}is-active{% endif %}" aria-pressed="{% if period == 'custom' %}true{% else %}false{% endif %}">Custom</button>
+    </div>
+  </div>
+  <div class="analysis-custom-range {% if period != 'custom' %}is-hidden{% endif %}" data-custom-range>
+    <label>From <input type="date" value="{{ selected_start_date|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}" data-analysis-start-date></label>
+    <label>To <input type="date" value="{{ selected_end_date|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}" data-analysis-end-date></label>
+    <button type="button" class="analysis-custom-apply" data-centre-custom-apply>Apply date range <span>→</span></button>
+  </div>
+
+  <div class="analysis-choice-grid">
+    <button type="button" class="analysis-choice-card analysis-choice-card--activity" data-analysis-open data-analysis-scope="activity" data-analysis-period="{{ period }}">
+      <span class="analysis-choice-icon">↗</span>
+      <span class="analysis-choice-overline">THE BIG PICTURE</span>
+      <strong>My spending & activity</strong>
+      <span>See where your money went, what came in, your biggest expenses and how this period compares.</span>
+      <b>Review my activity <i>→</i></b>
+    </button>
+    <button type="button" class="analysis-choice-card analysis-choice-card--budget" data-analysis-open data-analysis-scope="budgets" data-analysis-period="{{ period }}">
+      <span class="analysis-choice-icon">▤</span>
+      <span class="analysis-choice-overline">KEEP THE PLAN BALANCED</span>
+      <strong>My budgets</strong>
+      <span>Find budgets getting tight, categories with room left and places where a small adjustment could help.</span>
+      <b>Check my budgets <i>→</i></b>
+    </button>
+    <button type="button" class="analysis-choice-card analysis-choice-card--goals" data-analysis-open data-analysis-scope="goals" data-analysis-period="{{ period }}">
+      <span class="analysis-choice-icon">◎</span>
+      <span class="analysis-choice-overline">BUILD TOWARDS TOMORROW</span>
+      <strong>My savings goals</strong>
+      <span>See what's on track, what still needs attention and what small contribution could move you forward.</span>
+      <b>Review my goals <i>→</i></b>
+    </button>
+    <button type="button" class="analysis-choice-card analysis-choice-card--coach" data-analysis-personalize>
+      <span class="analysis-choice-icon">✦</span>
+      <span class="analysis-choice-overline">MAKE TIANA FEEL LIKE TIANA</span>
+      <strong>How should TIANA advise me?</strong>
+      <span>Choose a friendly, fatherly, motherly or mentor-like voice. Share what you're working towards so her advice fits your life.</span>
+      <b>{% if has_personalization %}Update my preferences{% else %}Personalise TIANA{% endif %} <i>→</i></b>
+    </button>
+  </div>
+
+  <section class="analysis-recent-section">
+    <div class="analysis-recent-heading"><div><span class="analysis-centre-eyebrow">ONE EXPENSE AT A TIME</span><h2>Take a closer look</h2><p>Open an individual expense and see what it meant for your money.</p></div><a href="{% url 'transactions' %}">Go to activity →</a></div>
+    <div class="analysis-recent-list">
+      {% for item in recent_expenses %}
+        <div class="analysis-recent-row">
+          <span class="analysis-recent-icon">↗</span>
+          <span class="analysis-recent-copy"><strong>{{ item.description|default:item.category }}</strong><small>{{ item.category }} · {{ item.transaction_date|date:"j M Y" }}</small></span>
+          <strong class="analysis-recent-amount">{{ item.amount|floatformat:0 }} {{ item.currency }}</strong>
+          <button type="button" class="analysis-recent-action" data-analysis-open data-analysis-scope="transaction" data-analysis-object-id="{{ item.pk }}" data-analysis-period="{{ period }}" aria-label="Analyse {{ item.description|default:item.category }}">Analyze</button>
+        </div>
+      {% empty %}
+        <div class="analysis-recent-empty">Your recorded expenses will appear here. You can also preview an expense before saving it from Add Transaction.</div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <p class="analysis-centre-footnote">Your analysis is private to your account. It reads your records but never moves money or changes a transaction.</p>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const periodButtons = document.querySelectorAll("[data-centre-period]");
+  const range = document.querySelector("[data-custom-range]");
+  const startInput = document.querySelector("[data-analysis-start-date]");
+  const endInput = document.querySelector("[data-analysis-end-date]");
+  const activityAction = document.querySelector('[data-analysis-open][data-analysis-scope="activity"]');
+
+  const setPeriod = (period) => {
+    periodButtons.forEach((item) => {
+      const active = item.dataset.centrePeriod === period;
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+    if (range) range.classList.toggle("is-hidden", period !== "custom");
+    document.querySelectorAll("[data-analysis-open]").forEach((action) => {
+      action.dataset.analysisPeriod = period;
+      if (period === "custom") {
+        action.dataset.analysisStartDate = startInput?.value || "";
+        action.dataset.analysisEndDate = endInput?.value || "";
+      } else {
+        delete action.dataset.analysisStartDate;
+        delete action.dataset.analysisEndDate;
+      }
+    });
+  };
+
+  periodButtons.forEach((button) => {
+    button.addEventListener("click", () => setPeriod(button.dataset.centrePeriod));
+  });
+  document.querySelector("[data-centre-custom-apply]")?.addEventListener("click", () => {
+    const start = startInput?.value || "";
+    const end = endInput?.value || "";
+    if (!start || !end) {
+      window.alert("Choose both dates before applying your custom range.");
+      return;
+    }
+    if (start > end) {
+      window.alert("The start date must be on or before the end date.");
+      return;
+    }
+    setPeriod("custom");
+    document.querySelectorAll("[data-analysis-open]").forEach((action) => {
+      action.dataset.analysisStartDate = start;
+      action.dataset.analysisEndDate = end;
+    });
+    activityAction?.click();
+  });
+
+  [startInput, endInput].forEach((input) => input?.addEventListener("change", () => {
+    if (startInput.value && endInput.value) {
+      document.querySelectorAll("[data-analysis-open]").forEach((action) => {
+        action.dataset.analysisStartDate = startInput.value;
+        action.dataset.analysisEndDate = endInput.value;
+      });
+    }
+  }));
+});</script>
+{% endblock %}

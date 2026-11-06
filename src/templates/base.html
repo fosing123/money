@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f7faf8">
-<meta name="description" content="TIANA personal finance. Track your money, manage budgets and plan savings.">
+<meta name="description" content="{% block meta_description %}TIANA helps you track money, plan budgets and build savings goals with clear, practical tools.{% endblock %}">
 <title>{% block title %}TIANA · Personal finance{% endblock %}</title>
 <meta name="google-adsense-account" content="ca-pub-1554607983371431">
 {% if not user.is_authenticated %}<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1554607983371431"
@@ -13,12 +13,56 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap"></noscript>
-<link rel="stylesheet" href="{% static 'nkem/app.css' %}?v=20261101-premium-final"><link rel="stylesheet" href="{% static 'nkem/theme.css' %}?v=20261101-palettes-final"><link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030"><link rel="stylesheet" href="{% static 'nkem/ui-polish.css' %}?v=20261101-delete-nav-market-invest">
+<link rel="stylesheet" href="{% static 'nkem/app.css' %}?v=20261105-expense-analyzer-nav"><link rel="stylesheet" href="{% static 'nkem/theme.css' %}?v=20261101-palettes-final"><link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030"><link rel="stylesheet" href="{% static 'nkem/ui-polish.css' %}?v=20261101-delete-nav-market-invest">
 <link rel="stylesheet" href="{% static 'nkem/minimal-copy.css' %}?v=20261105-minimal-copy">
-<style>.tiana-pwa-actions{display:flex;align-items:center;gap:7px}.tiana-pwa-actions [hidden]{display:none!important}@media(max-width:760px){.tiana-pwa-actions .button{font-size:.68rem;padding:8px 9px}}</style>
+<link rel="stylesheet" href="{% static 'nkem/expense-analyzer.css' %}?v=20261106-premium-layer-v2">
+<link rel="stylesheet" href="{% static 'nkem/page-loader.css' %}?v=20261106-glass-loader-v1">
+<style>
+.tiana-pwa-actions{display:flex;align-items:center;gap:7px}
+.tiana-pwa-actions [hidden],[data-tiana-analysis-modal][hidden],.tiana-analysis-overlay[hidden]{display:none!important}
+@media(max-width:760px){.tiana-pwa-actions .button{font-size:.68rem;padding:8px 9px}}
+/* Critical modal geometry stays available even while optional theme assets load. */
+.tiana-analysis-open{overflow:hidden}
+.tiana-analysis-overlay{position:fixed!important;inset:0!important;z-index:3200!important;display:grid;place-items:center;padding:24px;background:rgba(20,16,34,.54);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.tiana-analysis-overlay[hidden]{display:none!important}
+.tiana-analysis-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;cursor:default}
+.tiana-analysis-dialog{position:relative;z-index:1;display:flex;flex-direction:column;width:min(100%,880px);max-height:min(92dvh,940px);min-height:0;overflow:hidden;border:1px solid rgba(255,255,255,.78);border-radius:28px;background:var(--surface,#fff);box-shadow:0 32px 100px rgba(12,8,28,.32)}
+.tiana-analysis-dialog-header{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:76px;padding:15px 22px;border-bottom:1px solid var(--line,#ece8f2);background:var(--surface,#fff)}
+.tiana-analysis-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.tiana-analysis-brand>span{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:14px;background:var(--brand-soft,#f0eaff);color:var(--brand-primary,#7655cb);font-size:1.25rem}
+.tiana-analysis-brand>div{display:grid;gap:3px;min-width:0}
+.tiana-analysis-brand small{color:var(--brand-primary,#7655cb);font-size:.6rem;font-weight:850;letter-spacing:.13em}
+.tiana-analysis-brand strong{overflow:hidden;color:var(--text,#292338);font:800 .94rem Manrope,Inter,sans-serif;text-overflow:ellipsis;white-space:nowrap}
+.tiana-analysis-close{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border:1px solid var(--line,#ece8f2);border-radius:13px;background:var(--surface,#fff);color:var(--text,#292338);font-size:1.5rem;cursor:pointer}
+.tiana-analysis-loading,.tiana-analysis-personalization,.tiana-analysis-result{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.tiana-analysis-error{margin:22px;padding:18px;border:1px solid #f1d3d6;border-radius:17px;background:#fff5f5;color:#98444d;font-size:.82rem;line-height:1.6}
+.tiana-analysis-result,.tiana-analysis-personalization{padding:24px}
+@media(max-width:680px){
+ .tiana-analysis-overlay{align-items:end;padding:0}
+ .tiana-analysis-dialog{width:100%;max-height:94dvh;max-height:94vh;border:0;border-radius:27px 27px 0 0;box-shadow:0 -18px 70px rgba(12,8,28,.28)}
+ .tiana-analysis-dialog-header{min-height:68px;padding:12px 17px}
+ .tiana-analysis-result,.tiana-analysis-personalization{padding:19px 17px max(22px,env(safe-area-inset-bottom))}
+ .tiana-analysis-loading{padding:56px 22px}
+ .tiana-analysis-error{margin:16px}
+}
+</style>
 {% block extra_head %}{% endblock %}
 </head>
 <body data-user-theme="{{ user.theme|default:'violet' }}" data-page="{{ request.resolver_match.url_name|default:'' }}" data-user-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}">
+<div class="tiana-page-loader" data-tiana-page-loader hidden aria-hidden="true">
+  <div class="tiana-page-loader-card" role="status" aria-live="polite" aria-atomic="true">
+    <span class="tiana-page-loader-orbit" aria-hidden="true">
+      <svg class="tiana-page-loader-ring" viewBox="0 0 88 88">
+        <circle cx="44" cy="44" r="35"></circle>
+        <circle cx="44" cy="44" r="35"></circle>
+      </svg>
+      <span class="tiana-page-loader-spark">✦</span>
+    </span>
+    <span class="tiana-page-loader-kicker">TIANA MONEY COMPANION</span>
+    <strong class="tiana-page-loader-message" data-page-loader-message>Getting everything ready for you</strong>
+    <p class="tiana-page-loader-note">A moment of patience. Your money stays safe.</p>
+  </div>
+</div>
 <header class="app-topbar">
 <a class="brand-wrap" href="{% url 'home' %}" aria-label="TIANA home"><picture><source type="image/webp" srcset="{% static 'assets/optimized/tiana-logo-transparent-320.webp' %} 320w, {% static 'assets/optimized/tiana-logo-transparent-640.webp' %} 640w" sizes="180px"><img class="nkem-header-logo tiana-header-wordmark" src="{% static 'assets/tiana-logo-transparent.png' %}" alt="TIANA — Your Money Friend Always" width="1660" height="716" decoding="async"></picture></a>
 {% if user.is_authenticated %}
@@ -27,10 +71,64 @@
 {% else %}<nav class="header-actions" aria-label="Account navigation"><a class="button button-secondary header-login" href="{% url 'money_school' %}">Money School</a><a class="button button-secondary header-login" href="{% url 'login' %}">Log in</a><a class="button" href="{% url 'register' %}">Get started</a></nav>{% endif %}
 </header>
 <main class="page-shell">{% if messages %}<div class="messages" role="status" aria-live="polite">{% for message in messages %}<div class="message message-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}</main>
+{% if not user.is_authenticated %}
+<footer class="public-site-footer"><div class="public-site-footer-inner"><a class="public-site-footer-brand" href="{% url 'home' %}">TIANA <span>Money, made clearer.</span></a><nav aria-label="Footer navigation"><a href="{% url 'about' %}">About</a><a href="{% url 'money_school' %}">Money School</a><a href="{% url 'privacy' %}">Privacy</a><a href="{% url 'terms' %}">Terms</a></nav><small>© {% now "Y" %} TIANA. A little more clarity for every money decision.</small></div></footer>
+{% endif %}
 {% if user.is_authenticated %}
+<div class="tiana-analysis-overlay" data-tiana-analysis-modal hidden data-insight-url="{% url 'analyzer_insight' %}" data-preview-url="{% url 'analyzer_transaction_preview' %}" data-personalization-url="{% url 'analyzer_personalization' %}">
+  <button type="button" class="tiana-analysis-backdrop" data-analysis-dismiss aria-label="Close analysis"></button>
+  <section class="tiana-analysis-dialog" role="dialog" aria-modal="true" aria-labelledby="tiana-analysis-title">
+    <header class="tiana-analysis-dialog-header">
+      <div class="tiana-analysis-brand"><span>✦</span><div><small>TIANA MONEY COMPANION</small><strong id="tiana-analysis-title">Your personal money review</strong></div></div>
+      <button type="button" class="tiana-analysis-close" data-analysis-dismiss aria-label="Close analysis">×</button>
+    </header>
+    <div class="tiana-analysis-loading" data-analysis-loading hidden>
+      <span class="tiana-analysis-loader">✦</span><strong>Let me look at this with you.</strong>
+      <p>I'm bringing your numbers together and finding the most useful next step.</p>
+      <div class="tiana-analysis-loading-bars"><i></i><i></i><i></i></div>
+    </div>
+    <div class="tiana-analysis-error" data-analysis-error hidden role="alert"></div>
+    <div class="tiana-analysis-result" data-analysis-result hidden>
+      <div class="tiana-analysis-result-hero"><div><span class="tiana-analysis-kicker" data-result-kicker>YOUR MONEY, CLEARER</span><h2 data-result-heading></h2><p data-result-subtitle></p></div><span class="tiana-analysis-verdict" data-result-verdict hidden></span></div>
+      <div class="tiana-analysis-summary"><span class="tiana-analysis-spark">✦</span><div><small data-result-summary-label>A NOTE FROM TIANA</small><p data-result-summary></p></div></div>
+      <div class="tiana-analysis-metrics" data-result-metrics></div>
+      <section class="tiana-analysis-section" data-result-score-section hidden><div class="tiana-analysis-section-heading"><div><small>THE BIG PICTURE</small><h3>How this expense looks</h3></div><strong class="tiana-analysis-score" data-result-score></strong></div><div class="tiana-analysis-score-track"><i data-result-score-track></i></div><div class="tiana-analysis-breakdown" data-result-breakdown></div></section>
+      <section class="tiana-analysis-section" data-result-categories-section hidden><div class="tiana-analysis-section-heading"><div><small>YOUR SPENDING PATTERN</small><h3>Where the money went</h3></div></div><div class="tiana-analysis-bars" data-result-categories></div></section>
+      <section class="tiana-analysis-section" data-result-rows-section hidden><div class="tiana-analysis-section-heading"><div><small>WHAT NEEDS YOUR ATTENTION</small><h3 data-result-rows-heading>Here's what I noticed</h3></div></div><div class="tiana-analysis-records" data-result-rows></div></section>
+      <div class="tiana-analysis-advice-grid">
+        <section class="tiana-analysis-advice-card tiana-analysis-advice-card--observations" data-result-observations-section hidden><span class="tiana-analysis-advice-icon">◎</span><small>WHAT I NOTICED</small><ul data-result-observations></ul></section>
+        <section class="tiana-analysis-advice-card tiana-analysis-advice-card--actions" data-result-recommendations-section hidden><span class="tiana-analysis-advice-icon">↗</span><small>WHAT I'D DO NEXT</small><ul data-result-recommendations></ul></section>
+      </div>
+      <section class="tiana-analysis-goal-ideas" data-result-goals-section hidden><div><small>THINKING ABOUT YOUR FUTURE</small><h3>Goals worth considering</h3><p>These are ideas to discuss and shape, not goals I've created for you.</p></div><div class="tiana-analysis-goal-idea-list" data-result-goal-ideas></div></section>
+      <section class="tiana-analysis-alternatives" data-result-alternatives-section hidden><small>ANOTHER WAY TO LOOK AT IT</small><ul data-result-alternatives></ul></section>
+      <p class="tiana-analysis-encouragement" data-result-encouragement hidden></p>
+      <p class="tiana-analysis-ai-status" data-result-ai-status></p>
+      <p class="tiana-analysis-disclaimer">This review uses the records currently saved in your TIANA account. It never moves money or edits your transactions.</p>
+    </div>
+    <div class="tiana-analysis-personalization" data-analysis-personalization hidden>
+      <div class="tiana-analysis-personalization-intro"><span class="tiana-analysis-kicker">LET'S GET TO KNOW HOW YOU THINK</span><h2>How would you like me to guide you?</h2><p>Money advice feels different when it understands the person behind the numbers. Tell me a little about the voice you prefer and the future you're building.</p></div>
+      <form data-personalization-form>
+        {% csrf_token %}
+        <div class="tiana-analysis-field"><label>Choose my voice</label><div class="tiana-analysis-voice-options">
+          <label><input type="radio" name="voice_style" value="friendly" checked><span><b>Friendly</b><small>Like a good friend</small></span></label>
+          <label><input type="radio" name="voice_style" value="fatherly"><span><b>Fatherly</b><small>Calm, protective advice</small></span></label>
+          <label><input type="radio" name="voice_style" value="motherly"><span><b>Motherly</b><small>Warm, caring guidance</small></span></label>
+          <label><input type="radio" name="voice_style" value="mentor"><span><b>Mentor</b><small>Clear, strategic support</small></span></label>
+        </div></div>
+        <div class="tiana-analysis-field"><label for="tiana-ambition">What matters most to your future?</label><select id="tiana-ambition" name="ambition"><option value="">I'm still figuring it out</option><option value="financial_freedom">Become financially independent</option><option value="millionaire">Build substantial wealth</option><option value="business_owner">Start or grow a business</option><option value="career">Build a successful career</option><option value="education">Complete my education or training</option><option value="support_family">Support my family</option><option value="own_home">Own a home or property</option><option value="other">Something else</option></select></div>
+        <div class="tiana-analysis-field-row"><div class="tiana-analysis-field"><label for="tiana-stage">Where are you right now?</label><select id="tiana-stage" name="current_stage"><option value="">Prefer not to say</option><option value="student">Student</option><option value="training">Learning a skill or trade</option><option value="employed">Employed</option><option value="self_employed">Self-employed</option><option value="job_seeking">Looking for work</option><option value="other">Other</option></select></div><div class="tiana-analysis-field"><label for="tiana-career">Career or work you're aiming for</label><input id="tiana-career" name="desired_career" maxlength="120" placeholder="e.g. software developer"></div></div>
+        <div class="tiana-analysis-field"><label for="tiana-vision">What do you want your future to look like?</label><textarea id="tiana-vision" name="future_vision" rows="2" maxlength="240" placeholder="Tell me in your own words. A business, a home, freedom, helping your family…"></textarea></div>
+        <div class="tiana-analysis-field"><label for="tiana-why">Why is this important to you? <span>Optional</span></label><input id="tiana-why" name="why_it_matters" maxlength="180" placeholder="Your reason, in a sentence"></div>
+        <p class="tiana-analysis-privacy-note">You can change these preferences later. TIANA uses them to make her advice feel more personal and relevant.</p>
+        <div class="tiana-analysis-form-actions"><button type="button" class="tiana-analysis-text-button" data-analysis-dismiss>Not now</button><button type="submit" class="tiana-analysis-primary-button">Save and continue <span>→</span></button></div>
+      </form>
+    </div>
+  </section>
+</div>
 <nav class="mobile-bottom-nav" aria-label="Primary mobile navigation">
 <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}><span class="nav-icon">⌂</span><span>Home</span></a>
 <a href="{% url 'transactions' %}" {% if request.resolver_match.url_name == 'transactions' %}aria-current="page"{% endif %}><span class="nav-icon">↕</span><span>Activity</span></a>
+
 <a href="{% url 'budgets' %}" {% if request.resolver_match.url_name == 'budgets' %}aria-current="page"{% endif %}><span class="nav-icon">▤</span><span>Budget</span></a>
 <a href="{% url 'goals' %}" {% if request.resolver_match.url_name == 'goals' %}aria-current="page"{% endif %}><span class="nav-icon">◎</span><span>Goals</span></a>
 <a href="{% url 'opportunities' %}" {% if request.resolver_match.url_name == 'opportunities' or request.resolver_match.url_name == 'opportunity_detail' %}aria-current="page"{% endif %}><span class="nav-icon">▦</span><span>Market</span></a>
@@ -38,7 +136,8 @@
 <a href="{% url 'profile' %}" {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}><span class="nav-icon">●</span><span>Profile</span></a>
 </nav>
 {% endif %}
+<script src="{% static 'nkem/page-loader.js' %}?v=20261106-glass-loader-v1" defer></script>
 <script src="{% static 'nkem/app.js' %}" defer></script>
 <script src="{% static 'nkem/offline-core.js' %}" defer></script>
-<script src="{% static 'nkem/pwa.js' %}" defer></script>{% block extra_js %}{% endblock %}
+<script src="{% static 'nkem/pwa.js' %}" defer></script>{% if user.is_authenticated %}<script src="{% static 'nkem/money-analysis-modal.js' %}?v=20261106-premium-modal-v4" defer></script>{% endif %}{% block extra_js %}{% endblock %}
 </body></html>

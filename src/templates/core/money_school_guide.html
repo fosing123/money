@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}{{ guide.title }} · TIANA Money School{% endblock %}
+{% block meta_description %}{{ guide.description }}{% endblock %}
+{% block extra_head %}
+<link rel="canonical" href="{% url 'money_school_guide' slug=guide.slug %}">
+{% endblock %}
+{% block content %}
+<section class="public-content-page money-school-article">
+  <nav class="money-school-breadcrumb" aria-label="Breadcrumb">
+    <a href="{% url 'money_school' %}">Money School</a><span aria-hidden="true">›</span><span>{{ guide.title }}</span>
+  </nav>
+  <header class="public-content-hero">
+    <span class="public-content-eyebrow">TIANA MONEY SCHOOL · {{ guide.reading_time|upper }}</span>
+    <h1>{{ guide.title }}</h1>
+    <p>{{ guide.intro }}</p>
+  </header>
+
+  <div class="public-content-layout money-school-article-layout">
+    <article class="public-content-main money-school-article-body">
+      {% for section in guide.sections %}
+        <section class="money-school-article-section">
+          <h2>{{ section.heading }}</h2>
+          {% for paragraph in section.paragraphs %}
+            <p>{{ paragraph }}</p>
+          {% endfor %}
+          {% if section.bullets %}
+            <ul class="money-school-article-list">
+              {% for bullet in section.bullets %}<li>{{ bullet }}</li>{% endfor %}
+            </ul>
+          {% endif %}
+        </section>
+      {% endfor %}
+      <div class="money-school-article-takeaway">
+        <span>THE TAKEAWAY</span>
+        <p>{{ guide.takeaway }}</p>
+      </div>
+      <p class="money-school-article-disclaimer">This guide is general financial education, not personal investment, legal or tax advice. Check details with the relevant provider and make decisions using your own circumstances.</p>
+      <a class="money-school-back-link" href="{% url 'money_school' %}">← Back to Money School</a>
+    </article>
+
+    <aside class="public-content-aside money-school-article-aside">
+      <span>PUT THE IDEA INTO PRACTICE</span>
+      <strong>Make the next money decision clearer.</strong>
+      <p>Use TIANA to record your activity, review a time period, plan a budget or follow a savings goal.</p>
+      <a href="{% url 'register' %}">Create a TIANA account →</a>
+      <a href="{% url 'about' %}">Learn about TIANA →</a>
+      <div class="money-school-related">
+        <span>KEEP LEARNING</span>
+        {% for related in related_guides %}
+          <a href="{% url 'money_school_guide' slug=related.slug %}">{{ related.title }} <b>→</b></a>
+        {% endfor %}
+      </div>
+    </aside>
+  </div>
+</section>
+<style>
+.money-school-breadcrumb{display:flex;align-items:center;gap:9px;min-width:0;margin:4px 0 0;color:#958da4;font-size:.76rem}
+.money-school-breadcrumb a{color:#775bc7;font-weight:750;text-decoration:none}
+.money-school-breadcrumb>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.money-school-article .public-content-hero{padding-top:33px}
+.money-school-article .public-content-hero h1{max-width:850px;font-size:clamp(2.15rem,5.4vw,3.7rem)}
+.money-school-article-layout{grid-template-columns:minmax(0,1fr) 280px;gap:34px}
+.money-school-article-body{max-width:790px}
+.money-school-article-section{margin:0 0 28px}
+.money-school-article-section h2{margin:28px 0 11px;color:#35294f;font:800 clamp(1.18rem,2.5vw,1.42rem)/1.25 Manrope,Inter,sans-serif;letter-spacing:-.035em}
+.money-school-article-section p{color:#686174;font-size:.97rem;line-height:1.85}
+.money-school-article-list{display:grid;gap:9px;margin:13px 0;padding-left:22px}
+.money-school-article-list li{color:#5f586d;font-size:.9rem;line-height:1.7}
+.money-school-article-list li::marker{color:#8061d5}
+.money-school-article-takeaway{margin:27px 0 15px;padding:19px 21px;border:1px solid #e9e1f7;border-radius:18px;background:linear-gradient(130deg,#f5f0ff,#fff)}
+.money-school-article-takeaway span,.money-school-related>span{color:#8568c9;font-size:.63rem;font-weight:900;letter-spacing:.13em}
+.money-school-article-takeaway p{margin:7px 0 0;color:#3e3355;font:700 .98rem/1.65 Manrope,Inter,sans-serif}
+.money-school-article-disclaimer{margin:18px 0;color:#8e879a!important;font-size:.73rem!important;line-height:1.65!important}
+.money-school-back-link{display:inline-flex;margin:7px 0 35px;color:#7357c5;font-size:.82rem;font-weight:800;text-decoration:none}
+.money-school-article-aside{top:105px}
+.money-school-related{display:grid;gap:11px;margin-top:11px;padding-top:16px;border-top:1px solid #ebe5f3}
+.money-school-related>a{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;color:#675a7c;font-size:.77rem;font-weight:700;line-height:1.5;text-decoration:none}
+.money-school-related>a b{flex:0 0 auto;color:#896dd1}
+@media(max-width:760px){.money-school-article-layout{grid-template-columns:1fr;gap:19px}.money-school-article .public-content-hero{padding-top:24px}.money-school-article-section p{font-size:.91rem}}
+</style>
+{% endblock %}

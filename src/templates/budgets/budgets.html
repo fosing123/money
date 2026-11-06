@@ -11,7 +11,7 @@
     <a class="budget-create-tile" href="{% url 'budget_allocations' %}"><span>✎</span><strong>Edit weekly plan</strong></a>
   </div>
   <section class="budget-allocation-card">
-    <div class="budget-section-heading"><div><h2>Budget snapshot</h2></div><a href="{% url 'insights' %}">View analytics <span>↗</span></a></div>
+    <div class="budget-section-heading"><div><h2>Budget snapshot</h2></div><button type="button" class="budget-analyze-action" data-analysis-open data-analysis-scope="budgets" data-analysis-period="month">✦ Analyze all budgets</button></div>
     <div class="budget-allocation-layout">
       <div class="budget-donut" data-budget-donut role="img" aria-label="Budget allocation by category"><div class="budget-donut-hole"><small>Total planned</small><strong data-budget-total>0</strong><span>{{ user.currency }}</span><i data-budget-spent>0 spent</i></div></div>
       <div class="budget-allocation-legend" data-budget-legend><p class="budget-legend-placeholder">Your category breakdown will appear here.</p></div>
@@ -41,7 +41,7 @@
         <div class="budget-plan-values"><strong>{{ item.spent_amount|floatformat:0 }} <small>spent</small></strong><span>{{ item.remaining_amount|floatformat:0 }} {{ user.currency }} remaining</span></div>
         <div class="budget-plan-track"><span style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div>
         <div class="budget-plan-foot"><span>{{ item.amount|floatformat:0 }} {{ user.currency }} planned</span><span>{{ item.get_period_display }}</span></div>
-        <div class="budget-plan-actions"><a href="{% url 'budget_delete' item.pk %}" aria-label="Delete {{ item.name }} budget">Delete budget</a></div>
+        <div class="budget-plan-actions"><button type="button" class="budget-analyze-action" data-analysis-open data-analysis-scope="budget" data-analysis-object-id="{{ item.pk }}" data-analysis-period="month">✦ Analyze budget</button><a href="{% url 'budget_delete' item.pk %}" aria-label="Delete {{ item.name }} budget">Delete budget</a></div>
       </article>
     {% empty %}
       <div class="budget-empty"><span>◉</span><h3>Your budget starts with a plan</h3><a class="button" href="{% url 'budget_allocations' %}">Set weekly allocations →</a></div>

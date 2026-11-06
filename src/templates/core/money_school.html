@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Student Money School · TIANA{% endblock %}
+{% block meta_description %}Practical financial education for students and young adults: budgeting, saving goals, spending reviews, variable income and Mobile Money safety.{% endblock %}
 {% block content %}
 <section class="money-school-hero">
   <p class="ui-eyebrow">TIANA MONEY SCHOOL · CAMEROON</p>
@@ -14,6 +15,16 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_client_id }}" crossorigin="anonymous"></script>
   <script>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
 {% endif %}
+<section class="money-school-deep-guides" aria-labelledby="money-school-guide-heading">
+  <header><span class="money-school-number">GO DEEPER</span><h2 id="money-school-guide-heading">Practical guides for your next money decision</h2><p>Explore focused lessons written for student life, everyday FCFA planning and digital money safety.</p></header>
+  <div class="money-school-deep-grid">
+    {% for guide in guides %}
+      <a class="money-school-deep-card" href="{% url 'money_school_guide' slug=guide.slug %}">
+        <span>{{ guide.reading_time|upper }}</span><h3>{{ guide.title }}</h3><p>{{ guide.description }}</p><b>Read this guide <i aria-hidden="true">→</i></b>
+      </a>
+    {% endfor %}
+  </div>
+</section>
 <section class="money-school-grid">
   <article class="money-school-card">
     <span class="money-school-number">01 · START SIMPLE</span>
@@ -41,6 +52,27 @@
     <h2>Protect your Mobile Money and accounts</h2>
     <p>Never share your PIN, one-time password or account recovery codes. Verify the recipient before confirming a transfer, and contact your provider through its official support channel when something looks wrong.</p>
   </article>
+  <article class="money-school-card">
+    <span class="money-school-number">05 · PLAN FOR CHANGE</span>
+    <h2>Make a plan when your income changes</h2>
+    <p>Part-time work, allowances and small business income can vary. Build your basic plan around the amount you can usually rely on. Treat extra income as a chance to catch up on a priority, add to a buffer or move a goal forward—not as money that must all be spent.</p>
+    <h3>When extra money arrives</h3>
+    <ul><li>Cover an essential bill that is due soon.</li><li>Top up a small emergency reserve.</li><li>Put a realistic amount towards one goal.</li><li>Keep a record of what remains available.</li></ul>
+  </article>
+  <article class="money-school-card">
+    <span class="money-school-number">06 · REVIEW WITHOUT JUDGEMENT</span>
+    <h2>Give your money ten minutes each week</h2>
+    <p>A short review can be more useful than a complicated plan you never revisit. Look at the transactions you recorded, check which categories changed and compare your actual spending with the limits you set.</p>
+    <h3>Ask yourself</h3>
+    <ul><li>Did I forget to record anything?</li><li>What expense surprised me?</li><li>What should I protect first next week?</li><li>Is my savings target still realistic?</li></ul>
+  </article>
+  <article class="money-school-card">
+    <span class="money-school-number">07 · PREPARE A BUFFER</span>
+    <h2>Start an emergency reserve at your own pace</h2>
+    <p>An emergency buffer is money kept for an unexpected essential cost, not for routine shopping. Start with a small target that fits your situation, keep it separate in your plan and build it gradually. Avoid setting a target that forces you to miss food, transport or school costs.</p>
+    <h3>Keep the first milestone simple</h3>
+    <p>Choose one realistic amount, decide where it will be kept and review it each week. Increase the target only when the first step feels manageable.</p>
+  </article>
 </section>
 <section class="money-school-note">
   <h2>Put the lesson into practice with TIANA.</h2>
@@ -51,6 +83,19 @@
 <style>
 .money-school-hero{max-width:870px;margin:28px auto 22px;padding:24px 0}.money-school-hero h1{margin:10px 0;font-size:clamp(2.2rem,6vw,4.1rem);line-height:1.04;letter-spacing:-.06em}.money-school-hero h1 span{color:#7658e6}.money-school-hero>p:last-child{max-width:610px;color:var(--muted);line-height:1.7}
 .money-school-ad{max-width:870px;min-height:105px;margin:8px auto 22px;padding:12px;border:1px dashed #dcd4ee;border-radius:15px;background:#fff;text-align:center}.money-school-ad>span{display:block;margin-bottom:8px;color:#9992aa;font-size:9px;letter-spacing:.14em}
+.money-school-deep-guides{max-width:870px;margin:0 auto 26px;padding:22px;border:1px solid #ebe4f7;border-radius:22px;background:linear-gradient(145deg,#fbf9ff,#fff)}
+.money-school-deep-guides>header{max-width:650px;margin-bottom:17px}
+.money-school-deep-guides>header h2{margin:7px 0;color:#332747;font:800 clamp(1.35rem,3vw,1.75rem)/1.2 Manrope,Inter,sans-serif;letter-spacing:-.045em}
+.money-school-deep-guides>header p{margin:0;color:var(--muted);font-size:.85rem;line-height:1.6}
+.money-school-deep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.money-school-deep-card{display:grid;align-content:start;min-width:0;min-height:205px;padding:18px;border:1px solid #eee8f7;border-radius:16px;background:#fff;text-decoration:none;transition:transform .2s,border-color .2s,box-shadow .2s}
+.money-school-deep-card:hover{transform:translateY(-2px);border-color:#d7c9f4;box-shadow:0 12px 28px #32245a0c}
+.money-school-deep-card>span{color:#8b74c9;font-size:.6rem;font-weight:900;letter-spacing:.12em}
+.money-school-deep-card h3{margin:8px 0;color:#332747;font:800 1rem/1.3 Manrope,Inter,sans-serif}
+.money-school-deep-card p{margin:0 0 14px;color:#797184;font-size:.78rem;line-height:1.6}
+.money-school-deep-card>b{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;color:#7659c8;font-size:.73rem}
+.money-school-deep-card i{font-size:1rem;font-style:normal}
+@media(max-width:650px){.money-school-deep-guides{padding:17px;border-radius:18px}.money-school-deep-grid{grid-template-columns:1fr}.money-school-deep-card{min-height:0;padding:16px}}
 .money-school-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;max-width:870px;margin:auto}.money-school-card{min-width:0;padding:23px;border:1px solid var(--border,#eee9f6);border-radius:20px;background:var(--card,#fff);box-shadow:0 8px 25px #32245a08}.money-school-number{color:#7558de;font-size:9px;font-weight:800;letter-spacing:.12em}.money-school-card h2{margin:10px 0;font-size:1.3rem;line-height:1.25}.money-school-card h3{margin:16px 0 7px;font-size:.9rem}.money-school-card p,.money-school-card li{color:var(--muted);font-size:.88rem;line-height:1.7}.money-school-card ol,.money-school-card ul{padding-left:20px}.money-school-note{max-width:870px;margin:20px auto;padding:24px;border-radius:20px;background:#f3efff}.money-school-note h2{margin:0 0 8px}.money-school-note p,.money-school-disclaimer{color:var(--muted);font-size:.85rem;line-height:1.7}.money-school-disclaimer{max-width:870px;margin:10px auto 30px}
 @media(max-width:650px){.money-school-grid{grid-template-columns:1fr}.money-school-card{padding:19px}.money-school-hero{padding:14px 0}.money-school-note{padding:19px}}
 </style>

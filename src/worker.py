@@ -88,6 +88,10 @@ def _initialize_django(source_env):
 
         print("TIANA cryptography PBKDF2 backend self-check passed.")
         _application = get_wsgi_application()
+        # Keep the Analyzer view in the Python Worker bundle. Django imports
+        # URL modules from ROOT_URLCONF dynamically, which static bundlers may
+        # otherwise miss.
+        import expense_analyzer.views  # noqa: F401
         print("TIANA Django WSGI application initialized successfully.")
     except Exception:
         _startup_error = traceback.format_exc()
