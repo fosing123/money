@@ -438,3 +438,45 @@ body.goal-topup-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){
  .goal-topup-context,.goal-topup-backdrop,.goal-topup-sheet,.goal-topup-progress i,.goal-topup-projection-track i{transition:none}
 }
+
+
+/* Public-facing trust, legal and editorial pages */
+.public-content-page{width:min(1050px,100%);margin:0 auto;padding:24px 0 60px;color:var(--text)}
+.public-content-hero{max-width:850px;padding:clamp(28px,6vw,64px) 0 30px}
+.public-content-eyebrow{color:#8060d4;font-size:.72rem;font-weight:850;letter-spacing:.15em}
+.public-content-hero h1{max-width:810px;margin:13px 0 16px;font-family:Manrope,Inter,sans-serif;font-size:clamp(2.15rem,6vw,4.4rem);line-height:1.04;letter-spacing:-.065em}
+.public-content-hero>p{max-width:700px;margin:0;color:var(--muted);font-size:clamp(.98rem,2vw,1.13rem);line-height:1.75}
+.public-content-hero>small{display:block;margin-top:15px;color:#9991a8;font-size:.73rem}
+.public-content-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:35px;align-items:start}
+.public-content-main{max-width:790px}
+.public-content-main h2{margin:30px 0 10px;color:#302744;font-family:Manrope,Inter,sans-serif;font-size:1.22rem;letter-spacing:-.03em}
+.public-content-main h2:first-child{margin-top:0}
+.public-content-main p,.public-content-main li{color:#6c6679;font-size:.94rem;line-height:1.8}
+.public-content-main ul{padding-left:22px}
+.public-content-main li{padding:3px 0}
+.public-content-aside{position:sticky;top:95px;display:grid;gap:12px;padding:24px;border:1px solid #ebe4fa;border-radius:22px;background:linear-gradient(145deg,#f8f5ff,#fff);box-shadow:0 14px 35px rgba(69,48,120,.05)}
+.public-content-aside>span{color:#8d79c6;font-size:.65rem;font-weight:850;letter-spacing:.13em}
+.public-content-aside>strong{color:#33264d;font-family:Manrope,Inter,sans-serif;font-size:1.5rem;letter-spacing:-.05em}
+.public-content-aside p{margin:0;color:#817891;font-size:.84rem;line-height:1.65}
+.public-content-aside a{padding-top:11px;border-top:1px solid #eae4f4;color:#7256c2;font-size:.8rem;font-weight:800;text-decoration:none}
+.public-legal-page .public-content-hero{padding-bottom:18px}
+.public-legal-page .public-content-main{max-width:820px;padding:8px 0 20px}
+.public-legal-page .public-content-main h2{margin-top:25px}
+.public-legal-note{margin-top:35px;padding:15px 17px;border-left:3px solid #aa95eb;border-radius:0 12px 12px 0;background:#f8f5ff;color:#817791!important;font-size:.79rem!important}
+.public-site-footer{margin-top:40px;border-top:1px solid #eae6f0;background:#fff}
+.public-site-footer-inner{display:grid;grid-template-columns:1fr auto;align-items:center;gap:15px;width:min(1120px,calc(100% - 36px));margin:auto;padding:25px 0 28px}
+.public-site-footer-brand{display:grid;gap:3px;color:#382c56;font-family:Manrope,Inter,sans-serif;font-size:1.05rem;font-weight:850;letter-spacing:-.04em;text-decoration:none}
+.public-site-footer-brand span{color:#898296;font-family:Inter,sans-serif;font-size:.7rem;font-weight:500;letter-spacing:0}
+.public-site-footer nav{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px 20px}
+.public-site-footer nav a{color:#706b7d;font-size:.78rem;font-weight:700;text-decoration:none}
+.public-site-footer nav a:hover{color:#7356c8}
+.public-site-footer small{grid-column:1/-1;color:#a29bab;font-size:.68rem}
+@media(max-width:760px){
+ .public-content-page{padding-top:5px}
+ .public-content-hero{padding:31px 0 22px}
+ .public-content-layout{grid-template-columns:1fr;gap:20px}
+ .public-content-aside{position:static}
+ .public-content-main p,.public-content-main li{font-size:.9rem}
+ .public-site-footer-inner{grid-template-columns:1fr;gap:16px}
+ .public-site-footer nav{justify-content:flex-start;gap:12px 16px}
+}
