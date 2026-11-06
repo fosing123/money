@@ -58,11 +58,15 @@ def main() -> None:
     if not service_worker.is_file():
         raise FileNotFoundError(f"Required service worker is missing: {service_worker}")
     shutil.copy2(service_worker, public_dir / "service-worker.js")
+    monetag_worker = ROOT / "monetag-sw.js"
+    if not monetag_worker.is_file():
+        raise FileNotFoundError(f"Required Monetag verification worker is missing: {monetag_worker}")
+    shutil.copy2(monetag_worker, public_dir / "sw.js")
     (public_dir / "robots.txt").write_text(
         "User-agent: *\\nAllow: /\\nDisallow: /admin/\\nDisallow: /api/\\n",
         encoding="utf-8",
     )
-    print("Prepared public/service-worker.js and public/robots.txt")
+    print("Prepared public/service-worker.js, public/sw.js (Monetag), and public/robots.txt")
 
     original_total = 0
     optimized_total = 0
