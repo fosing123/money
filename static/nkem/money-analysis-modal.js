@@ -30,6 +30,7 @@
     const contentType = response.headers.get("content-type") || "";
     const normalizedType = contentType.toLowerCase();
     const isJson = normalizedType.includes("application/json") || normalizedType.includes("+json");
+    const redirectedToLogin = response.redirected || (response.url || "").toLowerCase().includes("/login");
     if (redirectedToLogin) {
       throw new Error("Your TIANA session has expired. Refresh the page, sign in again and retry.");
     }
