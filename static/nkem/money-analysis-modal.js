@@ -28,8 +28,8 @@
   const readJsonResponse = async (response) => {
     const body = await response.text();
     const contentType = response.headers.get("content-type") || "";
-    const isJson = /(?:application\\/json|\\+json)/i.test(contentType);
-    const redirectedToLogin = response.redirected || /\\/login\\/?(?:[?#].*)?$/i.test(response.url || "");
+    const normalizedType = contentType.toLowerCase();
+    const isJson = normalizedType.includes("application/json") || normalizedType.includes("+json");
     if (redirectedToLogin) {
       throw new Error("Your TIANA session has expired. Refresh the page, sign in again and retry.");
     }
