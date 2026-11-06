@@ -25,6 +25,38 @@
     const input = document.querySelector("input[name=csrfmiddlewaretoken]");
     return input ? input.value : "";
   };
+  const readJsonResponse = async (response) => {
+    const body = await response.text();
+    const contentType = response.headers.get("content-type") || "";
+    const isJson = /(?:application\\/json|\\+json)/i.test(contentType);
+    const redirectedToLogin = response.redirected || /\\/login\\/?(?:[?#].*)?$/i.test(response.url || "");
+    if (redirectedToLogin) {
+      throw new Error("Your TIANA session has expired. Refresh the page, sign in again and retry.");
+    }
+    if (!isJson) {
+      const ray = response.headers.get("cf-ray");
+      const reference = ray ? " Reference: " + ray + "." : "";
+      if (response.status === 401 || response.status === 403) {
+        throw new Error("TIANA could not verify your session. Refresh the page and try again." + reference);
+      }
+      if (response.status >= 500) {
+        throw new Error("TIANA's service ran into a server error (HTTP " + response.status + "). Your money records were not changed. Please refresh and retry." + reference);
+      }
+      throw new Error("TIANA received an unexpected response (HTTP " + response.status + "). Please refresh and try again." + reference);
+    }
+    try {
+      const payload = body ? JSON.parse(body) : {};
+      if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+        throw new Error("The response was not a valid data object.");
+      }
+      return payload;
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        throw new Error("TIANA's reply was incomplete. Please retry in a moment.");
+      }
+      throw error;
+    }
+  };
   const setPanel = (panel) => {
     loadingPanel.hidden = panel !== "loading";
     resultPanel.hidden = panel !== "result";
@@ -210,16 +242,17 @@
     openModal();
     setPanel("loading");
     if (requestController) requestController.abort();
-    requestController = new AbortController();
+    const controller = new AbortController();
+    requestController = controller;
     try {
       const response = await fetch(action.endpoint, {
         method: "POST",
         credentials: "same-origin",
-        signal: requestController.signal,
+        signal: controller.signal,
         headers: {"Content-Type": "application/json", "X-CSRFToken": csrfToken()},
         body: JSON.stringify(action.payload),
       });
-      const payload = await response.json();
+      const payload = await readJsonResponse(response);
       if (response.status === 409 && payload.personalization_required) {
         await showPersonalization(false);
         return;
@@ -229,7 +262,7 @@
     } catch (error) {
       if (error.name !== "AbortError") showError(error.message);
     } finally {
-      requestController = null;
+      if (requestController === controller) requestController = null;
     }
   };
   const fillPersonalization = (profile) => {
@@ -256,7 +289,9 @@
     if (editing) {
       try {
         const response = await fetch(personalizationUrl, {credentials: "same-origin"});
-        if (response.ok) fillPersonalization((await response.json()).persona);
+        const data = await readJsonResponse(response);
+        if (response.ok) fillPersonalization(data.persona);
+        else throw new Error(data.error || "Your preferences could not be loaded.");
       } catch (_) {
         // Keep the usable blank form visible if existing preferences cannot be fetched.
       }
@@ -275,7 +310,7 @@
         headers: {"Content-Type": "application/json", "X-CSRFToken": csrfToken()},
         body: JSON.stringify(payload),
       });
-      const data = await response.json();
+      const data = await readJsonResponse(response);
       if (!response.ok) throw new Error(data.error || "Your preferences couldn't be saved.");
       if (pendingAction) await requestAnalysis(pendingAction);
       else closeModal();
