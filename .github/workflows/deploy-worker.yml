@@ -82,7 +82,6 @@ jobs:
       - name: Check service-worker JavaScript
         run: |
           node --check tiana-service-worker.js
-          node --check monetag-sw.js
           node --check static/nkem/offline-core.js
           node --check static/nkem/offline.js
           node --check static/nkem/pwa.js

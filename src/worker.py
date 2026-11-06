@@ -104,7 +104,7 @@ class Default(WorkerEntrypoint):
             return await self.env.ASSETS.fetch(request)
 
         # Keep root-level public files out of Django's Python startup path.
-        if path in {"/service-worker.js", "/sw.js", "/robots.txt", "/favicon.ico"}:
+        if path in {"/service-worker.js", "/robots.txt", "/favicon.ico"}:
             return await self.env.ASSETS.fetch(request)
 
         # Public Firebase Web configuration does not require Django startup.
