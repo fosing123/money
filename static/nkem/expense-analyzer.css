@@ -347,3 +347,94 @@
 .transaction-essential-flag small{color:var(--muted);font-size:.58rem;line-height:1.4}
 .goals-heading-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 @media(max-width:520px){.goals-heading-actions{width:100%;justify-content:space-between}.goals-heading-actions .button{flex:1}}
+
+
+/* TIANA goal contribution: premium draggable sheet */
+.goal-topup-stage{position:relative;min-height:calc(100dvh - 150px);isolation:isolate;padding:clamp(20px,5vw,52px) 18px 90px;overflow:clip}
+.goal-topup-context{width:min(780px,100%);margin:0 auto;transition:filter .3s ease,transform .3s ease}
+.goal-topup-context-heading{display:flex;align-items:center;gap:17px;padding:18px 2px 24px}
+.goal-topup-context-mark{display:grid;place-items:center;width:58px;height:58px;flex:0 0 58px;border-radius:20px;background:linear-gradient(145deg,#efe9ff,#dcd0ff);color:#7958dc;font-size:1.5rem;box-shadow:0 12px 28px rgba(103,76,190,.13)}
+.goal-topup-context-heading small,.goal-topup-eyebrow{color:#8069bb;font-size:.67rem;font-weight:850;letter-spacing:.15em}
+.goal-topup-context-heading h1{margin:4px 0 3px;color:var(--text);font-size:clamp(1.6rem,4vw,2.2rem);letter-spacing:-.045em}
+.goal-topup-context-heading p{margin:0;color:var(--muted);font-size:.88rem}
+.goal-topup-context-card{padding:22px;border:1px solid rgba(132,111,198,.15);border-radius:22px;background:linear-gradient(145deg,#fff,#f8f5ff);box-shadow:0 16px 44px rgba(68,48,125,.06)}
+.goal-topup-context-top,.goal-topup-summary-top{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#7c6aab;font-size:.67rem;font-weight:850;letter-spacing:.1em}
+.goal-topup-context-top strong,.goal-topup-summary-top strong{color:#7155cf;font-size:.86rem;letter-spacing:0}
+.goal-topup-context-track,.goal-topup-progress,.goal-topup-projection-track{height:10px;overflow:hidden;border-radius:999px;background:#eee9f8}
+.goal-topup-context-track{margin:14px 0 20px}
+.goal-topup-context-track i,.goal-topup-progress i,.goal-topup-projection-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#a68af7,#7052d7);transition:width .45s cubic-bezier(.2,.75,.25,1)}
+.goal-topup-context-numbers,.goal-topup-summary-numbers{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.goal-topup-context-numbers div,.goal-topup-summary-numbers div{display:grid;gap:5px}
+.goal-topup-context-numbers small,.goal-topup-summary-numbers small{color:#8b849c;font-size:.72rem}
+.goal-topup-context-numbers strong,.goal-topup-summary-numbers strong{color:#2c2540;font-size:1.1rem;font-weight:800;letter-spacing:-.035em}
+.goal-topup-context-numbers strong span,.goal-topup-summary-numbers strong span{font-size:.7em;color:#82769f}
+.goal-topup-back-link{display:inline-flex;margin:19px 0;color:#7962bc;text-decoration:none;font-size:.82rem;font-weight:750}
+.goal-topup-backdrop{position:fixed;z-index:2200;inset:0;background:rgba(24,17,43,.46);backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);opacity:0;pointer-events:none;transition:opacity .28s ease}
+.goal-topup-sheet{position:fixed;z-index:2201;left:50%;bottom:0;display:grid;grid-template-rows:auto auto auto minmax(0,1fr);width:min(690px,calc(100vw - 36px));max-height:min(88dvh,850px);overflow:hidden;transform:translate(-50%,calc(100% + 36px));border:1px solid rgba(255,255,255,.9);border-bottom:0;border-radius:30px 30px 0 0;background:linear-gradient(155deg,#fff 0%,#fcfaff 55%,#f8f5ff 100%);box-shadow:0 -24px 90px rgba(25,16,55,.25);transition:transform .48s cubic-bezier(.2,.85,.22,1);will-change:transform}
+.goal-topup-stage.is-open .goal-topup-backdrop{opacity:1;pointer-events:auto}
+.goal-topup-stage.is-open .goal-topup-sheet{transform:translate(-50%,0)}
+.goal-topup-stage.is-open .goal-topup-context{filter:blur(2px);transform:scale(.99)}
+body.goal-topup-open{overflow:hidden}
+.goal-topup-handle{display:flex;justify-content:center;align-items:center;min-height:34px;touch-action:pan-y;cursor:grab}
+.goal-topup-handle span{width:42px;height:5px;border-radius:99px;background:#d9d2e7}
+.goal-topup-sheet-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:4px 26px 19px}
+.goal-topup-sheet-heading h2{margin:5px 0 3px;color:#28213b;font-size:clamp(1.35rem,3vw,1.7rem);letter-spacing:-.05em}
+.goal-topup-sheet-heading p{margin:0;color:#887e9f;font-size:.84rem}
+.goal-topup-close{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border:1px solid #eae5f3;border-radius:50%;background:#fff;color:#72668e;font-size:1.35rem;cursor:pointer;transition:background .2s,transform .2s}
+.goal-topup-close:hover{background:#f1ecff;transform:rotate(90deg)}
+.goal-topup-summary{margin:0 26px 20px;padding:17px 18px 16px;border:1px solid #eee8fa;border-radius:18px;background:linear-gradient(120deg,#f8f5ff,#fff)}
+.goal-topup-progress{height:8px;margin:12px 0 14px}
+.goal-topup-summary-numbers{gap:12px}
+.goal-topup-summary-numbers strong{font-size:.94rem}
+.goal-topup-form{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 26px max(25px,env(safe-area-inset-bottom));scrollbar-width:thin}
+.goal-topup-amount-block>label,.goal-topup-field>label{display:block;margin:0 0 9px;color:#4c435f;font-size:.78rem;font-weight:800}
+.goal-topup-amount-input{display:flex;align-items:center;gap:10px;padding:4px 16px;border:1.5px solid #ded4f5;border-radius:17px;background:#fff;box-shadow:0 4px 18px rgba(87,64,159,.045);transition:border-color .2s,box-shadow .2s}
+.goal-topup-amount-input:focus-within{border-color:#9174e8;box-shadow:0 0 0 4px rgba(145,116,232,.11)}
+.goal-topup-amount-input>span{color:#8065ce;font-size:.83rem;font-weight:850}
+.goal-topup-amount-input input{width:100%;min-height:58px;border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;color:#2b2245!important;font-size:clamp(1.5rem,4vw,2rem)!important;font-weight:850!important;letter-spacing:-.05em;padding:7px 0!important}
+.goal-topup-quick-amounts{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.goal-topup-quick-amounts button{padding:8px 12px;border:1px solid #e8e1f6;border-radius:999px;background:#f8f5ff;color:#6d54b8;font-size:.73rem;font-weight:800;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.goal-topup-quick-amounts button:hover{transform:translateY(-1px);border-color:#b9a7ec;background:#f0ebff}
+.goal-topup-projection{margin:17px 0;padding:14px 15px;border:1px solid #ece6f7;border-radius:16px;background:#fff}
+.goal-topup-projection>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.goal-topup-projection>div:first-child span{color:#7e748f;font-size:.73rem;font-weight:700}
+.goal-topup-projection>div:first-child strong{color:#7255d0;font-size:.95rem;font-weight:850}
+.goal-topup-projection-track{height:7px}
+.goal-topup-projection-track i{background:linear-gradient(90deg,#ab91fa,#7051d4)}
+.goal-topup-projection>small{display:block;margin-top:8px;color:#9188a3;font-size:.68rem;line-height:1.4}
+.goal-topup-field{display:grid;gap:7px;margin-top:15px}
+.goal-topup-field>label span{color:#a39bb2;font-weight:500}
+.goal-topup-field select,.goal-topup-field input,.goal-topup-field textarea{width:100%;border:1px solid #e7e1f1;border-radius:12px;background:#fff;color:#302844;font-size:.85rem}
+.goal-topup-safety{display:flex;align-items:flex-start;gap:10px;margin:17px 0 15px;padding:12px 13px;border:1px solid #eee8f7;border-radius:13px;background:#f9f7fd;color:#7b718d;font-size:.7rem;line-height:1.5}
+.goal-topup-safety>span:first-child{display:grid;place-items:center;width:25px;height:25px;flex:0 0 25px;border-radius:9px;background:#eee8ff;color:#785ad2;font-size:1rem}
+.goal-topup-actions{position:sticky;bottom:0;display:grid;grid-template-columns:.72fr 1.28fr;gap:10px;padding:13px 0 max(3px,env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(252,250,255,0),#fcfaff 16%)}
+.goal-topup-secondary,.goal-topup-primary{display:flex;justify-content:center;align-items:center;gap:8px;min-height:49px;padding:10px 15px;border-radius:14px;text-decoration:none;font-size:.82rem;font-weight:850;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.goal-topup-secondary{border:1px solid #e6e0f0;background:#fff;color:#766b89}
+.goal-topup-primary{border:0;background:linear-gradient(105deg,#8769e4,#6846cf);box-shadow:0 9px 22px rgba(106,77,207,.24);color:#fff}
+.goal-topup-primary:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(106,77,207,.3)}
+.goal-topup-empty{padding:15px 26px 28px;text-align:center}
+.goal-topup-empty>span{display:inline-grid;place-items:center;width:54px;height:54px;border-radius:18px;background:#f0eaff;color:#7255cf;font-size:1.5rem}
+.goal-topup-empty h3{margin:13px 0 6px;color:#302844}
+.goal-topup-empty p{margin:0 auto 17px;max-width:300px;color:#827891;font-size:.82rem;line-height:1.5}
+.goal-topup-empty .goal-topup-primary{width:100%;max-width:280px;margin:auto}
+@media(min-width:760px){
+ .goal-topup-stage{min-height:calc(100vh - 150px);padding-top:44px}
+ .goal-topup-sheet{bottom:18px;border-bottom:1px solid rgba(255,255,255,.9);border-radius:30px;max-height:88dvh}
+ .goal-topup-stage.is-open .goal-topup-sheet{transform:translate(-50%,0)}
+}
+@media(max-width:600px){
+ .goal-topup-stage{min-height:calc(100dvh - 125px);padding:17px 14px 80px}
+ .goal-topup-context-heading{gap:12px;padding:12px 0 18px}
+ .goal-topup-context-mark{width:48px;height:48px;flex-basis:48px;border-radius:16px}
+ .goal-topup-context-card{padding:17px;border-radius:18px}
+ .goal-topup-sheet{left:0;width:100%;max-height:93dvh;border-radius:26px 26px 0 0;transform:translateY(calc(100% + 36px))}
+ .goal-topup-stage.is-open .goal-topup-sheet{transform:translateY(0)}
+ .goal-topup-sheet-heading{padding:3px 18px 15px}
+ .goal-topup-summary{margin:0 18px 17px;padding:15px}
+ .goal-topup-form{padding-left:18px;padding-right:18px}
+ .goal-topup-actions{grid-template-columns:.7fr 1.3fr}
+ .goal-topup-actions a,.goal-topup-actions button{min-height:47px;padding:9px 10px;font-size:.75rem}
+}
+@media(prefers-reduced-motion:reduce){
+ .goal-topup-context,.goal-topup-backdrop,.goal-topup-sheet,.goal-topup-progress i,.goal-topup-projection-track i{transition:none}
+}
