@@ -20,7 +20,7 @@ if (self.TIANA_FIREBASE_CONFIG && self.TIANA_FIREBASE_CONFIG.apiKey) {
 }
 
 const CACHE_PREFIX = "tiana-pwa-";
-const SHELL_CACHE = "tiana-pwa-shell-v2";
+const SHELL_CACHE = "tiana-pwa-shell-v3";
 const OFFLINE_PAGE = "/static/nkem/offline.html";
 const SHELL = [
   OFFLINE_PAGE,
@@ -31,6 +31,8 @@ const SHELL = [
   "/static/nkem/theme.css",
   "/static/nkem/brand.css",
   "/static/nkem/ui-polish.css",
+  "/static/nkem/page-loader.css",
+  "/static/nkem/page-loader.js",
   "/static/manifest.webmanifest",
   "/static/money-mark.svg",
   "/static/assets/tiana-logo-transparent.png",
