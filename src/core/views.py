@@ -275,6 +275,7 @@ def money_school_view(request):
         "adsense_enabled": settings.ADSENSE_ENABLED,
         "adsense_client_id": settings.ADSENSE_CLIENT_ID,
         "adsense_slot_id": settings.ADSENSE_SLOT_ID,
+        "guides": list(MONEY_SCHOOL_GUIDES.values()),
     })
 
 MONEY_SCHOOL_GUIDES = {
@@ -454,7 +455,11 @@ def money_school_guide_view(request, slug):
     guide = MONEY_SCHOOL_GUIDES.get(slug)
     if guide is None:
         raise Http404("This Money School guide could not be found.")
-    return render(request, "core/money_school_guide.html", {"guide": guide})
+    related_guides = [item for item in MONEY_SCHOOL_GUIDES.values() if item["slug"] != slug]
+    return render(request, "core/money_school_guide.html", {
+        "guide": guide,
+        "related_guides": related_guides,
+    })
 
 
 
