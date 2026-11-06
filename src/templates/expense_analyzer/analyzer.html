@@ -16,10 +16,17 @@
   <div class="analysis-centre-toolbar">
     <div><span class="analysis-centre-label">LOOK AT</span><strong>Choose a time period</strong></div>
     <div class="analysis-period-picker" role="group" aria-label="Analysis period">
+      <button type="button" data-centre-period="day" class="{% if period == 'day' %}is-active{% endif %}" aria-pressed="{% if period == 'day' %}true{% else %}false{% endif %}">Day</button>
       <button type="button" data-centre-period="week" class="{% if period == 'week' %}is-active{% endif %}" aria-pressed="{% if period == 'week' %}true{% else %}false{% endif %}">Week</button>
       <button type="button" data-centre-period="month" class="{% if period == 'month' %}is-active{% endif %}" aria-pressed="{% if period == 'month' %}true{% else %}false{% endif %}">Month</button>
       <button type="button" data-centre-period="year" class="{% if period == 'year' %}is-active{% endif %}" aria-pressed="{% if period == 'year' %}true{% else %}false{% endif %}">Year</button>
+      <button type="button" data-centre-period="custom" class="{% if period == 'custom' %}is-active{% endif %}" aria-pressed="{% if period == 'custom' %}true{% else %}false{% endif %}">Custom</button>
     </div>
+  </div>
+  <div class="analysis-custom-range {% if period != 'custom' %}is-hidden{% endif %}" data-custom-range>
+    <label>From <input type="date" value="{{ selected_start_date|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}" data-analysis-start-date></label>
+    <label>To <input type="date" value="{{ selected_end_date|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}" data-analysis-end-date></label>
+    <button type="button" class="analysis-custom-apply" data-centre-custom-apply>Apply date range <span>→</span></button>
   </div>
 
   <div class="analysis-choice-grid">
@@ -75,17 +82,60 @@
 {% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll("[data-centre-period]").forEach((button) => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll("[data-centre-period]").forEach((item) => {
-        item.classList.toggle("is-active", item === button);
-        item.setAttribute("aria-pressed", item === button ? "true" : "false");
-      });
-      document.querySelectorAll("[data-analysis-open]").forEach((action) => {
-        action.dataset.analysisPeriod = button.dataset.centrePeriod;
-      });
+  const periodButtons = document.querySelectorAll("[data-centre-period]");
+  const range = document.querySelector("[data-custom-range]");
+  const startInput = document.querySelector("[data-analysis-start-date]");
+  const endInput = document.querySelector("[data-analysis-end-date]");
+  const activityAction = document.querySelector('[data-analysis-open][data-analysis-scope="activity"]');
+
+  const setPeriod = (period) => {
+    periodButtons.forEach((item) => {
+      const active = item.dataset.centrePeriod === period;
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-pressed", active ? "true" : "false");
     });
+    if (range) range.classList.toggle("is-hidden", period !== "custom");
+    document.querySelectorAll("[data-analysis-open]").forEach((action) => {
+      action.dataset.analysisPeriod = period;
+      if (period === "custom") {
+        action.dataset.analysisStartDate = startInput?.value || "";
+        action.dataset.analysisEndDate = endInput?.value || "";
+      } else {
+        delete action.dataset.analysisStartDate;
+        delete action.dataset.analysisEndDate;
+      }
+    });
+  };
+
+  periodButtons.forEach((button) => {
+    button.addEventListener("click", () => setPeriod(button.dataset.centrePeriod));
   });
-});
-</script>
+  document.querySelector("[data-centre-custom-apply]")?.addEventListener("click", () => {
+    const start = startInput?.value || "";
+    const end = endInput?.value || "";
+    if (!start || !end) {
+      window.alert("Choose both dates before applying your custom range.");
+      return;
+    }
+    if (start > end) {
+      window.alert("The start date must be on or before the end date.");
+      return;
+    }
+    setPeriod("custom");
+    document.querySelectorAll("[data-analysis-open]").forEach((action) => {
+      action.dataset.analysisStartDate = start;
+      action.dataset.analysisEndDate = end;
+    });
+    activityAction?.click();
+  });
+
+  [startInput, endInput].forEach((input) => input?.addEventListener("change", () => {
+    if (startInput.value && endInput.value) {
+      document.querySelectorAll("[data-analysis-open]").forEach((action) => {
+        action.dataset.analysisStartDate = startInput.value;
+        action.dataset.analysisEndDate = endInput.value;
+      });
+    }
+  }));
+});</script>
 {% endblock %}
