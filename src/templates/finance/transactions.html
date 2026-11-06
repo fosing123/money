@@ -36,7 +36,6 @@
             <span class="activity-history-main"><strong>{{ tx.description|default:tx.category }}</strong><small>{{ tx.category }} · {{ tx.account.name }} · {{ tx.created_at|date:"g:i A" }}</small></span>
             <span class="activity-history-amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}is-income{% else %}is-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }}<small>FCFA</small></span>
           </a>
-          {% if tx.kind == "expense" and tx.currency|upper == user.currency|upper %}<button type="button" class="activity-history-analyze" data-analysis-open data-analysis-scope="transaction" data-analysis-object-id="{{ tx.pk }}" data-analysis-period="week">✦ Analyze this expense</button>{% endif %}
         {% endfor %}
       {% endfor %}
       </div><p class="empty-search" data-empty-search hidden>No matching transactions.</p>
