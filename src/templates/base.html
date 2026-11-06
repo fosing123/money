@@ -93,6 +93,7 @@
     <div class="tiana-analysis-personalization" data-analysis-personalization hidden>
       <div class="tiana-analysis-personalization-intro"><span class="tiana-analysis-kicker">LET'S GET TO KNOW HOW YOU THINK</span><h2>How would you like me to guide you?</h2><p>Money advice feels different when it understands the person behind the numbers. Tell me a little about the voice you prefer and the future you're building.</p></div>
       <form data-personalization-form>
+        {% csrf_token %}
         <div class="tiana-analysis-field"><label>Choose my voice</label><div class="tiana-analysis-voice-options">
           <label><input type="radio" name="voice_style" value="friendly" checked><span><b>Friendly</b><small>Like a good friend</small></span></label>
           <label><input type="radio" name="voice_style" value="fatherly"><span><b>Fatherly</b><small>Calm, protective advice</small></span></label>
