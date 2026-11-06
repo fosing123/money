@@ -335,3 +335,41 @@ class BudgetIntelligencePageTests(TestCase):
         self.assertEqual(response.context["weekly_spent"], Decimal("1200.00"))
         self.assertEqual(response.context["weekly_planned"], Decimal("3000.00"))
         self.assertContains(response, "40% of weekly limits used")
+
+class MoneySchoolGuideTests(TestCase):
+    def test_public_money_school_guides_are_complete_and_cross_linked(self):
+        expected = {
+            "weekly-budget": "Build a weekly student budget that works in real life",
+            "savings-goals": "Turn a savings goal into a plan you can follow",
+            "mobile-money-safety": "Protect your Mobile Money and digital accounts",
+            "variable-income": "Plan when your student income changes from week to week",
+        }
+        for slug, title in expected.items():
+            with self.subTest(slug=slug):
+                response = self.client.get(reverse("money_school_guide", kwargs={"slug": slug}))
+                self.assertEqual(response.status_code, 200)
+                self.assertTemplateUsed(response, "core/money_school_guide.html")
+                self.assertContains(response, title)
+                self.assertContains(response, "THE TAKEAWAY")
+                self.assertContains(response, "Back to Money School")
+                self.assertContains(response, 'rel="canonical"')
+
+        index = self.client.get(reverse("money_school"))
+        self.assertEqual(index.status_code, 200)
+        for slug in expected:
+            self.assertContains(index, reverse("money_school_guide", kwargs={"slug": slug}))
+
+    def test_money_school_guides_are_in_the_public_sitemap(self):
+        response = self.client.get(reverse("sitemap_xml"))
+        self.assertEqual(response.status_code, 200)
+        sitemap = response.content.decode()
+        for slug in ("weekly-budget", "savings-goals", "mobile-money-safety", "variable-income"):
+            self.assertIn(
+                "https://tiana.lol" + reverse("money_school_guide", kwargs={"slug": slug}),
+                sitemap,
+            )
+
+    def test_unknown_money_school_guide_returns_a_real_404(self):
+        response = self.client.get(reverse("money_school_guide", kwargs={"slug": "not-a-guide"}))
+        self.assertEqual(response.status_code, 404)
+
