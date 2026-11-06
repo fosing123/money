@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/tiana-ad-network-cleanup-20261106
   workflow_dispatch:
 
 concurrency:
