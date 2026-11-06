@@ -1,5 +1,5 @@
 """Read-only financial analysis workspace for TIANA."""
-from datetime import timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.db.models import Count, Q, Sum
@@ -14,18 +14,37 @@ from .scoring import analyze_completed_expense
 
 
 ZERO = Decimal("0.00")
-PERIOD_LABELS = {"week": "This week", "month": "This month", "year": "This year"}
+PERIOD_LABELS = {
+    "day": "Today",
+    "week": "This week",
+    "month": "This month",
+    "year": "This year",
+    "custom": "Selected period",
+}
 
 
-def _period_bounds(period, today):
-    if period == "month":
-        start = today.replace(day=1)
+def _period_bounds(period, today, start_date=None, end_date=None):
+    if period == "day":
+        start = end = today
+    elif period == "week":
+        start, end = today - timedelta(days=today.weekday()), today
+    elif period == "month":
+        start, end = today.replace(day=1), today
     elif period == "year":
-        start = today.replace(month=1, day=1)
+        start, end = today.replace(month=1, day=1), today
+    elif period == "custom":
+        if not isinstance(start_date, date) or not isinstance(end_date, date):
+            raise ValueError("Choose both a start date and an end date for your custom analysis.")
+        if start_date > end_date:
+            raise ValueError("The start date must be on or before the end date.")
+        if end_date > today:
+            raise ValueError("Choose an end date that is today or earlier.")
+        if (end_date - start_date).days > 365:
+            raise ValueError("A custom analysis can cover up to one year at a time.")
+        start, end = start_date, end_date
     else:
-        period = "week"
-        start = today - timedelta(days=today.weekday())
-    return period, start, today
+        raise ValueError("Choose a valid analysis period.")
+    return period, start, end
 
 
 def _cash_flow(queryset):
@@ -44,8 +63,8 @@ def _cash_flow(queryset):
     }
 
 
-def _activity_analysis(user, period, today):
-    period, start, end = _period_bounds(period, today)
+def _activity_analysis(user, period, today, start_date=None, end_date=None):
+    period, start, end = _period_bounds(period, today, start_date, end_date)
     currency = (user.currency or "XAF").upper()
     base = Transaction.objects.filter(
         owner=user, currency__iexact=currency,
@@ -92,8 +111,12 @@ def _activity_analysis(user, period, today):
     elif current["expenses"] > ZERO:
         change = 100.0
 
+    period_label = PERIOD_LABELS[period]
+    if period == "custom":
+        period_label = f"{start:%d %b} – {end:%d %b %Y}"
+
     return {
-        "period": period, "period_label": PERIOD_LABELS[period],
+        "period": period, "period_label": period_label,
         "start_date": start, "end_date": end, "days": days, "currency": currency,
         "expenses": current["expenses"], "income": current["income"], "net": current["net"],
         "expense_count": current["expense_count"], "income_count": current["income_count"],
@@ -181,10 +204,10 @@ def _transaction_assessment(user, transaction):
     }
 
 
-def build_workspace_context(user, period="week", focus="activity", object_id=None):
+def build_workspace_context(user, period="week", focus="activity", object_id=None, start_date=None, end_date=None):
     """Build a private, read-only analysis payload from the member's own records."""
     today = timezone.localdate()
-    activity = _activity_analysis(user, period, today)
+    activity = _activity_analysis(user, period, today, start_date=start_date, end_date=end_date)
     currency = activity["currency"]
     budgets = _budget_analysis(user, currency)
     goals = _goal_analysis(user, currency, today)
