@@ -1,7 +1,9 @@
 from decimal import Decimal, InvalidOperation
 from datetime import date
+import html
 import json
 import logging
+import re
 import uuid
 
 from django.conf import settings
@@ -274,3 +276,77 @@ def money_school_view(request):
         "adsense_client_id": settings.ADSENSE_CLIENT_ID,
         "adsense_slot_id": settings.ADSENSE_SLOT_ID,
     })
+
+
+
+@require_GET
+def about_view(request):
+    return render(request, "core/about.html")
+
+
+@require_GET
+def privacy_view(request):
+    return render(request, "core/privacy.html")
+
+
+@require_GET
+def terms_view(request):
+    return render(request, "core/terms.html")
+
+
+@require_GET
+def ads_txt_view(request):
+    """Serve the publisher record at the exact root path AdSense crawls."""
+    client_id = (getattr(settings, "ADSENSE_CLIENT_ID", "") or "").strip()
+    match = re.fullmatch(r"ca-pub-(\d{16})", client_id)
+    if not match:
+        return HttpResponse("", status=404, content_type="text/plain; charset=utf-8")
+    publisher_id = match.group(1)
+    response = HttpResponse(
+        f"google.com, pub-{publisher_id}, DIRECT, f08c47fec0942fa0\n",
+        content_type="text/plain; charset=utf-8",
+    )
+    response["Cache-Control"] = "public, max-age=3600"
+    response["X-Content-Type-Options"] = "nosniff"
+    return response
+
+
+@require_GET
+def robots_txt_view(request):
+    site_root = (getattr(settings, "PUBLIC_SITE_URL", "https://tiana.lol") or "https://tiana.lol").rstrip("/")
+    body = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Allow: /ads.txt\n"
+        "Disallow: /admin/\n"
+        "Disallow: /dashboard/\n"
+        "Disallow: /transactions/\n"
+        "Disallow: /budgets/\n"
+        "Disallow: /goals/\n"
+        "Disallow: /accounts/\n"
+        "Disallow: /profile/\n"
+        "Disallow: /analyzer/\n"
+        "Disallow: /api/\n"
+        f"Sitemap: {site_root}/sitemap.xml\n"
+    )
+    response = HttpResponse(body, content_type="text/plain; charset=utf-8")
+    response["Cache-Control"] = "public, max-age=3600"
+    return response
+
+
+@require_GET
+def sitemap_xml_view(request):
+    site_root = (getattr(settings, "PUBLIC_SITE_URL", "https://tiana.lol") or "https://tiana.lol").rstrip("/")
+    public_paths = ("", "money-school/", "about/", "privacy/", "terms/", "register/", "login/")
+    entries = "".join(
+        f"<url><loc>{html.escape(site_root + '/' + path, quote=True)}</loc></url>"
+        for path in public_paths
+    )
+    body = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        f"{entries}</urlset>"
+    )
+    response = HttpResponse(body, content_type="application/xml; charset=utf-8")
+    response["Cache-Control"] = "public, max-age=3600"
+    return response
