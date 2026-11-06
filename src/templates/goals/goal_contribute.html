@@ -125,11 +125,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.key === "Escape" && root.classList.contains("is-open")) close();
   });
 
+  const scrollArea = sheet.querySelector(".goal-topup-form");
   const beginSwipe = (event) => {
     const point = event.changedTouches?.[0] || event;
     startY = point.clientY;
     startX = point.clientX;
-    startScroll = sheet.scrollTop;
+    startScroll = scrollArea?.scrollTop || 0;
   };
   const endSwipe = (event, threshold) => {
     const point = event.changedTouches?.[0] || event;
@@ -141,11 +142,11 @@ document.addEventListener("DOMContentLoaded", () => {
   handle?.addEventListener("touchstart", beginSwipe, { passive: true });
   handle?.addEventListener("touchend", (event) => endSwipe(event, 45), { passive: true });
   sheet.addEventListener("touchstart", (event) => {
-    if (sheet.scrollTop <= 0) beginSwipe(event);
+    if (!scrollArea || scrollArea.scrollTop <= 0) beginSwipe(event);
     else startY = 0;
   }, { passive: true });
   sheet.addEventListener("touchend", (event) => {
-    if (startScroll <= 0 && sheet.scrollTop <= 0) endSwipe(event, 95);
+    if (startScroll <= 0 && (!scrollArea || scrollArea.scrollTop <= 0)) endSwipe(event, 95);
   }, { passive: true });
 
   const amount = sheet.querySelector("#{{ form.amount.id_for_label }}");
