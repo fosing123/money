@@ -20,7 +20,7 @@ if (self.TIANA_FIREBASE_CONFIG && self.TIANA_FIREBASE_CONFIG.apiKey) {
 }
 
 const CACHE_PREFIX = "tiana-pwa-";
-const SHELL_CACHE = "tiana-pwa-shell-v1";
+const SHELL_CACHE = "tiana-pwa-shell-v2";
 const OFFLINE_PAGE = "/static/nkem/offline.html";
 const SHELL = [
   OFFLINE_PAGE,
