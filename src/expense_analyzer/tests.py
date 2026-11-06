@@ -1,5 +1,5 @@
 import json
-from datetime import timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 
 from asgiref.sync import async_to_sync
@@ -9,11 +9,13 @@ from django.urls import reverse
 from django.utils import timezone
 
 from budgets.models import Budget
-from expense_analyzer.ai import _system_instruction
+from expense_analyzer.ai import _parse_response, _system_instruction
 from expense_analyzer.models import AIPersonalization, ExpenseAnalysis
 from expense_analyzer.scoring import analyze_completed_expense, analyze_planned_purchase
 from finance.models import Account, Transaction
 from goals.models import Goal
+from expense_analyzer.views import _fallback_insights
+from expense_analyzer.workspace import _activity_analysis
 
 
 User = get_user_model()
@@ -83,16 +85,108 @@ class ExpenseAnalyzerWorkspaceTests(TestCase):
         self.assertContains(response, "School lunch")
         self.assertNotContains(response, "This week at a glance")
 
-    def test_week_month_and_year_periods_are_supported_in_the_choice_centre(self):
-        for period in ["week", "month", "year"]:
+    def test_day_week_month_year_and_custom_periods_are_supported_in_the_choice_centre(self):
+        for period in ["day", "week", "month", "year"]:
             response = self.client.get(reverse("analyzer"), {"period": period})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.context["period"], period)
+        start = self.today - timedelta(days=4)
+        response = self.client.get(reverse("analyzer"), {
+            "period": "custom", "start_date": start.isoformat(), "end_date": self.today.isoformat(),
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["period"], "custom")
+        self.assertEqual(response.context["selected_start_date"], start)
+        self.assertContains(response, 'data-centre-period="custom"')
+
+    def test_daily_analysis_uses_today_only_not_the_whole_week(self):
+        self.create_expense(amount="900.00", description="Today lunch")
+        yesterday = self.today - timedelta(days=1)
+        Transaction.objects.create(
+            owner=self.user, account=self.account, amount="1500.00", currency="XAF",
+            kind="expense", category="Food", description="Yesterday lunch",
+            transaction_date=yesterday,
+        )
+        activity = _activity_analysis(self.user, "day", self.today)
+        self.assertEqual(activity["start_date"], self.today)
+        self.assertEqual(activity["end_date"], self.today)
+        self.assertEqual(activity["expenses"], Decimal("900.00"))
+        self.assertEqual(activity["expense_count"], 1)
+
+    def test_custom_analysis_includes_only_the_selected_date_window(self):
+        start = self.today - timedelta(days=2)
+        Transaction.objects.create(
+            owner=self.user, account=self.account, amount="1200.00", currency="XAF",
+            kind="expense", category="Food", description="Inside range",
+            transaction_date=start,
+        )
+        Transaction.objects.create(
+            owner=self.user, account=self.account, amount="600.00", currency="XAF",
+            kind="expense", category="Food", description="Outside range",
+            transaction_date=start - timedelta(days=1),
+        )
+        activity = _activity_analysis(self.user, "custom", self.today, start_date=start, end_date=start)
+        self.assertEqual(activity["start_date"], start)
+        self.assertEqual(activity["end_date"], start)
+        self.assertEqual(activity["expenses"], Decimal("1200.00"))
+
+    def test_custom_analysis_rejects_future_dates_and_ranges_over_one_year(self):
+        with self.assertRaises(ValueError):
+            _activity_analysis(self.user, "custom", self.today, start_date=self.today, end_date=self.today + timedelta(days=1))
+        with self.assertRaises(ValueError):
+            _activity_analysis(self.user, "custom", self.today, start_date=self.today - timedelta(days=366), end_date=self.today)
+
+    def test_activity_has_one_period_analysis_action_not_a_button_on_every_expense(self):
+        self.create_expense(description="School lunch")
+        response = self.client.get(reverse("transactions"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'data-analysis-scope="activity"')
+        self.assertNotContains(response, "Analyze this expense")
+
+    def test_public_pages_and_crawler_files_are_available(self):
+        for name in ["about", "privacy", "terms"]:
+            response = self.client.get(reverse(name))
+            self.assertEqual(response.status_code, 200)
+        robots = self.client.get(reverse("robots_txt"))
+        self.assertEqual(robots.status_code, 200)
+        self.assertIn("/ads.txt", robots.content.decode())
+        sitemap = self.client.get(reverse("sitemap_xml"))
+        self.assertEqual(sitemap.status_code, 200)
+        self.assertIn("https://tiana.lol/money-school/", sitemap.content.decode())
+
+    @override_settings(ADSENSE_CLIENT_ID="ca-pub-1554607983371431")
+    def test_ads_txt_uses_the_publisher_id_already_configured_for_tiana(self):
+        response = self.client.get(reverse("ads_txt"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.content.decode().strip(),
+            "google.com, pub-1554607983371431, DIRECT, f08c47fec0942fa0",
+        )
 
     def test_analyzer_insight_requires_personalisation_on_first_use(self):
         response = self.post_json("analyzer_insight", {"scope": "activity", "period": "week"})
         self.assertEqual(response.status_code, 409)
         self.assertTrue(response.json()["personalization_required"])
+
+    @override_settings(AI_PROVIDER="none", GEMINI_API_KEY="", AI_API_KEY="")
+    def test_custom_date_range_flows_through_to_analysis_results(self):
+        self.create_personalization()
+        start = self.today - timedelta(days=3)
+        self.create_expense(amount="2400.00", description="Selected date expense")
+        response = self.post_json("analyzer_insight", {
+            "scope": "activity", "period": "custom",
+            "start_date": start.isoformat(), "end_date": self.today.isoformat(),
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["result"]["subtitle"], f"{start:%d %b} – {self.today:%d %b %Y}")
+
+    def test_custom_date_range_requires_both_valid_dates(self):
+        self.create_personalization()
+        response = self.post_json("analyzer_insight", {
+            "scope": "activity", "period": "custom", "start_date": self.today.isoformat(),
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("start date and end date", response.json()["error"])
 
     @override_settings(AI_PROVIDER="none", GEMINI_API_KEY="", AI_API_KEY="")
     def test_transaction_analysis_opens_a_read_only_result_for_its_owner(self):
@@ -231,6 +325,40 @@ class ExpenseAnalyzerWorkspaceTests(TestCase):
         self.assertIn("fatherly warmth", fatherly)
         self.assertIn("motherly warmth", motherly)
         self.assertIn("Build a business.", fatherly)
+
+    def test_gemini_reasoning_is_exposed_to_the_observations_component(self):
+        model_result = {
+            "summary": "You spent more on Food this week.",
+            "reasoning": ["Food is the largest category.", "Your transport budget has room."],
+            "recommendations": ["Review your next Food purchase."],
+            "alternatives": [],
+            "goal_suggestions": [],
+            "encouragement": "Small steps add up.",
+        }
+        body = json.dumps({"candidates": [{"content": {"parts": [{"text": json.dumps(model_result)}]}}]})
+        insights = _parse_response(body)
+        self.assertEqual(insights["observations"], model_result["reasoning"])
+        self.assertEqual(insights["reasoning"], model_result["reasoning"])
+
+    def test_ai_fallback_uses_period_totals_and_the_actual_top_category(self):
+        result = {
+            "scope": "activity",
+            "period_label": "This week",
+            "metrics": [
+                {"label": "Money in", "value": "10,000 XAF"},
+                {"label": "Money out", "value": "5,000 XAF"},
+                {"label": "Net flow", "value": "+5,000 XAF"},
+            ],
+            "categories": [{"name": "Food", "value": "3,000 XAF", "percent": 60}],
+            "rows": [{"title": "School lunch", "value": "1,500 XAF"}],
+            "notes": ["You spent 8% less than in the previous period."],
+            "deterministic_recommendations": [],
+        }
+        result = _fallback_insights(result, {"future_vision": "Build a small business."})
+        self.assertIn("10,000 XAF", result["summary"])
+        self.assertIn("Food", result["summary"])
+        self.assertIn("60%", result["observations"][0])
+        self.assertTrue(result["recommendations"])
 
 
 class ExpenseAnalyzerScoringTests(TestCase):
