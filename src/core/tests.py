@@ -54,7 +54,7 @@ class PWAOfflineAndPremiumTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("javascript", response["Content-Type"])
         self.assertEqual(response["Service-Worker-Allowed"], "/")
-        self.assertContains(response, "tiana-pwa-shell-v1")
+        self.assertContains(response, "tiana-pwa-shell-v2")
         self.assertNotContains(response, "caches.put(event.request")
 
     def test_offline_bootstrap_requires_a_signed_in_member(self):
