@@ -1,4 +1,5 @@
 import json
+from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 
 from asgiref.sync import sync_to_async
@@ -219,52 +220,124 @@ def _modal_result(context):
 
 
 def _fallback_insights(result, persona):
-    scope = result["scope"]
-    if scope == "preview":
-        summary = "You haven't saved this purchase yet, so we still have room to think it through. Here's how it compares with the money you have planned to protect."
-    elif scope == "transaction":
-        summary = f"I've looked at {result['title']}. Let's use what this expense tells us to make the next choice a little easier."
-    elif scope in {"budgets", "budget"}:
-        summary = "Let's keep your spending connected to the things you planned for. The figures below show where each limit stands today."
-    elif scope in {"goals", "goal"}:
-        summary = "Your future is built from the small amounts you protect consistently. Let's keep the next step realistic and manageable."
-    else:
-        summary = "I've looked over the money you've recorded for this period. Let's use the pattern to make the next few days feel a little more in control."
-
-    observations = list(result.get("notes") or ["Keep recording your transactions so the picture becomes clearer."])
+    """Build a useful, data-led review when Gemini is temporarily unavailable."""
+    persona = persona or {}
+    scope = result.get("scope", "activity")
+    metrics = {item.get("label"): item.get("value") for item in result.get("metrics", [])}
+    period = (result.get("period_label") or "this period").lower()
     categories = result.get("categories") or []
-    if categories:
-        top = categories[0]
-        observations.insert(0, f"{top['name']} is your largest recorded spending category at {top['value']}.")
-    recommendations = result.get("deterministic_recommendations") or []
-    if not recommendations:
-        recommendations = ["Protect money for food, transport and school needs before optional spending."]
-        if scope in {"budgets", "budget"}:
-            recommendations.append("Check the budget with the highest percentage used before spending more in that category.")
-        elif scope in {"goals", "goal"}:
-            recommendations.append("Choose a small amount you can contribute regularly, even when the week is tight.")
-        else:
-            recommendations.append("Pick one spending category to pay attention to for the rest of this period.")
-    vision = persona.get("future_vision")
+    rows = result.get("rows") or []
+    observations = list(result.get("notes") or [])
+    recommendations = list(result.get("deterministic_recommendations") or [])
+    goal_suggestions = []
+
+    if scope == "preview":
+        amount = metrics.get("Planned amount", "the amount you entered")
+        summary = (
+            f"You're considering {result.get('title') or 'this expense'} at {amount}. "
+            "I checked it against the financial position and commitments available in your saved records. "
+            "Use the score and next steps below to decide whether now is the right moment."
+        )
+        if not recommendations:
+            recommendations = ["Protect money for essentials and planned savings before deciding on optional spending."]
+    elif scope == "transaction":
+        summary = result.get("summary") or (
+            f"I reviewed {result.get('title') or 'this expense'} using the records available around it. "
+            "The score below reflects the current budget and savings context, not a judgement about you."
+        )
+        if not observations:
+            observations = ["This review is focused on one recorded expense rather than your entire period."]
+    elif scope in {"budgets", "budget"}:
+        summary = (
+            f"Across your budgets, you've planned {metrics.get('Planned limits', 'an amount')} "
+            f"and recorded {metrics.get('Already spent', 'some spending')}. "
+            f"That leaves {metrics.get('Still available', 'the balance shown below')} against those limits."
+        )
+        most_used = max(rows, key=lambda item: float(item.get("percent") or 0), default=None)
+        if most_used:
+            observations.insert(0, f"{most_used['title']} is currently the tightest budget at {round(float(most_used.get('percent') or 0))}% used.")
+            if not recommendations:
+                recommendations.append(
+                    f"Review the next planned {most_used['title'].lower()} expense before spending more in this category."
+                )
+        if not recommendations:
+            recommendations.append("Keep a little room for unexpected essentials instead of assigning every remaining franc.")
+    elif scope in {"goals", "goal"}:
+        summary = (
+            f"You've put {metrics.get('Already saved', 'money')} towards your goals, "
+            f"with {metrics.get('Still to go', 'more to save')} remaining. "
+            "The progress bars show which milestones are closest and which may need a little more time."
+        )
+        closest = max(rows, key=lambda item: float(item.get("percent") or 0), default=None)
+        if closest:
+            observations.insert(0, f"{closest['title']} is your furthest-along goal at {round(float(closest.get('percent') or 0))}% of its target.")
+        if not recommendations:
+            recommendations.append("Choose a contribution that leaves food, transport, school and other essentials covered.")
+        if not rows and persona.get("ambition_label"):
+            goal_suggestions.append(
+                f"Consider one small milestone that supports your {persona['ambition_label'].lower()} ambition."
+            )
+    else:
+        summary = (
+            f"For {period}, your records show {metrics.get('Money in', 'no recorded income')} coming in "
+            f"and {metrics.get('Money out', 'no recorded expenses')} going out. "
+            f"Your recorded net flow is {metrics.get('Net flow', 'shown in the figures below')}."
+        )
+        if categories:
+            top = categories[0]
+            summary += f" {top['name']} is the largest spending category at {top['value']}."
+            observations.insert(0, f"{top['name']} represents {top.get('percent', 0)}% of recorded spending in this period.")
+            if not recommendations:
+                recommendations.append(f"Keep an eye on the next {top['name'].lower()} expense and compare it with the rest of this period.")
+        if rows:
+            largest = rows[0]
+            observations.append(f"The largest individual expense in this review is {largest['title']} at {largest['value']}.")
+        if not recommendations:
+            recommendations.append("Keep recording transactions so your next review can identify changes more confidently.")
+        if not categories:
+            observations.append("There is not enough category-level activity in this period to identify a leading spending area.")
+
+    vision = persona.get("future_vision") or ""
+    ambition = persona.get("ambition_label") or ""
+    career = persona.get("desired_career") or ""
     if vision and len(recommendations) < 4:
-        recommendations.append(f"Keep your bigger plan in sight: {vision[:120]}.")
+        recommendations.append(f"Keep your long-term plan in view: {vision[:110]}")
+    elif career and len(recommendations) < 4:
+        recommendations.append(f"Let your money choices support the career you're building in {career[:80]}.")
+    if ambition and not goal_suggestions and scope in {"activity", "budgets", "budget"}:
+        goal_suggestions.append(f"A realistic next milestone connected to your goal of {ambition.lower()}.")
+
+    encouragement = (
+        f"You're working towards {vision[:100]}. You don't have to solve everything today; one thoughtful next step counts."
+        if vision else
+        "You don't have to get everything perfect today. One thoughtful next step is enough to keep moving."
+    )
     return {
         "summary": summary,
-        "observations": observations[:3],
+        "observations": observations[:4],
+        "reasoning": observations[:4],
         "recommendations": recommendations[:4],
         "alternatives": result.get("alternatives") or [],
-        "goal_suggestions": [],
-        "encouragement": "You don't have to fix everything today. One good next choice is enough to keep moving.",
+        "goal_suggestions": goal_suggestions[:3],
+        "encouragement": encouragement,
     }
-
 
 @login_required
 @require_GET
 def analyzer_view(request):
     """Analysis centre: choose what to understand without leaving this page again."""
     period = request.GET.get("period", "week").strip().lower()
-    if period not in {"week", "month", "year"}:
+    if period not in {"day", "week", "month", "year", "custom"}:
         period = "week"
+    today = __import__("django.utils.timezone", fromlist=["localdate"]).localdate()
+    selected_start_date = selected_end_date = None
+    if period == "custom":
+        try:
+            selected_start_date = date.fromisoformat(request.GET.get("start_date", ""))
+            selected_end_date = date.fromisoformat(request.GET.get("end_date", ""))
+        except (TypeError, ValueError):
+            period = "week"
+            selected_start_date = selected_end_date = None
     recent_expenses = Transaction.objects.filter(
         owner=request.user,
         kind="expense",
@@ -275,6 +348,9 @@ def analyzer_view(request):
     ).exists()
     return render(request, "expense_analyzer/analyzer.html", {
         "period": period,
+        "today": today,
+        "selected_start_date": selected_start_date,
+        "selected_end_date": selected_end_date,
         "recent_expenses": recent_expenses,
         "has_personalization": has_personalization,
     })
@@ -400,14 +476,22 @@ async def analyzer_insight_view(request):
         if not isinstance(payload, dict):
             raise ValueError("The analysis request is not valid.")
         period = (payload.get("period") or "week").strip().lower()
-        if period not in {"week", "month", "year"}:
+        if period not in {"day", "week", "month", "year", "custom"}:
             period = "week"
+        start_date = end_date = None
+        if period == "custom":
+            try:
+                start_date = date.fromisoformat(str(payload.get("start_date") or ""))
+                end_date = date.fromisoformat(str(payload.get("end_date") or ""))
+            except (TypeError, ValueError) as exc:
+                raise ValueError("Choose a valid start date and end date.") from exc
         focus = (payload.get("scope") or "activity").strip().lower()
         if focus not in {"activity", "transaction", "budget", "budgets", "goal", "goals"}:
             focus = "activity"
         object_id = payload.get("object_id")
         context = await sync_to_async(build_workspace_context, thread_sensitive=True)(
-            request.user, period=period, focus=focus, object_id=object_id
+            request.user, period=period, focus=focus, object_id=object_id,
+            start_date=start_date, end_date=end_date,
         )
         persona = await sync_to_async(_profile_for, thread_sensitive=True)(request.user)
         result = await sync_to_async(_modal_result, thread_sensitive=True)(context)
