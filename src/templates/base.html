@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="{% static 'nkem/app.css' %}?v=20261105-expense-analyzer-nav"><link rel="stylesheet" href="{% static 'nkem/theme.css' %}?v=20261101-palettes-final"><link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030"><link rel="stylesheet" href="{% static 'nkem/ui-polish.css' %}?v=20261101-delete-nav-market-invest">
 <link rel="stylesheet" href="{% static 'nkem/minimal-copy.css' %}?v=20261105-minimal-copy">
 <link rel="stylesheet" href="{% static 'nkem/expense-analyzer.css' %}?v=20261106-premium-layer-v2">
+<link rel="stylesheet" href="{% static 'nkem/page-loader.css' %}?v=20261106-glass-loader-v1">
 <style>
 .tiana-pwa-actions{display:flex;align-items:center;gap:7px}
 .tiana-pwa-actions [hidden],[data-tiana-analysis-modal][hidden],.tiana-analysis-overlay[hidden]{display:none!important}
@@ -48,6 +49,20 @@
 {% block extra_head %}{% endblock %}
 </head>
 <body data-user-theme="{{ user.theme|default:'violet' }}" data-page="{{ request.resolver_match.url_name|default:'' }}" data-user-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}">
+<div class="tiana-page-loader" data-tiana-page-loader hidden aria-hidden="true">
+  <div class="tiana-page-loader-card" role="status" aria-live="polite" aria-atomic="true">
+    <span class="tiana-page-loader-orbit" aria-hidden="true">
+      <svg class="tiana-page-loader-ring" viewBox="0 0 88 88">
+        <circle cx="44" cy="44" r="35"></circle>
+        <circle cx="44" cy="44" r="35"></circle>
+      </svg>
+      <span class="tiana-page-loader-spark">✦</span>
+    </span>
+    <span class="tiana-page-loader-kicker">TIANA MONEY COMPANION</span>
+    <strong class="tiana-page-loader-message" data-page-loader-message>Getting everything ready for you</strong>
+    <p class="tiana-page-loader-note">A moment of patience. Your money stays safe.</p>
+  </div>
+</div>
 <header class="app-topbar">
 <a class="brand-wrap" href="{% url 'home' %}" aria-label="TIANA home"><picture><source type="image/webp" srcset="{% static 'assets/optimized/tiana-logo-transparent-320.webp' %} 320w, {% static 'assets/optimized/tiana-logo-transparent-640.webp' %} 640w" sizes="180px"><img class="nkem-header-logo tiana-header-wordmark" src="{% static 'assets/tiana-logo-transparent.png' %}" alt="TIANA — Your Money Friend Always" width="1660" height="716" decoding="async"></picture></a>
 {% if user.is_authenticated %}
@@ -121,6 +136,7 @@
 <a href="{% url 'profile' %}" {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}><span class="nav-icon">●</span><span>Profile</span></a>
 </nav>
 {% endif %}
+<script src="{% static 'nkem/page-loader.js' %}?v=20261106-glass-loader-v1" defer></script>
 <script src="{% static 'nkem/app.js' %}" defer></script>
 <script src="{% static 'nkem/offline-core.js' %}" defer></script>
 <script src="{% static 'nkem/pwa.js' %}" defer></script>{% if user.is_authenticated %}<script src="{% static 'nkem/money-analysis-modal.js' %}?v=20261106-premium-modal-v4" defer></script>{% endif %}{% block extra_js %}{% endblock %}
