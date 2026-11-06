@@ -184,7 +184,8 @@ AI_API_KEY = GEMINI_API_KEY or os.environ.get("AI_API_KEY", "")
 AI_MODEL = GEMINI_MODEL
 
 # AdSense remains disabled until Google approves the site and provides IDs.
-ADSENSE_CLIENT_ID = os.environ.get("ADSENSE_CLIENT_ID", "").strip()
+ADSENSE_CLIENT_ID = os.environ.get("ADSENSE_CLIENT_ID", "ca-pub-1554607983371431").strip()
+PUBLIC_SITE_URL = os.environ.get("PUBLIC_SITE_URL", "https://tiana.lol").strip().rstrip("/")
 ADSENSE_SLOT_ID = os.environ.get("ADSENSE_SLOT_ID", "").strip()
 ADSENSE_ENABLED = ADSENSE_CLIENT_ID.startswith("ca-pub-") and ADSENSE_SLOT_ID.isdigit()
 
