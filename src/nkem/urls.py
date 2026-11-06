@@ -7,7 +7,7 @@ from django.contrib.auth.views import PasswordChangeDoneView, PasswordChangeView
 from accounts.views import application_security_view, login_view, logout_view, manage_devices_view, onboarding_setup_view, onboarding_view, profile_view, register_view, registration_welcome_view
 from expense_analyzer.views import analyzer_insight_view, analyzer_personalization_view, analyzer_transaction_preview_view, analyzer_view
 from budgets.views import budget_allocations_view, budget_delete_view, budget_list_view
-from core.views import about_view, ads_txt_view, dashboard_view, health_check_view, home_view, investments_coming_soon_view, money_school_view, offline_bootstrap_view, offline_sync_view, premium_view, privacy_view, robots_txt_view, service_worker_view, sitemap_xml_view, terms_view
+from core.views import about_view, ads_txt_view, dashboard_view, money_school_guide_view, health_check_view, home_view, investments_coming_soon_view, money_school_view, offline_bootstrap_view, offline_sync_view, premium_view, privacy_view, robots_txt_view, service_worker_view, sitemap_xml_view, terms_view
 from finance.views import account_list_view, account_create_view, transaction_create_view, transaction_delete_view, transaction_export_view, transaction_list_view, transaction_update_view
 from goals.views import goal_contribute_view, goal_create_view, goal_delete_view, goal_list_view
 from insights.views import insights_view
@@ -66,6 +66,7 @@ urlpatterns = [
     path("opportunities/", opportunity_list_view, name="opportunities"),
     path("invest/", investments_coming_soon_view, name="investments"),
     path("premium/", premium_view, name="premium"),
+    path("money-school/<slug:slug>/", money_school_guide_view, name="money_school_guide"),
     path("money-school/", money_school_view, name="money_school"),
     path("opportunities/<int:pk>/", opportunity_detail_view, name="opportunity_detail"),
     path("analyzer/transaction-preview/", analyzer_transaction_preview_view, name="analyzer_transaction_preview"),
