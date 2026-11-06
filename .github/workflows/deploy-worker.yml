@@ -115,7 +115,20 @@ jobs:
             if [[ "$status" == "200" ]]; then
               root_status=$(curl --silent --show-error --max-time 10 --output /dev/null --write-out '%{http_code}' "$url" || true)
               if [[ "$root_status" =~ ^(200|301|302|303|307|308)$ ]]; then
-                echo "TIANA staging application and PostgreSQL health checks passed (health HTTP $status; root HTTP $root_status)."
+                ads_txt=$(curl --silent --show-error --fail --max-time 10 "${url}ads.txt" || true)
+                expected_ads='google.com, pub-1554607983371431, DIRECT, f08c47fec0942fa0'
+                if [[ "$ads_txt" != "$expected_ads" ]]; then
+                  echo "::error::The staging ads.txt response does not contain the expected publisher record."
+                  exit 1
+                fi
+                for path in robots.txt sitemap.xml about/ privacy/ terms/ money-school/; do
+                  page_status=$(curl --silent --show-error --max-time 10 --output /dev/null --write-out '%{http_code}' "${url}${path}" || true)
+                  if [[ "$page_status" != "200" ]]; then
+                    echo "::error::Public route ${path} returned HTTP ${page_status:-no-response}."
+                    exit 1
+                  fi
+                done
+                echo "TIANA staging health, public pages, crawler files and ads.txt checks passed."
                 exit 0
               fi
             fi
