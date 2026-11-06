@@ -139,7 +139,8 @@ async def generate_money_insights(context, persona=None):
         "generationConfig": {
             "responseMimeType": "application/json",
             "maxOutputTokens": 950,
-            "temperature": 0.75,
+            # Gemini 3.8 Flash uses its model-default thinking level and does not
+            # accept legacy sampling fields such as temperature/top_p/top_k.
         },
     }
     endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
