@@ -95,3 +95,55 @@ class ExpenseAnalysis(models.Model):
     def __str__(self):
         label = self.description or self.category
         return f"{label} · {self.score}/100 · {self.user}"
+
+
+
+class AIPersonalization(models.Model):
+    """A member's preferred coaching voice and future direction for TIANA."""
+
+    VOICE_STYLES = [
+        ("friendly", "Friendly"),
+        ("fatherly", "Fatherly"),
+        ("motherly", "Motherly"),
+        ("mentor", "Mentor"),
+    ]
+    AMBITIONS = [
+        ("financial_freedom", "Become financially independent"),
+        ("millionaire", "Build substantial wealth"),
+        ("business_owner", "Start or grow a business"),
+        ("career", "Build a successful career"),
+        ("education", "Complete my education or training"),
+        ("support_family", "Support my family"),
+        ("own_home", "Own a home or property"),
+        ("other", "Something else"),
+    ]
+    STAGES = [
+        ("student", "Student"),
+        ("training", "Learning a skill or trade"),
+        ("employed", "Employed"),
+        ("self_employed", "Self-employed"),
+        ("job_seeking", "Looking for work"),
+        ("other", "Other"),
+    ]
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="ai_personalization",
+    )
+    voice_style = models.CharField(max_length=12, choices=VOICE_STYLES, default="friendly")
+    ambition = models.CharField(max_length=24, choices=AMBITIONS, blank=True, default="")
+    current_stage = models.CharField(max_length=16, choices=STAGES, blank=True, default="")
+    future_vision = models.CharField(max_length=240, blank=True, default="")
+    desired_career = models.CharField(max_length=120, blank=True, default="")
+    why_it_matters = models.CharField(max_length=180, blank=True, default="")
+    setup_completed = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "AI personalisation"
+        verbose_name_plural = "AI personalisations"
+
+    def __str__(self):
+        return f"TIANA preferences · {self.user}"

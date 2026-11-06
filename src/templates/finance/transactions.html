@@ -5,7 +5,7 @@
 {% block content %}
 <section class="activity-page" data-activity-dashboard>
   <header class="activity-hero">
-    <div class="activity-topline"><div><h1>Activity</h1></div><div class="activity-header-actions"><a href="{% url 'analyzer' %}?scope=activity&period=week" class="activity-analyze-link">✦ Analyze activity</a><a href="{% url 'transactions' %}" class="activity-round-action" aria-label="Search activity">⌕</a><a href="{% url 'transaction_export' %}" class="activity-round-action" aria-label="Download transactions as CSV" title="Download CSV">⇩</a><a href="{% url 'notifications' %}" class="activity-round-action" aria-label="Notifications">♧{% if unread_notification_count %}<i></i>{% endif %}</a></div></div>
+    <div class="activity-topline"><div><h1>Activity</h1></div><div class="activity-header-actions"><button type="button" class="activity-analyze-link" data-analysis-open data-analysis-scope="activity" data-analysis-period="week">✦ Analyze activity</button><a href="{% url 'transactions' %}" class="activity-round-action" aria-label="Search activity">⌕</a><a href="{% url 'transaction_export' %}" class="activity-round-action" aria-label="Download transactions as CSV" title="Download CSV">⇩</a><a href="{% url 'notifications' %}" class="activity-round-action" aria-label="Notifications">♧{% if unread_notification_count %}<i></i>{% endif %}</a></div></div>
     <div class="activity-period-switch" role="group" aria-label="Statistics period"><button type="button" data-activity-period="day">Day</button><button type="button" data-activity-period="week" class="is-active" aria-pressed="true">Week</button><button type="button" data-activity-period="month">Month</button><button type="button" data-activity-period="year">Year</button></div>
     <div class="activity-total-block"><span>Total spending</span><strong data-activity-total>{{ expense_total|floatformat:0 }} <small>FCFA</small></strong><div class="activity-total-meta"><span class="activity-income-meta">↗ <b data-activity-income>{{ income_total|floatformat:0 }}</b> in</span><span class="activity-expense-meta">↘ <b data-activity-expense>{{ expense_total|floatformat:0 }}</b> out</span></div></div>
     <div class="activity-chart-wrap">
@@ -36,7 +36,7 @@
             <span class="activity-history-main"><strong>{{ tx.description|default:tx.category }}</strong><small>{{ tx.category }} · {{ tx.account.name }} · {{ tx.created_at|date:"g:i A" }}</small></span>
             <span class="activity-history-amount {% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}is-income{% else %}is-expense{% endif %}">{% if tx.kind == 'income' or tx.kind == 'refund' or tx.kind == 'transfer_in' %}+{% else %}−{% endif %}{{ tx.amount|floatformat:0 }}<small>FCFA</small></span>
           </a>
-          {% if tx.kind == "expense" and tx.currency|upper == user.currency|upper %}<a class="activity-history-analyze" href="{% url 'analyzer' %}?scope=transaction&amp;transaction_id={{ tx.pk }}">✦ Analyze this expense</a>{% endif %}
+          {% if tx.kind == "expense" and tx.currency|upper == user.currency|upper %}<button type="button" class="activity-history-analyze" data-analysis-open data-analysis-scope="transaction" data-analysis-object-id="{{ tx.pk }}" data-analysis-period="week">✦ Analyze this expense</button>{% endif %}
         {% endfor %}
       {% endfor %}
       </div><p class="empty-search" data-empty-search hidden>No matching transactions.</p>
@@ -46,4 +46,14 @@
   </section>
 </section>
 {% endblock %}
-{% block extra_js %}<script src="{% static 'nkem/activity-chart.js' %}?v=20261031-chart" defer></script>{% endblock %}
+{% block extra_js %}<script src="{% static 'nkem/activity-chart.js' %}?v=20261031-chart" defer></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const trigger = document.querySelector(".activity-analyze-link");
+  document.querySelectorAll("[data-activity-period]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (trigger) trigger.dataset.analysisPeriod = button.dataset.activityPeriod;
+    });
+  });
+});
+</script>{% endblock %}

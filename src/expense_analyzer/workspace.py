@@ -210,12 +210,17 @@ def build_workspace_context(user, period="week", focus="activity", object_id=Non
         selected_goal = next((item for item in goals["items"] if item["id"] == selected_id), None)
         if selected_goal is None:
             raise Http404("This goal could not be found in your account.")
-    else:
+    elif focus == "budget":
+        focus = "budgets"
+    elif focus == "goal":
+        focus = "goals"
+    elif focus not in {"activity", "budgets", "goals"}:
         focus = "activity"
 
     focus_labels = {
         "activity": "Activity analysis", "transaction": "Expense analysis",
-        "budget": "Budget analysis", "goal": "Savings goal analysis",
+        "budget": "Budget analysis", "budgets": "Budget overview",
+        "goal": "Savings goal analysis", "goals": "Savings goals overview",
     }
     ai_payload = {
         "currency": currency, "focus": focus, "period": activity["period_label"],

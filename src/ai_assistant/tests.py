@@ -90,10 +90,10 @@ class LegacyAIURLCompatibilityTests(TestCase):
         response = self.client.get(reverse("ai_chat"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "expense_analyzer/workspace.html")
-        self.assertContains(response, "Understand your money")
-        self.assertContains(response, "Are your limits working?")
-        self.assertContains(response, "Are your goals on track?")
+        self.assertTemplateUsed(response, "expense_analyzer/analyzer.html")
+        self.assertContains(response, "What would you like to understand?")
+        self.assertContains(response, "My budgets")
+        self.assertContains(response, "My savings goals")
         self.assertNotContains(response, "Your private conversation")
 
 
