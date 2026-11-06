@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
+from django.utils import timezone
 from django.db import transaction as db_transaction
 
 from finance.models import Transaction
@@ -329,7 +330,7 @@ def analyzer_view(request):
     period = request.GET.get("period", "week").strip().lower()
     if period not in {"day", "week", "month", "year", "custom"}:
         period = "week"
-    today = __import__("django.utils.timezone", fromlist=["localdate"]).localdate()
+    today = timezone.localdate()
     selected_start_date = selected_end_date = None
     if period == "custom":
         try:
