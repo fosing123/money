@@ -7,7 +7,7 @@ from django.contrib.auth.views import PasswordChangeDoneView, PasswordChangeView
 from accounts.views import application_security_view, login_view, logout_view, manage_devices_view, onboarding_setup_view, onboarding_view, profile_view, register_view, registration_welcome_view
 from expense_analyzer.views import analyzer_insight_view, analyzer_personalization_view, analyzer_transaction_preview_view, analyzer_view
 from budgets.views import budget_allocations_view, budget_delete_view, budget_list_view
-from core.views import dashboard_view, health_check_view, home_view, investments_coming_soon_view, money_school_view, offline_bootstrap_view, offline_sync_view, premium_view, service_worker_view
+from core.views import about_view, ads_txt_view, dashboard_view, health_check_view, home_view, investments_coming_soon_view, money_school_view, offline_bootstrap_view, offline_sync_view, premium_view, privacy_view, robots_txt_view, service_worker_view, sitemap_xml_view, terms_view
 from finance.views import account_list_view, account_create_view, transaction_create_view, transaction_delete_view, transaction_export_view, transaction_list_view, transaction_update_view
 from goals.views import goal_contribute_view, goal_create_view, goal_delete_view, goal_list_view
 from insights.views import insights_view
@@ -22,6 +22,12 @@ admin.site.index_title = "Manage the TIANA experience"
 
 urlpatterns = [
     path("", home_view, name="home"),
+    path("about/", about_view, name="about"),
+    path("privacy/", privacy_view, name="privacy"),
+    path("terms/", terms_view, name="terms"),
+    path("ads.txt", ads_txt_view, name="ads_txt"),
+    path("robots.txt", robots_txt_view, name="robots_txt"),
+    path("sitemap.xml", sitemap_xml_view, name="sitemap_xml"),
     path("onboarding/", onboarding_view, name="onboarding"),
     path("setup/", onboarding_setup_view, name="onboarding_setup"),
     path("register/", register_view, name="register"),
