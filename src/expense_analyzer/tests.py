@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 from datetime import date, timedelta
 from decimal import Decimal
 
@@ -9,6 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from budgets.models import Budget
+from ai_assistant.services import AIUsageLimitError
 from expense_analyzer.ai import _parse_response, _system_instruction
 from expense_analyzer.models import AIPersonalization, ExpenseAnalysis
 from expense_analyzer.scoring import analyze_completed_expense, analyze_planned_purchase
@@ -339,6 +341,22 @@ class ExpenseAnalyzerWorkspaceTests(TestCase):
         insights = _parse_response(body)
         self.assertEqual(insights["observations"], model_result["reasoning"])
         self.assertEqual(insights["reasoning"], model_result["reasoning"])
+
+    def test_daily_free_ai_limit_blocks_gemini_and_returns_a_premium_path(self):
+        self.create_personalization()
+        with patch(
+            "expense_analyzer.views._reserve_ai_request",
+            side_effect=AIUsageLimitError("You've used today's 3 free TIANA AI requests."),
+        ), patch("expense_analyzer.views.generate_money_insights") as generate:
+            response = self.post_json("analyzer_insight", {
+                "scope": "activity", "period": "week",
+            })
+
+        self.assertEqual(response.status_code, 429)
+        self.assertTrue(response.json()["upgrade_required"])
+        self.assertEqual(response.json()["upgrade_url"], "/premium/")
+        self.assertEqual(response["Cache-Control"], "private, no-store, max-age=0")
+        generate.assert_not_called()
 
     def test_ai_fallback_uses_period_totals_and_the_actual_top_category(self):
         result = {
