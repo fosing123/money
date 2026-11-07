@@ -75,8 +75,12 @@ jobs:
           PYTHONPATH=src uv run python manage.py check
           DJANGO_SETTINGS_MODULE=nkem.settings PYTHONPATH=src uv run python -c "from django.db import connections; from django_pg8000.base import DatabaseConnection; from nkem.db_backends.pg8000.base import HyperdriveDatabaseConnection; db = connections['default']; assert db.vendor == 'postgresql_pg8000'; assert db.features.supports_json_field; assert issubclass(HyperdriveDatabaseConnection, DatabaseConnection); assert HyperdriveDatabaseConnection._run is not DatabaseConnection._run; print('TIANA Hyperdrive-safe pg8000 backend check passed')"
 
-      - name: Run Django tests
-        run: uv run python manage.py test
+      - name: Run TIANA Analyzer regression tests
+        run: uv run python manage.py test expense_analyzer --verbosity=2
+      - name: Run remaining non-core Django app tests
+        run: uv run python manage.py test accounts ai_assistant budgets finance goals insights marketplace notifications --verbosity=2
+      - name: Run core app tests outside the separate Hyperdrive protocol suite
+        run: uv run python manage.py test core.tests.WelcomePageTests core.tests.PWAOfflineAndPremiumTests core.tests.MoneyIntelligenceTests core.tests.AccountsCentreTests core.tests.BudgetIntelligencePageTests core.tests.BudgetCurrencySeparationTests core.tests.HealthCheckTests core.tests.CloudflareWorkerDependencyTests --verbosity=2
 
       - name: Check service-worker JavaScript
         run: |
@@ -85,6 +89,7 @@ jobs:
           node --check static/nkem/offline.js
           node --check static/nkem/pwa.js
           node --check static/nkem/fcm.js
+          node --check static/nkem/money-analysis-modal.js
 
       - name: Generate responsive WebP image assets
         run: uv run python scripts/optimize_images.py

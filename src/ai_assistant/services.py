@@ -110,9 +110,9 @@ def _reserve_ai_request(user):
         usage = AIUsage.objects.select_for_update().get(pk=usage.pk)
         if usage.request_count >= daily_limit:
             if user.has_active_premium:
-                message = "You've reached today's 20 AI coach requests. Your allowance resets tomorrow."
+                message = "You've reached today's 20 TIANA AI requests. Your allowance resets tomorrow."
             else:
-                message = "You've used today's 3 free AI coach requests. Upgrade to TIANA Premium for a higher daily allowance."
+                message = "You've used today's 3 free TIANA AI requests. Upgrade to TIANA Premium for a higher daily allowance."
             raise AIUsageLimitError(message)
         usage.request_count += 1
         usage.save(update_fields=["request_count", "updated_at"])

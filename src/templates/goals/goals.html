@@ -4,7 +4,10 @@
 <section class="goals-page">
   <header class="goals-page-heading">
     <div><h1>Savings goals</h1></div>
-    <a class="button goals-create-button" href="{% url 'goal_create' %}"><span>＋</span> New goal</a>
+    <div class="goals-heading-actions">
+      <button type="button" class="goal-analysis-action" data-analysis-open data-analysis-scope="goals" data-analysis-period="month">✦ Analyze goals</button>
+      <a class="button goals-create-button" href="{% url 'goal_create' %}"><span>＋</span> New goal</a>
+    </div>
   </header>
 
   <section class="goals-overview" aria-label="Savings overview">
@@ -40,6 +43,7 @@
               {% if goal.contributions.count %}
                 <span class="goal-contribution-count">{{ goal.contributions.count }} top-ups</span>
               {% endif %}
+              <button type="button" class="goal-analysis-action" data-analysis-open data-analysis-scope="goal" data-analysis-object-id="{{ goal.pk }}" data-analysis-period="month">Analyze</button>
               <a class="goal-delete-action" href="{% url 'goal_delete' goal.pk %}">Delete goal</a>
             </div>
           </div>

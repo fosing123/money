@@ -135,9 +135,11 @@
         <p><span>✦</span> Your account balance will update automatically when you save.</p>
         <div class="form-actions">
           <a class="button button-secondary" href="{% url 'transactions' %}">Cancel</a>
+          {% if form.kind %}<button class="button button-secondary transaction-inline-analyze" type="button" data-transaction-analyze data-url="{% url 'analyzer_transaction_preview' %}">✦ Preview with TIANA</button>{% endif %}
           <button class="button transaction-save-button" type="submit">Save transaction <span>→</span></button>
         </div>
       </footer>
+      <section class="transaction-analysis-preview" data-transaction-analysis-preview hidden aria-live="polite"></section>
     </form>
   </section>
 </section>
@@ -155,6 +157,104 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll("[data-transaction-amount]").forEach((item) => item.classList.toggle("is-active", item === button));
     });
   });
+
+  const entryForm = document.querySelector(".transaction-refresh-form");
+  const analyzeButton = document.querySelector("[data-transaction-analyze]");
+  const analysisPanel = document.querySelector("[data-transaction-analysis-preview]");
+  if (entryForm && analyzeButton && analysisPanel) {
+    const kindField = entryForm.querySelector("[name=kind]");
+    const refreshAnalyzeVisibility = () => {
+      analyzeButton.hidden = !!kindField && kindField.value !== "expense";
+    };
+    refreshAnalyzeVisibility();
+    if (kindField) kindField.addEventListener("change", refreshAnalyzeVisibility);
+    analyzeButton.addEventListener("click", async () => {
+      const values = new FormData(entryForm);
+      const csrf = entryForm.querySelector("[name=csrfmiddlewaretoken]");
+      const essential = entryForm.querySelector("[name=is_essential]");
+      const payload = {
+        kind: kindField ? kindField.value : "expense",
+        amount: values.get("amount") || "",
+        category: values.get("category") || "General",
+        description: values.get("description") || "",
+        is_essential: !!(essential && essential.checked)
+      };
+      analysisPanel.hidden = false;
+      analysisPanel.replaceChildren();
+      analysisPanel.textContent = "TIANA is reviewing this expense against your recorded balance, budget and savings plan…";
+      analysisPanel.setAttribute("aria-busy", "true");
+      analyzeButton.disabled = true;
+      try {
+        const response = await fetch(analyzeButton.dataset.url, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {"Content-Type": "application/json", "X-CSRFToken": csrf ? csrf.value : ""},
+          body: JSON.stringify(payload)
+        });
+        const body = await response.text();
+        let data;
+        try { data = body ? JSON.parse(body) : {}; }
+        catch (_) { throw new Error("TIANA received an incomplete response. Please retry."); }
+
+        if (response.status === 409 && data.personalization_required) {
+          analysisPanel.replaceChildren();
+          const message = document.createElement("p");
+          message.textContent = "Set your coaching preferences first so TIANA can personalise this review.";
+          const link = document.createElement("a");
+          link.href = "/analyzer/";
+          link.textContent = "Personalise TIANA →";
+          analysisPanel.append(message, link);
+          return;
+        }
+        if (response.status === 429 && data.upgrade_required) {
+          analysisPanel.replaceChildren();
+          const message = document.createElement("p");
+          message.textContent = data.error || "You've reached your free AI allowance.";
+          const link = document.createElement("a");
+          link.href = data.upgrade_url || "/premium/";
+          link.textContent = "Explore TIANA Premium →";
+          analysisPanel.append(message, link);
+          return;
+        }
+        if (!response.ok) throw new Error(data.error || "TIANA couldn't review this expense just now.");
+
+        const result = data.result || {};
+        const insights = data.insights || {};
+        analysisPanel.replaceChildren();
+        const heading = document.createElement("div");
+        heading.className = "transaction-analysis-preview-heading";
+        const score = document.createElement("strong");
+        score.textContent = (result.score ?? "—") + "/100";
+        const verdict = document.createElement("span");
+        verdict.textContent = result.verdict || "Review";
+        heading.append(score, verdict);
+        const summary = document.createElement("p");
+        summary.textContent = insights.summary || result.summary || "Review the score and recommendations before saving.";
+        analysisPanel.append(heading, summary);
+
+        const recommendations = insights.recommendations || result.deterministic_recommendations || [];
+        if (recommendations.length) {
+          const list = document.createElement("ul");
+          recommendations.forEach((item) => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            list.appendChild(li);
+          });
+          analysisPanel.appendChild(list);
+        }
+        const note = document.createElement("small");
+        note.textContent = data.ai_enhanced
+          ? "Gemini added a personalised explanation. This is a read-only preview; no transaction or balance was changed."
+          : (data.ai_error || "This is a read-only preview. Your transaction has not been saved.");
+        analysisPanel.appendChild(note);
+      } catch (error) {
+        analysisPanel.textContent = error.message || "TIANA couldn't complete the preview.";
+      } finally {
+        analysisPanel.setAttribute("aria-busy", "false");
+        analyzeButton.disabled = false;
+      }
+    });
+  }
 
   const category = document.querySelector("#{{ form.category.id_for_label }}");
   if (category) category.setAttribute("list", "transactionCategorySuggestions");
