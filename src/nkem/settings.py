@@ -184,6 +184,17 @@ ADSENSE_CLIENT_ID = os.environ.get("ADSENSE_CLIENT_ID", "").strip()
 ADSENSE_SLOT_ID = os.environ.get("ADSENSE_SLOT_ID", "").strip()
 ADSENSE_ENABLED = ADSENSE_CLIENT_ID.startswith("ca-pub-") and ADSENSE_SLOT_ID.isdigit()
 
+# Adsterra uses a website/domain ID for publisher reporting and a separate
+# generated ad-unit script for delivery. Never treat the website ID as a zone.
+# The full script is accepted only from trusted server-side deployment config.
+ADSTERRA_WEBSITE_ID = os.environ.get("ADSTERRA_WEBSITE_ID", "6182605").strip()
+ADSTERRA_NATIVE_BANNER_CODE = os.environ.get("ADSTERRA_NATIVE_BANNER_CODE", "").strip()
+ADSTERRA_ENABLED = (
+    env_bool("ADSTERRA_ENABLED", False)
+    and ADSTERRA_WEBSITE_ID.isdigit()
+    and "<script" in ADSTERRA_NATIVE_BANNER_CODE.lower()
+)
+
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", not DEBUG)
 SESSION_COOKIE_SECURE = not DEBUG
