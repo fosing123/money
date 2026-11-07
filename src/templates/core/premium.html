@@ -15,7 +15,7 @@
       <li>Income and expense tracking</li>
       <li>Budgets and savings goals</li>
       <li>Activity and spending insights</li>
-      <li>{{ free_ai_daily_limit }} AI coach requests per day</li>
+      <li>{{ free_ai_daily_limit }} AI requests per day across the Analyzer and AI Coach</li>
     </ul>
   </article>
   <article class="card premium-plan-card premium-plan-featured">
@@ -24,7 +24,7 @@
     <p>More personalised guidance for your next financial steps.</p>
     <ul>
       <li>Everything in the free plan</li>
-      <li>Up to {{ premium_ai_daily_limit }} AI coach requests per day</li>
+      <li>Up to {{ premium_ai_daily_limit }} AI requests per day across the Analyzer and AI Coach</li>
       <li>Priority access to future advanced planning tools</li>
       <li>Early access to new Premium features</li>
     </ul>
@@ -36,6 +36,7 @@
     {% endif %}
   </article>
 </section>
+<p class="premium-disclaimer">One AI request is shared across the Analyzer and the chat-based AI Coach. Premium gives you a larger daily allowance for Gemini-powered spending, budget, savings-goal and planned-expense reviews.</p>
 <p class="premium-disclaimer">Premium access is only activated after a verified payment or an authorised administrator action. A displayed plan is not a payment confirmation. TIANA does not hold or move money.</p>
 <style>
 .premium-page-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:900px;margin:20px auto}
