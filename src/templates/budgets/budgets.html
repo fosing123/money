@@ -41,7 +41,10 @@
         <div class="budget-plan-values"><strong>{{ item.spent_amount|floatformat:0 }} <small>spent</small></strong><span>{{ item.remaining_amount|floatformat:0 }} {{ user.currency }} remaining</span></div>
         <div class="budget-plan-track"><span style="width:{% if item.percent_used > 100 %}100{% else %}{{ item.percent_used }}{% endif %}%"></span></div>
         <div class="budget-plan-foot"><span>{{ item.amount|floatformat:0 }} {{ user.currency }} planned</span><span>{{ item.get_period_display }}</span></div>
-        <div class="budget-plan-actions"><a href="{% url 'budget_delete' item.pk %}" aria-label="Delete {{ item.name }} budget">Delete budget</a></div>
+        <div class="budget-plan-actions">
+          <button type="button" class="budget-analyze-action" data-analysis-open data-analysis-scope="budget" data-analysis-object-id="{{ item.pk }}" data-analysis-period="month">✦ Analyze budget</button>
+          <a href="{% url 'budget_delete' item.pk %}" aria-label="Delete {{ item.name }} budget">Delete budget</a>
+        </div>
       </article>
     {% empty %}
       <div class="budget-empty"><span>◉</span><h3>Your budget starts with a plan</h3><a class="button" href="{% url 'budget_allocations' %}">Set weekly allocations →</a></div>
