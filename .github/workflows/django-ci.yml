@@ -46,5 +46,7 @@ jobs:
         run: node --check tiana-service-worker.js && node --check static/nkem/offline-core.js && node --check static/nkem/offline.js && node --check static/nkem/pwa.js && node --check static/nkem/fcm.js && node --check static/nkem/money-analysis-modal.js
       - name: Run TIANA Analyzer regression tests
         run: python manage.py test expense_analyzer --verbosity=2
-      - name: Run remaining Django app tests
-        run: python manage.py test accounts ai_assistant budgets core finance goals insights marketplace notifications --verbosity=2
+      - name: Run remaining non-core Django app tests
+        run: python manage.py test accounts ai_assistant budgets finance goals insights marketplace notifications --verbosity=2
+      - name: Run core app tests outside the separate Hyperdrive protocol suite
+        run: python manage.py test core.tests.WelcomePageTests core.tests.PWAOfflineAndPremiumTests core.tests.MoneyIntelligenceTests core.tests.AccountsCentreTests core.tests.BudgetIntelligencePageTests core.tests.BudgetCurrencySeparationTests core.tests.HealthCheckTests core.tests.CloudflareWorkerDependencyTests --verbosity=2
