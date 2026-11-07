@@ -44,4 +44,14 @@
   </section>
 </section>
 {% endblock %}
-{% block extra_js %}<script src="{% static 'nkem/activity-chart.js' %}?v=20261031-chart" defer></script>{% endblock %}
+{% block extra_js %}
+<script src="{% static 'nkem/activity-chart.js' %}?v=20261031-chart" defer></script>
+<script>
+document.addEventListener("click", (event) => {
+  const period = event.target.closest("[data-activity-period]");
+  if (!period) return;
+  const analyze = document.querySelector('[data-analysis-open][data-analysis-scope="activity"]');
+  if (analyze) analyze.dataset.analysisPeriod = period.dataset.activityPeriod || "week";
+});
+</script>
+{% endblock %}
