@@ -46,5 +46,5 @@ jobs:
         run: node --check tiana-service-worker.js && node --check static/nkem/offline-core.js && node --check static/nkem/offline.js && node --check static/nkem/pwa.js && node --check static/nkem/fcm.js && node --check static/nkem/money-analysis-modal.js
       - name: Run TIANA Analyzer regression tests
         run: python manage.py test expense_analyzer --verbosity=2
-      - name: Run remaining Django tests
-        run: python manage.py test --verbosity=2
+      - name: Run remaining Django app tests
+        run: python manage.py test accounts ai_assistant budgets core finance goals insights marketplace notifications --verbosity=2
