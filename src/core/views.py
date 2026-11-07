@@ -269,8 +269,23 @@ def premium_view(request):
 
 @require_GET
 def money_school_view(request):
+    """Keep third-party ad scripts on the public education page, never finance screens."""
+    is_premium_member = (
+        request.user.is_authenticated and request.user.has_active_premium
+    )
+    adsterra_enabled = settings.ADSTERRA_ENABLED and not is_premium_member
+    adsense_enabled = (
+        settings.ADSENSE_ENABLED and not is_premium_member and not adsterra_enabled
+    )
     return render(request, "core/money_school.html", {
-        "adsense_enabled": settings.ADSENSE_ENABLED,
+        "adsense_enabled": adsense_enabled,
         "adsense_client_id": settings.ADSENSE_CLIENT_ID,
         "adsense_slot_id": settings.ADSENSE_SLOT_ID,
+        "adsterra_enabled": adsterra_enabled,
+        "adsterra_website_id": settings.ADSTERRA_WEBSITE_ID,
+        # Only the trusted deployment secret is rendered, and only when the
+        # slot has passed the explicit enablement/configuration checks above.
+        "adsterra_native_banner_code": (
+            settings.ADSTERRA_NATIVE_BANNER_CODE if adsterra_enabled else ""
+        ),
     })
