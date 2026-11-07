@@ -1,38 +1,40 @@
 # Adsterra setup for TIANA
 
-TIANA keeps Adsterra ads inside the public **Money School** education page. It does not inject third-party ad scripts into account balances, transactions, budgets, savings goals, the AI Coach, or Analyzer pages. Active Premium members do not receive the Money School ad slot.
+TIANA renders the standard banner units only on the public **Money School** education page. The 320×50 mobile leaderboard appears just below the page introduction. The 300×250 rectangle appears after the educational guides. The scripts are never injected into account balances, transactions, budgets, savings goals, the AI Coach, Analyzer, Insights or other private finance screens. Premium members do not receive the Money School ad slots.
 
-## What the supplied ID means
+## Website ID vs ad-unit IDs
 
-The supplied value `6182605` is configured as `ADSTERRA_WEBSITE_ID`. Adsterra distinguishes a website/domain ID from an ad-unit placement and its generated JavaScript code. The website ID alone cannot render an ad.
+The value `6182605` is configured as `ADSTERRA_WEBSITE_ID`. It identifies the publisher website; it is not an ad-unit key. Each banner unit has its own generated code and its own placement statistics.
 
-## Get the placement code
+## Approved banner snippets
 
 1. Sign in to Adsterra as a publisher.
-2. Open **Websites** and confirm the website corresponding to the live TIANA domain is listed and approved.
-3. Add a **Native Banner** or a standard **Banner** placement for that website. For TIANA, prefer a static in-content banner; do not enable Popunder, forced redirects, or Social Bar overlays across financial screens.
-4. Wait until the website and ad unit are active.
-5. Select **Get code** for that exact ad unit and copy the complete generated script unchanged.
+2. Open **Websites** and confirm the TIANA domain is approved.
+3. Open **Add Unit → Banner**, choose **320×50**, and copy the complete code from **Get Code**.
+4. Create a separate **300×250** banner unit and copy its complete code too.
+5. Use only the exact snippets shown as active in your own Adsterra dashboard or the approval email. Do not edit the script URLs or keys.
 
-Adsterra's current publisher instructions say the website must be added, the ad unit requested/approved, and the generated code copied from the publisher dashboard or approval email. See the official [publisher dashboard guide](https://adsterra.com/blog/set-up-publishers-dashboard/) and [banner implementation guide](https://adsterra.com/blog/how-banner-ads-make-money/).
+Adsterra's official guides explain that banner codes are generated per unit and can be placed in page content. They also recommend matching the ad size to the viewport and avoiding several crowded banners on the same area. See the [publisher dashboard guide](https://adsterra.com/blog/set-up-publishers-dashboard/) and [banner implementation guide](https://adsterra.com/blog/how-banner-ads-make-money/).
 
-## Configure the Cloudflare staging deployment
+## Configure Cloudflare staging
 
-In GitHub, open **Settings → Environments → tiana-django-staging** for this repository and configure:
+In GitHub, open **Settings → Environments → tiana-django-staging** and configure:
 
 - Variable `ADSTERRA_ENABLED`: `true`
-- Variable `ADSTERRA_WEBSITE_ID`: `6182605` (replace only if your Websites table shows a different site ID)
-- Secret `ADSTERRA_NATIVE_BANNER_CODE`: paste the complete ad-unit script copied from Adsterra.
+- Variable `ADSTERRA_WEBSITE_ID`: `6182605`
+- Secret `ADSTERRA_BANNER_320X50_CODE`: paste the complete 320×50 banner snippet
+- Secret `ADSTERRA_BANNER_300X250_CODE`: paste the complete 300×250 banner snippet
 
-Then run the **Deploy TIANA Django Worker** workflow on `main`. The workflow transfers the code as a Cloudflare Worker secret before deploying. The code is intentionally not committed to Git.
+The previous `ADSTERRA_NATIVE_BANNER_CODE` secret remains a backwards-compatible fallback for the 320×50 slot if the new dedicated secret is not set.
 
-For local testing, put the same values in your untracked `.env` file. Keep `ADSTERRA_ENABLED=0` until you have the approved ad-unit script.
+The **Deploy TIANA Django Worker** workflow transfers these values to Cloudflare Worker secrets before deployment. The generated JavaScript is intentionally not committed to Git. For local testing, put the values in your untracked `.env` file and keep `ADSTERRA_ENABLED=0` until the site and ad units are approved.
 
-## Safety and placement rules
+## Why some supplied scripts are not enabled
 
-- Do not paste the numeric website ID into a JavaScript zone/key field.
-- Do not use a Smartlink as a fake banner; Smartlinks are user-click destinations and need a deliberate link placement.
-- Do not put popunders, automatic redirects, or full-screen overlays on the authenticated finance and AI flows.
-- Use only the exact code from the approved Adsterra dashboard. The server renders that trusted configuration as HTML on Money School only.
-- If you need to pause ads, set `ADSTERRA_ENABLED=false` and redeploy.
-- Ad delivery and earnings still depend on Adsterra approval, their ad inventory, browser protections, and your account settings; a successful deploy does not guarantee an impression or payout.
+The additional scripts using the `/1/`, `/14/` and `/21/` paths do not identify their ad format from the snippet alone. They are not included in this banner-only integration. Confirm each unit's exact format in the Adsterra dashboard before enabling it. TIANA intentionally avoids Popunders, Smartlinks, Social Bar overlays and automatic redirects inside signed-in finance and AI workflows.
+
+The Analyzer and AI Coach display sensitive personal spending context. Third-party JavaScript on those pages could inspect page content, so those pages remain ad-free rather than exposing financial records to advertising scripts.
+
+## Pause ads
+
+Set `ADSTERRA_ENABLED=false` in the GitHub environment and redeploy. Ad delivery and earnings still depend on Adsterra approval, active ad inventory, browser protections, and account settings; successful deployment does not guarantee impressions or payouts.
