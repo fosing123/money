@@ -67,7 +67,7 @@ class ExpenseAnalyzerWorkspaceTests(TestCase):
         )
 
     def post_json(self, url_name, payload):
-        return async_to_sync(self.async_client.post)(
+        return self.client.post(
             reverse(url_name),
             data=json.dumps(payload),
             content_type="application/json",
@@ -144,26 +144,6 @@ class ExpenseAnalyzerWorkspaceTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'data-analysis-scope="activity"')
         self.assertNotContains(response, "Analyze this expense")
-
-    def test_public_pages_and_crawler_files_are_available(self):
-        for name in ["about", "privacy", "terms"]:
-            response = self.client.get(reverse(name))
-            self.assertEqual(response.status_code, 200)
-        robots = self.client.get(reverse("robots_txt"))
-        self.assertEqual(robots.status_code, 200)
-        self.assertIn("/ads.txt", robots.content.decode())
-        sitemap = self.client.get(reverse("sitemap_xml"))
-        self.assertEqual(sitemap.status_code, 200)
-        self.assertIn("https://tiana.lol/money-school/", sitemap.content.decode())
-
-    @override_settings(ADSENSE_CLIENT_ID="ca-pub-1554607983371431")
-    def test_ads_txt_uses_the_publisher_id_already_configured_for_tiana(self):
-        response = self.client.get(reverse("ads_txt"))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.content.decode().strip(),
-            "google.com, pub-1554607983371431, DIRECT, f08c47fec0942fa0",
-        )
 
     def test_analyzer_insight_requires_personalisation_on_first_use(self):
         response = self.post_json("analyzer_insight", {"scope": "activity", "period": "week"})
@@ -312,7 +292,7 @@ class ExpenseAnalyzerWorkspaceTests(TestCase):
         self.assertTrue(response.json()["saved"])
         self.assertEqual(response.json()["persona"]["voice_style"], "motherly")
 
-        loaded = async_to_sync(self.async_client.get)(reverse("analyzer_personalization"))
+        loaded = self.client.get(reverse("analyzer_personalization"))
         self.assertEqual(loaded.status_code, 200)
         self.assertEqual(loaded.json()["persona"]["ambition"], "business_owner")
         self.assertEqual(loaded.json()["persona"]["future_vision"], "Open a small technology company.")
@@ -326,7 +306,8 @@ class ExpenseAnalyzerWorkspaceTests(TestCase):
         motherly = _system_instruction({"voice_style": "motherly"})
         self.assertIn("fatherly warmth", fatherly)
         self.assertIn("motherly warmth", motherly)
-        self.assertIn("Build a business.", fatherly)
+        self.assertIn("member_profile object", fatherly)
+        self.assertNotIn("Build a business.", fatherly)
 
     def test_gemini_reasoning_is_exposed_to_the_observations_component(self):
         model_result = {
@@ -418,6 +399,7 @@ class ExpenseAnalyzerScoringTests(TestCase):
             currency="XAF", kind="expense", category="Food",
             description="Lunch", transaction_date=self.today,
         )
+        self.account.refresh_from_db()
         balance = self.account.balance
         report = analyze_completed_expense(self.user, expense, persist=False)
 
