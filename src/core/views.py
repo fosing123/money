@@ -283,9 +283,12 @@ def money_school_view(request):
         "adsense_slot_id": settings.ADSENSE_SLOT_ID,
         "adsterra_enabled": adsterra_enabled,
         "adsterra_website_id": settings.ADSTERRA_WEBSITE_ID,
-        # Only the trusted deployment secret is rendered, and only when the
-        # slot has passed the explicit enablement/configuration checks above.
-        "adsterra_native_banner_code": (
-            settings.ADSTERRA_NATIVE_BANNER_CODE if adsterra_enabled else ""
+        # Only trusted deployment secrets are rendered, and only on this
+        # public education page after the explicit enablement checks above.
+        "adsterra_banner_320x50_code": (
+            settings.ADSTERRA_BANNER_320X50_CODE if adsterra_enabled else ""
+        ),
+        "adsterra_banner_300x250_code": (
+            settings.ADSTERRA_BANNER_300X250_CODE if adsterra_enabled else ""
         ),
     })
