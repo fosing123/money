@@ -90,8 +90,8 @@ class PWAOfflineAndPremiumTests(TestCase):
         response = self.client.get(reverse("premium"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "3 AI coach requests per day")
-        self.assertContains(response, "20 AI coach requests per day")
+        self.assertContains(response, "3 AI requests per day across the Analyzer and AI Coach")
+        self.assertContains(response, "20 AI requests per day across the Analyzer and AI Coach")
         self.assertContains(response, "Premium checkout is not connected yet")
 
 
