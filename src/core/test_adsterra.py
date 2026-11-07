@@ -20,7 +20,6 @@ class AdsterraPlacementTests(TestCase):
         response = self.client.get(reverse("money_school"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'data-ad-network="adsterra"') if False else None
         self.assertContains(response, 'data-adsterra-site-id="6182605"')
         self.assertContains(response, "container-test-slot")
         self.assertContains(response, "ADVERTISEMENT")
