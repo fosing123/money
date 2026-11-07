@@ -5,11 +5,11 @@ from django.urls import reverse
 
 TEST_320X50_CODE = (
     '<script>atOptions = {"key":"test-320x50","format":"iframe","height":50,"width":320};</script>'
-    '<script src="https://bauval.org/22/test-320x50"></script>'
+    '<script src="https://ads.example.test/22/test-320x50"></script>'
 )
 TEST_300X250_CODE = (
     '<script>atOptions = {"key":"test-300x250","format":"iframe","height":250,"width":300};</script>'
-    '<script src="https://bauval.org/22/test-300x250"></script>'
+    '<script src="https://ads.example.test/22/test-300x250"></script>'
 )
 
 
@@ -51,7 +51,7 @@ class AdsterraPlacementTests(TestCase):
         response = self.client.get(reverse("money_school"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "bauval.org")
+        self.assertNotContains(response, "ads.example.test")
         self.assertNotContains(response, "data-adsterra-site-id")
 
     @override_settings(
@@ -64,7 +64,7 @@ class AdsterraPlacementTests(TestCase):
         response = self.client.get(reverse("money_school"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "bauval.org")
+        self.assertNotContains(response, "ads.example.test")
         self.assertNotContains(response, "data-adsterra-site-id")
 
     @override_settings(
@@ -77,7 +77,7 @@ class AdsterraPlacementTests(TestCase):
         response = self.client.get(reverse("home"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "bauval.org")
+        self.assertNotContains(response, "ads.example.test")
         self.assertNotContains(response, "data-adsterra-site-id")
 
     @override_settings(
@@ -107,5 +107,5 @@ class AdsterraPlacementTests(TestCase):
             with self.subTest(route=route_name):
                 response = self.client.get(reverse(route_name))
                 self.assertEqual(response.status_code, 200)
-                self.assertNotContains(response, "bauval.org")
+                self.assertNotContains(response, "ads.example.test")
                 self.assertNotContains(response, "data-adsterra-site-id")
