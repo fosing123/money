@@ -11,7 +11,7 @@
     <a class="budget-create-tile" href="{% url 'budget_allocations' %}"><span>✎</span><strong>Edit weekly plan</strong></a>
   </div>
   <section class="budget-allocation-card">
-    <div class="budget-section-heading"><div><h2>Budget snapshot</h2></div><a href="{% url 'insights' %}">View analytics <span>↗</span></a></div>
+    <div class="budget-section-heading"><div><h2>Budget snapshot</h2></div><div class="budget-heading-actions"><button type="button" class="budget-analyze-action" data-analysis-open data-analysis-scope="budgets" data-analysis-period="month">✦ Analyze budgets</button><a href="{% url 'insights' %}">View analytics <span>↗</span></a></div></div>
     <div class="budget-allocation-layout">
       <div class="budget-donut" data-budget-donut role="img" aria-label="Budget allocation by category"><div class="budget-donut-hole"><small>Total planned</small><strong data-budget-total>0</strong><span>{{ user.currency }}</span><i data-budget-spent>0 spent</i></div></div>
       <div class="budget-allocation-legend" data-budget-legend><p class="budget-legend-placeholder">{% if other_currency_budgets %}Your other-currency plans are shown separately below. This chart only includes {{ currency }}.{% else %}Your category breakdown will appear here.{% endif %}</p></div>
