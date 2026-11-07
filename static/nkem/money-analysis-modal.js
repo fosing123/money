@@ -24,7 +24,7 @@
   const csrfToken = () => {
     const input = document.querySelector("input[name=csrfmiddlewaretoken]");
     if (input && input.value) return input.value;
-    const cookie = document.cookie.match(/(?:^|;\\s*)csrftoken=([^;]*)/);
+    const cookie = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]*)/);
     return cookie ? decodeURIComponent(cookie[1]) : "";
   };
   const readJsonResponse = async (response) => {
