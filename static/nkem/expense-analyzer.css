@@ -497,3 +497,31 @@ body.goal-topup-open{overflow:hidden}
  .analysis-custom-range label{flex:1 1 120px}
  .analysis-custom-apply{flex:1 1 100%}
 }
+
+
+/* Restored Analyzer access, allowance and transaction preview. */
+.analysis-plan-strip{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 24px;padding:18px 21px;border:1px solid rgba(133,105,204,.16);border-radius:20px;background:linear-gradient(112deg,rgba(247,243,255,.96),rgba(255,255,255,.98));box-shadow:0 10px 30px rgba(62,43,108,.06)}
+.analysis-plan-strip>div{display:grid;gap:5px;min-width:0}
+.analysis-plan-eyebrow{color:#8060c6;font-size:.61rem;font-weight:850;letter-spacing:.13em}
+.analysis-plan-strip strong{color:#302844;font:800 .93rem Manrope,Inter,sans-serif}
+.analysis-plan-strip p{margin:0;color:#777184;font-size:.72rem;line-height:1.5}
+.analysis-plan-status{flex:0 0 auto;padding:8px 12px;border-radius:999px;background:#eee8fb;color:#6549a8;font-size:.68rem;font-weight:800}
+.analysis-plan-upgrade,.home-coach-analyzer-link{display:inline-flex;align-items:center;gap:8px;color:#7150bf;font-size:.78rem;font-weight:800;text-decoration:none}
+.analysis-plan-upgrade{flex:0 0 auto;padding:11px 14px;border-radius:12px;background:#7656c8;color:#fff;box-shadow:0 7px 18px rgba(118,86,200,.2)}
+.analysis-plan-upgrade:hover{background:#6545b7;color:#fff}
+.tiana-analysis-upgrade-link{display:inline-flex;margin-top:10px;color:#6748b4;font-weight:850;text-decoration:underline;text-underline-offset:3px}
+.transaction-inline-analyze{border-color:rgba(123,91,194,.25)!important;color:#694ab5!important}
+.transaction-analysis-preview{margin-top:17px;padding:18px;border:1px solid rgba(123,91,194,.19);border-radius:17px;background:linear-gradient(135deg,#fbf9ff,#fff);color:#3b334c}
+.transaction-analysis-preview[hidden]{display:none!important}
+.transaction-analysis-preview[aria-busy="true"]{opacity:.78}
+.transaction-analysis-preview-heading{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.transaction-analysis-preview-heading strong{color:#6849b5;font:850 1.35rem Manrope,Inter,sans-serif}
+.transaction-analysis-preview-heading span{padding:5px 9px;border-radius:999px;background:#eee8fb;color:#6549a8;font-size:.69rem;font-weight:800}
+.transaction-analysis-preview p{margin:8px 0;color:#514a60;font-size:.82rem;line-height:1.6}
+.transaction-analysis-preview ul{display:grid;gap:8px;padding-left:19px;color:#514a60;font-size:.78rem;line-height:1.55}
+.transaction-analysis-preview small{display:block;margin-top:13px;color:#81798d;font-size:.68rem;line-height:1.5}
+.transaction-analysis-preview a{display:inline-flex;margin-top:8px;color:#6849b5;font-size:.79rem;font-weight:850;text-decoration:none}
+.budget-plan-actions,.goal-card-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.budget-plan-actions button,.goal-analysis-action{border:0;background:transparent;color:#7252be;font-size:.7rem;font-weight:850;cursor:pointer}
+.home-coach-analyzer-link{margin-top:10px}
+@media(max-width:640px){.analysis-plan-strip{align-items:flex-start;flex-direction:column;padding:16px}.analysis-plan-upgrade{width:100%;justify-content:center}.transaction-analysis-preview{padding:15px}}
