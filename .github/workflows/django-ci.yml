@@ -43,6 +43,6 @@ jobs:
       - name: Check migration consistency
         run: python manage.py makemigrations --check --dry-run
       - name: Check Django service-worker JavaScript
-        run: node --check tiana-service-worker.js && node --check static/nkem/offline-core.js && node --check static/nkem/offline.js && node --check static/nkem/pwa.js && node --check static/nkem/fcm.js
+        run: node --check tiana-service-worker.js && node --check static/nkem/offline-core.js && node --check static/nkem/offline.js && node --check static/nkem/pwa.js && node --check static/nkem/fcm.js && node --check static/nkem/money-analysis-modal.js
       - name: Run Django tests
         run: python manage.py test
