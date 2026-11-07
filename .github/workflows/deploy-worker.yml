@@ -38,6 +38,9 @@ jobs:
           FIREBASE_WEB_MESSAGING_SENDER_ID: ${{ vars.FIREBASE_WEB_MESSAGING_SENDER_ID || secrets.FIREBASE_WEB_MESSAGING_SENDER_ID }}
           FIREBASE_WEB_APP_ID: ${{ vars.FIREBASE_WEB_APP_ID || secrets.FIREBASE_WEB_APP_ID }}
           FIREBASE_WEB_VAPID_KEY: ${{ vars.FIREBASE_WEB_VAPID_KEY || secrets.FIREBASE_WEB_VAPID_KEY }}
+          ADSTERRA_ENABLED: ${{ vars.ADSTERRA_ENABLED || 'false' }}
+          ADSTERRA_WEBSITE_ID: ${{ vars.ADSTERRA_WEBSITE_ID || '6182605' }}
+          ADSTERRA_NATIVE_BANNER_CODE: ${{ secrets.ADSTERRA_NATIVE_BANNER_CODE }}
         shell: bash
         run: |
           required=(CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID GEMINI_API_KEY FIREBASE_SERVICE_ACCOUNT_JSON)
@@ -80,7 +83,7 @@ jobs:
       - name: Run remaining non-core Django app tests
         run: uv run python manage.py test accounts ai_assistant budgets finance goals insights marketplace notifications --verbosity=2
       - name: Run core app tests outside the separate Hyperdrive protocol suite
-        run: uv run python manage.py test core.tests.WelcomePageTests core.tests.PWAOfflineAndPremiumTests core.tests.MoneyIntelligenceTests core.tests.AccountsCentreTests core.tests.BudgetIntelligencePageTests core.tests.BudgetCurrencySeparationTests core.tests.HealthCheckTests core.tests.CloudflareWorkerDependencyTests --verbosity=2
+        run: uv run python manage.py test core.tests.WelcomePageTests core.tests.PWAOfflineAndPremiumTests core.tests.MoneyIntelligenceTests core.tests.AccountsCentreTests core.tests.BudgetIntelligencePageTests core.tests.BudgetCurrencySeparationTests core.tests.HealthCheckTests core.tests.CloudflareWorkerDependencyTests core.test_adsterra --verbosity=2
 
       - name: Check service-worker JavaScript
         run: |
@@ -120,7 +123,13 @@ jobs:
               printf '%s' "${!name}" | npx --yes wrangler versions secret put "$name" --name tiana-django-staging
             fi
           done
-          echo "Required Gemini and Firebase Admin credentials were synced to the staging Worker. Optional Firebase Web values were synced when provided. The existing Django signing secret was preserved."
+          for name in ADSTERRA_ENABLED ADSTERRA_WEBSITE_ID; do
+            printf '%s' "${!name}" | npx --yes wrangler versions secret put "$name" --name tiana-django-staging
+          done
+          if [[ -n "${ADSTERRA_NATIVE_BANNER_CODE}" ]]; then
+            printf '%s' "${ADSTERRA_NATIVE_BANNER_CODE}" | npx --yes wrangler versions secret put ADSTERRA_NATIVE_BANNER_CODE --name tiana-django-staging
+          fi
+          echo "Gemini, Firebase and Adsterra runtime configuration was synced to the staging Worker. The existing Django signing secret was preserved."
 
       - name: Deploy to Cloudflare staging Worker
         env:
