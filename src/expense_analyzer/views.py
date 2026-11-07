@@ -16,6 +16,7 @@ from .ai import ExpenseAIUnavailable, generate_money_insights
 from .models import AIPersonalization, ExpenseAnalysis
 from .scoring import analyze_planned_purchase
 from .workspace import build_workspace_context
+from ai_assistant.models import AIUsage
 from ai_assistant.services import AIUsageLimitError, _reserve_ai_request, _release_ai_request
 
 class AnalyzerPremiumRequired(Exception):
@@ -379,6 +380,9 @@ def analyzer_view(request):
     has_personalization = AIPersonalization.objects.filter(
         user=request.user, setup_completed=True
     ).exists()
+    daily_ai_limit = 20 if request.user.has_active_premium else 3
+    usage = AIUsage.objects.filter(user=request.user, usage_date=today).first()
+    used_ai_requests = usage.request_count if usage else 0
     response = render(request, "expense_analyzer/analyzer.html", {
         "period": period,
         "today": today,
@@ -386,6 +390,9 @@ def analyzer_view(request):
         "selected_end_date": selected_end_date,
         "recent_expenses": recent_expenses,
         "has_personalization": has_personalization,
+        "is_premium_member": request.user.has_active_premium,
+        "ai_daily_limit": daily_ai_limit,
+        "ai_requests_remaining": max(daily_ai_limit - used_ai_requests, 0),
     })
     response["Cache-Control"] = "private, no-store, max-age=0"
     response["Vary"] = "Cookie"
