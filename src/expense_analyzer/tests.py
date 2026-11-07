@@ -255,6 +255,7 @@ class ExpenseAnalyzerWorkspaceTests(TestCase):
     @override_settings(AI_PROVIDER="none", GEMINI_API_KEY="", AI_API_KEY="")
     def test_add_transaction_preview_is_read_only_and_returns_a_designed_result_payload(self):
         self.create_personalization()
+        self.account.refresh_from_db()
         before = self.account.balance
         response = self.post_json("analyzer_transaction_preview", {
             "kind": "expense", "amount": "2000", "category": "School",
