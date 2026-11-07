@@ -112,6 +112,9 @@ jobs:
           FIREBASE_WEB_MESSAGING_SENDER_ID: ${{ vars.FIREBASE_WEB_MESSAGING_SENDER_ID || secrets.FIREBASE_WEB_MESSAGING_SENDER_ID }}
           FIREBASE_WEB_APP_ID: ${{ vars.FIREBASE_WEB_APP_ID || secrets.FIREBASE_WEB_APP_ID }}
           FIREBASE_WEB_VAPID_KEY: ${{ vars.FIREBASE_WEB_VAPID_KEY || secrets.FIREBASE_WEB_VAPID_KEY }}
+          ADSTERRA_ENABLED: ${{ vars.ADSTERRA_ENABLED || 'false' }}
+          ADSTERRA_WEBSITE_ID: ${{ vars.ADSTERRA_WEBSITE_ID || '6182605' }}
+          ADSTERRA_NATIVE_BANNER_CODE: ${{ secrets.ADSTERRA_NATIVE_BANNER_CODE }}
         shell: bash
         run: |
           set -euo pipefail
@@ -123,6 +126,10 @@ jobs:
               printf '%s' "${!name}" | npx --yes wrangler versions secret put "$name" --name tiana-django-staging
             fi
           done
+          # Fail closed: never activate the slot if the generated Adsterra code is absent.
+          if [[ -z "${ADSTERRA_NATIVE_BANNER_CODE}" ]]; then
+            ADSTERRA_ENABLED=false
+          fi
           for name in ADSTERRA_ENABLED ADSTERRA_WEBSITE_ID; do
             printf '%s' "${!name}" | npx --yes wrangler versions secret put "$name" --name tiana-django-staging
           done
