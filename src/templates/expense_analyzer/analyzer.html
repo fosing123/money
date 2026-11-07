@@ -12,6 +12,19 @@
     <div class="analysis-centre-art" aria-hidden="true"><span>✦</span><i>◎</i><b>↗</b></div>
   </header>
 
+  <section class="analysis-plan-strip" aria-label="TIANA AI plan usage">
+    <div>
+      <span class="analysis-plan-eyebrow">YOUR TIANA AI ACCESS</span>
+      <strong>{{ ai_requests_remaining }} of {{ ai_daily_limit }} AI requests left today</strong>
+      <p>This allowance is shared between your Analyzer reviews and the AI Coach.</p>
+    </div>
+    {% if is_premium_member %}
+      <span class="analysis-plan-status">Premium active</span>
+    {% else %}
+      <a href="{% url 'premium' %}" class="analysis-plan-upgrade">Get more AI with Premium <span aria-hidden="true">→</span></a>
+    {% endif %}
+  </section>
+
   <div class="analysis-centre-toolbar">
     <div><span class="analysis-centre-label">LOOK AT</span><strong>Choose a time period</strong></div>
     <div class="analysis-period-picker" role="group" aria-label="Analysis period">
