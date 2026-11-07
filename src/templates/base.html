@@ -15,6 +15,7 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="{% static 'nkem/app.css' %}?v=20261101-premium-final"><link rel="stylesheet" href="{% static 'nkem/theme.css' %}?v=20261101-palettes-final"><link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030"><link rel="stylesheet" href="{% static 'nkem/ui-polish.css' %}?v=20261101-delete-nav-market-invest">
 <link rel="stylesheet" href="{% static 'nkem/minimal-copy.css' %}?v=20261105-sparse-ui">
+<link rel="stylesheet" href="{% static 'nkem/expense-analyzer.css' %}?v=20261107-restored-analyzer">
 <style>.tiana-pwa-actions{display:flex;align-items:center;gap:7px}.tiana-pwa-actions [hidden]{display:none!important}@media(max-width:760px){.tiana-pwa-actions .button{font-size:.68rem;padding:8px 9px}}</style>
 {% block extra_head %}{% endblock %}
 </head>
@@ -27,6 +28,7 @@
 {% else %}<nav class="header-actions" aria-label="Account navigation"><a class="button button-secondary header-login" href="{% url 'money_school' %}">Money School</a><a class="button button-secondary header-login" href="{% url 'login' %}">Log in</a><a class="button" href="{% url 'register' %}">Get started</a></nav>{% endif %}
 </header>
 <main class="page-shell">{% if messages %}<div class="messages" role="status" aria-live="polite">{% for message in messages %}<div class="message message-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}</main>
+{% if user.is_authenticated %}{% include 'expense_analyzer/analysis_modal.html' %}{% endif %}
 {% if user.is_authenticated %}
 <nav class="mobile-bottom-nav" aria-label="Primary mobile navigation">
 <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}><span class="nav-icon">⌂</span><span>Home</span></a>
@@ -40,5 +42,6 @@
 {% endif %}
 <script src="{% static 'nkem/app.js' %}" defer></script>
 <script src="{% static 'nkem/offline-core.js' %}" defer></script>
-<script src="{% static 'nkem/pwa.js' %}" defer></script>{% block extra_js %}{% endblock %}
+<script src="{% static 'nkem/pwa.js' %}" defer></script>
+{% if user.is_authenticated %}<script src="{% static 'nkem/money-analysis-modal.js' %}?v=20261107-restored-analyzer" defer></script>{% endif %}{% block extra_js %}{% endblock %}
 </body></html>
