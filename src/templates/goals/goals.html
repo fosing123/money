@@ -43,6 +43,7 @@
               {% if goal.contributions.count %}
                 <span class="goal-contribution-count">{{ goal.contributions.count }} top-ups</span>
               {% endif %}
+              <button type="button" class="goal-analysis-action" data-analysis-open data-analysis-scope="goal" data-analysis-object-id="{{ goal.pk }}" data-analysis-period="month">Analyze</button>
               <a class="goal-delete-action" href="{% url 'goal_delete' goal.pk %}">Delete goal</a>
             </div>
           </div>
