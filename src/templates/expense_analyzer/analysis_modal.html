@@ -1,0 +1,50 @@
+<div class="tiana-analysis-overlay" data-tiana-analysis-modal hidden data-insight-url="{% url 'analyzer_insight' %}" data-preview-url="{% url 'analyzer_transaction_preview' %}" data-personalization-url="{% url 'analyzer_personalization' %}" data-upgrade-url="{% url 'premium' %}">
+  <button type="button" class="tiana-analysis-backdrop" data-analysis-dismiss aria-label="Close analysis"></button>
+  <section class="tiana-analysis-dialog" role="dialog" aria-modal="true" aria-labelledby="tiana-analysis-title">
+    <header class="tiana-analysis-dialog-header">
+      <div class="tiana-analysis-brand"><span>✦</span><div><small>TIANA MONEY COMPANION</small><strong id="tiana-analysis-title">Your personal money review</strong></div></div>
+      <button type="button" class="tiana-analysis-close" data-analysis-dismiss aria-label="Close analysis">×</button>
+    </header>
+    <div class="tiana-analysis-loading" data-analysis-loading hidden>
+      <span class="tiana-analysis-loader">✦</span><strong>Let me look at this with you.</strong>
+      <p>I'm bringing your numbers together and finding the most useful next step.</p>
+      <div class="tiana-analysis-loading-bars"><i></i><i></i><i></i></div>
+    </div>
+    <div class="tiana-analysis-error" data-analysis-error hidden role="alert"></div>
+    <div class="tiana-analysis-result" data-analysis-result hidden>
+      <div class="tiana-analysis-result-hero"><div><span class="tiana-analysis-kicker" data-result-kicker>YOUR MONEY, CLEARER</span><h2 data-result-heading></h2><p data-result-subtitle></p></div><span class="tiana-analysis-verdict" data-result-verdict hidden></span></div>
+      <div class="tiana-analysis-summary"><span class="tiana-analysis-spark">✦</span><div><small data-result-summary-label>A NOTE FROM TIANA</small><p data-result-summary></p></div></div>
+      <div class="tiana-analysis-metrics" data-result-metrics></div>
+      <section class="tiana-analysis-section" data-result-score-section hidden><div class="tiana-analysis-section-heading"><div><small>THE BIG PICTURE</small><h3>How this expense looks</h3></div><strong class="tiana-analysis-score" data-result-score></strong></div><div class="tiana-analysis-score-track"><i data-result-score-track></i></div><div class="tiana-analysis-breakdown" data-result-breakdown></div></section>
+      <section class="tiana-analysis-section" data-result-categories-section hidden><div class="tiana-analysis-section-heading"><div><small>YOUR SPENDING PATTERN</small><h3>Where the money went</h3></div></div><div class="tiana-analysis-bars" data-result-categories></div></section>
+      <section class="tiana-analysis-section" data-result-rows-section hidden><div class="tiana-analysis-section-heading"><div><small>WHAT NEEDS YOUR ATTENTION</small><h3 data-result-rows-heading>Here's what I noticed</h3></div></div><div class="tiana-analysis-records" data-result-rows></div></section>
+      <div class="tiana-analysis-advice-grid">
+        <section class="tiana-analysis-advice-card tiana-analysis-advice-card--observations" data-result-observations-section hidden><span class="tiana-analysis-advice-icon">◎</span><small>WHAT I NOTICED</small><ul data-result-observations></ul></section>
+        <section class="tiana-analysis-advice-card tiana-analysis-advice-card--actions" data-result-recommendations-section hidden><span class="tiana-analysis-advice-icon">↗</span><small>WHAT I'D DO NEXT</small><ul data-result-recommendations></ul></section>
+      </div>
+      <section class="tiana-analysis-goal-ideas" data-result-goals-section hidden><div><small>THINKING ABOUT YOUR FUTURE</small><h3>Goals worth considering</h3><p>These are ideas to discuss and shape, not goals I've created for you.</p></div><div class="tiana-analysis-goal-idea-list" data-result-goal-ideas></div></section>
+      <section class="tiana-analysis-alternatives" data-result-alternatives-section hidden><small>ANOTHER WAY TO LOOK AT IT</small><ul data-result-alternatives></ul></section>
+      <p class="tiana-analysis-encouragement" data-result-encouragement hidden></p>
+      <p class="tiana-analysis-ai-status" data-result-ai-status></p>
+      <p class="tiana-analysis-disclaimer">This review uses the records currently saved in your TIANA account. It never moves money or edits your transactions.</p>
+    </div>
+    <div class="tiana-analysis-personalization" data-analysis-personalization hidden>
+      <div class="tiana-analysis-personalization-intro"><span class="tiana-analysis-kicker">LET'S GET TO KNOW HOW YOU THINK</span><h2>How would you like me to guide you?</h2><p>Money advice feels different when it understands the person behind the numbers. Tell me a little about the voice you prefer and the future you're building.</p></div>
+      <form data-personalization-form>
+        {% csrf_token %}
+        <div class="tiana-analysis-field"><label>Choose my voice</label><div class="tiana-analysis-voice-options">
+          <label><input type="radio" name="voice_style" value="friendly" checked><span><b>Friendly</b><small>Like a good friend</small></span></label>
+          <label><input type="radio" name="voice_style" value="fatherly"><span><b>Fatherly</b><small>Calm, protective advice</small></span></label>
+          <label><input type="radio" name="voice_style" value="motherly"><span><b>Motherly</b><small>Warm, caring guidance</small></span></label>
+          <label><input type="radio" name="voice_style" value="mentor"><span><b>Mentor</b><small>Clear, strategic support</small></span></label>
+        </div></div>
+        <div class="tiana-analysis-field"><label for="tiana-ambition">What matters most to your future?</label><select id="tiana-ambition" name="ambition"><option value="">I'm still figuring it out</option><option value="financial_freedom">Become financially independent</option><option value="millionaire">Build substantial wealth</option><option value="business_owner">Start or grow a business</option><option value="career">Build a successful career</option><option value="education">Complete my education or training</option><option value="support_family">Support my family</option><option value="own_home">Own a home or property</option><option value="other">Something else</option></select></div>
+        <div class="tiana-analysis-field-row"><div class="tiana-analysis-field"><label for="tiana-stage">Where are you right now?</label><select id="tiana-stage" name="current_stage"><option value="">Prefer not to say</option><option value="student">Student</option><option value="training">Learning a skill or trade</option><option value="employed">Employed</option><option value="self_employed">Self-employed</option><option value="job_seeking">Looking for work</option><option value="other">Other</option></select></div><div class="tiana-analysis-field"><label for="tiana-career">Career or work you're aiming for</label><input id="tiana-career" name="desired_career" maxlength="120" placeholder="e.g. software developer"></div></div>
+        <div class="tiana-analysis-field"><label for="tiana-vision">What do you want your future to look like?</label><textarea id="tiana-vision" name="future_vision" rows="2" maxlength="240" placeholder="Tell me in your own words. A business, a home, freedom, helping your family…"></textarea></div>
+        <div class="tiana-analysis-field"><label for="tiana-why">Why is this important to you? <span>Optional</span></label><input id="tiana-why" name="why_it_matters" maxlength="180" placeholder="Your reason, in a sentence"></div>
+        <p class="tiana-analysis-privacy-note">You can change these preferences later. TIANA uses them to make her advice feel more personal and relevant.</p>
+        <div class="tiana-analysis-form-actions"><button type="button" class="tiana-analysis-text-button" data-analysis-dismiss>Not now</button><button type="submit" class="tiana-analysis-primary-button">Save and continue <span>→</span></button></div>
+      </form>
+    </div>
+  </section>
+</div>
