@@ -74,6 +74,7 @@
       renderAdSlots();
       oldFocus = document.activeElement;
       gate.hidden = false;
+      gate.setAttribute("aria-hidden", "false");
       document.body.classList.add("tiana-ai-ad-gate-open");
       if (continueButton) continueButton.disabled = true;
       if (status) status.textContent = "Loading the sponsored placement…";
