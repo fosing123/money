@@ -10,6 +10,11 @@
     </div>
     <span class="ai-state {% if not configured %}preview{% endif %}">{% if configured %}AI ready{% else %}Preview mode{% endif %}</span>
   </header>
+  {% if adsterra_enabled and adsterra_banner_300x250_code %}
+    {% with ad_code=adsterra_banner_300x250_code ad_size="300x250" ad_width=300 ad_height=250 %}
+      {% include 'monetization/ad_slot.html' %}
+    {% endwith %}
+  {% endif %}
   <section class="ai-workspace" aria-label="TIANA AI chat">
     <div class="ai-workspace-head"><strong>Your private conversation</strong><span>Personal money guidance</span></div>
     {% if error %}<div class="message message-error ai-error" role="alert">{{ error }}</div>{% endif %}
