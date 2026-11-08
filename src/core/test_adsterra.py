@@ -29,7 +29,7 @@ class AdsterraPlacementTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'data-ad-network="adsterra"')
-        self.assertContains(response, 'data-adsterra-site-id="6182605"')
+        self.assertNotContains(response, 'data-adsterra-site-id="6182605"')
         self.assertContains(response, 'data-ad-size="320x50"')
         self.assertContains(response, 'data-ad-size="300x250"')
         self.assertContains(response, "test-320x50")
