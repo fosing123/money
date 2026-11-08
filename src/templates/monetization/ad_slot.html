@@ -1,0 +1,6 @@
+{% if ad_code %}
+<section class="tiana-ad-placement tiana-ad-placement--{{ ad_size }}" aria-label="Advertisement" data-ad-network="adsterra" data-ad-size="{{ ad_size }}">
+  <span class="tiana-ad-label">ADVERTISEMENT</span>
+  <div class="tiana-ad-frame" data-adsterra-slot data-adsterra-code="{{ ad_code|escape }}" data-ad-width="{{ ad_width }}" data-ad-height="{{ ad_height }}" data-adsterra-site-id="{{ adsterra_website_id }}"></div>
+</section>
+{% endif %}
