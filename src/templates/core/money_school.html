@@ -47,12 +47,9 @@
   </article>
 </section>
 {% if adsterra_enabled and adsterra_banner_300x250_code %}
-<section class="money-school-ad money-school-ad--adsterra money-school-ad--rectangle" aria-label="Advertisement" data-ad-network="adsterra" data-ad-size="300x250">
-  <span>ADVERTISEMENT</span>
-  <div class="money-school-adsterra-slot money-school-adsterra-slot--rectangle" data-adsterra-site-id="{{ adsterra_website_id }}">
-    {{ adsterra_banner_300x250_code|safe }}
-  </div>
-</section>
+  {% with ad_code=adsterra_banner_300x250_code ad_size="300x250" ad_width=300 ad_height=250 %}
+    {% include 'monetization/ad_slot.html' %}
+  {% endwith %}
 {% endif %}
 <section class="money-school-note">
   <h2>Put the lesson into practice with TIANA.</h2>
