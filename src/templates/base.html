@@ -34,7 +34,7 @@
   {% endwith %}
 {% endif %}
 <main class="page-shell">{% if messages %}<div class="messages" role="status" aria-live="polite">{% for message in messages %}<div class="message message-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}</main>
-{% if adsterra_enabled and adsterra_banner_300x250_code and request.resolver_match.url_name != 'money_school' %}
+{% if adsterra_enabled and adsterra_banner_300x250_code and request.resolver_match.url_name != 'money_school' and request.resolver_match.url_name != 'ai_chat' and request.resolver_match.url_name != 'analyzer' %}
   {% with ad_code=adsterra_banner_300x250_code ad_size="300x250" ad_width=300 ad_height=250 %}
     {% include 'monetization/ad_slot.html' %}
   {% endwith %}
