@@ -41,7 +41,6 @@
 {% endif %}
 {% if user.is_authenticated %}{% include 'expense_analyzer/analysis_modal.html' %}{% endif %}
 {% if user.is_authenticated and adsterra_enabled and adsterra_banner_300x250_code %}
-  {% if request.resolver_match.url_name == 'ai_chat' or request.resolver_match.url_name == 'analyzer' %}
   <div class="tiana-ai-ad-gate" data-tiana-ai-ad-gate hidden aria-hidden="true">
     <section class="tiana-ai-ad-gate__panel" role="dialog" aria-modal="true" aria-labelledby="tiana-ai-ad-title">
       <span class="tiana-ai-ad-gate__eyebrow">A SPONSORED PAUSE</span>
