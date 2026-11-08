@@ -48,6 +48,7 @@
     const resolve = activeResolve;
     activeResolve = null;
     gate.hidden = true;
+    gate.setAttribute("aria-hidden", "true");
     document.body.classList.remove("tiana-ai-ad-gate-open");
     if (oldFocus && typeof oldFocus.focus === "function") oldFocus.focus({preventScroll:true});
     oldFocus = null;
