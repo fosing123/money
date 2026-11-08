@@ -12,6 +12,7 @@ The Python Worker entrypoint is `src/worker.py`. Django applications, project se
 - **CPU budget:** Workers Paid plan with a 30-second per-request CPU limit. Django's import and initialization workload can exceed Free-plan limits; the staging Worker requires the Paid plan for reliable execution. This is configured as `limits.cpu_ms: 30000` in `wrangler.jsonc`.
 - **Financial database:** PostgreSQL through Cloudflare Hyperdrive.
 - **Uploaded profile and goal images:** Cloudflare R2, using the `MEDIA` bucket binding and Cloudflare's `django-cf` R2 storage backend.
+- **Pull-request previews:** the `previews` block uses the separate `tiana-django-media` R2 bucket and `tiana-staging` Neon branch through the existing Hyperdrive binding. Preview builds must not use the production database or production media bucket.
 - **Static files:** the image build step generates responsive WebP assets, then `collectstatic` writes to `public/static/`. Worker static assets are configured asset-first (`run_worker_first: false`) so matching images, CSS and JavaScript are served directly from Cloudflare's edge without invoking Python. Missing routes fall through to Django. The build also publishes the root service worker and `robots.txt`.
 - **Local development:** SQLite and local filesystem uploads. Those local defaults are not permitted in production.
 

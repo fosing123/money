@@ -6,7 +6,11 @@
   <h1>Small money habits.<br><span>More freedom later.</span></h1>
   <p>Practical, beginner-friendly guides to help students understand their money, plan their week and protect what they have.</p>
 </section>
-{% if adsense_enabled %}
+{% if adsterra_enabled and adsterra_banner_320x50_code %}
+  {% with ad_code=adsterra_banner_320x50_code ad_size="320x50" ad_width=320 ad_height=50 %}
+    {% include 'monetization/ad_slot.html' %}
+  {% endwith %}
+{% elif adsense_enabled %}
   <section class="money-school-ad" aria-label="Advertisement">
     <span>ADVERTISEMENT</span>
     <ins class="adsbygoogle" style="display:block;min-height:100px" data-ad-client="{{ adsense_client_id }}" data-ad-slot="{{ adsense_slot_id }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -42,6 +46,11 @@
     <p>Never share your PIN, one-time password or account recovery codes. Verify the recipient before confirming a transfer, and contact your provider through its official support channel when something looks wrong.</p>
   </article>
 </section>
+{% if adsterra_enabled and adsterra_banner_300x250_code %}
+  {% with ad_code=adsterra_banner_300x250_code ad_size="300x250" ad_width=300 ad_height=250 %}
+    {% include 'monetization/ad_slot.html' %}
+  {% endwith %}
+{% endif %}
 <section class="money-school-note">
   <h2>Put the lesson into practice with TIANA.</h2>
   <p>Track income and expenses, build a weekly budget, and follow your savings goals in one place.</p>
@@ -51,6 +60,9 @@
 <style>
 .money-school-hero{max-width:870px;margin:28px auto 22px;padding:24px 0}.money-school-hero h1{margin:10px 0;font-size:clamp(2.2rem,6vw,4.1rem);line-height:1.04;letter-spacing:-.06em}.money-school-hero h1 span{color:#7658e6}.money-school-hero>p:last-child{max-width:610px;color:var(--muted);line-height:1.7}
 .money-school-ad{max-width:870px;min-height:105px;margin:8px auto 22px;padding:12px;border:1px dashed #dcd4ee;border-radius:15px;background:#fff;text-align:center}.money-school-ad>span{display:block;margin-bottom:8px;color:#9992aa;font-size:9px;letter-spacing:.14em}
+.money-school-adsterra-slot{display:flex;justify-content:center;align-items:center;max-width:100%;min-height:50px;overflow:hidden}.money-school-adsterra-slot iframe{max-width:100%}
+.money-school-ad--leaderboard{max-width:344px;min-height:74px;padding:10px}.money-school-adsterra-slot--leaderboard{width:320px;min-height:50px}
+.money-school-ad--rectangle{max-width:326px;min-height:274px;margin:22px auto;padding:10px}.money-school-adsterra-slot--rectangle{width:300px;min-height:250px}
 .money-school-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;max-width:870px;margin:auto}.money-school-card{min-width:0;padding:23px;border:1px solid var(--border,#eee9f6);border-radius:20px;background:var(--card,#fff);box-shadow:0 8px 25px #32245a08}.money-school-number{color:#7558de;font-size:9px;font-weight:800;letter-spacing:.12em}.money-school-card h2{margin:10px 0;font-size:1.3rem;line-height:1.25}.money-school-card h3{margin:16px 0 7px;font-size:.9rem}.money-school-card p,.money-school-card li{color:var(--muted);font-size:.88rem;line-height:1.7}.money-school-card ol,.money-school-card ul{padding-left:20px}.money-school-note{max-width:870px;margin:20px auto;padding:24px;border-radius:20px;background:#f3efff}.money-school-note h2{margin:0 0 8px}.money-school-note p,.money-school-disclaimer{color:var(--muted);font-size:.85rem;line-height:1.7}.money-school-disclaimer{max-width:870px;margin:10px auto 30px}
 @media(max-width:650px){.money-school-grid{grid-template-columns:1fr}.money-school-card{padding:19px}.money-school-hero{padding:14px 0}.money-school-note{padding:19px}}
 </style>

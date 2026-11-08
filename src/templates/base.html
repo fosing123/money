@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="{% static 'nkem/app.css' %}?v=20261101-premium-final"><link rel="stylesheet" href="{% static 'nkem/theme.css' %}?v=20261101-palettes-final"><link rel="stylesheet" href="{% static 'nkem/brand.css' %}?v=20261030"><link rel="stylesheet" href="{% static 'nkem/ui-polish.css' %}?v=20261101-delete-nav-market-invest">
 <link rel="stylesheet" href="{% static 'nkem/minimal-copy.css' %}?v=20261105-sparse-ui">
 <link rel="stylesheet" href="{% static 'nkem/expense-analyzer.css' %}?v=20261107-restored-analyzer">
+<link rel="stylesheet" href="{% static 'nkem/ad-placements.css' %}?v=20261108-sponsored-ai">
 <style>.tiana-pwa-actions{display:flex;align-items:center;gap:7px}.tiana-pwa-actions [hidden]{display:none!important}@media(max-width:760px){.tiana-pwa-actions .button{font-size:.68rem;padding:8px 9px}}</style>
 {% block extra_head %}{% endblock %}
 </head>
@@ -27,7 +28,17 @@
 <div class="header-actions"><a class="icon-button notification-button" href="{% url 'notifications' %}" aria-label="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{% if unread_notification_count %}<span class="notification-count">{{ unread_notification_count }}</span>{% endif %}</a><a class="profile-chip" href="{% url 'profile' %}" aria-label="Your profile"><span class="profile-chip-avatar">{% if user.avatar %}<img src="{{ user.avatar.url }}" alt="" width="40" height="40" decoding="async">{% elif brand_assets.profile_avatar %}<img src="{{ brand_assets.profile_avatar.image.url }}" alt="" width="40" height="40" decoding="async">{% else %}{{ user.first_name|first|default:user.username|first|upper }}{% endif %}</span><span class="profile-chip-name">{{ user.first_name|default:user.username }}</span></a>{% if user.is_staff %}<a class="icon-button desktop-only" href="{% url 'admin:index' %}" aria-label="Admin panel">⚙</a>{% endif %}<form class="desktop-only" action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="button button-secondary button-small" type="submit">Log out</button></form><div class="tiana-pwa-actions"><button class="button button-small" id="tiana-install-button" type="button" hidden>Install TIANA</button><a class="button button-secondary button-small" href="{% static 'nkem/offline.html' %}">Offline mode</a></div></div>
 {% else %}<nav class="header-actions" aria-label="Account navigation"><a class="button button-secondary header-login" href="{% url 'money_school' %}">Money School</a><a class="button button-secondary header-login" href="{% url 'login' %}">Log in</a><a class="button" href="{% url 'register' %}">Get started</a></nav>{% endif %}
 </header>
+{% if adsterra_enabled and adsterra_banner_320x50_code and request.resolver_match.url_name != 'money_school' %}
+  {% with ad_code=adsterra_banner_320x50_code ad_size="320x50" ad_width=320 ad_height=50 %}
+    {% include 'monetization/ad_slot.html' %}
+  {% endwith %}
+{% endif %}
 <main class="page-shell">{% if messages %}<div class="messages" role="status" aria-live="polite">{% for message in messages %}<div class="message message-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}</main>
+{% if adsterra_enabled and adsterra_banner_300x250_code and request.resolver_match.url_name != 'money_school' and request.resolver_match.url_name != 'ai_chat' and request.resolver_match.url_name != 'analyzer' %}
+  {% with ad_code=adsterra_banner_300x250_code ad_size="300x250" ad_width=300 ad_height=250 %}
+    {% include 'monetization/ad_slot.html' %}
+  {% endwith %}
+{% endif %}
 {% if user.is_authenticated %}{% include 'expense_analyzer/analysis_modal.html' %}{% endif %}
 {% if user.is_authenticated %}
 <nav class="mobile-bottom-nav" aria-label="Primary mobile navigation">
@@ -43,5 +54,6 @@
 <script src="{% static 'nkem/app.js' %}" defer></script>
 <script src="{% static 'nkem/offline-core.js' %}" defer></script>
 <script src="{% static 'nkem/pwa.js' %}" defer></script>
+
 {% if user.is_authenticated %}<script src="{% static 'nkem/money-analysis-modal.js' %}?v=20261107-restored-analyzer" defer></script>{% endif %}{% block extra_js %}{% endblock %}
 </body></html>

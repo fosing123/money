@@ -1,0 +1,6 @@
+{% if ad_code %}
+<section class="tiana-ad-placement tiana-ad-placement--{{ ad_size }}" aria-label="Advertisement" data-ad-network="adsterra" data-ad-size="{{ ad_size }}">
+  <span class="tiana-ad-label">ADVERTISEMENT</span>
+  {{ ad_code|safe }}
+</section>
+{% endif %}

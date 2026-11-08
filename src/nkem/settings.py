@@ -184,6 +184,28 @@ ADSENSE_CLIENT_ID = os.environ.get("ADSENSE_CLIENT_ID", "").strip()
 ADSENSE_SLOT_ID = os.environ.get("ADSENSE_SLOT_ID", "").strip()
 ADSENSE_ENABLED = ADSENSE_CLIENT_ID.startswith("ca-pub-") and ADSENSE_SLOT_ID.isdigit()
 
+# Adsterra uses a website/domain ID for publisher reporting and separate
+# generated ad-unit scripts for delivery. Keep every script in server-side
+# deployment secrets; never commit third-party executable ad code to Git.
+ADSTERRA_WEBSITE_ID = os.environ.get("ADSTERRA_WEBSITE_ID", "6182605").strip()
+ADSTERRA_NATIVE_BANNER_CODE = os.environ.get("ADSTERRA_NATIVE_BANNER_CODE", "").strip()
+# Backward-compatible fallback: an existing native banner secret can fill the
+# top 320x50 slot until the dedicated banner secret is configured.
+ADSTERRA_BANNER_320X50_CODE = (
+    os.environ.get("ADSTERRA_BANNER_320X50_CODE", "").strip()
+    or ADSTERRA_NATIVE_BANNER_CODE
+)
+ADSTERRA_BANNER_300X250_CODE = os.environ.get("ADSTERRA_BANNER_300X250_CODE", "").strip()
+ADSTERRA_HAS_CONFIGURED_BANNER = any(
+    "<script" in code.lower()
+    for code in (ADSTERRA_BANNER_320X50_CODE, ADSTERRA_BANNER_300X250_CODE)
+)
+ADSTERRA_ENABLED = (
+    env_bool("ADSTERRA_ENABLED", False)
+    and ADSTERRA_WEBSITE_ID.isdigit()
+    and ADSTERRA_HAS_CONFIGURED_BANNER
+)
+
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", not DEBUG)
 SESSION_COOKIE_SECURE = not DEBUG

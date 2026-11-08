@@ -97,5 +97,33 @@
       "PIL/XpmImagePlugin.py",
       "PIL/XVThumbImagePlugin.py"
     ]
+  },
+  "previews": {
+    "vars": {
+      "ALLOWED_HOSTS": "tiana-django-staging.fosingkameni.workers.dev,staging.tiana.lol,tiana.lol,www.tiana.lol",
+      "CSRF_TRUSTED_ORIGINS": "https://tiana-django-staging.fosingkameni.workers.dev,https://staging.tiana.lol,https://tiana.lol,https://www.tiana.lol",
+      "SECURE_SSL_REDIRECT": "1",
+      "FIREBASE_WEB_VAPID_KEY": "BBribgqIk3PI0TDvioC34aAzlCOgpntHQRfSVCgMqqFaA2t27bM03GgQLJYlCWcBDsyi9BEcYavppOPJVk81Fgs",
+      "FIREBASE_WEB_API_KEY": "AIzaSyACoGDU4MgYndo6ddPgruFC64kThnWfqwY",
+      "FIREBASE_WEB_AUTH_DOMAIN": "tiana-9632c.firebaseapp.com",
+      "FIREBASE_WEB_PROJECT_ID": "tiana-9632c",
+      "FIREBASE_WEB_MESSAGING_SENDER_ID": "573252278637",
+      "FIREBASE_WEB_APP_ID": "1:573252278637:web:b4c5a5600e0a87df5aa264"
+    },
+    "r2_buckets": [
+      {
+        "binding": "MEDIA",
+        "bucket_name": "tiana-django-media"
+      }
+    ],
+    "hyperdrive": [
+      {
+        "binding": "HYPERDRIVE",
+        "id": "74744f012eb646569c58b7659715ea80"
+      }
+    ],
+    "placement": {
+      "region": "aws:eu-west-2"
+    }
   }
 }

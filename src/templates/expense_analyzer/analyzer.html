@@ -24,6 +24,11 @@
       <a href="{% url 'premium' %}" class="analysis-plan-upgrade">Get more AI with Premium <span aria-hidden="true">→</span></a>
     {% endif %}
   </section>
+  {% if adsterra_enabled and adsterra_banner_300x250_code %}
+    {% with ad_code=adsterra_banner_300x250_code ad_size="300x250" ad_width=300 ad_height=250 %}
+      {% include 'monetization/ad_slot.html' %}
+    {% endwith %}
+  {% endif %}
 
   <div class="analysis-centre-toolbar">
     <div><span class="analysis-centre-label">LOOK AT</span><strong>Choose a time period</strong></div>
