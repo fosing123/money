@@ -1,22 +1,7 @@
-/* TIANA sponsored placements — restrained, responsive and clearly labelled. */
-.tiana-ad-placement{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:100%;margin:14px auto 20px;padding:9px 10px;border:1px solid var(--line,#e9e5f1);border-radius:15px;background:var(--surface,#fff);overflow:hidden}
+/* TIANA's responsive Adsterra banner placements. Publisher tags render directly as provided. */
+.tiana-ad-placement{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:100%;max-width:100%;margin:14px auto 20px;padding:9px 10px;border:1px solid var(--line,#e9e5f1);border-radius:15px;background:var(--surface,#fff);overflow:hidden}
 .tiana-ad-label{display:block;color:var(--muted,#888);font-size:9px;font-weight:800;letter-spacing:.14em;text-align:center}
-.tiana-ad-frame{display:flex;align-items:center;justify-content:center;width:min(100%,var(--ad-width,320px));min-height:var(--ad-height,50px);max-width:100%;overflow:hidden}
-.tiana-ad-frame iframe{display:block;max-width:100%;border:0;background:transparent}
-.tiana-ad-placement--320x50{max-width:360px;min-height:78px}
-.tiana-ad-placement--300x250{max-width:330px;min-height:280px}
-.tiana-ad-placement--300x250 .tiana-ad-frame{min-height:250px}
-.tiana-ad-placement--320x50 .tiana-ad-frame{min-height:50px}
-.tiana-ai-ad-gate[hidden]{display:none!important}
-.tiana-ai-ad-gate{position:fixed;inset:0;z-index:10020;display:grid;place-items:center;padding:18px;background:rgba(24,20,36,.66);backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px)}
-.tiana-ai-ad-gate__panel{position:relative;box-sizing:border-box;width:min(100%,430px);max-height:min(90dvh,760px);overflow:auto;padding:24px 20px;border:1px solid rgba(255,255,255,.65);border-radius:26px;background:var(--surface,#fff);box-shadow:0 25px 80px rgba(0,0,0,.28);text-align:center}
-.tiana-ai-ad-gate__eyebrow{display:block;margin-bottom:8px;color:var(--brand-primary,#7454dc);font-size:10px;font-weight:850;letter-spacing:.15em}
-.tiana-ai-ad-gate__panel h2{margin:0;font:800 clamp(1.25rem,4vw,1.55rem)/1.15 Manrope,Inter,sans-serif;letter-spacing:-.04em;color:var(--text,#262332)}
-.tiana-ai-ad-gate__panel p{margin:9px auto 14px;max-width:340px;color:var(--muted,#777);font-size:.82rem;line-height:1.55}
-.tiana-ai-ad-gate__panel .tiana-ad-placement{margin:12px auto 15px}
-.tiana-ai-ad-gate__continue{width:100%;min-height:48px;border:0;border-radius:14px;background:var(--brand-primary,#7454dc);color:#fff;font-weight:800;font-size:.9rem}
-.tiana-ai-ad-gate__continue:disabled{opacity:.48;cursor:not-allowed}
-.tiana-ai-ad-gate__cancel{display:inline-block;margin-top:10px;border:0;background:transparent;color:var(--muted,#777);font-size:.8rem;padding:8px 12px}
-.tiana-ai-ad-gate__status{min-height:18px;margin:8px 0!important;font-size:.72rem!important}
+.tiana-ad-placement--320x50{max-width:360px;min-height:74px}
+.tiana-ad-placement--300x250{max-width:330px;min-height:274px}
+.tiana-ad-placement--300x250 iframe{max-width:100%}
 @media(min-width:761px){.tiana-ad-placement--320x50{max-width:760px}.tiana-ad-placement--300x250{max-width:340px}}
-@media(prefers-reduced-motion:no-preference){.tiana-ai-ad-gate__panel{animation:tiana-ad-gate-in .22s ease-out}@keyframes tiana-ad-gate-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}}
