@@ -1,9 +1,12 @@
 (() => {
   "use strict";
 
-  const renderAdSlots = () => {
-    document.querySelectorAll("[data-adsterra-slot]").forEach((slot) => {
+  const renderAdSlots = (root = document) => {
+    root.querySelectorAll("[data-adsterra-slot]").forEach((slot) => {
       if (slot.dataset.rendered === "true") return;
+      // Do not request the AI sponsor ad while its overlay is hidden. Load
+      // it only after the user opens the sponsored pause.
+      if (slot.closest("[data-tiana-ai-ad-gate]") && gate?.hidden) return;
       const code = slot.dataset.adsterraCode || "";
       const width = Math.max(1, Math.min(1200, Number(slot.dataset.adWidth) || 320));
       const height = Math.max(1, Math.min(1200, Number(slot.dataset.adHeight) || 50));
@@ -71,11 +74,11 @@
     show() {
       if (!gate) return Promise.resolve(true);
       if (activeResolve) return Promise.resolve(false);
-      renderAdSlots();
       oldFocus = document.activeElement;
       gate.hidden = false;
       gate.setAttribute("aria-hidden", "false");
       document.body.classList.add("tiana-ai-ad-gate-open");
+      renderAdSlots(gate);
       if (continueButton) continueButton.disabled = true;
       if (status) status.textContent = "Loading the sponsored placement…";
       const adFrame = gate.querySelector("[data-adsterra-slot] iframe");
