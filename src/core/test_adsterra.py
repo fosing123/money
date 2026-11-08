@@ -24,7 +24,7 @@ AD_SETTINGS = {
 @override_settings(ADSENSE_ENABLED=False)
 class AdsterraPlacementTests(TestCase):
     @override_settings(**AD_SETTINGS)
-    def test_money_school_renders_two_sandboxed_banner_slots(self):
+    def test_money_school_renders_both_direct_publisher_banner_tags(self):
         response = self.client.get(reverse("money_school"))
 
         self.assertEqual(response.status_code, 200)
@@ -34,11 +34,11 @@ class AdsterraPlacementTests(TestCase):
         self.assertContains(response, 'data-ad-size="300x250"')
         self.assertContains(response, "test-320x50")
         self.assertContains(response, "test-300x250")
-        self.assertContains(response, "&lt;script")
+        self.assertContains(response, "<script>atOptions", html=False)
         self.assertEqual(response.content.count(b"ADVERTISEMENT"), 2)
 
     @override_settings(**AD_SETTINGS)
-    def test_authenticated_free_members_get_banners_on_finance_and_profile_pages(self):
+    def test_authenticated_free_members_get_two_banners_on_finance_and_profile_pages(self):
         user = get_user_model().objects.create_user(
             username="free-ad-member",
             email="free-ad-member@example.com",
@@ -63,7 +63,7 @@ class AdsterraPlacementTests(TestCase):
                 self.assertContains(response, "ads.example.test")
 
     @override_settings(**AD_SETTINGS)
-    def test_ai_coach_and_analyzer_show_sponsored_pause_before_ai_requests(self):
+    def test_ai_coach_and_analyzer_pages_show_both_banner_units_without_a_forced_gate(self):
         user = get_user_model().objects.create_user(
             username="ai-ad-member",
             email="ai-ad-member@example.com",
@@ -77,10 +77,10 @@ class AdsterraPlacementTests(TestCase):
                 response = self.client.get(reverse(route_name))
                 self.assertEqual(response.status_code, 200)
                 self.assertContains(response, 'data-ad-size="320x50"')
-                self.assertContains(response, 'data-tiana-ai-ad-gate')
                 self.assertContains(response, 'data-ad-size="300x250"')
-                self.assertContains(response, "Help keep TIANA AI available")
-                self.assertContains(response, "You never need to click the advertisement")
+                self.assertContains(response, "ads.example.test")
+                self.assertNotContains(response, "data-tiana-ai-ad-gate")
+                self.assertNotContains(response, "TianaAdGate")
 
     @override_settings(**AD_SETTINGS)
     def test_premium_members_remain_ad_free(self):
@@ -99,7 +99,6 @@ class AdsterraPlacementTests(TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertNotContains(response, "ads.example.test")
                 self.assertNotContains(response, "data-adsterra-site-id")
-                self.assertNotContains(response, "data-tiana-ai-ad-gate")
 
     @override_settings(
         ADSTERRA_ENABLED=False,
@@ -115,7 +114,7 @@ class AdsterraPlacementTests(TestCase):
         self.assertNotContains(response, "data-adsterra-site-id")
 
     @override_settings(**AD_SETTINGS)
-    def test_anonymous_welcome_page_can_show_banner_inventory(self):
+    def test_anonymous_welcome_page_can_show_both_banner_units(self):
         response = self.client.get(reverse("home"))
 
         self.assertEqual(response.status_code, 200)
