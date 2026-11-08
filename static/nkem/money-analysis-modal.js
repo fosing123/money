@@ -243,6 +243,10 @@
   const requestAnalysis = async (action) => {
     pendingAction = action;
     openModal();
+    if (window.TianaAdGate) {
+      const allowed = await window.TianaAdGate.show();
+      if (!allowed) return;
+    }
     setPanel("loading");
     if (requestController) requestController.abort();
     const controller = new AbortController();
