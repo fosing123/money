@@ -54,6 +54,6 @@
 <script src="{% static 'nkem/app.js' %}" defer></script>
 <script src="{% static 'nkem/offline-core.js' %}" defer></script>
 <script src="{% static 'nkem/pwa.js' %}" defer></script>
-{% if adsterra_enabled %}<script src="{% static 'nkem/ad-placements.js' %}?v=20261108-sponsored-ai" defer></script>{% endif %}
+
 {% if user.is_authenticated %}<script src="{% static 'nkem/money-analysis-modal.js' %}?v=20261107-restored-analyzer" defer></script>{% endif %}{% block extra_js %}{% endblock %}
 </body></html>
