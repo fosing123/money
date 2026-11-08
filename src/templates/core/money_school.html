@@ -7,12 +7,9 @@
   <p>Practical, beginner-friendly guides to help students understand their money, plan their week and protect what they have.</p>
 </section>
 {% if adsterra_enabled and adsterra_banner_320x50_code %}
-  <section class="money-school-ad money-school-ad--adsterra money-school-ad--leaderboard" aria-label="Advertisement" data-ad-network="adsterra" data-ad-size="320x50">
-    <span>ADVERTISEMENT</span>
-    <div class="money-school-adsterra-slot money-school-adsterra-slot--leaderboard" data-adsterra-site-id="{{ adsterra_website_id }}">
-      {{ adsterra_banner_320x50_code|safe }}
-    </div>
-  </section>
+  {% with ad_code=adsterra_banner_320x50_code ad_size="320x50" ad_width=320 ad_height=50 %}
+    {% include 'monetization/ad_slot.html' %}
+  {% endwith %}
 {% elif adsense_enabled %}
   <section class="money-school-ad" aria-label="Advertisement">
     <span>ADVERTISEMENT</span>
