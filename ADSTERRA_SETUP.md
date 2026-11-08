@@ -1,20 +1,25 @@
 # Adsterra setup for TIANA
 
-TIANA renders the standard banner units only on the public **Money School** education page. The 320×50 mobile leaderboard appears just below the page introduction. The 300×250 rectangle appears after the educational guides. The scripts are never injected into account balances, transactions, budgets, savings goals, the AI Coach, Analyzer, Insights or other private finance screens. Premium members do not receive the Money School ad slots.
+TIANA uses two standard Adsterra banner units across the public welcome experience and the free signed-in app:
+
+- **320×50 mobile banner:** shared placement below the site header (and below the welcome hero on the public landing screen).
+- **300×250 rectangle:** a second shared placement on ordinary pages, including Profile, Dashboard, Activity, Budgets, Goals and Insights. On AI pages, this same size is presented in a sponsored pause before the AI request is sent.
+
+Money School also displays the two units. Premium members remain ad-free.
 
 ## Website ID vs ad-unit IDs
 
-The value `6182605` is configured as `ADSTERRA_WEBSITE_ID`. It identifies the publisher website; it is not an ad-unit key. Each banner unit has its own generated code and its own placement statistics.
+The value `6182605` is `ADSTERRA_WEBSITE_ID`, used for publisher website reporting. It is not an ad-unit key. Each banner unit has its own generated code and placement statistics.
 
-## Approved banner snippets
+## Create the two banner units
 
 1. Sign in to Adsterra as a publisher.
 2. Open **Websites** and confirm the TIANA domain is approved.
 3. Open **Add Unit → Banner**, choose **320×50**, and copy the complete code from **Get Code**.
-4. Create a separate **300×250** banner unit and copy its complete code too.
-5. Use only the exact snippets shown as active in your own Adsterra dashboard or the approval email. Do not edit the script URLs or keys.
+4. Create a separate **300×250** Banner unit and copy its complete code too.
+5. Use the exact active snippets from your own Adsterra dashboard. Do not edit their script URLs or keys.
 
-Adsterra's official guides explain that banner codes are generated per unit and can be placed in page content. They also recommend matching the ad size to the viewport and avoiding several crowded banners on the same area. See the [publisher dashboard guide](https://adsterra.com/blog/set-up-publishers-dashboard/) and [banner implementation guide](https://adsterra.com/blog/how-banner-ads-make-money/).
+The official [publisher dashboard guide](https://adsterra.com/blog/set-up-publishers-dashboard/) explains adding a website and generating its ad-unit code. The [publisher formats page](https://adsterra.com/publishers/) describes banners and Social Bar/interstitial formats.
 
 ## Configure Cloudflare staging
 
@@ -22,19 +27,27 @@ In GitHub, open **Settings → Environments → tiana-django-staging** and confi
 
 - Variable `ADSTERRA_ENABLED`: `true`
 - Variable `ADSTERRA_WEBSITE_ID`: `6182605`
-- Secret `ADSTERRA_BANNER_320X50_CODE`: paste the complete 320×50 banner snippet
-- Secret `ADSTERRA_BANNER_300X250_CODE`: paste the complete 300×250 banner snippet
+- Secret `ADSTERRA_BANNER_320X50_CODE`: the complete 320×50 banner snippet
+- Secret `ADSTERRA_BANNER_300X250_CODE`: the complete 300×250 banner snippet
 
-The previous `ADSTERRA_NATIVE_BANNER_CODE` secret remains a backwards-compatible fallback for the 320×50 slot if the new dedicated secret is not set.
+The previous `ADSTERRA_NATIVE_BANNER_CODE` remains a backwards-compatible fallback for the 320×50 unit.
 
-The **Deploy TIANA Django Worker** workflow transfers these values to Cloudflare Worker secrets before deployment. The generated JavaScript is intentionally not committed to Git. For local testing, put the values in your untracked `.env` file and keep `ADSTERRA_ENABLED=0` until the site and ad units are approved.
+The **Deploy TIANA Django Worker** workflow transfers these values to Cloudflare Worker secrets before deploying. Third-party JavaScript is not committed to Git. For local testing, use your untracked `.env` file and keep `ADSTERRA_ENABLED=0` until the site and units are approved.
 
-## Why some supplied scripts are not enabled
+## AI Coach and Analyzer sponsored pause
 
-The additional scripts using the `/1/`, `/14/` and `/21/` paths do not identify their ad format from the snippet alone. They are not included in this banner-only integration. Confirm each unit's exact format in the Adsterra dashboard before enabling it. TIANA intentionally avoids Popunders, Smartlinks, Social Bar overlays and automatic redirects inside signed-in finance and AI workflows.
+Before the Coach submits a Gemini request or the Analyzer sends its AI-enhanced analysis request, TIANA opens a short sponsored pause containing the 300×250 banner. The user presses **Continue to TIANA AI** after the placement has had time to load. The user is never asked or incentivised to click an advertisement.
 
-The Analyzer and AI Coach display sensitive personal spending context. Third-party JavaScript on those pages could inspect page content, so those pages remain ad-free rather than exposing financial records to advertising scripts.
+Important: a standard banner script does not provide a trusted video-completion/reward callback. This pause is an ad-supported presentation step, not a verified rewarded-video integration. Ad blockers, low inventory, or script failures can mean no impression or revenue even though a user can continue. Do not describe this as guaranteed payment per AI request.
+
+## Privacy boundary
+
+Each publisher snippet is rendered inside a sandboxed iframe with scripts and ad popups allowed, but without same-origin access or top-page navigation. This limits an ad script's ability to inspect TIANA's surrounding finance and AI page DOM. Test actual delivery after deployment because a publisher's code may not render or count impressions identically in a sandboxed frame.
+
+## Other supplied snippets not enabled
+
+The additional scripts using the `/1/`, `/14/` and `/21/` paths are not enabled in this release. Confirm their exact formats in the Adsterra dashboard before using them. TIANA intentionally does not activate popunders, automatic redirects or unclassified overlays across financial workflows.
 
 ## Pause ads
 
-Set `ADSTERRA_ENABLED=false` in the GitHub environment and redeploy. Ad delivery and earnings still depend on Adsterra approval, active ad inventory, browser protections, and account settings; successful deployment does not guarantee impressions or payouts.
+Set `ADSTERRA_ENABLED=false` in the GitHub environment and redeploy. A successful deployment does not guarantee impressions or payouts; delivery depends on approval, fill rate, browser protections and publisher-account settings.
