@@ -24,6 +24,9 @@
   <link rel="preload" as="image" type="image/webp" imagesrcset="{% static 'assets/optimized/tiana-welcome-student-campus-800.webp' %} 800w, {% static 'assets/optimized/tiana-welcome-student-campus-1440.webp' %} 1440w, {% static 'assets/optimized/tiana-welcome-student-campus-1920.webp' %} 1920w" imagesizes="100vw" fetchpriority="high">
   <link rel="preload" as="image" type="image/webp" href="{% static 'assets/optimized/tiana-logo-transparent-640.webp' %}">
   <link rel="stylesheet" href="{% static 'nkem/welcome.css' %}?v=20261031-tiana-welcome">
+  {% if adsterra_enabled %}
+  <link rel="stylesheet" href="{% static 'nkem/ad-placements.css' %}?v=20261108-sponsored-ai">
+  {% endif %}
 </head>
 <body class="welcome-page">
   <main class="welcome-screen" aria-label="Welcome to TIANA">
@@ -67,6 +70,17 @@
       <a class="welcome-learn-link" href="{% url 'money_school' %}">Explore Money School · Student money guides</a>
     </section>
   </main>
+{% if adsterra_enabled and adsterra_banner_320x50_code %}
+  {% with ad_code=adsterra_banner_320x50_code ad_size="320x50" ad_width=320 ad_height=50 %}
+    {% include 'monetization/ad_slot.html' %}
+  {% endwith %}
+{% endif %}
+{% if adsterra_enabled and adsterra_banner_300x250_code %}
+  {% with ad_code=adsterra_banner_300x250_code ad_size="300x250" ad_width=300 ad_height=250 %}
+    {% include 'monetization/ad_slot.html' %}
+  {% endwith %}
+{% endif %}
 <script src="{% static 'nkem/pwa.js' %}" defer></script>
+{% if adsterra_enabled %}<script src="{% static 'nkem/ad-placements.js' %}?v=20261108-sponsored-ai" defer></script>{% endif %}
 </body>
 </html>
