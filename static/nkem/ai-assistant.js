@@ -13,25 +13,8 @@ document.addEventListener("DOMContentLoaded",function(){
  const resize=function(){input.style.height="auto";input.style.height=Math.min(input.scrollHeight,130)+"px";};
  input.addEventListener("input",resize);
  input.addEventListener("keydown",function(event){if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();form.requestSubmit();}});
- form.addEventListener("submit",async function(event){
+ form.addEventListener("submit",function(){
   if(!input.value.trim())return;
-  if(form.dataset.tianaAdPassed!=="true"&&window.TianaAdGate){
-   event.preventDefault();
-   if(form.dataset.tianaAdPending==="true")return;
-   form.dataset.tianaAdPending="true";
-   try{
-    const allowed=await window.TianaAdGate.show();
-    if(!allowed){delete form.dataset.tianaAdPending;return;}
-    form.dataset.tianaAdPassed="true";
-    delete form.dataset.tianaAdPending;
-    form.requestSubmit(send);
-    return;
-   }catch(error){
-    delete form.dataset.tianaAdPending;
-    return;
-   }
-  }
-  delete form.dataset.tianaAdPassed;
   send.disabled=true;send.setAttribute("aria-label","Sending message");
   if(loading)loading.classList.add("active");
   if(transcript)transcript.scrollTop=transcript.scrollHeight;
