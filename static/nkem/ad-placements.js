@@ -81,7 +81,7 @@
       const adFrame = gate.querySelector("[data-adsterra-slot] iframe");
       if (adFrame) {
         adFrame.addEventListener("load", () => {
-          if (status && !gate.hidden) status.textContent = "Thanks for supporting TIANA. You can continue when ready.";
+          if (status && !gate.hidden) status.textContent = "The sponsored panel has opened. Continue when ready.";
         }, {once:true});
       }
       window.requestAnimationFrame(() => continueButton?.focus());
