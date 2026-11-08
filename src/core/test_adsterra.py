@@ -80,7 +80,7 @@ class AdsterraPlacementTests(TestCase):
                 self.assertContains(response, 'data-tiana-ai-ad-gate')
                 self.assertContains(response, 'data-ad-size="300x250"')
                 self.assertContains(response, "Help keep TIANA AI available")
-                self.assertContains(response, "You never need to click it")
+                self.assertContains(response, "you never need to click the advertisement")
 
     @override_settings(**AD_SETTINGS)
     def test_premium_members_remain_ad_free(self):
